@@ -124,26 +124,6 @@ import SPSchema from "../../spec/packets/schemas/SP.schema.json";
 
 import TISchema from "../../spec/packets/schemas/TI.schema.json";
 
-import VS_AUDIOSchema from "../../spec/packets/schemas/VS_AUDIO.schema.json";
-
-import VS_CAPSSchema from "../../spec/packets/schemas/VS_CAPS.schema.json";
-
-import VS_FRAMESchema from "../../spec/packets/schemas/VS_FRAME.schema.json";
-
-import VS_JOINToClientSchema from "../../spec/packets/schemas/VS_JOINToClient.schema.json";
-
-import VS_JOINToServerSchema from "../../spec/packets/schemas/VS_JOINToServer.schema.json";
-
-import VS_LEAVEToClientSchema from "../../spec/packets/schemas/VS_LEAVEToClient.schema.json";
-
-import VS_LEAVEToServerSchema from "../../spec/packets/schemas/VS_LEAVEToServer.schema.json";
-
-import VS_PEERSSchema from "../../spec/packets/schemas/VS_PEERS.schema.json";
-
-import VS_SPEAKToClientSchema from "../../spec/packets/schemas/VS_SPEAKToClient.schema.json";
-
-import VS_SPEAKToServerSchema from "../../spec/packets/schemas/VS_SPEAKToServer.schema.json";
-
 import ZZToClientSchema from "../../spec/packets/schemas/ZZToClient.schema.json";
 
 import ZZToServerSchema from "../../spec/packets/schemas/ZZToServer.schema.json";
@@ -254,26 +234,6 @@ export { default as SMSchema } from "../../spec/packets/schemas/SM.schema.json";
 export { default as SPSchema } from "../../spec/packets/schemas/SP.schema.json";
 
 export { default as TISchema } from "../../spec/packets/schemas/TI.schema.json";
-
-export { default as VS_AUDIOSchema } from "../../spec/packets/schemas/VS_AUDIO.schema.json";
-
-export { default as VS_CAPSSchema } from "../../spec/packets/schemas/VS_CAPS.schema.json";
-
-export { default as VS_FRAMESchema } from "../../spec/packets/schemas/VS_FRAME.schema.json";
-
-export { default as VS_JOINToClientSchema } from "../../spec/packets/schemas/VS_JOINToClient.schema.json";
-
-export { default as VS_JOINToServerSchema } from "../../spec/packets/schemas/VS_JOINToServer.schema.json";
-
-export { default as VS_LEAVEToClientSchema } from "../../spec/packets/schemas/VS_LEAVEToClient.schema.json";
-
-export { default as VS_LEAVEToServerSchema } from "../../spec/packets/schemas/VS_LEAVEToServer.schema.json";
-
-export { default as VS_PEERSSchema } from "../../spec/packets/schemas/VS_PEERS.schema.json";
-
-export { default as VS_SPEAKToClientSchema } from "../../spec/packets/schemas/VS_SPEAKToClient.schema.json";
-
-export { default as VS_SPEAKToServerSchema } from "../../spec/packets/schemas/VS_SPEAKToServer.schema.json";
 
 export { default as ZZToClientSchema } from "../../spec/packets/schemas/ZZToClient.schema.json";
 
@@ -1036,120 +996,6 @@ export interface TIInit {
 }
 
 
-export interface VS_AUDIO extends Packet {
-  $header: "VS_AUDIO";
-  fromUid: number;
-  payload: string;
-}
-
-export interface VS_AUDIOInit {
-  fromUid: number;
-  payload: string;
-}
-
-
-export interface VS_CAPS extends Packet {
-  $header: "VS_CAPS";
-  enabled: boolean;
-  pttOnly: boolean;
-  maxPeers: number;
-  codec: string;
-  sampleRate: number;
-  frameMs: number;
-  maxFrameBytes: number;
-}
-
-export interface VS_CAPSInit {
-  enabled: boolean;
-  pttOnly: boolean;
-  maxPeers: number;
-  codec: string;
-  sampleRate: number;
-  frameMs: number;
-  maxFrameBytes: number;
-}
-
-
-export interface VS_FRAME extends Packet {
-  $header: "VS_FRAME";
-  payload: string;
-}
-
-export interface VS_FRAMEInit {
-  payload: string;
-}
-
-
-export interface VS_JOINToClient extends Packet {
-  $header: "VS_JOIN";
-  uid: number;
-}
-
-export interface VS_JOINToClientInit {
-  uid: number;
-}
-
-
-export interface VS_JOINToServer extends Packet {
-  $header: "VS_JOIN";
-}
-
-export interface VS_JOINToServerInit {
-
-}
-
-
-export interface VS_LEAVEToClient extends Packet {
-  $header: "VS_LEAVE";
-  uid: number;
-}
-
-export interface VS_LEAVEToClientInit {
-  uid: number;
-}
-
-
-export interface VS_LEAVEToServer extends Packet {
-  $header: "VS_LEAVE";
-}
-
-export interface VS_LEAVEToServerInit {
-
-}
-
-
-export interface VS_PEERS extends Packet {
-  $header: "VS_PEERS";
-  uids: number[];
-}
-
-export interface VS_PEERSInit {
-  uids: number[];
-}
-
-
-export interface VS_SPEAKToClient extends Packet {
-  $header: "VS_SPEAK";
-  uid: number;
-  on: boolean;
-}
-
-export interface VS_SPEAKToClientInit {
-  uid: number;
-  on: boolean;
-}
-
-
-export interface VS_SPEAKToServer extends Packet {
-  $header: "VS_SPEAK";
-  on: boolean;
-}
-
-export interface VS_SPEAKToServerInit {
-  on: boolean;
-}
-
-
 export interface ZZToClient extends Packet {
   $header: "ZZ";
   reason: string;
@@ -1212,10 +1058,6 @@ export const c2sSchemas = {
   RD: RDSchema,
   RM: RMSchema,
   RT: RTToServerSchema,
-  VS_FRAME: VS_FRAMESchema,
-  VS_JOIN: VS_JOINToServerSchema,
-  VS_LEAVE: VS_LEAVEToServerSchema,
-  VS_SPEAK: VS_SPEAKToServerSchema,
   ZZ: ZZToServerSchema,
 } as const;
 
@@ -1256,12 +1098,6 @@ export const s2cSchemas = {
   SM: SMSchema,
   SP: SPSchema,
   TI: TISchema,
-  VS_AUDIO: VS_AUDIOSchema,
-  VS_CAPS: VS_CAPSSchema,
-  VS_JOIN: VS_JOINToClientSchema,
-  VS_LEAVE: VS_LEAVEToClientSchema,
-  VS_PEERS: VS_PEERSSchema,
-  VS_SPEAK: VS_SPEAKToClientSchema,
   ZZ: ZZToClientSchema,
 } as const;
 
@@ -1283,10 +1119,6 @@ export type C2SInputs = {
   RD: RDInit;
   RM: RMInit;
   RT: RTToServerInit;
-  VS_FRAME: VS_FRAMEInit;
-  VS_JOIN: VS_JOINToServerInit;
-  VS_LEAVE: VS_LEAVEToServerInit;
-  VS_SPEAK: VS_SPEAKToServerInit;
   ZZ: ZZToServerInit;
 };
 
@@ -1327,12 +1159,6 @@ export type S2CInputs = {
   SM: SMInit;
   SP: SPInit;
   TI: TIInit;
-  VS_AUDIO: VS_AUDIOInit;
-  VS_CAPS: VS_CAPSInit;
-  VS_JOIN: VS_JOINToClientInit;
-  VS_LEAVE: VS_LEAVEToClientInit;
-  VS_PEERS: VS_PEERSInit;
-  VS_SPEAK: VS_SPEAKToClientInit;
   ZZ: ZZToClientInit;
 };
 
@@ -1354,10 +1180,6 @@ export type C2SOutputs = {
   RD: RD;
   RM: RM;
   RT: RTToServer;
-  VS_FRAME: VS_FRAME;
-  VS_JOIN: VS_JOINToServer;
-  VS_LEAVE: VS_LEAVEToServer;
-  VS_SPEAK: VS_SPEAKToServer;
   ZZ: ZZToServer;
 };
 
@@ -1398,12 +1220,6 @@ export type S2COutputs = {
   SM: SM;
   SP: SP;
   TI: TI;
-  VS_AUDIO: VS_AUDIO;
-  VS_CAPS: VS_CAPS;
-  VS_JOIN: VS_JOINToClient;
-  VS_LEAVE: VS_LEAVEToClient;
-  VS_PEERS: VS_PEERS;
-  VS_SPEAK: VS_SPEAKToClient;
   ZZ: ZZToClient;
 };
 

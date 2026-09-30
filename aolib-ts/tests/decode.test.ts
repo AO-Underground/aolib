@@ -30,7 +30,7 @@ const SM = packetSchema("SM", {
   music_list: { type: "array", items: { type: "string" } },
 });
 
-const VS_PEERS = packetSchema("VS_PEERS", {
+const XT = packetSchema("XT", {
   peers: {
     type: "array",
     items: {
@@ -112,10 +112,10 @@ describe("decode: JSON mode", () => {
   it("array of nested decodes element-by-element", () => {
     expect(
       decode(
-        VS_PEERS,
-        '{"$header":"VS_PEERS","peers":[{"uid":1,"name":"Alice"},{"uid":2,"name":"Bob"}]}',
+        XT,
+        '{"$header":"XT","peers":[{"uid":1,"name":"Alice"},{"uid":2,"name":"Bob"}]}',
       ),
-    ).toEqual({ $header: "VS_PEERS",
+    ).toEqual({ $header: "XT",
       peers: [
         { uid: 1, name: "Alice" },
         { uid: 2, name: "Bob" },
@@ -208,7 +208,7 @@ describe("decode: fanta mode", () => {
   });
 
   it("array of nested decodes element-by-element", () => {
-    expect(decode(VS_PEERS, "VS_PEERS#1&Alice#2&Bob#%")).toEqual({ $header: "VS_PEERS",
+    expect(decode(XT, "XT#1&Alice#2&Bob#%")).toEqual({ $header: "XT",
       peers: [
         { uid: 1, name: "Alice" },
         { uid: 2, name: "Bob" },
@@ -271,15 +271,15 @@ describe("encode → decode round-trip", () => {
     expect(decode(PV, encode(PV, v, "fanta"))).toEqual({ $header: "PV", ...v });
   });
 
-  it("VS_PEERS (array of nested) round-trips", () => {
+  it("XT (array of nested) round-trips", () => {
     const v = {
       peers: [
         { uid: 1, name: "Alice" },
         { uid: 2, name: "Bob" },
       ],
     };
-    expect(decode(VS_PEERS, encode(VS_PEERS, v, "json"))).toEqual({ $header: "VS_PEERS", ...v });
-    expect(decode(VS_PEERS, encode(VS_PEERS, v, "fanta"))).toEqual({ $header: "VS_PEERS", ...v });
+    expect(decode(XT, encode(XT, v, "json"))).toEqual({ $header: "XT", ...v });
+    expect(decode(XT, encode(XT, v, "fanta"))).toEqual({ $header: "XT", ...v });
   });
 
   it("SM (array of scalars) round-trips even when empty", () => {

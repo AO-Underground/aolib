@@ -29,7 +29,7 @@ const SM = packetSchema("SM", {
   music_list: { type: "array", items: { type: "string" } },
 });
 
-const VS_PEERS = packetSchema("VS_PEERS", {
+const XT = packetSchema("XT", {
   peers: {
     type: "array",
     items: {
@@ -91,7 +91,7 @@ describe("encode: JSON mode", () => {
   it("array of nested becomes JSON array of objects", () => {
     expect(
       encode(
-        VS_PEERS,
+        XT,
         {
           peers: [
             { uid: 1, name: "Alice" },
@@ -101,7 +101,7 @@ describe("encode: JSON mode", () => {
         "json",
       ),
     ).toBe(
-      '{"$header":"VS_PEERS","peers":[{"uid":1,"name":"Alice"},{"uid":2,"name":"Bob"}]}',
+      '{"$header":"XT","peers":[{"uid":1,"name":"Alice"},{"uid":2,"name":"Bob"}]}',
     );
   });
 
@@ -156,7 +156,7 @@ describe("encode: fanta mode", () => {
   it("array of nested packs each element with `&` separator", () => {
     expect(
       encode(
-        VS_PEERS,
+        XT,
         {
           peers: [
             { uid: 1, name: "Alice" },
@@ -165,7 +165,7 @@ describe("encode: fanta mode", () => {
         },
         "fanta",
       ),
-    ).toBe("VS_PEERS#1&Alice#2&Bob#%");
+    ).toBe("XT#1&Alice#2&Bob#%");
   });
 
   it("nested field packs into one positional slot", () => {

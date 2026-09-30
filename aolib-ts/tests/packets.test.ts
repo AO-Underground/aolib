@@ -25,8 +25,7 @@ describe("registry shape", () => {
     expect(Object.keys(c2sSchemas).sort()).toEqual(
       [
         "CC", "CH", "CT", "DE", "EE", "HI", "HP",
-        "ID", "MA", "MC", "MS", "PE", "RC", "RD", "RM", "RT", "VS_FRAME",
-        "VS_JOIN", "VS_LEAVE", "VS_SPEAK", "ZZ", "askchaa",
+        "ID", "MA", "MC", "MS", "PE", "RC", "RD", "RM", "RT", "ZZ", "askchaa",
       ].sort(),
     );
   });
@@ -38,14 +37,13 @@ describe("registry shape", () => {
         "CharsCheck", "DONE", "EI", "EM", "FA", "FL", "FM", "HP",
         "ID", "JD", "KB", "KK", "LE", "MC", "MS", "PN", "PR", "PU",
         "PV", "RMC", "RT", "SC", "SI", "SM", "SP", "TI",
-        "VS_AUDIO", "VS_CAPS", "VS_JOIN", "VS_LEAVE", "VS_PEERS",
-        "VS_SPEAK", "ZZ", "decryptor",
+        "ZZ", "decryptor",
       ].sort(),
     );
   });
 
   it("every schema's $header matches its registry key", () => {
-    // Bidirectional packets (MC, CT, HP, RT, ZZ, VS_*) intentionally
+    // Bidirectional packets (MC, CT, HP, RT, ZZ) intentionally
     // share a header across the two maps but may have different
     // shapes; what we verify here is just that the schema's own
     // $header field matches the key it was registered under.
@@ -107,12 +105,6 @@ describe("round-trips: array packets", () => {
     const p = { features: ["yellowtext", "cccc_ic_support", "flipping"] };
     expect(decode(s2cSchemas.FL, encode(s2cSchemas.FL, p, "fanta"))).toEqual({ $header: "FL", ...p });
     expect(decode(s2cSchemas.FL, encode(s2cSchemas.FL, p, "json"))).toEqual({ $header: "FL", ...p });
-  });
-
-  it("VS_PEERS (array of numbers)", () => {
-    const p = { uids: [1, 2, 3, 42] };
-    expect(decode(s2cSchemas.VS_PEERS, encode(s2cSchemas.VS_PEERS, p, "fanta"))).toEqual({ $header: "VS_PEERS", ...p });
-    expect(decode(s2cSchemas.VS_PEERS, encode(s2cSchemas.VS_PEERS, p, "json"))).toEqual({ $header: "VS_PEERS", ...p });
   });
 
   it("FA empty array", () => {
@@ -179,11 +171,9 @@ describe("session integration: new packets are reachable", () => {
     const s = server({ send: (w) => out.push(w) });
     s.send.RC({});
     s.send.MA({ id: 1, duration: 60, reason: "spam" });
-    s.send.VS_FRAME({ payload: "BASE64==" });
     expect(out).toEqual([
       "RC#%",
       "MA#1#60#spam#%",
-      "VS_FRAME#BASE64==#%",
     ]);
   });
 
@@ -193,15 +183,12 @@ describe("session integration: new packets are reachable", () => {
     s.on.BN((p) => { seen.BN = p; });
     s.on.SI((p) => { seen.SI = p; });
     s.on.FL((p) => { seen.FL = p; });
-    s.on.VS_AUDIO((p) => { seen.VS_AUDIO = p; });
     s.receive("BN#court##%");
     s.receive("SI#10#5#20#%");
     s.receive("FL#a#b#%");
-    s.receive("VS_AUDIO#3#abc==#%");
     expect(seen.BN).toEqual({ $header: "BN", background: "court", position: "" });
     expect(seen.SI).toEqual({ $header: "SI", char_count: 10, evi_count: 5, mus_count: 20 });
     expect(seen.FL).toEqual({ $header: "FL", features: ["a", "b"] });
-    expect(seen.VS_AUDIO).toEqual({ $header: "VS_AUDIO", fromUid: 3, payload: "abc==" });
   });
 
   it("client.send.<S2C> works for the new s2c packets", () => {
@@ -236,18 +223,6 @@ describe("bidirectional packets", () => {
     const c2 = server({ send: (w) => out.push(w) });
     c2.send.CT({ name: "Phoenix", message: "objection" });
     expect(out).toEqual(["CT#Phoenix#objection#%"]);
-  });
-
-  it("VS_SPEAK: c2s has on only, s2c has uid+on", () => {
-    const out: string[] = [];
-    const sToServer = server({ send: (w) => out.push(w) });
-    sToServer.send.VS_SPEAK({ on: true });
-    expect(out).toEqual(["VS_SPEAK#1#%"]);
-
-    out.length = 0;
-    const sToClient = client({ send: (w) => out.push(w) });
-    sToClient.send.VS_SPEAK({ uid: 5, on: false });
-    expect(out).toEqual(["VS_SPEAK#5#0#%"]);
   });
 
   it("HP: symmetric, same schema works in both directions", () => {

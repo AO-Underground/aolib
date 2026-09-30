@@ -45,18 +45,6 @@ func (c *ClientSession) SendSC(p *SC)                 { c.s.send(p) }
 func (c *ClientSession) SendSI(p *SI)                 { c.s.send(p) }
 func (c *ClientSession) SendSM(p *SM)                 { c.s.send(p) }
 func (c *ClientSession) SendSP(p *SP)                 { c.s.send(p) }
-func (c *ClientSession) SendVS_AUDIO(p *VS_AUDIO)     { c.s.send(p) }
-func (c *ClientSession) SendVS_CAPS(p *VS_CAPS)       { c.s.send(p) }
-func (c *ClientSession) OnVS_FRAME(h func(*VS_FRAME)) {
-	c.s.on("VS_FRAME", func(p any) { h(p.(*VS_FRAME)) })
-}
-func (c *ClientSession) SendVS_JOIN(p *VS_JOINToClient)   { c.s.send(p) }
-func (c *ClientSession) SendVS_LEAVE(p *VS_LEAVEToClient) { c.s.send(p) }
-func (c *ClientSession) SendVS_PEERS(p *VS_PEERS)         { c.s.send(p) }
-func (c *ClientSession) SendVS_SPEAK(p *VS_SPEAKToClient) { c.s.send(p) }
-func (c *ClientSession) OnVS_SPEAK(h func(*VS_SPEAKToServer)) {
-	c.s.on("VS_SPEAK", func(p any) { h(p.(*VS_SPEAKToServer)) })
-}
-func (c *ClientSession) SendZZ(p *ZZToClient)       { c.s.send(p) }
-func (c *ClientSession) OnZZ(h func(*ZZToServer))   { c.s.on("ZZ", func(p any) { h(p.(*ZZToServer)) }) }
-func (c *ClientSession) SendDecryptor(p *Decryptor) { c.s.send(p) }
+func (c *ClientSession) SendZZ(p *ZZToClient)         { c.s.send(p) }
+func (c *ClientSession) OnZZ(h func(*ZZToServer))     { c.s.on("ZZ", func(p any) { h(p.(*ZZToServer)) }) }
+func (c *ClientSession) SendDecryptor(p *Decryptor)   { c.s.send(p) }
