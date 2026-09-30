@@ -138,6 +138,42 @@ func ParseIDClient(body []string) (*IDClient, error) {
 	return &IDClient{PlayerNumber: pid, Software: body[1], Version: body[2]}, nil
 }
 
+// ParsePV decodes the server→client PV form: PV#{player_id}#CID#{char_id}#%.
+func ParsePV(body []string) (*PV, error) {
+	if len(body) < 3 {
+		return nil, fmt.Errorf("PV: expected 3 fields, got %d", len(body))
+	}
+	pid, err := strconv.Atoi(strings.TrimSpace(body[0]))
+	if err != nil {
+		return nil, fmt.Errorf("PV: player_id: %w", err)
+	}
+	cid, err := strconv.Atoi(strings.TrimSpace(body[2]))
+	if err != nil {
+		return nil, fmt.Errorf("PV: char_id: %w", err)
+	}
+	return &PV{PlayerID: pid, CharID: cid}, nil
+}
+
+// ParseMCToClient decodes the server→client MC form:
+// MC#{name}#{char_id}#{showname}#{looping}#{channel}#{effects}#%.
+func ParseMCToClient(body []string) (*MCToClient, error) {
+	if len(body) < 2 {
+		return nil, fmt.Errorf("MC: expected at least 2 fields, got %d", len(body))
+	}
+	cid, err := strconv.Atoi(strings.TrimSpace(body[1]))
+	if err != nil {
+		return nil, fmt.Errorf("MC: char_id: %w", err)
+	}
+	return &MCToClient{
+		Name:     getStr(body, 0),
+		CharID:   cid,
+		Showname: getStr(body, 2),
+		Looping:  getStr(body, 3),
+		Channel:  getStr(body, 4),
+		Effects:  getStr(body, 5),
+	}, nil
+}
+
 // CC selects a character. Wire: CC#0#{char_id}#{char_pw}#%. The leading
 // "0" slot is a protocol relic and is ignored.
 type CC struct {
@@ -172,6 +208,11 @@ type MCFromClient struct {
 	CharID   int
 	Showname string // optional
 	Effects  string // optional, kept as string because AO2 sends it raw
+}
+
+func (p *MCFromClient) Header() string { return "MC" }
+func (p *MCFromClient) Args() []string {
+	return []string{p.Name, itoa(p.CharID), p.Showname, p.Effects}
 }
 
 // ParseMCFromClient decodes a client-side MC body.

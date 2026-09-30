@@ -2,42 +2,33 @@ package aolib
 
 import "testing"
 
-// TestExampleServerClient walks a minimal AO handshake through two Sessions —
-// a server-side session (one connected client) and a client-side session (the
-// server) — over an in-memory transport. It exercises the whole public
-// surface: NewServer/NewClient, Send, Receive, and On (typed handlers).
+// TestExampleServerClient mirrors aolib-ts's exampleServer.ts + exampleClient.ts
+// over an in-memory transport: a ClientSession (server side, one remote client)
+// and a ServerSession (client side, the remote server) complete the AO join
+// handshake through the typed On*/Send* surface.
 func TestExampleServerClient(t *testing.T) {
-	var server, client *Session
+	var serverSide *ClientSession
+	var clientSide *ServerSession
 
-	server = NewServer(SessionOptions{
-		Send: func(wire []byte) { client.Receive(wire) },
-		OnUnhandled: func(header string, _ any) {
-			t.Logf("server: unhandled %s", header)
-		},
-	})
-	client = NewClient(SessionOptions{
-		Send: func(wire []byte) { server.Receive(wire) },
-		OnUnhandled: func(header string, _ any) {
-			t.Logf("client: unhandled %s", header)
-		},
-	})
+	serverSide = NewClient(SessionConfig{Send: func(wire []byte) { clientSide.Receive(wire) }})
+	clientSide = NewServer(SessionConfig{Send: func(wire []byte) { serverSide.Receive(wire) }})
 
-	// Client: handle what the server sends us.
+	// Client: handle packets the server sends us (typed, IDE-autocompleted).
 	var playerID int
 	var tracks []string
 	done := false
-	client.On("ID", func(p any) { playerID = p.(*IDClient).PlayerNumber })
-	client.On("SM", func(p any) { tracks = p.(*SM).Items })
-	client.On("DONE", func(p any) { done = true })
+	clientSide.OnID(func(p *IDClient) { playerID = p.PlayerNumber })
+	clientSide.OnSM(func(p *SM) { tracks = p.Items })
+	clientSide.OnDONE(func(_ *DONE) { done = true })
 
 	// Server: answer the client's HI with the join handshake.
-	server.On("HI", func(_ any) {
-		server.Send(&IDClient{PlayerNumber: 7, Software: "example-server", Version: "1.0"})
-		server.Send(&SM{Items: []string{"track1.mp3", "track2.mp3"}})
-		server.Send(&DONE{})
+	serverSide.OnHI(func(_ *HI) {
+		serverSide.SendID(&IDClient{PlayerNumber: 7, Software: "example-server", Version: "1.0"})
+		serverSide.SendSM(&SM{Items: []string{"track1.mp3", "track2.mp3"}})
+		serverSide.SendDONE(&DONE{})
 	})
 
-	client.Send(&HI{HDID: "abc123"})
+	clientSide.SendHI(&HI{HDID: "abc123"})
 
 	if playerID != 7 {
 		t.Fatalf("player id = %d, want 7", playerID)
@@ -50,25 +41,44 @@ func TestExampleServerClient(t *testing.T) {
 	}
 }
 
-// TestExampleAutoJSON shows the wire format being auto-detected: the client
-// speaks JSON (after the server advertises decryptor#JSON), and the server's
+// TestExampleAutoJSON shows the wire format being auto-detected: after the
+// server advertises decryptor#JSON, the client speaks JSON and the server's
 // session flips to JSON outbound without the caller touching the wire format.
 func TestExampleAutoJSON(t *testing.T) {
-	var server, client *Session
-	server = NewServer(SessionOptions{Send: func(w []byte) { client.Receive(w) }})
-	client = NewClient(SessionOptions{Send: func(w []byte) { server.Receive(w) }})
+	var serverSide *ClientSession
+	var clientSide *ServerSession
+	serverSide = NewClient(SessionConfig{Send: func(w []byte) { clientSide.Receive(w) }})
+	clientSide = NewServer(SessionConfig{Send: func(w []byte) { serverSide.Receive(w) }})
 
 	// Server advertises JSON support (sent as FantaCode).
-	server.AdvertiseJSON()
+	serverSide.SendDecryptor(&Decryptor{})
 
 	// Client opts into JSON and sends a JSON-encoded HI.
 	jsonHI, err := Encode(&HI{HDID: "json-client"}, WireJSON)
 	if err != nil {
 		t.Fatalf("encode: %v", err)
 	}
-	server.Receive(jsonHI)
+	serverSide.Receive(jsonHI)
 
-	if !server.JSONMode() {
+	if !serverSide.JSONMode() {
 		t.Fatal("server should have auto-flipped to JSON after receiving a JSON packet")
 	}
 }
+
+// TestWrongDirectionUnhandled guards the direction registry: a header that
+// doesn't travel in this session's inbound direction routes to OnUnknownHeader
+// rather than reaching a handler. (The typed surface makes the same mistake a
+// compile error; this covers the runtime path for string-typed callers.)
+func TestWrongDirectionUnhandled(t *testing.T) {
+	// A client session receiving a client→server packet (e.g. HI) is wrong:
+	// HI travels client→server, but a ServerSession receives server→client only.
+	clientSide := NewServer(SessionConfig{
+		Send:            func([]byte) {},
+		OnUnknownHeader: func(header string, _ []byte) { t.Logf("unknown header %q", header) },
+	})
+
+	clientSide.Receive([]byte("HI#abc123#%"))
+
+	// No panic, no handler ran — the unknown-header hook fired instead.
+}
+

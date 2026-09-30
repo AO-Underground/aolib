@@ -43,14 +43,14 @@ func Encode(p Outgoing, mode WireMode) ([]byte, error) {
 //	fl := v.(*aolib.FL)
 //	_ = fl.Features
 func Decode(raw []byte, mode WireMode) (any, error) {
-	_, p, err := decodeWire(raw, mode, true)
+	_, p, err := decodeWire(raw, mode, c2sDecoders)
 	return p, err
 }
 
-// decodeWire parses raw and returns the packet header plus its typed struct,
-// decoding bidirectionally-ambiguous headers (ID, MC, …) according to the
-// session's side.
-func decodeWire(raw []byte, mode WireMode, serverSide bool) (string, any, error) {
+// parseFrame reads a raw wire packet into its header + positional body without
+// typed decoding. JSON is normalised to the same positional body FantaCode
+// uses, so the registry decoders run identically for both wire formats.
+func parseFrame(raw []byte, mode WireMode) (string, []string, error) {
 	var pkt *Packet
 	var err error
 	switch mode {
@@ -67,32 +67,23 @@ func decodeWire(raw []byte, mode WireMode, serverSide bool) (string, any, error)
 	if err != nil {
 		return "", nil, err
 	}
-	var p any
-	if serverSide {
-		p, err = decodeBody(pkt.Header, pkt.Body)
-	} else {
-		p, err = decodeClientInbound(pkt.Header, pkt.Body)
-	}
-	return pkt.Header, p, err
+	return pkt.Header, pkt.Body, nil
 }
 
-// decodeClientInbound dispatches a server→client body (what a client receives).
-func decodeClientInbound(header string, body []string) (any, error) {
-	switch header {
-	case "ID":
-		return ParseIDClient(body)
-	case "SM":
-		return &SM{Items: body}, nil
-	case "DONE":
-		return &DONE{}, nil
-	case "BB":
-		if len(body) < 1 {
-			return nil, fmt.Errorf("BB: missing message")
-		}
-		return &BB{Message: body[0]}, nil
-	default:
-		return &Packet{Header: header, Body: body}, nil
+// decodeWire parses raw and returns the packet header plus its typed struct by
+// looking the header up in the supplied direction registry. Unknown headers
+// fall back to the generic *Packet.
+func decodeWire(raw []byte, mode WireMode, decoders map[string]decoder) (string, any, error) {
+	header, body, err := parseFrame(raw, mode)
+	if err != nil {
+		return "", nil, err
 	}
+	dec, ok := decoders[header]
+	if !ok {
+		return header, &Packet{Header: header, Body: body}, nil
+	}
+	p, err := dec(body)
+	return header, p, err
 }
 
 // frameFanta frames header + positional args into HEADER#a#b#...#%.
@@ -108,46 +99,4 @@ func frameFanta(header string, args []string) []byte {
 	return []byte(b.String())
 }
 
-// decodeBody dispatches a positional body to the matching typed struct.
-func decodeBody(header string, body []string) (any, error) {
-	switch header {
-	case "FL":
-		return &FL{Features: body}, nil
-	case "MS":
-		return ParseMSClient(body), nil
-	case "HI":
-		return ParseHI(body)
-	case "ID":
-		return ParseIDServer(body)
-	case "CC":
-		return ParseCC(body)
-	case "MC":
-		return ParseMCFromClient(body)
-	case "HP":
-		return ParseHP(body)
-	case "RT":
-		return ParseRT(body)
-	case "TT":
-		return ParseTT(body)
-	case "CT":
-		return ParseCTFromClient(body)
-	case "PE":
-		return ParsePE(body)
-	case "DE":
-		return ParseDE(body)
-	case "EE":
-		return ParseEE(body)
-	case "ZZ":
-		return ParseZZ(body)
-	case "SETCASE":
-		return ParseSETCASE(body)
-	case "CASEA":
-		return ParseCASEA(body)
-	case "VS_FRAME":
-		return ParseVSFrame(body)
-	case "VS_SPEAK":
-		return ParseVSSpeak(body)
-	default:
-		return &Packet{Header: header, Body: body}, nil
-	}
-}
+
