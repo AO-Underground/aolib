@@ -15,8 +15,9 @@ the packet carries; `update_data` holds one value per area, in area-index order
 ARUP#{update_type}#{area0}#{area1}#...#%
 ```
 
-- `update_type` (`AreaUpdateType`, 0-3): decimal integer, one slot, emitted
-  first.
+- `update_type` (`AreaUpdateType`): one slot, emitted first, as the legacy
+  integer from the enum's `x-wire-ints` (JSON carries the string name; the wire
+  carries the number). The value determines the per-area encoding below.
 - `update_data`: one slot per area, immediately after `update_type` with no
   leading placeholder slot. The per-area encoding follows `update_type`:
   - `0` player_count: decimal integer per area.

@@ -3,8 +3,9 @@
 Shared schemas `$ref`'d by packets so a value's shape or meaning lives in one
 place. Two flavors, told apart by schema shape rather than filename:
 
-- **Named enums** (`type: string`/`integer` with an `enum`): codegen emits one
-  enum, using the parallel `x-enum-names` for the member names.
+- **Named enums** (`type: string` with an `enum`): codegen emits one enum whose
+  member names and values both come from `enum`; an optional `x-enum-description`
+  gives a human-readable label per value.
 - **Object types** (`type: object`, e.g. `Offset`): codegen emits one
   struct/interface, imported wherever referenced.
 

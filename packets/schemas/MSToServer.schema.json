@@ -10,7 +10,7 @@
     },
     "desk_modifier": {
       "$ref": "../../types/DeskModifier.schema.json",
-      "default": 1
+      "default": "shown"
     },
     "preanim": {
       "type": "string",
@@ -34,7 +34,7 @@
     },
     "emote_modifier": {
       "$ref": "../../types/EmoteModifier.schema.json",
-      "default": 0
+      "default": "no_preanim"
     },
     "char_id": {
       "type": "number"
@@ -45,7 +45,7 @@
     },
     "shout_modifier": {
       "$ref": "../../types/ShoutModifier.schema.json",
-      "default": 0
+      "default": "none"
     },
     "evidence_id": {
       "type": "number",
@@ -53,7 +53,7 @@
     },
     "flip": {
       "$ref": "../../types/Flip.schema.json",
-      "default": 0
+      "default": "none"
     },
     "realization": {
       "type": "boolean",
@@ -61,7 +61,7 @@
     },
     "text_color": {
       "$ref": "../../types/TextColor.schema.json",
-      "default": 0
+      "default": "white"
     },
     "showname": {
       "type": "string",

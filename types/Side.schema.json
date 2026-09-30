@@ -14,7 +14,7 @@
     "jur",
     "sea"
   ],
-  "x-enum-names": [
+  "x-enum-description": [
     "defense",
     "prosecution",
     "defense_helper",

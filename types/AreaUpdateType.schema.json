@@ -3,17 +3,17 @@
   "$id": "/types/AreaUpdateType.schema.json",
   "title": "AreaUpdateType",
   "description": "Discriminator for ARUP payloads: 0 = player counts (numbers), 1/2/3 = area metadata strings.",
-  "type": "integer",
+  "type": "string",
   "enum": [
-    0,
-    1,
-    2,
-    3
-  ],
-  "x-enum-names": [
     "player_count",
     "status",
     "case_manager",
     "locked"
+  ],
+  "x-wire-ints": [
+    0,
+    1,
+    2,
+    3
   ]
 }

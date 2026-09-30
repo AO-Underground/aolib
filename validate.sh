@@ -33,8 +33,17 @@ done
 for f in types/*.schema.json; do
     en=$(jq '(.enum // []) | length' "$f")
     if [ "$en" -gt 0 ]; then
-        nm=$(jq '(.["x-enum-names"] // []) | length' "$f")
-        [ "$en" = "$nm" ] || err "$f: enum length $en != x-enum-names length $nm"
+        if [ "$(jq 'has("x-enum-description")' "$f")" = "true" ]; then
+            nm=$(jq '(.["x-enum-description"]) | length' "$f")
+            [ "$en" = "$nm" ] || err "$f: x-enum-description length $nm != enum length $en"
+        fi
+
+        wi=$(jq '(.["x-wire-ints"] // []) | length' "$f")
+        if [ "$wi" -gt 0 ]; then
+            [ "$en" = "$wi" ] || err "$f: enum length $en != x-wire-ints length $wi"
+            [ "$(jq -r '.type' "$f")" = "string" ] || err "$f: x-wire-ints requires type string"
+            [ "$(jq '[.["x-wire-ints"][] | floor == .] | all' "$f")" = "true" ] || err "$f: x-wire-ints must be all integers"
+        fi
     fi
 done
 

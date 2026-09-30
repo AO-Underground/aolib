@@ -3,19 +3,19 @@
   "$id": "/types/ShoutModifier.schema.json",
   "title": "ShoutModifier",
   "description": "Shout / objection selector.",
-  "type": "integer",
+  "type": "string",
   "enum": [
-    0,
-    1,
-    2,
-    3,
-    4
-  ],
-  "x-enum-names": [
     "none",
     "hold_it",
     "objection",
     "take_that",
     "custom"
+  ],
+  "x-wire-ints": [
+    0,
+    1,
+    2,
+    3,
+    4
   ]
 }

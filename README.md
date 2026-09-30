@@ -43,7 +43,7 @@ file:
   constructor/init carries the *input* shape (default-bearing fields
   optional, `const`-only padding slots omitted).
 - **types/** produces, per file, either a named enum (schemas carrying an
-  `enum`; member names from `x-enum-names`, values from `enum`) or a shared
+  `enum`; both member names and values come from `enum`) or a shared
   struct/interface (object schemas like `Offset`), importable by packets that
   `$ref` it. The kind is read from the schema shape, not the filename.
 
@@ -71,6 +71,10 @@ fanta-format walker to the same schemas:
   - `array`: greedy, trailing array consumes all remaining slots
   - `const`: emitted as the const value; on decode the slot is consumed
     and the schema-fixed value is used regardless of the token
+  - `$ref` to an enum with `x-wire-ints`: encode the parallel legacy integer
+    (by the value's index in `enum`); decode maps the integer token back to the
+    string. A plain enum with no `x-wire-ints` (e.g. `Side`) uses its base-type
+    rule above (the string is sent verbatim)
 
 Validation (defaults, required-field checks, type coercion errors) is
 delegated to the JSON Schema validator on both encode (pre-serialize) and
@@ -81,17 +85,19 @@ decode (post-parse), so the typed shape is identical on both ends.
 These `x-*` keywords are project-specific. JSON Schema validators ignore
 unknown keywords by default; the codegen and walker interpret them.
 
-### `x-enum-names: string[]`
+### `x-enum-description: string[]`
 
-On an enum schema. Names parallel to the `enum` values array; codegen
-uses them as the enum member names in the target language.
+On an enum schema, optional. Codegen derives both member names and values from
+`enum` itself; this array is a parallel, human-readable descriptor for each
+value (docs, comments, display) and is not used for identifiers. Include it only
+when the `enum` values are opaque codes worth labelling, e.g. `Side`:
 
 ```json
 {
   "$id": "/types/Side.schema.json",
   "type": "string",
   "enum": ["def", "pro", "wit"],
-  "x-enum-names": ["DEFENSE", "PROSECUTION", "WITNESS"]
+  "x-enum-description": ["defense", "prosecution", "witness"]
 }
 ```
 
@@ -113,6 +119,15 @@ directly. Symmetric bidirectional packets are split into two schemas
 sharing a header (e.g. `HPToServer` with `x-receiver: "server"` and
 `HPToClient` with `x-receiver: "client"`).
 
+### `x-wire-ints: integer[]`
+
+On a string enum. Makes the string values first-class (the JSON envelope carries
+the string, e.g. `"desk_modifier": "shown"`) while keeping the legacy integer
+wire encoding: this array is parallel to `enum` and gives each value's integer.
+The fanta walker encodes the integer and decodes an incoming integer back to the
+string, so real AO servers still see the numbers they expect. Enums without this
+keyword (e.g. `Side`) are sent as their string value on both sides.
+
 ### `x-fanta-unescape-amp: true`
 
 On an `object`-typed schema. Encoders never emit the legacy `<and>`
@@ -133,5 +148,5 @@ the way in but no longer does on the way out. Currently set on
 
 Keep all JSON files formatted with `./format.sh`. Run `./validate.sh` to check
 the invariants above: JSON parses, `$ref`s resolve, each packet's `title`
-matches its `$header`, `x-receiver` is set, `enum`/`x-enum-names` lengths agree,
+matches its `$header`, `x-receiver` is set, `enum`/`x-enum-description` lengths agree,
 and every `x-fanta-codec` is documented in `packets/CODECS.md`.

@@ -3,17 +3,8 @@
   "$id": "/types/EmoteModifier.schema.json",
   "title": "EmoteModifier",
   "description": "Emote behavior selector. Spec values 3 and 4 are documented as unused.",
-  "type": "integer",
+  "type": "string",
   "enum": [
-    0,
-    1,
-    2,
-    3,
-    4,
-    5,
-    6
-  ],
-  "x-enum-names": [
     "no_preanim",
     "preanim",
     "preanim_and_objection",
@@ -21,5 +12,14 @@
     "unused_4",
     "zoom",
     "objection_zoom"
+  ],
+  "x-wire-ints": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6
   ]
 }

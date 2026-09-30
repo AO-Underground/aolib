@@ -3,20 +3,8 @@
   "$id": "/types/TextColor.schema.json",
   "title": "TextColor",
   "description": "Chat message text color. `blue` also disables the talking animation.",
-  "type": "integer",
+  "type": "string",
   "enum": [
-    0,
-    1,
-    2,
-    3,
-    4,
-    5,
-    6,
-    7,
-    8,
-    9
-  ],
-  "x-enum-names": [
     "white",
     "green",
     "red",
@@ -27,5 +15,17 @@
     "cyan",
     "grey",
     "rainbow"
+  ],
+  "x-wire-ints": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
   ]
 }

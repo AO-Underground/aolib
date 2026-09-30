@@ -3,17 +3,17 @@
   "$id": "/types/Flip.schema.json",
   "title": "Flip",
   "description": "Sprite mirroring.",
-  "type": "integer",
+  "type": "string",
   "enum": [
-    0,
-    1,
-    2,
-    3
-  ],
-  "x-enum-names": [
     "none",
     "horizontal",
     "vertical",
     "horizontal_and_vertical"
+  ],
+  "x-wire-ints": [
+    0,
+    1,
+    2,
+    3
   ]
 }
