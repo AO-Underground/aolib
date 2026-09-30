@@ -1,5 +1,11 @@
 import { describe, it, expect } from "bun:test";
-import { server, client, type SessionConfig } from "../src/session";
+import {
+  server,
+  client,
+  type SessionConfig,
+  type ServerSession,
+  type ClientSession,
+} from "../src/session";
 
 // ---------------------------------------------------------------------
 // Tiny config-builder. Each test wires up its own outbound buffer + hooks.
@@ -463,5 +469,85 @@ describe("defaults: missing hooks fall back to console (no throw)", () => {
       });
       expect(() => { s.receive("BB#hi#%"); }).not.toThrow();
     });
+  });
+});
+
+// ---------------------------------------------------------------------
+// End-to-end loopback: real sessions wired together (each side's `send`
+// feeds the other's `receive`), one server serving two clients at once —
+// one on JSON, one on fanta — each getting proper typed responses in its
+// own encoding.
+// ---------------------------------------------------------------------
+
+describe("loopback: a JSON client and a fanta client share one server", () => {
+  // The server: assigns a player id per connection, answers HI with ID.
+  let nextPlayerId = 0;
+  const serve = (cs: ClientSession): void => {
+    cs.on.HI(() => {
+      cs.send.ID({
+        player_id: nextPlayerId++,
+        software: "aolib-test",
+        version: "1",
+      });
+    });
+  };
+
+  // Wire one client<->server pair: each side's `send` feeds the other's
+  // `receive`. Returns the client's session (to drive) and the wire the
+  // server sent back to that client (to inspect its encoding).
+  function connect(json: boolean): { srv: ServerSession; responses: string[] } {
+    const responses: string[] = [];
+    const link = { toServer(_: string): void {}, toClient(_: string): void {} };
+    const srv = server({
+      send: (w) => {
+        link.toServer(w);
+      },
+    });
+    const cs = client({
+      send: (w) => {
+        responses.push(w);
+        link.toClient(w);
+      },
+    });
+    link.toServer = (w) => {
+      cs.receive(w);
+    };
+    link.toClient = (w) => {
+      srv.receive(w);
+    };
+    if (json) {
+      srv.setJsonMode(true);
+      cs.setJsonMode(true);
+    }
+    serve(cs);
+    return { srv, responses };
+  }
+
+  it("delivers typed responses to each client in its own encoding", () => {
+    const a = connect(true); // JSON on both ends
+    const b = connect(false); // fanta (the default)
+
+    // Each client records its typed ID response.
+    let idA: { player_id: number; software: string; version: string } | undefined;
+    let idB: typeof idA;
+    a.srv.on.ID((p) => {
+      idA = p;
+    });
+    b.srv.on.ID((p) => {
+      idB = p;
+    });
+
+    // Both clients join the same server.
+    a.srv.send.HI({ hdid: "json-client" });
+    b.srv.send.HI({ hdid: "fanta-client" });
+
+    // Proper, fully typed responses, each with its own assigned id.
+    expect(idA).toEqual({ player_id: 0, software: "aolib-test", version: "1" });
+    expect(idB).toEqual({ player_id: 1, software: "aolib-test", version: "1" });
+
+    // And each connection carried its own wire encoding.
+    expect(a.responses).toHaveLength(1);
+    expect(a.responses[0]?.startsWith("{")).toBe(true); // JSON envelope
+    expect(b.responses).toEqual(["ID#1#aolib-test#1#%"]); // fanta positional
   });
 });
