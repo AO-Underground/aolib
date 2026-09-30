@@ -1,0 +1,45 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "/packets/schemas/VS_CAPS.schema.json",
+  "title": "VS_CAPS",
+  "type": "object",
+  "properties": {
+    "$header": {
+      "type": "string",
+      "const": "VS_CAPS"
+    },
+    "enabled": {
+      "type": "boolean"
+    },
+    "pttOnly": {
+      "type": "boolean"
+    },
+    "maxPeers": {
+      "type": "number"
+    },
+    "codec": {
+      "type": "string"
+    },
+    "sampleRate": {
+      "type": "number"
+    },
+    "frameMs": {
+      "type": "number"
+    },
+    "maxFrameBytes": {
+      "type": "number"
+    }
+  },
+  "required": [
+    "$header",
+    "enabled",
+    "pttOnly",
+    "maxPeers",
+    "codec",
+    "sampleRate",
+    "frameMs",
+    "maxFrameBytes"
+  ],
+  "additionalProperties": false,
+  "x-receiver": "client"
+}

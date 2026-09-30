@@ -1,0 +1,25 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "/types/EmoteModifier.schema.json",
+  "title": "EmoteModifier",
+  "description": "Emote behavior selector. Spec values 3 and 4 are documented as unused.",
+  "type": "string",
+  "enum": [
+    "no_preanim",
+    "preanim",
+    "preanim_and_objection",
+    "unused_3",
+    "unused_4",
+    "zoom",
+    "objection_zoom"
+  ],
+  "x-wire-ints": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6
+  ]
+}

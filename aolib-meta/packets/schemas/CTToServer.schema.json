@@ -1,0 +1,25 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "/packets/schemas/CTToServer.schema.json",
+  "title": "CT",
+  "type": "object",
+  "properties": {
+    "$header": {
+      "type": "string",
+      "const": "CT"
+    },
+    "name": {
+      "type": "string"
+    },
+    "message": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "$header",
+    "name",
+    "message"
+  ],
+  "additionalProperties": false,
+  "x-receiver": "server"
+}

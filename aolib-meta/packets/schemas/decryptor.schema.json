@@ -1,0 +1,21 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "/packets/schemas/decryptor.schema.json",
+  "title": "decryptor",
+  "type": "object",
+  "properties": {
+    "$header": {
+      "type": "string",
+      "const": "decryptor"
+    },
+    "value": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "$header",
+    "value"
+  ],
+  "additionalProperties": false,
+  "x-receiver": "client"
+}

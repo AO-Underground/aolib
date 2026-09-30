@@ -1,0 +1,21 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "/packets/schemas/DE.schema.json",
+  "title": "DE",
+  "type": "object",
+  "properties": {
+    "$header": {
+      "type": "string",
+      "const": "DE"
+    },
+    "id": {
+      "type": "number"
+    }
+  },
+  "required": [
+    "$header",
+    "id"
+  ],
+  "additionalProperties": false,
+  "x-receiver": "server"
+}
