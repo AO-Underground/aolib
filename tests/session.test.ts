@@ -75,22 +75,22 @@ describe("server(): on (S2C)", () => {
   it("on.BB dispatches a decoded packet to the registered handler", () => {
     const { config } = makeBuf();
     const s = server(config);
-    let received: { message: string } | undefined;
+    let received: { $header: string; message: string } | undefined;
     s.on.BB((p) => {
       received = p;
     });
     s.receive("BB#hello#%");
-    expect(received).toEqual({ message: "hello" });
+    expect(received).toEqual({ $header: "BB", message: "hello" });
   });
 
   it("on.PV strips the CID literal from the decoded shape", () => {
     const s = server(makeBuf().config);
-    let received: { player_id: number; char_id: number } | undefined;
+    let received: { $header: string; player_id: number; char_id: number } | undefined;
     s.on.PV((p) => {
       received = p;
     });
     s.receive("PV#3#CID#7#%");
-    expect(received).toEqual({ player_id: 3, char_id: 7 });
+    expect(received).toEqual({ $header: "PV", player_id: 3, char_id: 7 });
     expect("_cid" in (received as object)).toBe(false);
   });
 
@@ -146,22 +146,22 @@ describe("client(): send (S2C)", () => {
 describe("client(): on (C2S)", () => {
   it("on.HI dispatches the typed packet", () => {
     const c = client(makeBuf().config);
-    let received: { hdid: string } | undefined;
+    let received: { $header: string; hdid: string } | undefined;
     c.on.HI((p) => {
       received = p;
     });
     c.receive("HI#device-1#%");
-    expect(received).toEqual({ hdid: "device-1" });
+    expect(received).toEqual({ $header: "HI", hdid: "device-1" });
   });
 
   it("on.CC decodes player_id, char_id, and the optional char_password slot", () => {
     const c = client(makeBuf().config);
-    let received: { player_id: number; char_id: number; char_password?: string } | undefined;
+    let received: { $header: string; player_id: number; char_id: number; char_password?: string } | undefined;
     c.on.CC((p) => {
       received = p;
     });
     c.receive("CC#3#5##%");
-    expect(received).toEqual({ player_id: 3, char_id: 5, char_password: "" });
+    expect(received).toEqual({ $header: "CC", player_id: 3, char_id: 5, char_password: "" });
   });
 
   it("on.<S2C> throws role-aware wrong-direction error", () => {
@@ -220,6 +220,7 @@ describe("bidirectional MC", () => {
     });
     c.receive("MC#track3#7##0#%");
     expect(received).toEqual({
+      $header: "MC",
       name: "track3",
       char_id: 7,
       showname: "",
@@ -244,12 +245,12 @@ describe("receive: dispatch", () => {
 
   it("works on JSON wire frames", () => {
     const s = server(makeBuf().config);
-    let received: { message: string } | undefined;
+    let received: { $header: string; message: string } | undefined;
     s.on.BB((p) => {
       received = p;
     });
     s.receive('{"$header":"BB","message":"hi"}');
-    expect(received).toEqual({ message: "hi" });
+    expect(received).toEqual({ $header: "BB", message: "hi" });
   });
 
   it("ignores frames after close()", () => {
@@ -325,7 +326,7 @@ describe("receive: hooks", () => {
     s.receive("BB#hi#%");
     expect(calls.length).toBe(1);
     expect(calls[0]!.header).toBe("BB");
-    expect(calls[0]!.packet).toEqual({ message: "hi" });
+    expect(calls[0]!.packet).toEqual({ $header: "BB", message: "hi" });
   });
 
   it("onHandlerError fires when the application handler throws", () => {
@@ -535,7 +536,9 @@ describe("loopback: a JSON client and a fanta client share one server", () => {
     const a = connect(true); // JSON on both ends
     const b = connect(false); // fanta (the default)
 
-    let idA: { player_id: number; software: string; version: string } | undefined;
+    let idA:
+      | { $header: string; player_id: number; software: string; version: string }
+      | undefined;
     let idB: typeof idA;
     const heardA: { character: string; message: string; side: string; char_id: number }[] = [];
     const heardB: typeof heardA = [];
@@ -557,8 +560,8 @@ describe("loopback: a JSON client and a fanta client share one server", () => {
     b.srv.send.HI({ hdid: "fanta-client" });
 
     // Proper, fully typed handshake responses, each with its own id.
-    expect(idA).toEqual({ player_id: 0, software: "aolib-test", version: "1" });
-    expect(idB).toEqual({ player_id: 1, software: "aolib-test", version: "1" });
+    expect(idA).toEqual({ $header: "ID", player_id: 0, software: "aolib-test", version: "1" });
+    expect(idB).toEqual({ $header: "ID", player_id: 1, software: "aolib-test", version: "1" });
 
     // The JSON client speaks; the server fans the MS out to both clients.
     a.srv.send.MS({

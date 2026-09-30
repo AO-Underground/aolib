@@ -289,7 +289,12 @@ export const enumSchemas = [AreaUpdateTypeEnumSchema, DeskModifierEnumSchema, Em
 export const typeSchemas = [OffsetTypeSchema];
 
 
-export interface ARUP {
+export interface Packet {
+  $header: string;
+}
+
+export interface ARUP extends Packet {
+  $header: "ARUP";
   update_type: AreaUpdateType;
   update_data: (number | string)[];
 }
@@ -300,7 +305,8 @@ export interface ARUPInit {
 }
 
 
-export interface ASS {
+export interface ASS extends Packet {
+  $header: "ASS";
   asset_url: string;
 }
 
@@ -309,7 +315,8 @@ export interface ASSInit {
 }
 
 
-export interface AUTH {
+export interface AUTH extends Packet {
+  $header: "AUTH";
   auth_state: number;
 }
 
@@ -318,7 +325,8 @@ export interface AUTHInit {
 }
 
 
-export interface BB {
+export interface BB extends Packet {
+  $header: "BB";
   message: string;
 }
 
@@ -327,7 +335,8 @@ export interface BBInit {
 }
 
 
-export interface BD {
+export interface BD extends Packet {
+  $header: "BD";
   reason: string;
 }
 
@@ -336,7 +345,8 @@ export interface BDInit {
 }
 
 
-export interface BN {
+export interface BN extends Packet {
+  $header: "BN";
   background: string;
   position: string;
 }
@@ -347,7 +357,8 @@ export interface BNInit {
 }
 
 
-export interface CC {
+export interface CC extends Packet {
+  $header: "CC";
   player_id: number;
   char_id: number;
   char_password: string;
@@ -360,7 +371,8 @@ export interface CCInit {
 }
 
 
-export interface CH {
+export interface CH extends Packet {
+  $header: "CH";
   char_id: number;
 }
 
@@ -369,8 +381,8 @@ export interface CHInit {
 }
 
 
-export interface CHECK {
-
+export interface CHECK extends Packet {
+  $header: "CHECK";
 }
 
 export interface CHECKInit {
@@ -378,7 +390,8 @@ export interface CHECKInit {
 }
 
 
-export interface CI {
+export interface CI extends Packet {
+  $header: "CI";
   batchIndex: number;
   entries: {
     index: number;
@@ -395,7 +408,8 @@ export interface CIInit {
 }
 
 
-export interface CTToClient {
+export interface CTToClient extends Packet {
+  $header: "CT";
   name: string;
   message: string;
   is_from_server: boolean;
@@ -408,7 +422,8 @@ export interface CTToClientInit {
 }
 
 
-export interface CTToServer {
+export interface CTToServer extends Packet {
+  $header: "CT";
   name: string;
   message: string;
 }
@@ -419,7 +434,8 @@ export interface CTToServerInit {
 }
 
 
-export interface CharsCheck {
+export interface CharsCheck extends Packet {
+  $header: "CharsCheck";
   taken: number[];
 }
 
@@ -428,7 +444,8 @@ export interface CharsCheckInit {
 }
 
 
-export interface DE {
+export interface DE extends Packet {
+  $header: "DE";
   id: number;
 }
 
@@ -437,8 +454,8 @@ export interface DEInit {
 }
 
 
-export interface DONE {
-
+export interface DONE extends Packet {
+  $header: "DONE";
 }
 
 export interface DONEInit {
@@ -446,7 +463,8 @@ export interface DONEInit {
 }
 
 
-export interface EE {
+export interface EE extends Packet {
+  $header: "EE";
   id: number;
   name: string;
   description: string;
@@ -461,7 +479,8 @@ export interface EEInit {
 }
 
 
-export interface EI {
+export interface EI extends Packet {
+  $header: "EI";
   id: number;
   details: {
     name: string;
@@ -482,7 +501,8 @@ export interface EIInit {
 }
 
 
-export interface EM {
+export interface EM extends Packet {
+  $header: "EM";
   batchIndex: number;
   entries: {
     index: number;
@@ -499,7 +519,8 @@ export interface EMInit {
 }
 
 
-export interface FA {
+export interface FA extends Packet {
+  $header: "FA";
   areas: string[];
 }
 
@@ -508,7 +529,8 @@ export interface FAInit {
 }
 
 
-export interface FL {
+export interface FL extends Packet {
+  $header: "FL";
   features: string[];
 }
 
@@ -517,7 +539,8 @@ export interface FLInit {
 }
 
 
-export interface FM {
+export interface FM extends Packet {
+  $header: "FM";
   music_list: {
     name: string;
   }[];
@@ -530,7 +553,8 @@ export interface FMInit {
 }
 
 
-export interface HI {
+export interface HI extends Packet {
+  $header: "HI";
   hdid: string;
 }
 
@@ -539,7 +563,8 @@ export interface HIInit {
 }
 
 
-export interface HPToClient {
+export interface HPToClient extends Packet {
+  $header: "HP";
   bar: number;
   value: number;
 }
@@ -550,7 +575,8 @@ export interface HPToClientInit {
 }
 
 
-export interface HPToServer {
+export interface HPToServer extends Packet {
+  $header: "HP";
   bar: number;
   value: number;
 }
@@ -561,7 +587,8 @@ export interface HPToServerInit {
 }
 
 
-export interface IDToClient {
+export interface IDToClient extends Packet {
+  $header: "ID";
   player_id: number;
   software: string;
   version: string;
@@ -574,7 +601,8 @@ export interface IDToClientInit {
 }
 
 
-export interface IDToServer {
+export interface IDToServer extends Packet {
+  $header: "ID";
   software: string;
   version: string;
 }
@@ -585,7 +613,8 @@ export interface IDToServerInit {
 }
 
 
-export interface JD {
+export interface JD extends Packet {
+  $header: "JD";
   state: number;
 }
 
@@ -594,7 +623,8 @@ export interface JDInit {
 }
 
 
-export interface KB {
+export interface KB extends Packet {
+  $header: "KB";
   reason: string;
 }
 
@@ -603,7 +633,8 @@ export interface KBInit {
 }
 
 
-export interface KK {
+export interface KK extends Packet {
+  $header: "KK";
   reason: string;
 }
 
@@ -612,7 +643,8 @@ export interface KKInit {
 }
 
 
-export interface LE {
+export interface LE extends Packet {
+  $header: "LE";
   evidence: {
     name: string;
     description: string;
@@ -629,7 +661,8 @@ export interface LEInit {
 }
 
 
-export interface MA {
+export interface MA extends Packet {
+  $header: "MA";
   id: number;
   duration: number;
   reason: string;
@@ -642,7 +675,8 @@ export interface MAInit {
 }
 
 
-export interface MCToClient {
+export interface MCToClient extends Packet {
+  $header: "MC";
   name: string;
   char_id: number;
   showname: string;
@@ -661,7 +695,8 @@ export interface MCToClientInit {
 }
 
 
-export interface MCToServer {
+export interface MCToServer extends Packet {
+  $header: "MC";
   name: string;
   char_id: number;
   showname: string;
@@ -676,7 +711,8 @@ export interface MCToServerInit {
 }
 
 
-export interface MSToClient {
+export interface MSToClient extends Packet {
+  $header: "MS";
   desk_modifier: DeskModifier;
   preanim: string;
   character: string;
@@ -743,7 +779,8 @@ export interface MSToClientInit {
 }
 
 
-export interface MSToServer {
+export interface MSToServer extends Packet {
+  $header: "MS";
   desk_modifier: DeskModifier;
   preanim: string;
   character: string;
@@ -802,7 +839,8 @@ export interface MSToServerInit {
 }
 
 
-export interface PE {
+export interface PE extends Packet {
+  $header: "PE";
   name: string;
   description: string;
   image: string;
@@ -815,7 +853,8 @@ export interface PEInit {
 }
 
 
-export interface PN {
+export interface PN extends Packet {
+  $header: "PN";
   player_count: number;
   max_players: number;
   server_description: string;
@@ -828,7 +867,8 @@ export interface PNInit {
 }
 
 
-export interface PR {
+export interface PR extends Packet {
+  $header: "PR";
   id: number;
   type: number;
 }
@@ -839,7 +879,8 @@ export interface PRInit {
 }
 
 
-export interface PU {
+export interface PU extends Packet {
+  $header: "PU";
   id: number;
   type: number;
   data: string;
@@ -852,7 +893,8 @@ export interface PUInit {
 }
 
 
-export interface PV {
+export interface PV extends Packet {
+  $header: "PV";
   player_id: number;
   char_id: number;
 }
@@ -863,8 +905,8 @@ export interface PVInit {
 }
 
 
-export interface RC {
-
+export interface RC extends Packet {
+  $header: "RC";
 }
 
 export interface RCInit {
@@ -872,8 +914,8 @@ export interface RCInit {
 }
 
 
-export interface RD {
-
+export interface RD extends Packet {
+  $header: "RD";
 }
 
 export interface RDInit {
@@ -881,8 +923,8 @@ export interface RDInit {
 }
 
 
-export interface RM {
-
+export interface RM extends Packet {
+  $header: "RM";
 }
 
 export interface RMInit {
@@ -890,7 +932,8 @@ export interface RMInit {
 }
 
 
-export interface RMC {
+export interface RMC extends Packet {
+  $header: "RMC";
   toTime: string;
 }
 
@@ -899,7 +942,8 @@ export interface RMCInit {
 }
 
 
-export interface RTToClient {
+export interface RTToClient extends Packet {
+  $header: "RT";
   animation: string;
   judgeId: number;
 }
@@ -910,7 +954,8 @@ export interface RTToClientInit {
 }
 
 
-export interface RTToServer {
+export interface RTToServer extends Packet {
+  $header: "RT";
   animation: string;
   judgeId: number;
 }
@@ -921,7 +966,8 @@ export interface RTToServerInit {
 }
 
 
-export interface SC {
+export interface SC extends Packet {
+  $header: "SC";
   char_data: {
     name: string;
     desc?: string;
@@ -938,7 +984,8 @@ export interface SCInit {
 }
 
 
-export interface SI {
+export interface SI extends Packet {
+  $header: "SI";
   char_count: number;
   evi_count: number;
   mus_count: number;
@@ -951,7 +998,8 @@ export interface SIInit {
 }
 
 
-export interface SM {
+export interface SM extends Packet {
+  $header: "SM";
   music_list: {
     name: string;
   }[];
@@ -964,7 +1012,8 @@ export interface SMInit {
 }
 
 
-export interface SP {
+export interface SP extends Packet {
+  $header: "SP";
   side: Side;
 }
 
@@ -973,7 +1022,8 @@ export interface SPInit {
 }
 
 
-export interface TI {
+export interface TI extends Packet {
+  $header: "TI";
   timer_id: number;
   command: number;
   time: number;
@@ -986,7 +1036,8 @@ export interface TIInit {
 }
 
 
-export interface VS_AUDIO {
+export interface VS_AUDIO extends Packet {
+  $header: "VS_AUDIO";
   fromUid: number;
   payload: string;
 }
@@ -997,7 +1048,8 @@ export interface VS_AUDIOInit {
 }
 
 
-export interface VS_CAPS {
+export interface VS_CAPS extends Packet {
+  $header: "VS_CAPS";
   enabled: boolean;
   pttOnly: boolean;
   maxPeers: number;
@@ -1018,7 +1070,8 @@ export interface VS_CAPSInit {
 }
 
 
-export interface VS_FRAME {
+export interface VS_FRAME extends Packet {
+  $header: "VS_FRAME";
   payload: string;
 }
 
@@ -1027,7 +1080,8 @@ export interface VS_FRAMEInit {
 }
 
 
-export interface VS_JOINToClient {
+export interface VS_JOINToClient extends Packet {
+  $header: "VS_JOIN";
   uid: number;
 }
 
@@ -1036,8 +1090,8 @@ export interface VS_JOINToClientInit {
 }
 
 
-export interface VS_JOINToServer {
-
+export interface VS_JOINToServer extends Packet {
+  $header: "VS_JOIN";
 }
 
 export interface VS_JOINToServerInit {
@@ -1045,7 +1099,8 @@ export interface VS_JOINToServerInit {
 }
 
 
-export interface VS_LEAVEToClient {
+export interface VS_LEAVEToClient extends Packet {
+  $header: "VS_LEAVE";
   uid: number;
 }
 
@@ -1054,8 +1109,8 @@ export interface VS_LEAVEToClientInit {
 }
 
 
-export interface VS_LEAVEToServer {
-
+export interface VS_LEAVEToServer extends Packet {
+  $header: "VS_LEAVE";
 }
 
 export interface VS_LEAVEToServerInit {
@@ -1063,7 +1118,8 @@ export interface VS_LEAVEToServerInit {
 }
 
 
-export interface VS_PEERS {
+export interface VS_PEERS extends Packet {
+  $header: "VS_PEERS";
   uids: number[];
 }
 
@@ -1072,7 +1128,8 @@ export interface VS_PEERSInit {
 }
 
 
-export interface VS_SPEAKToClient {
+export interface VS_SPEAKToClient extends Packet {
+  $header: "VS_SPEAK";
   uid: number;
   on: boolean;
 }
@@ -1083,7 +1140,8 @@ export interface VS_SPEAKToClientInit {
 }
 
 
-export interface VS_SPEAKToServer {
+export interface VS_SPEAKToServer extends Packet {
+  $header: "VS_SPEAK";
   on: boolean;
 }
 
@@ -1092,7 +1150,8 @@ export interface VS_SPEAKToServerInit {
 }
 
 
-export interface ZZToClient {
+export interface ZZToClient extends Packet {
+  $header: "ZZ";
   reason: string;
   target: number;
 }
@@ -1103,7 +1162,8 @@ export interface ZZToClientInit {
 }
 
 
-export interface ZZToServer {
+export interface ZZToServer extends Packet {
+  $header: "ZZ";
   reason: string;
   target: number;
 }
@@ -1114,8 +1174,8 @@ export interface ZZToServerInit {
 }
 
 
-export interface askchaa {
-
+export interface askchaa extends Packet {
+  $header: "askchaa";
 }
 
 export interface askchaaInit {
@@ -1123,7 +1183,8 @@ export interface askchaaInit {
 }
 
 
-export interface decryptor {
+export interface decryptor extends Packet {
+  $header: "decryptor";
   value: string;
 }
 
@@ -1345,3 +1406,8 @@ export type S2COutputs = {
   VS_SPEAK: VS_SPEAKToClient;
   ZZ: ZZToClient;
 };
+
+/** Discriminated union of decoded packets, narrow on `$header`. */
+export type AnyC2S = C2SOutputs[keyof C2SOutputs];
+export type AnyS2C = S2COutputs[keyof S2COutputs];
+export type AnyPacket = AnyC2S | AnyS2C;

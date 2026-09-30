@@ -35,6 +35,7 @@ import { decode, readHeader } from "./decode";
 import {
   c2sSchemas,
   s2cSchemas,
+  type Packet,
   type C2SInputs,
   type S2CInputs,
   type C2SOutputs,
@@ -60,8 +61,33 @@ type OnMap<Outputs> = {
   [K in keyof Outputs]: (handler: (packet: Outputs[K]) => void) => void;
 };
 
+/**
+ * Raw send/receive escape hatch, shared by both session roles.
+ *
+ * These bypass the schema layer entirely: `sendCustom` JSON-encodes an
+ * arbitrary packet-shaped object verbatim (no validation, no direction
+ * check, always JSON regardless of the session's mode), and `onCustom`
+ * dispatches inbound JSON frames by `$header` with the raw parsed object
+ * (extra fields preserved). For custom or extended packets a peer
+ * understands but the schemas don't model.
+ *
+ * JSON only: `sendCustom` never emits fanta, and `onCustom` never fires
+ * for fanta frames. For a given header you register `on.<X>` or
+ * `onCustom("X")`, not both, the second registration throws.
+ */
+interface CustomChannel {
+  // The generic P (vs a plain `Packet` param) is what lets an inline literal
+  // carry extra fields without an excess-property error.
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters
+  sendCustom<P extends Packet>(packet: P): void;
+  onCustom<T extends Packet = Packet & Record<string, unknown>>(
+    header: T["$header"],
+    handler: (packet: T) => void,
+  ): void;
+}
+
 /** Returned from `server(config)`. Owns the C2S send side, S2C on side. */
-export interface ServerSession {
+export interface ServerSession extends CustomChannel {
   send: SendMap<C2SInputs>;
   on: OnMap<S2COutputs>;
   receive(wire: string): void;
@@ -74,7 +100,7 @@ export interface ServerSession {
 }
 
 /** Returned from `client(config)`. Owns the S2C send side, C2S on side. */
-export interface ClientSession {
+export interface ClientSession extends CustomChannel {
   send: SendMap<S2CInputs>;
   on: OnMap<C2SOutputs>;
   receive(wire: string): void;
@@ -108,6 +134,7 @@ function makeSession(role: Role, config: SessionConfig): ServerSession & ClientS
   let mode: WireMode = "fanta";
   let closed = false;
   const handlers: Record<string, (packet: unknown) => void> = {};
+  const customHandlers: Record<string, (packet: unknown) => void> = {};
 
   const send = new Proxy({}, {
     get: (_t, prop) => {
@@ -141,10 +168,30 @@ function makeSession(role: Role, config: SessionConfig): ServerSession & ClientS
         throw new Error(`aolib: no schema registered for header '${header}'`);
       }
       return (handler: (packet: unknown) => void) => {
+        if (header in customHandlers) throw customCollisionError(header);
         handlers[header] = handler;
       };
     },
   });
+
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters
+  function sendCustom<P extends Packet>(packet: P): void {
+    if (closed) {
+      throw new Error(`aolib: sendCustom on a closed session`);
+    }
+    if (typeof packet.$header !== "string" || packet.$header === "") {
+      throw new Error(`aolib: sendCustom requires a non-empty string $header`);
+    }
+    config.send(JSON.stringify(packet));
+  }
+
+  function onCustom<T extends Packet = Packet & Record<string, unknown>>(
+    header: T["$header"],
+    handler: (packet: T) => void,
+  ): void {
+    if (header in handlers) throw customCollisionError(header);
+    customHandlers[header] = handler as (packet: unknown) => void;
+  }
 
   function receive(wire: string): void {
     if (closed) return;
@@ -157,6 +204,24 @@ function makeSession(role: Role, config: SessionConfig): ServerSession & ClientS
         defaultMalformedFrame(err as Error, wire);
       }
       return;
+    }
+
+    // Custom JSON handlers win over the typed path, and reach headers the
+    // schemas don't model at all. Fanta frames never route here.
+    if (wire.startsWith("{")) {
+      const custom = customHandlers[header];
+      if (custom) {
+        // readHeader already parsed this frame, so JSON.parse cannot fail here.
+        const raw = JSON.parse(wire) as Record<string, unknown>;
+        try {
+          custom(raw);
+        } catch (err) {
+          if (!callHook(config.onHandlerError, header, err as Error, raw)) {
+            defaultHandlerError(header, err as Error, raw);
+          }
+        }
+        return;
+      }
     }
 
     const schema = inboundSchemas[header];
@@ -202,6 +267,10 @@ function makeSession(role: Role, config: SessionConfig): ServerSession & ClientS
       // eslint-disable-next-line @typescript-eslint/no-dynamic-delete -- clearing all handler keys on close
       delete handlers[k];
     }
+    for (const k of Object.keys(customHandlers)) {
+      // eslint-disable-next-line @typescript-eslint/no-dynamic-delete -- clearing all custom handler keys on close
+      delete customHandlers[k];
+    }
   }
 
   function setJsonMode(enabled: boolean): void {
@@ -211,6 +280,8 @@ function makeSession(role: Role, config: SessionConfig): ServerSession & ClientS
   return {
     send: send as unknown as SendMap<C2SInputs> & SendMap<S2CInputs>,
     on: on as unknown as OnMap<S2COutputs> & OnMap<C2SOutputs>,
+    sendCustom,
+    onCustom,
     receive,
     close,
     setJsonMode,
@@ -250,6 +321,13 @@ function wrongDirectionOnError(role: Role, header: string): Error {
       `On a client session (representing a remote client), you can only register ` +
       `handlers for client -> server packets. Use server(config).on.${header} ` +
       `instead, or send the packet with client.send.${header}(...).`,
+  );
+}
+
+function customCollisionError(header: string): Error {
+  return new Error(
+    `aolib: header '${header}' already has both a typed on.${header} handler ` +
+      `and onCustom('${header}'). Register one or the other, not both.`,
   );
 }
 

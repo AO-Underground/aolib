@@ -29,7 +29,7 @@ describe("aolib-ts/wire subpath", () => {
     expect(typeof wire.c2sSchemas.HI).toBe("object");
     const frame = wire.encode(wire.c2sSchemas.HI, { hdid: "abc" }, "fanta");
     expect(frame).toBe("HI#abc#%");
-    expect(wire.decode(wire.c2sSchemas.HI, frame)).toEqual({ hdid: "abc" });
+    expect(wire.decode(wire.c2sSchemas.HI, frame)).toEqual({ $header: "HI", hdid: "abc" });
     expect(wire.readHeader(frame)).toBe("HI");
   });
 });

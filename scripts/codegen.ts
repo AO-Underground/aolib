@@ -260,23 +260,29 @@ function classifyProperties(schema: JsonSchema, ctx: RenderCtx): PropInfo[] {
 }
 
 /**
- * Two interfaces per packet: `<Name>` is the decoded shape (every visible
- * field present, defaults filled by Ajv on decode) and `<Name>Init` is the
- * send shape (default-bearing or non-required fields optional). Const-typed
- * properties (`$header`, PV's `_cid`) are protocol padding and appear on
- * neither. Packets are plain data; there is no class or constructor.
+ * Two interfaces per packet. `<Name>` is the decoded shape: every visible
+ * field plus the `$header` literal, so it `extends Packet` and the decoded
+ * union is discriminable (`switch (p.$header)`). `<Name>Init` is the send
+ * shape (default-bearing or non-required fields optional), with `$header`
+ * omitted (the framing layer adds it). Other const padding (PV's `_cid`)
+ * appears on neither. Packets are plain data; no class, no constructor.
  */
 function emitPacketTypes(name: string, schema: JsonSchema, ctx: RenderCtx): string {
-  const visible = classifyProperties(schema, ctx).filter((p) => !p.hasConst);
-
-  const decoded = visible.map((p) => `  ${quoteKey(p.key)}: ${p.type};`);
-  const init = visible.map((p) => {
-    const optional = p.hasDefault || !p.required;
-    return `  ${quoteKey(p.key)}${optional ? "?" : ""}: ${p.type};`;
-  });
+  const props = classifyProperties(schema, ctx);
+  // Decoded keeps `$header` (the discriminant); drops other const padding.
+  const decoded = props
+    .filter((p) => !p.hasConst || p.key === "$header")
+    .map((p) => `  ${quoteKey(p.key)}: ${p.type};`);
+  // Init drops all const fields (including `$header`).
+  const init = props
+    .filter((p) => !p.hasConst)
+    .map((p) => {
+      const optional = p.hasDefault || !p.required;
+      return `  ${quoteKey(p.key)}${optional ? "?" : ""}: ${p.type};`;
+    });
 
   return (
-    `export interface ${name} {\n${decoded.join("\n")}\n}\n\n` +
+    `export interface ${name} extends Packet {\n${decoded.join("\n")}\n}\n\n` +
     `export interface ${name}Init {\n${init.join("\n")}\n}\n`
   );
 }
@@ -360,6 +366,11 @@ ${c2s.map(outputLine).join("\n")}
 export type S2COutputs = {
 ${s2c.map(outputLine).join("\n")}
 };
+
+/** Discriminated union of decoded packets, narrow on \`$header\`. */
+export type AnyC2S = C2SOutputs[keyof C2SOutputs];
+export type AnyS2C = S2COutputs[keyof S2COutputs];
+export type AnyPacket = AnyC2S | AnyS2C;
 `;
 }
 
@@ -430,6 +441,10 @@ function main(): void {
     `export const typeSchemas = [${typeNames.map((n) => `${n}TypeSchema`).join(", ")}];\n`,
   );
   parts.push("");
+
+  // Shared base: every decoded packet carries its wire header as a literal
+  // discriminant, so `AnyPacket` narrows on `$header`.
+  parts.push("export interface Packet {\n  $header: string;\n}\n");
 
   for (const block of packetBlocks) {
     parts.push(block);

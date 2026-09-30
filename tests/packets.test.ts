@@ -63,61 +63,61 @@ describe("registry shape", () => {
 describe("round-trips: scalar-only packets", () => {
   it("HP", () => {
     const p = { bar: 1, value: 8 };
-    expect(decode(c2sSchemas.HP, encode(c2sSchemas.HP, p, "fanta"))).toEqual(p);
-    expect(decode(c2sSchemas.HP, encode(c2sSchemas.HP, p, "json"))).toEqual(p);
+    expect(decode(c2sSchemas.HP, encode(c2sSchemas.HP, p, "fanta"))).toEqual({ $header: "HP", ...p });
+    expect(decode(c2sSchemas.HP, encode(c2sSchemas.HP, p, "json"))).toEqual({ $header: "HP", ...p });
   });
 
   it("MA (mod action)", () => {
     const p = { id: 42, duration: 60, reason: "spamming" };
-    expect(decode(c2sSchemas.MA, encode(c2sSchemas.MA, p, "fanta"))).toEqual(p);
-    expect(decode(c2sSchemas.MA, encode(c2sSchemas.MA, p, "json"))).toEqual(p);
+    expect(decode(c2sSchemas.MA, encode(c2sSchemas.MA, p, "fanta"))).toEqual({ $header: "MA", ...p });
+    expect(decode(c2sSchemas.MA, encode(c2sSchemas.MA, p, "json"))).toEqual({ $header: "MA", ...p });
   });
 
   it("TI", () => {
     const p = { timer_id: 1, command: 2, time: 60_000 };
-    expect(decode(s2cSchemas.TI, encode(s2cSchemas.TI, p, "fanta"))).toEqual(p);
-    expect(decode(s2cSchemas.TI, encode(s2cSchemas.TI, p, "json"))).toEqual(p);
+    expect(decode(s2cSchemas.TI, encode(s2cSchemas.TI, p, "fanta"))).toEqual({ $header: "TI", ...p });
+    expect(decode(s2cSchemas.TI, encode(s2cSchemas.TI, p, "json"))).toEqual({ $header: "TI", ...p });
   });
 });
 
 describe("round-trips: optional-with-default packets", () => {
   it("BN fills empty position when absent", () => {
     const out = decode(s2cSchemas.BN, encode(s2cSchemas.BN, { background: "court" }, "fanta"));
-    expect(out).toEqual({ background: "court", position: "" });
+    expect(out).toEqual({ $header: "BN", background: "court", position: "" });
   });
 
   it("RT fills judgeId=-1 when absent (fanta)", () => {
     const out = decode(s2cSchemas.RT, encode(s2cSchemas.RT, { animation: "testimony1" }, "fanta"));
-    expect(out).toEqual({ animation: "testimony1", judgeId: -1 });
+    expect(out).toEqual({ $header: "RT", animation: "testimony1", judgeId: -1 });
   });
 
   it("ZZ fills target=-1 when absent", () => {
     const out = decode(c2sSchemas.ZZ, encode(c2sSchemas.ZZ, { reason: "racism" }, "fanta"));
-    expect(out).toEqual({ reason: "racism", target: -1 });
+    expect(out).toEqual({ $header: "ZZ", reason: "racism", target: -1 });
   });
 
   it("PN preserves all fields when provided", () => {
     const p = { player_count: 5, max_players: 100, server_description: "A test server" };
-    expect(decode(s2cSchemas.PN, encode(s2cSchemas.PN, p, "fanta"))).toEqual(p);
+    expect(decode(s2cSchemas.PN, encode(s2cSchemas.PN, p, "fanta"))).toEqual({ $header: "PN", ...p });
   });
 });
 
 describe("round-trips: array packets", () => {
   it("FL (array of strings)", () => {
     const p = { features: ["yellowtext", "cccc_ic_support", "flipping"] };
-    expect(decode(s2cSchemas.FL, encode(s2cSchemas.FL, p, "fanta"))).toEqual(p);
-    expect(decode(s2cSchemas.FL, encode(s2cSchemas.FL, p, "json"))).toEqual(p);
+    expect(decode(s2cSchemas.FL, encode(s2cSchemas.FL, p, "fanta"))).toEqual({ $header: "FL", ...p });
+    expect(decode(s2cSchemas.FL, encode(s2cSchemas.FL, p, "json"))).toEqual({ $header: "FL", ...p });
   });
 
   it("VS_PEERS (array of numbers)", () => {
     const p = { uids: [1, 2, 3, 42] };
-    expect(decode(s2cSchemas.VS_PEERS, encode(s2cSchemas.VS_PEERS, p, "fanta"))).toEqual(p);
-    expect(decode(s2cSchemas.VS_PEERS, encode(s2cSchemas.VS_PEERS, p, "json"))).toEqual(p);
+    expect(decode(s2cSchemas.VS_PEERS, encode(s2cSchemas.VS_PEERS, p, "fanta"))).toEqual({ $header: "VS_PEERS", ...p });
+    expect(decode(s2cSchemas.VS_PEERS, encode(s2cSchemas.VS_PEERS, p, "json"))).toEqual({ $header: "VS_PEERS", ...p });
   });
 
   it("FA empty array", () => {
     const p: { areas: string[] } = { areas: [] };
-    expect(decode(s2cSchemas.FA, encode(s2cSchemas.FA, p, "fanta"))).toEqual(p);
+    expect(decode(s2cSchemas.FA, encode(s2cSchemas.FA, p, "fanta"))).toEqual({ $header: "FA", ...p });
   });
 });
 
@@ -132,8 +132,8 @@ describe("round-trips: nested packets", () => {
         image: "pistol.png",
       },
     };
-    expect(decode(s2cSchemas.EI, encode(s2cSchemas.EI, p, "fanta"))).toEqual(p);
-    expect(decode(s2cSchemas.EI, encode(s2cSchemas.EI, p, "json"))).toEqual(p);
+    expect(decode(s2cSchemas.EI, encode(s2cSchemas.EI, p, "fanta"))).toEqual({ $header: "EI", ...p });
+    expect(decode(s2cSchemas.EI, encode(s2cSchemas.EI, p, "json"))).toEqual({ $header: "EI", ...p });
   });
 
   it("LE (array of nested)", () => {
@@ -143,8 +143,8 @@ describe("round-trips: nested packets", () => {
         { name: "Letter", description: "evidence", image: "letter.png" },
       ],
     };
-    expect(decode(s2cSchemas.LE, encode(s2cSchemas.LE, p, "fanta"))).toEqual(p);
-    expect(decode(s2cSchemas.LE, encode(s2cSchemas.LE, p, "json"))).toEqual(p);
+    expect(decode(s2cSchemas.LE, encode(s2cSchemas.LE, p, "fanta"))).toEqual({ $header: "LE", ...p });
+    expect(decode(s2cSchemas.LE, encode(s2cSchemas.LE, p, "json"))).toEqual({ $header: "LE", ...p });
   });
 
   it("CI (incremental char info with (idx, data) pairs)", () => {
@@ -155,19 +155,19 @@ describe("round-trips: nested packets", () => {
         { index: 1, data: "Edgeworth" },
       ],
     };
-    expect(decode(s2cSchemas.CI, encode(s2cSchemas.CI, p, "fanta"))).toEqual(p);
-    expect(decode(s2cSchemas.CI, encode(s2cSchemas.CI, p, "json"))).toEqual(p);
+    expect(decode(s2cSchemas.CI, encode(s2cSchemas.CI, p, "fanta"))).toEqual({ $header: "CI", ...p });
+    expect(decode(s2cSchemas.CI, encode(s2cSchemas.CI, p, "json"))).toEqual({ $header: "CI", ...p });
   });
 });
 
 describe("round-trips: empty packets", () => {
   it("askchaa (c2s empty)", () => {
-    expect(decode(c2sSchemas.askchaa, encode(c2sSchemas.askchaa, {}, "fanta"))).toEqual({});
-    expect(decode(c2sSchemas.askchaa, encode(c2sSchemas.askchaa, {}, "json"))).toEqual({});
+    expect(decode(c2sSchemas.askchaa, encode(c2sSchemas.askchaa, {}, "fanta"))).toEqual({ $header: "askchaa",});
+    expect(decode(c2sSchemas.askchaa, encode(c2sSchemas.askchaa, {}, "json"))).toEqual({ $header: "askchaa",});
   });
 
   it("CHECK (s2c empty)", () => {
-    expect(decode(s2cSchemas.CHECK, encode(s2cSchemas.CHECK, {}, "fanta"))).toEqual({});
+    expect(decode(s2cSchemas.CHECK, encode(s2cSchemas.CHECK, {}, "fanta"))).toEqual({ $header: "CHECK",});
   });
 });
 
@@ -198,10 +198,10 @@ describe("session integration: new packets are reachable", () => {
     s.receive("SI#10#5#20#%");
     s.receive("FL#a#b#%");
     s.receive("VS_AUDIO#3#abc==#%");
-    expect(seen.BN).toEqual({ background: "court", position: "" });
-    expect(seen.SI).toEqual({ char_count: 10, evi_count: 5, mus_count: 20 });
-    expect(seen.FL).toEqual({ features: ["a", "b"] });
-    expect(seen.VS_AUDIO).toEqual({ fromUid: 3, payload: "abc==" });
+    expect(seen.BN).toEqual({ $header: "BN", background: "court", position: "" });
+    expect(seen.SI).toEqual({ $header: "SI", char_count: 10, evi_count: 5, mus_count: 20 });
+    expect(seen.FL).toEqual({ $header: "FL", features: ["a", "b"] });
+    expect(seen.VS_AUDIO).toEqual({ $header: "VS_AUDIO", fromUid: 3, payload: "abc==" });
   });
 
   it("client.send.<S2C> works for the new s2c packets", () => {
@@ -229,7 +229,7 @@ describe("bidirectional packets", () => {
     let received: unknown;
     s.on.CT((p) => { received = p; });
     s.receive("CT#Server#hi#1#%");
-    expect(received).toEqual({ name: "Server", message: "hi", is_from_server: true });
+    expect(received).toEqual({ $header: "CT", name: "Server", message: "hi", is_from_server: true });
 
     // The c2s shape has no is_from_server field at all
     out.length = 0;
@@ -266,12 +266,12 @@ describe("chat-meta escaping is applied uniformly", () => {
   it("BB reason with # and & round-trips on fanta", () => {
     const p = { message: "Don't use #1 & $5 in chat" };
     const out = decode(s2cSchemas.BB, encode(s2cSchemas.BB, p, "fanta"));
-    expect(out).toEqual(p);
+    expect(out).toEqual({ $header: "BB", ...p });
   });
 
   it("CT message with chat-meta survives on fanta", () => {
     const p = { name: "Phoenix", message: "100% sure & #1!" };
     const out = decode(c2sSchemas.CT, encode(c2sSchemas.CT, p, "fanta"));
-    expect(out).toEqual(p);
+    expect(out).toEqual({ $header: "CT", ...p });
   });
 });

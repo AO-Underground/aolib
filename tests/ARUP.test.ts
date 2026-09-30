@@ -46,7 +46,7 @@ describe("ARUP: update_type discriminates payload", () => {
       },
       "fanta",
     );
-    expect(decode(ARUP, wire)).toEqual({
+    expect(decode(ARUP, wire)).toEqual({ $header: "ARUP",
       update_type: AreaUpdateType.case_manager,
       update_data: ["Phoenix Wright", "", "Edgeworth"],
     });
@@ -61,7 +61,7 @@ describe("ARUP: update_type discriminates payload", () => {
       },
       "fanta",
     );
-    expect(decode(ARUP, wire)).toEqual({
+    expect(decode(ARUP, wire)).toEqual({ $header: "ARUP",
       update_type: AreaUpdateType.locked,
       update_data: ["FREE", "LOCKED", "SPECTATABLE"],
     });
@@ -122,7 +122,7 @@ describe("ARUP: edge cases", () => {
     );
     expect(wire).toBe("ARUP#0#%");
     const decoded = decode(ARUP, wire) as unknown as ARUPType;
-    expect(decoded).toEqual({
+    expect(decoded).toEqual({ $header: "ARUP",
       update_type: AreaUpdateType.player_count,
       update_data: [],
     });
@@ -182,7 +182,7 @@ describe("ARUP: JSON envelope", () => {
       { update_type: AreaUpdateType.locked, update_data: ["FREE"] },
     ];
     for (const c of cases) {
-      expect(decode(ARUP, encode(ARUP, c, "json"))).toEqual(c);
+      expect(decode(ARUP, encode(ARUP, c, "json"))).toEqual({ $header: "ARUP", ...c });
     }
   });
 });
@@ -198,6 +198,7 @@ describe("ARUP: session integration", () => {
     });
     s.receive("ARUP#1#normal#battle#%");
     expect(received).toEqual({
+      $header: "ARUP",
       update_type: AreaUpdateType.status,
       update_data: ["normal", "battle"],
     });

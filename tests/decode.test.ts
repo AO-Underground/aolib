@@ -49,7 +49,7 @@ const VS_PEERS = packetSchema("VS_PEERS", {
 
 describe("decode: format auto-detect", () => {
   it("`{` prefix routes to JSON path", () => {
-    expect(decode(MC, '{"$header":"MC","name":"x","char_id":5}')).toEqual({
+    expect(decode(MC, '{"$header":"MC","name":"x","char_id":5}')).toEqual({ $header: "MC",
       name: "x",
       char_id: 5,
       showname: "",
@@ -58,7 +58,7 @@ describe("decode: format auto-detect", () => {
   });
 
   it("non-`{` prefix routes to fanta path", () => {
-    expect(decode(MC, "MC#x#5##0#%")).toEqual({
+    expect(decode(MC, "MC#x#5##0#%")).toEqual({ $header: "MC",
       name: "x",
       char_id: 5,
       showname: "",
@@ -71,7 +71,7 @@ describe("decode: format auto-detect", () => {
 
 describe("decode: JSON mode", () => {
   it("decodes scalars and fills defaults from cast", () => {
-    expect(decode(MC, '{"$header":"MC","name":"x","char_id":5}')).toEqual({
+    expect(decode(MC, '{"$header":"MC","name":"x","char_id":5}')).toEqual({ $header: "MC",
       name: "x",
       char_id: 5,
       showname: "",
@@ -85,12 +85,12 @@ describe("decode: JSON mode", () => {
         MC,
         '{"$header":"MC","name":"x","char_id":5,"showname":"P","effects":2}',
       ),
-    ).toEqual({ name: "x", char_id: 5, showname: "P", effects: 2 });
+    ).toEqual({ $header: "MC", name: "x", char_id: 5, showname: "P", effects: 2 });
   });
 
   it("literals are stripped from the result", () => {
     const out = decode(CC, '{"$header":"CC","char_id":5}');
-    expect(out).toEqual({ char_id: 5 });
+    expect(out).toEqual({ $header: "CC", char_id: 5 });
     expect("_0" in out).toBe(false);
     expect("_pw" in out).toBe(false);
   });
@@ -104,7 +104,7 @@ describe("decode: JSON mode", () => {
         additionalProperties: false,
       },
     });
-    expect(decode(FOO, '{"$header":"FOO","offset":{"x":5,"y":3}}')).toEqual({
+    expect(decode(FOO, '{"$header":"FOO","offset":{"x":5,"y":3}}')).toEqual({ $header: "FOO",
       offset: { x: 5, y: 3 },
     });
   });
@@ -115,7 +115,7 @@ describe("decode: JSON mode", () => {
         VS_PEERS,
         '{"$header":"VS_PEERS","peers":[{"uid":1,"name":"Alice"},{"uid":2,"name":"Bob"}]}',
       ),
-    ).toEqual({
+    ).toEqual({ $header: "VS_PEERS",
       peers: [
         { uid: 1, name: "Alice" },
         { uid: 2, name: "Bob" },
@@ -150,7 +150,7 @@ describe("decode: JSON mode", () => {
       MC,
       '{"$header":"MC","name":"x","char_id":5,"extra":"junk"}',
     );
-    expect(out).toEqual({ name: "x", char_id: 5, showname: "", effects: 0 });
+    expect(out).toEqual({ $header: "MC", name: "x", char_id: 5, showname: "", effects: 0 });
     expect("extra" in out).toBe(false);
   });
 });
@@ -159,7 +159,7 @@ describe("decode: JSON mode", () => {
 
 describe("decode: fanta mode", () => {
   it("decodes canonical `HEADER#a#b#%`", () => {
-    expect(decode(MC, "MC#x#5#showname#0#%")).toEqual({
+    expect(decode(MC, "MC#x#5#showname#0#%")).toEqual({ $header: "MC",
       name: "x",
       char_id: 5,
       showname: "showname",
@@ -168,7 +168,7 @@ describe("decode: fanta mode", () => {
   });
 
   it("accepts trailing `#` without `%`", () => {
-    expect(decode(MC, "MC#x#5##0#")).toEqual({
+    expect(decode(MC, "MC#x#5##0#")).toEqual({ $header: "MC",
       name: "x",
       char_id: 5,
       showname: "",
@@ -177,7 +177,7 @@ describe("decode: fanta mode", () => {
   });
 
   it("accepts no terminator at all", () => {
-    expect(decode(MC, "MC#x#5##0")).toEqual({
+    expect(decode(MC, "MC#x#5##0")).toEqual({ $header: "MC",
       name: "x",
       char_id: 5,
       showname: "",
@@ -186,11 +186,11 @@ describe("decode: fanta mode", () => {
   });
 
   it("literals are consumed but stripped", () => {
-    expect(decode(CC, "CC#0#5##%")).toEqual({ char_id: 5 });
+    expect(decode(CC, "CC#0#5##%")).toEqual({ $header: "CC", char_id: 5 });
   });
 
   it("decodes PV's CID literal between scalars", () => {
-    expect(decode(PV, "PV#3#CID#7#%")).toEqual({
+    expect(decode(PV, "PV#3#CID#7#%")).toEqual({ $header: "PV",
       player_id: 3,
       char_id: 7,
     });
@@ -198,17 +198,17 @@ describe("decode: fanta mode", () => {
 
   it("forgiving on non-conforming literal values", () => {
     // Server sent non-zero at CC's literal slot; we ignore it.
-    expect(decode(CC, "CC#9#5#anything#%")).toEqual({ char_id: 5 });
+    expect(decode(CC, "CC#9#5#anything#%")).toEqual({ $header: "CC", char_id: 5 });
   });
 
   it("array consumes all remaining slots", () => {
-    expect(decode(SM, "SM#a#b#c#%")).toEqual({
+    expect(decode(SM, "SM#a#b#c#%")).toEqual({ $header: "SM",
       music_list: ["a", "b", "c"],
     });
   });
 
   it("array of nested decodes element-by-element", () => {
-    expect(decode(VS_PEERS, "VS_PEERS#1&Alice#2&Bob#%")).toEqual({
+    expect(decode(VS_PEERS, "VS_PEERS#1&Alice#2&Bob#%")).toEqual({ $header: "VS_PEERS",
       peers: [
         { uid: 1, name: "Alice" },
         { uid: 2, name: "Bob" },
@@ -217,11 +217,11 @@ describe("decode: fanta mode", () => {
   });
 
   it("empty schema decodes to `{}`", () => {
-    expect(decode(DONE, "DONE#%")).toEqual({});
+    expect(decode(DONE, "DONE#%")).toEqual({ $header: "DONE",});
   });
 
   it("strings are unescaped through fromFanta", () => {
-    expect(decode(MC, "MC#100<percent> <num>1#5##0#%")).toEqual({
+    expect(decode(MC, "MC#100<percent> <num>1#5##0#%")).toEqual({ $header: "MC",
       name: "100% #1",
       char_id: 5,
       showname: "",
@@ -251,24 +251,24 @@ describe("decode: fanta mode", () => {
 describe("encode → decode round-trip", () => {
   it("MC round-trips in JSON mode", () => {
     const v = { name: "track", char_id: 5, showname: "Phoenix", effects: 2 };
-    expect(decode(MC, encode(MC, v, "json"))).toEqual(v);
+    expect(decode(MC, encode(MC, v, "json"))).toEqual({ $header: "MC", ...v });
   });
 
   it("MC round-trips in fanta mode", () => {
     const v = { name: "track", char_id: 5, showname: "Phoenix", effects: 2 };
-    expect(decode(MC, encode(MC, v, "fanta"))).toEqual(v);
+    expect(decode(MC, encode(MC, v, "fanta"))).toEqual({ $header: "MC", ...v });
   });
 
   it("CC strips literals consistently in both modes", () => {
     const v = { char_id: 5 };
-    expect(decode(CC, encode(CC, v, "json"))).toEqual(v);
-    expect(decode(CC, encode(CC, v, "fanta"))).toEqual(v);
+    expect(decode(CC, encode(CC, v, "json"))).toEqual({ $header: "CC", ...v });
+    expect(decode(CC, encode(CC, v, "fanta"))).toEqual({ $header: "CC", ...v });
   });
 
   it("PV strips CID literal in both modes", () => {
     const v = { player_id: 3, char_id: 7 };
-    expect(decode(PV, encode(PV, v, "json"))).toEqual(v);
-    expect(decode(PV, encode(PV, v, "fanta"))).toEqual(v);
+    expect(decode(PV, encode(PV, v, "json"))).toEqual({ $header: "PV", ...v });
+    expect(decode(PV, encode(PV, v, "fanta"))).toEqual({ $header: "PV", ...v });
   });
 
   it("VS_PEERS (array of nested) round-trips", () => {
@@ -278,19 +278,19 @@ describe("encode → decode round-trip", () => {
         { uid: 2, name: "Bob" },
       ],
     };
-    expect(decode(VS_PEERS, encode(VS_PEERS, v, "json"))).toEqual(v);
-    expect(decode(VS_PEERS, encode(VS_PEERS, v, "fanta"))).toEqual(v);
+    expect(decode(VS_PEERS, encode(VS_PEERS, v, "json"))).toEqual({ $header: "VS_PEERS", ...v });
+    expect(decode(VS_PEERS, encode(VS_PEERS, v, "fanta"))).toEqual({ $header: "VS_PEERS", ...v });
   });
 
   it("SM (array of scalars) round-trips even when empty", () => {
     const empty: { music_list: string[] } = { music_list: [] };
-    expect(decode(SM, encode(SM, empty, "json"))).toEqual(empty);
-    expect(decode(SM, encode(SM, empty, "fanta"))).toEqual(empty);
+    expect(decode(SM, encode(SM, empty, "json"))).toEqual({ $header: "SM", ...empty });
+    expect(decode(SM, encode(SM, empty, "fanta"))).toEqual({ $header: "SM", ...empty });
   });
 
   it("DONE (empty schema) round-trips", () => {
-    expect(decode(DONE, encode(DONE, {}, "json"))).toEqual({});
-    expect(decode(DONE, encode(DONE, {}, "fanta"))).toEqual({});
+    expect(decode(DONE, encode(DONE, {}, "json"))).toEqual({ $header: "DONE",});
+    expect(decode(DONE, encode(DONE, {}, "fanta"))).toEqual({ $header: "DONE",});
   });
 
   it("chat meta-chars survive fanta round-trip", () => {

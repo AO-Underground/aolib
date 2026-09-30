@@ -119,7 +119,7 @@ describe("MS: enum values round-trip", () => {
       text_color: "red",
       flip: "none",
     });
-    expect(decode(MSToClient, out[0] ?? "")).toMatchObject({
+    expect(decode(MSToClient, out[0] ?? "")).toMatchObject({ $header: "MS",
       side: "wit",
       emote_modifier: "zoom",
       desk_modifier: "shown",
@@ -164,7 +164,7 @@ describe("MS: minimal-input encoding fills every default", () => {
       "fanta",
     );
     const decoded = decode(MSToServer, wire) as unknown as MSToServerType;
-    expect(decoded).toMatchObject({
+    expect(decoded).toMatchObject({ $header: "MS",
       desk_modifier: DeskModifier.shown,
       preanim: "",
       character: "Phoenix",
@@ -411,7 +411,7 @@ describe("MS: JSON envelope round-trip", () => {
     };
     const json = encode(MSToClient, p, "json");
     const decoded = decode(MSToClient, json) as unknown as MSToClientType;
-    expect(decoded).toEqual(p as unknown as MSToClientType);
+    expect(decoded).toEqual({ $header: "MS", ...p } as unknown as MSToClientType);
   });
 
   it("enums survive a JSON round-trip with the correct typed value", () => {
@@ -481,8 +481,8 @@ describe("MS: JSON envelope round-trip", () => {
       flip: "horizontal",
       text_color: "red",
     };
-    expect(decode(MSToServer, fanta)).toMatchObject(want);
-    expect(decode(MSToServer, encode(MSToServer, p, "json"))).toMatchObject(want);
+    expect(decode(MSToServer, fanta)).toMatchObject({ $header: "MS", ...want });
+    expect(decode(MSToServer, encode(MSToServer, p, "json"))).toMatchObject({ $header: "MS", ...want });
   });
 });
 

@@ -78,6 +78,9 @@ function decodeJson(
  */
 function stripConsts(schema: JsonSchema, value: Record<string, unknown>): void {
   for (const [k, sub] of Object.entries(schema.properties ?? {})) {
+    // Keep `$header`: it is the decoded packet's discriminant. Strip other
+    // const padding (e.g. PV's `_cid`).
+    if (k === "$header") continue;
     if ("const" in sub) {
       // eslint-disable-next-line @typescript-eslint/no-dynamic-delete -- stripping const-typed schema props by name
       delete value[k];
