@@ -237,7 +237,7 @@ aolib-ts/
 │   ├── fanta.ts               ← positional wire walker + escape rules + $ref resolver
 │   ├── validate.ts            ← Ajv adapter sharing the same schemas
 │   ├── enums.ts               ← runtime enum helpers
-│   ├── types.ts               ← JsonSchema, FantaCodec, WireMode
+│   ├── types.ts               ← JsonSchema, Codec, WireMode
 │   └── codecs/                ← bespoke codecs for x-fanta-codec packets (ARUP)
 ├── examples/
 │   ├── exampleClient.ts

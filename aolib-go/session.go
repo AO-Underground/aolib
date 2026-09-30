@@ -1,7 +1,6 @@
 package aolib
 
 import (
-	"encoding/json"
 	"fmt"
 	"strings"
 )
@@ -63,10 +62,10 @@ type session struct {
 	role     role
 	jsonMode bool
 	handlers map[string]func(any)
-	// customHandlers receive raw JSON objects for headers with no meta schema,
-	// registered via OnCustom. They take precedence over the typed path and
-	// fire on JSON frames only.
-	customHandlers map[string]func(map[string]any)
+	// customHandlers receive the typed value produced by a header's registered
+	// Codec (see RegisterCodec), for headers with no meta schema. Registered via
+	// OnCustom; they fire on both wire formats.
+	customHandlers map[string]func(any)
 }
 
 func newSession(cfg SessionConfig, r role) *session {
@@ -74,7 +73,7 @@ func newSession(cfg SessionConfig, r role) *session {
 		cfg:            cfg,
 		role:           r,
 		handlers:       make(map[string]func(any)),
-		customHandlers: make(map[string]func(map[string]any)),
+		customHandlers: make(map[string]func(any)),
 	}
 }
 
@@ -116,6 +115,19 @@ func (s *session) receiveFanta(raw []byte) {
 		}
 		return
 	}
+	// A registered codec owns its header in both wire formats and wins over the
+	// generated registry.
+	if c, ok := codecs[pkt.Header]; ok {
+		p, derr := c.DecodeFanta(pkt.Body)
+		if derr != nil {
+			if s.cfg.OnDecodeError != nil {
+				s.cfg.OnDecodeError(pkt.Header, derr, raw)
+			}
+			return
+		}
+		s.dispatchCustom(pkt.Header, p)
+		return
+	}
 	dec, ok := s.role.inboundDecoders()[pkt.Header]
 	if !ok {
 		if s.cfg.OnUnknownHeader != nil {
@@ -141,17 +153,17 @@ func (s *session) receiveJSON(raw []byte) {
 		}
 		return
 	}
-	// Custom handlers win over the typed path and reach headers with no meta
-	// schema.
-	if h, ok := s.customHandlers[header]; ok {
-		var obj map[string]any
-		if err := json.Unmarshal(raw, &obj); err != nil {
-			if s.cfg.OnMalformedFrame != nil {
-				s.cfg.OnMalformedFrame(err, raw)
+	// A registered codec owns its header in both wire formats and wins over the
+	// generated registry.
+	if c, ok := codecs[header]; ok {
+		p, derr := c.DecodeJSON(string(raw))
+		if derr != nil {
+			if s.cfg.OnDecodeError != nil {
+				s.cfg.OnDecodeError(header, derr, raw)
 			}
 			return
 		}
-		s.dispatchCustom(header, obj, h)
+		s.dispatchCustom(header, p)
 		return
 	}
 	dec, ok := s.role.inboundJSON()[header]
@@ -193,46 +205,53 @@ func (s *session) dispatch(header string, p any) {
 	}()
 }
 
-// dispatchCustom runs a custom JSON handler, recovering panics like dispatch.
-func (s *session) dispatchCustom(header string, obj map[string]any, h func(map[string]any)) {
-	defer func() {
-		if r := recover(); r != nil {
-			if s.cfg.OnHandlerError != nil {
-				s.cfg.OnHandlerError(header, fmt.Errorf("handler panic: %v", r), obj)
-			}
+// dispatchCustom hands the codec-decoded value to the registered custom
+// handler (or the unhandled hook), recovering panics like dispatch.
+func (s *session) dispatchCustom(header string, p any) {
+	h, ok := s.customHandlers[header]
+	if !ok {
+		if s.cfg.OnUnhandled != nil {
+			s.cfg.OnUnhandled(header, p)
 		}
+		return
+	}
+	func() {
+		defer func() {
+			if r := recover(); r != nil {
+				if s.cfg.OnHandlerError != nil {
+					s.cfg.OnHandlerError(header, fmt.Errorf("handler panic: %v", r), p)
+				}
+			}
+		}()
+		h(p)
 	}()
-	h(obj)
 }
 
-// sendCustom ships a nonstandard packet as JSON, bypassing the meta schema
-// layer. aolib does not model such packets; servers that need them build the
-// object themselves. A "$header" is injected from header (overriding any the
-// payload carries). JSON only — there is no positional form for a packet aolib
-// has no schema for.
+// sendCustom ships a nonstandard packet through its registered Codec, in the
+// session's current wire mode. The header must have a codec (RegisterCodec);
+// aolib itself models only canonical aolib-meta.
 func (s *session) sendCustom(header string, payload any) error {
 	if strings.TrimSpace(header) == "" {
-		return fmt.Errorf("aolib: SendCustom requires a non-empty $header")
+		return fmt.Errorf("aolib: SendCustom requires a non-empty header")
 	}
-	obj, err := toObject(payload)
-	if err != nil {
-		return fmt.Errorf("aolib: SendCustom payload not a JSON object: %w", err)
+	mode := WireFanta
+	if s.jsonMode {
+		mode = WireJSON
 	}
-	h, _ := json.Marshal(header)
-	obj["$header"] = h
-	buf, err := json.Marshal(obj)
+	raw, err := encodeCustom(header, payload, mode)
 	if err != nil {
 		return err
 	}
 	if s.cfg.Send != nil {
-		s.cfg.Send(buf)
+		s.cfg.Send(raw)
 	}
 	return nil
 }
 
-// onCustom registers a handler for a nonstandard JSON header. It errors on a
-// collision with a typed handler or another custom handler for the same header.
-func (s *session) onCustom(header string, h func(map[string]any)) error {
+// onCustom registers a handler for a custom header. The header's Codec
+// (RegisterCodec) decodes the frame first; the handler receives that typed
+// value. Errors on a collision with a typed handler or another custom handler.
+func (s *session) onCustom(header string, h func(any)) error {
 	if strings.TrimSpace(header) == "" {
 		return fmt.Errorf("aolib: OnCustom requires a non-empty header")
 	}
@@ -282,28 +301,30 @@ func (s *ServerSession) JSONMode() bool { return s.s.jsonMode }
 // JSONMode reports the current outbound wire format for a ClientSession.
 func (c *ClientSession) JSONMode() bool { return c.s.jsonMode }
 
-// SendCustom ships a nonstandard packet (one aolib has no meta schema for) as
-// JSON, with header injected as "$header". Use it for server-specific
-// extensions; aolib only facilitates them.
+// SendCustom ships a nonstandard packet through its registered Codec
+// (RegisterCodec), in the session's current wire mode. Use it for
+// server-specific extensions; aolib only facilitates them.
 func (s *ServerSession) SendCustom(header string, payload any) error {
 	return s.s.sendCustom(header, payload)
 }
 
-// OnCustom registers a handler for a nonstandard JSON header. Errors on a
-// collision with a typed or existing custom handler.
-func (s *ServerSession) OnCustom(header string, h func(map[string]any)) error {
+// OnCustom registers a handler for a custom header; the header's Codec decodes
+// the frame and the handler receives the typed value. Errors on a collision
+// with a typed or existing custom handler.
+func (s *ServerSession) OnCustom(header string, h func(any)) error {
 	return s.s.onCustom(header, h)
 }
 
-// SendCustom ships a nonstandard packet (one aolib has no meta schema for) as
-// JSON, with header injected as "$header". Use it for server-specific
-// extensions; aolib only facilitates them.
+// SendCustom ships a nonstandard packet through its registered Codec
+// (RegisterCodec), in the session's current wire mode. Use it for
+// server-specific extensions; aolib only facilitates them.
 func (c *ClientSession) SendCustom(header string, payload any) error {
 	return c.s.sendCustom(header, payload)
 }
 
-// OnCustom registers a handler for a nonstandard JSON header. Errors on a
-// collision with a typed or existing custom handler.
-func (c *ClientSession) OnCustom(header string, h func(map[string]any)) error {
+// OnCustom registers a handler for a custom header; the header's Codec decodes
+// the frame and the handler receives the typed value. Errors on a collision
+// with a typed or existing custom handler.
+func (c *ClientSession) OnCustom(header string, h func(any)) error {
 	return c.s.onCustom(header, h)
 }

@@ -18,7 +18,7 @@ export {
   unescapeUnicode,
   registerCodec,
 } from "./fanta";
-export type { JsonSchema, FantaCodec } from "./types";
+export type { JsonSchema, Codec } from "./types";
 
 // Header-keyed schema maps for the dispatcher, and the direction shape
 // maps, for routing outside a session.

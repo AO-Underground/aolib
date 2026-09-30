@@ -25,7 +25,7 @@
  * value and its positional-token form.
  */
 
-import type { JsonSchema, FantaCodec } from "./types";
+import type { JsonSchema, Codec } from "./types";
 
 // Chat-escape helpers, public so ARUP-style custom codecs can reuse.
 
@@ -53,13 +53,23 @@ export function unescapeUnicode(s: string): string {
 
 // Custom codec registry.
 
-const codecs = new Map<string, FantaCodec>();
+const codecs = new Map<string, Codec>();
 
-export function registerCodec(name: string, codec: FantaCodec): void {
+export function registerCodec(name: string, codec: Codec): void {
   codecs.set(name, codec);
 }
 
-function getCodec(name: string): FantaCodec {
+/**
+ * Look up a registered codec by name (a packet's `x-fanta-codec`, or, for a
+ * caller-registered custom header, the header itself). Returns undefined when
+ * none is registered. Used by the session custom channel to encode/decode a
+ * custom header's FantaCode form.
+ */
+export function lookupCodec(name: string): Codec | undefined {
+  return codecs.get(name);
+}
+
+function getCodec(name: string): Codec {
   const c = codecs.get(name);
   if (!c) throw new Error(`fanta: no codec registered as '${name}'`);
   return c;
@@ -243,7 +253,7 @@ export function toFantaArgs(
   packet: Record<string, unknown>,
 ): string[] {
   if (schema["x-fanta-codec"]) {
-    return getCodec(schema["x-fanta-codec"]).encode(packet);
+    return getCodec(schema["x-fanta-codec"]).encodeFanta(packet);
   }
 
   const baseId = typeof schema.$id === "string" ? schema.$id : "";
@@ -274,7 +284,7 @@ export function fromFantaArgs(
   args: string[],
 ): Record<string, unknown> {
   if (schema["x-fanta-codec"]) {
-    return getCodec(schema["x-fanta-codec"]).decode(args);
+    return getCodec(schema["x-fanta-codec"]).decodeFanta(args);
   }
 
   const baseId = typeof schema.$id === "string" ? schema.$id : "";

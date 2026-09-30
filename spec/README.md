@@ -109,6 +109,14 @@ delegates encode/decode to it. Used for packets whose wire form has
 discriminator-driven payload shapes (e.g. `ARUP`). Per-codec wire forms
 are specified in `packets/CODECS.md`.
 
+A codec fully owns its packet's wire representation and, per the codec rule,
+must implement **both** wire forms: the FantaCode positional frame and the
+JSON envelope. The same mechanism is exposed to library callers at runtime
+(`registerCodec` / `RegisterCodec`) so a server can teach the library a
+nonstandard header it needs. aolib itself models only canonical packets here;
+a custom codec is how a caller extends that, and because it must implement
+FantaCode too there is no JSON-only custom packet.
+
 ### `x-receiver: "client" | "server"`
 
 On a packet schema. Names which side receives this packet on the wire

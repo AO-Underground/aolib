@@ -5,6 +5,15 @@ root `README.md`); the generic per-type rules do not describe them, so each
 codec's wire form is specified here. A library registers one codec per
 `x-fanta-codec` name and the walker delegates to it.
 
+A codec is the single authority for its header and must implement both wire
+forms (FantaCode and JSON). The same registration is available to callers at
+runtime for nonstandard headers the spec does not model: the library exposes it
+(`registerCodec` in aolib-ts, `RegisterCodec` in aolib-go), the session routes a
+custom header through the caller's codec in whichever wire mode is active, and
+the both-forms rule applies equally, so a custom packet always has a FantaCode
+form, not JSON alone. The codecs documented below are the ones the spec itself
+defines.
+
 ## `ARUP`
 
 Area status update, server to client. `update_type` selects which per-area field

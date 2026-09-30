@@ -33,7 +33,7 @@ function fromWireInt(token: string): string {
 }
 
 registerCodec("ARUP", {
-  encode(packet) {
+  encodeFanta(packet) {
     const wireInt = toWireInt(packet.update_type);
     const data = (packet.update_data as unknown[] | undefined) ?? [];
     const slots = wireInt === PLAYER_COUNT_INT
@@ -42,7 +42,7 @@ registerCodec("ARUP", {
     return [String(wireInt), ...slots];
   },
 
-  decode(args) {
+  decodeFanta(args) {
     const token = args[0] ?? String(PLAYER_COUNT_INT);
     const update_type = fromWireInt(token);
     const rest = args.slice(1);

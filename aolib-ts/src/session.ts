@@ -32,6 +32,7 @@
 
 import { encode, type WireMode } from "./encode";
 import { decode, readHeader } from "./decode";
+import { lookupCodec } from "./fanta";
 import {
   c2sSchemas,
   s2cSchemas,
@@ -64,16 +65,18 @@ type OnMap<Outputs> = {
 /**
  * Raw send/receive escape hatch, shared by both session roles.
  *
- * These bypass the schema layer entirely: `sendCustom` JSON-encodes an
- * arbitrary packet-shaped object verbatim (no validation, no direction
- * check, always JSON regardless of the session's mode), and `onCustom`
- * dispatches inbound JSON frames by `$header` with the raw parsed object
- * (extra fields preserved). For custom or extended packets a peer
- * understands but the schemas don't model.
+ * These bypass the schema layer: they carry custom or extended packets a
+ * peer understands but the meta schemas don't model. The packet is a
+ * plain object with a `$header`; `onCustom` dispatches inbound frames by
+ * `$header`, passing the object (extra fields preserved).
  *
- * JSON only: `sendCustom` never emits fanta, and `onCustom` never fires
- * for fanta frames. For a given header you register `on.<X>` or
- * `onCustom("X")`, not both, the second registration throws.
+ * Both wire formats are supported. JSON uses the object verbatim. FantaCode
+ * requires a codec registered for that header via `registerCodec` (the same
+ * mechanism ARUP uses, just caller-defined): `sendCustom` encodes through it
+ * in fanta mode, and `onCustom` decodes through it for inbound fanta frames.
+ * The rule: a custom packet that travels over FantaCode must register a codec;
+ * there is no fanta-less custom packet. For a given header you register
+ * `on.<X>` or `onCustom("X")`, not both, the second registration throws.
  */
 interface CustomChannel {
   // The generic P (vs a plain `Packet` param) is what lets an inline literal
@@ -118,6 +121,13 @@ export interface ClientSession extends CustomChannel {
 type Role = "client" | "server";
 
 type SchemaMap = Record<string, JsonSchema>;
+
+// Guarantee a custom codec's JSON object carries a matching "$header".
+function withJsonHeader(raw: string, header: string): string {
+  const obj = JSON.parse(raw) as Record<string, unknown>;
+  obj.$header = header;
+  return JSON.stringify(obj);
+}
 
 function makeSession(role: Role, config: SessionConfig): ServerSession & ClientSession {
   // role "server" → this represents the remote server → from us-as-client.
@@ -179,10 +189,26 @@ function makeSession(role: Role, config: SessionConfig): ServerSession & ClientS
     if (closed) {
       throw new Error(`aolib: sendCustom on a closed session`);
     }
-    if (typeof packet.$header !== "string" || packet.$header === "") {
+    const header = packet.$header;
+    if (typeof header !== "string" || header === "") {
       throw new Error(`aolib: sendCustom requires a non-empty string $header`);
     }
-    config.send(JSON.stringify(packet));
+    const codec = lookupCodec(header);
+    if (!codec) {
+      throw new Error(
+        `aolib: sendCustom('${header}') needs a codec; call registerCodec('${header}', ...) first`,
+      );
+    }
+    if (mode === "json") {
+      if (!codec.encodeJson) {
+        throw new Error(`aolib: codec for '${header}' must implement encodeJson`);
+      }
+      config.send(withJsonHeader(codec.encodeJson(packet as Record<string, unknown>), header));
+      return;
+    }
+    const args = codec.encodeFanta(packet as Record<string, unknown>);
+    const body = args.join("#");
+    config.send(body === "" ? `${header}#%` : `${header}#${body}#%`);
   }
 
   function onCustom<T extends Packet = Packet & Record<string, unknown>>(
@@ -206,13 +232,21 @@ function makeSession(role: Role, config: SessionConfig): ServerSession & ClientS
       return;
     }
 
-    // Custom JSON handlers win over the typed path, and reach headers the
-    // schemas don't model at all. Fanta frames never route here.
-    if (wire.startsWith("{")) {
-      const custom = customHandlers[header];
-      if (custom) {
-        // readHeader already parsed this frame, so JSON.parse cannot fail here.
-        const raw = JSON.parse(wire) as Record<string, unknown>;
+    // Custom handlers win over the typed path and reach headers the schemas
+    // don't model. JSON uses the object verbatim; fanta decodes through the
+    // header's registered codec.
+    const custom = customHandlers[header];
+    if (custom) {
+      const codec = lookupCodec(header);
+      let raw: Record<string, unknown> | undefined;
+      if (wire.startsWith("{")) {
+        if (codec?.decodeJson) raw = codec.decodeJson(wire);
+      } else if (codec) {
+        const rest = wire.replace(/#?%$/, "").slice(header.length + 1);
+        const args = rest === "" ? [] : rest.split("#");
+        raw = codec.decodeFanta(args);
+      }
+      if (raw !== undefined) {
         try {
           custom(raw);
         } catch (err) {

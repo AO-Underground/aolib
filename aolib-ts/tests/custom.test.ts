@@ -1,13 +1,15 @@
 /**
- * The raw JSON escape hatch: `sendCustom` / `onCustom`.
+ * The custom-packet escape hatch: `registerCodec` + `sendCustom` / `onCustom`.
  *
- * Covers the promise made to consumers, define a type that extends a
- * generated packet (or the `Packet` base), populate it, send it, and
- * receive it typed on the other end, all bypassing the schema layer.
+ * A custom packet is handled by a registered codec (the same mechanism ARUP
+ * uses, hot-definable by callers). The codec owns both wire forms, so the same
+ * typed value round-trips over FantaCode and JSON, and `onCustom` receives the
+ * codec's decoded value regardless of wire mode.
  */
 
 import { describe, it, expect } from "bun:test";
 import { server, client, type SessionConfig } from "../src/session";
+import { registerCodec, escapeFanta, unescapeFanta } from "../src/wire";
 import type { Packet, BB } from "../generated/packets";
 
 function makeBuf(overrides: Partial<SessionConfig> = {}): {
@@ -32,10 +34,27 @@ interface Ping extends Packet {
   seq: number;
 }
 
+// Codecs for the headers these tests exercise. A custom codec owns both wire
+// forms; for JSON the object round-trips through stringify/parse, and the
+// FantaCode form is defined explicitly.
+registerCodec("BB", {
+  encodeFanta: (p) => [escapeFanta(String(p.message ?? ""))],
+  decodeFanta: (args) => ({ $header: "BB", message: unescapeFanta(args[0] ?? "") }),
+  encodeJson: (p) => JSON.stringify(p),
+  decodeJson: (raw) => JSON.parse(raw) as Record<string, unknown>,
+});
+registerCodec("PING", {
+  encodeFanta: (p) => [String(p.seq ?? 0)],
+  decodeFanta: (args) => ({ $header: "PING", seq: Number(args[0] ?? 0) }),
+  encodeJson: (p) => JSON.stringify(p),
+  decodeJson: (raw) => JSON.parse(raw) as Record<string, unknown>,
+});
+
 describe("sendCustom", () => {
-  it("sends a typed inherited-packet variable as JSON verbatim", () => {
+  it("encodes through the codec's JSON form in JSON mode", () => {
     const { out, config } = makeBuf();
     const s = server(config);
+    s.setJsonMode(true);
 
     const msg: BBExt = { $header: "BB", message: "evacuate", urgent: true };
     s.sendCustom(msg);
@@ -48,18 +67,19 @@ describe("sendCustom", () => {
     });
   });
 
-  it("accepts an inline literal with extra fields", () => {
+  it("encodes through the codec's FantaCode form in fanta mode", () => {
     const { out, config } = makeBuf();
-    server(config).sendCustom({ $header: "PING", seq: 7, note: "hi" });
-    expect(JSON.parse(out[0]!)).toEqual({ $header: "PING", seq: 7, note: "hi" });
+    const s = server(config); // default mode is fanta
+    s.sendCustom({ $header: "PING", seq: 7 });
+    expect(out[0]).toBe("PING#7#%");
   });
 
-  it("always emits JSON even while the session is in fanta mode", () => {
-    const { out, config } = makeBuf();
+  it("throws when no codec is registered for the header", () => {
+    const { config } = makeBuf();
     const s = server(config);
-    // default mode is fanta; sendCustom must ignore it.
-    s.sendCustom({ $header: "PING", seq: 1 });
-    expect(out[0]!.startsWith("{")).toBe(true);
+    expect(() => { s.sendCustom({ $header: "NOPE", x: 1 }); }).toThrow(
+      /needs a codec/,
+    );
   });
 
   it("throws on a closed session", () => {
@@ -79,7 +99,7 @@ describe("sendCustom", () => {
 });
 
 describe("onCustom", () => {
-  it("dispatches an inbound JSON frame with extra fields preserved, typed", () => {
+  it("decodes an inbound JSON frame through the codec, extras preserved", () => {
     const { config } = makeBuf();
     const s = server(config);
 
@@ -90,33 +110,30 @@ describe("onCustom", () => {
     expect(got).toEqual({ $header: "BB", message: "evacuate", urgent: true });
   });
 
-  it("fires for a header no schema models", () => {
+  it("decodes an inbound fanta frame through the codec", () => {
     const { config } = makeBuf();
     const s = server(config);
 
     let seq = 0;
     s.onCustom<Ping>("PING", (p) => { seq = p.seq; });
-    s.receive(JSON.stringify({ $header: "PING", seq: 42 }));
+    s.receive("PING#42#%");
     expect(seq).toBe(42);
   });
 
-  it("does not fire for a fanta frame of the same header", () => {
-    const unhandled: string[] = [];
-    const { config } = makeBuf({ onUnhandled: (h) => unhandled.push(h) });
+  it("does not fire for a header with no registered codec", () => {
+    const unknown: string[] = [];
+    const { config } = makeBuf({ onUnknownHeader: (h) => unknown.push(h) });
     const s = server(config);
 
     let fired = false;
-    s.onCustom("BB", () => { fired = true; });
-    s.receive("BB#hello#%"); // fanta, routes to the typed path
+    s.onCustom("NOPE", () => { fired = true; });
+    s.receive("NOPE#hello#%");
 
     expect(fired).toBe(false);
-    expect(unhandled).toEqual(["BB"]);
+    expect(unknown).toEqual(["NOPE"]);
   });
 
-  it("wins over a would-be typed handler for JSON frames", () => {
-    // Registering on.BB after onCustom('BB') is a collision (below); here we
-    // only register onCustom and confirm the JSON frame reaches it, not the
-    // typed decode + onUnhandled path.
+  it("wins over the typed path for a header it overrides", () => {
     const unhandled: string[] = [];
     const { config } = makeBuf({ onUnhandled: (h) => unhandled.push(h) });
     const s = server(config);
@@ -164,17 +181,17 @@ describe("on / onCustom collision", () => {
 });
 
 describe("custom channel loopback", () => {
-  it("client.sendCustom reaches server.onCustom, extras intact", () => {
-    // Wire a client session's output straight into a server session's input.
-    const srv = server({ send: () => {} });
-    const cli = client({ send: (wire) => { srv.receive(wire); } });
+  it("client.sendCustom reaches server.onCustom over both wires", () => {
+    for (const jsonMode of [false, true]) {
+      const srv = server({ send: () => {} });
+      const cli = client({ send: (wire) => { srv.receive(wire); } });
+      cli.setJsonMode(jsonMode);
 
-    let got: BBExt | undefined;
-    srv.onCustom<BBExt>("BB", (p) => { got = p; });
+      let got: Ping | undefined;
+      srv.onCustom<Ping>("PING", (p) => { got = p; });
+      cli.sendCustom({ $header: "PING", seq: 9 });
 
-    const msg: BBExt = { $header: "BB", message: "sync", urgent: false };
-    cli.sendCustom(msg);
-
-    expect(got).toEqual({ $header: "BB", message: "sync", urgent: false });
+      expect(got?.seq).toBe(9);
+    }
   });
 });
