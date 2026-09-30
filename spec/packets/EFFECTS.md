@@ -1,0 +1,45 @@
+# MS `effect` — the `fx|folder|sound` field
+
+The `MS` packet's `effect` field (AO2 ≥ 2.8) carries a screen-effect overlay
+request as a single `|`-separated string. It is a plain `string` on both wire
+forms; `|` is not a Fanta metacharacter, so it needs no escaping.
+
+This documents the wire convention AsyncAO implements (mirroring AO2-Client's
+`start_chat_ticking`, `courtroom.cpp:4154-4172`). The schema leaves the field
+opaque (`"type": "string"`) because the `|` sub-format is not expressible in
+JSON Schema; the semantics live here.
+
+## Wire format
+
+The field splits on `|`. Only the first three parts are meaningful; any further
+parts are ignored.
+
+| parts | form | meaning |
+|---|---|---|
+| 1 | `name` | `folder` falls back to the sender's `char.ini [Options] effects` |
+| 2 | `name\|sound` | legacy; `folder` still falls back |
+| 3 | `name\|folder\|sound` | AO2 ≥ 2.8 |
+
+A sender emits the 3-part form `name|folder|sound`, or an empty string for "no
+effect".
+
+## `name` (the effect)
+
+| value | behaviour |
+|---|---|
+| `""` | no effect — does **not** clear a running overlay |
+| `-` / `none` | explicit clear |
+| `realization` | white flash; its sound resolves via `get_custom_realization` (the speaker's `char.ini [Options] realization`, else the theme's `realization`) |
+| `flash` / `realizationflash` | white flash (legacy) |
+| `screenshake` | screenshake (decaying sinusoid) |
+| anything else | named overlay art, resolved from the theme's `effects.ini`; an unresolvable name clears the overlay |
+
+## `folder`
+
+The overlay art's misc folder. Empty → fall back to the sender's `char.ini
+[Options] effects` folder. Only meaningful for the named-overlay case.
+
+## `sound`
+
+The effect sound file to play. The sentinels `""`, `0`, `-`, and `none` mean
+"no sound".

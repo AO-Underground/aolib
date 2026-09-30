@@ -127,7 +127,8 @@
     },
     "effect": {
       "type": "string",
-      "default": ""
+      "default": "",
+      "description": "Screen-effect overlay request in `fx|folder|sound` form — see EFFECTS.md."
     }
   },
   "required": [
