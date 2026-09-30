@@ -113,6 +113,27 @@ var flipFromWire = map[int]Flip{
 	3: FlipHorizontalAndVertical,
 }
 
+// JudgeState is Judge-control visibility carried by the JD packet.
+type JudgeState string
+
+const (
+	JudgeStateByPosition JudgeState = "by_position"
+	JudgeStateHidden     JudgeState = "hidden"
+	JudgeStateShown      JudgeState = "shown"
+)
+
+var judgeStateToWire = map[JudgeState]int{
+	JudgeStateByPosition: -1,
+	JudgeStateHidden:     0,
+	JudgeStateShown:      1,
+}
+
+var judgeStateFromWire = map[int]JudgeState{
+	-1: JudgeStateByPosition,
+	0:  JudgeStateHidden,
+	1:  JudgeStateShown,
+}
+
 // ShoutModifier is Shout / objection selector.
 type ShoutModifier string
 

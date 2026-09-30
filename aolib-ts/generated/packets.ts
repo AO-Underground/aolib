@@ -2,7 +2,7 @@
 
 /* eslint-disable */
 
-import { AreaUpdateType, DeskModifier, EmoteModifier, Flip, ShoutModifier, Side, TextColor } from "./enums";
+import { AreaUpdateType, DeskModifier, EmoteModifier, Flip, JudgeState, ShoutModifier, Side, TextColor } from "./enums";
 import { Offset } from "./types";
 
 import AreaUpdateTypeEnumSchema from "../../spec/types/AreaUpdateType.schema.json";
@@ -12,6 +12,8 @@ import DeskModifierEnumSchema from "../../spec/types/DeskModifier.schema.json";
 import EmoteModifierEnumSchema from "../../spec/types/EmoteModifier.schema.json";
 
 import FlipEnumSchema from "../../spec/types/Flip.schema.json";
+
+import JudgeStateEnumSchema from "../../spec/types/JudgeState.schema.json";
 
 import ShoutModifierEnumSchema from "../../spec/types/ShoutModifier.schema.json";
 
@@ -244,7 +246,7 @@ export { default as askchaaSchema } from "../../spec/packets/schemas/askchaa.sch
 export { default as decryptorSchema } from "../../spec/packets/schemas/decryptor.schema.json";
 
 
-export const enumSchemas = [AreaUpdateTypeEnumSchema, DeskModifierEnumSchema, EmoteModifierEnumSchema, FlipEnumSchema, ShoutModifierEnumSchema, SideEnumSchema, TextColorEnumSchema];
+export const enumSchemas = [AreaUpdateTypeEnumSchema, DeskModifierEnumSchema, EmoteModifierEnumSchema, FlipEnumSchema, JudgeStateEnumSchema, ShoutModifierEnumSchema, SideEnumSchema, TextColorEnumSchema];
 
 export const typeSchemas = [OffsetTypeSchema];
 
@@ -575,11 +577,11 @@ export interface IDToServerInit {
 
 export interface JD extends Packet {
   $header: "JD";
-  state: number;
+  state: JudgeState;
 }
 
 export interface JDInit {
-  state: number;
+  state: JudgeState;
 }
 
 

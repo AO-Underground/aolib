@@ -846,14 +846,14 @@ func ParseIDToServer(body []string) (*IDToServer, error) {
 
 // JD is
 type JD struct {
-	State int `json:"state"`
+	State JudgeState `json:"state"`
 }
 
 func (p *JD) Header() string { return "JD" }
 
 func (p *JD) Args() []string {
 	var args []string
-	args = append(args, itoa(p.State))
+	args = append(args, itoa(judgeStateToWire[p.State]))
 	return args
 }
 
@@ -866,7 +866,7 @@ func ParseJD(body []string) (*JD, error) {
 		return ""
 	}
 	cursor := 0
-	p.State = atoiOrZero(get(cursor))
+	p.State = judgeStateFromWire[atoiOrZero(get(cursor))]
 	cursor++
 	return p, nil
 }

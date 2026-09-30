@@ -60,10 +60,10 @@
     "id": "CTToServer-escape",
     "header": "CT",
     "receiver": "server",
-    "fanta": "CT#Phoenix#Objection! 100\u003cpercent\u003e \u003cnum\u003e1 \u003cand\u003e \u003cdollar\u003ex#%",
+    "fanta": "CT#Phoenix#Objection! 100<percent> <num>1 <and> <dollar>x#%",
     "json": {
       "$header": "CT",
-      "message": "Objection! 100% #1 \u0026 $x",
+      "message": "Objection! 100% #1 & $x",
       "name": "Phoenix"
     }
   },
@@ -71,7 +71,7 @@
     "id": "MSToServer",
     "header": "MS",
     "receiver": "server",
-    "fanta": "MS#1##Phoenix#normal#Take that! \u003cnum\u003e1#def##1#1#0#0#0#1#1#2#Nick#-1#5\u0026-3#0#0#0####0##%",
+    "fanta": "MS#1##Phoenix#normal#Take that! <num>1#def##1#1#0#0#0#1#1#2#Nick#-1#5&-3#0#0#0####0##%",
     "json": {
       "$header": "MS",
       "additive": false,
@@ -140,12 +140,12 @@
     "id": "SC",
     "header": "SC",
     "receiver": "client",
-    "fanta": "SC#A\u003cand\u003eB\u0026prosecutor\u0026e1#Maya\u0026\u0026#%",
+    "fanta": "SC#A<and>B&prosecutor&e1#Maya&&#%",
     "json": {
       "$header": "SC",
       "char_data": [
         {
-          "name": "A\u0026B",
+          "name": "A&B",
           "desc": "prosecutor",
           "evidence": "e1"
         },
@@ -161,7 +161,7 @@
     "id": "LE",
     "header": "LE",
     "receiver": "client",
-    "fanta": "LE#Knife\u0026bloody\u0026knife.png#%",
+    "fanta": "LE#Knife&bloody&knife.png#%",
     "json": {
       "$header": "LE",
       "evidence": [
@@ -177,7 +177,7 @@
     "id": "CI",
     "header": "CI",
     "receiver": "client",
-    "fanta": "CI#0#0\u0026Phoenix#1\u0026Maya#%",
+    "fanta": "CI#0#0&Phoenix#1&Maya#%",
     "json": {
       "$header": "CI",
       "batchIndex": 0,
@@ -197,7 +197,7 @@
     "id": "EM",
     "header": "EM",
     "receiver": "client",
-    "fanta": "EM#0#0\u0026Category#%",
+    "fanta": "EM#0#0&Category#%",
     "json": {
       "$header": "EM",
       "batchIndex": 0,
@@ -207,6 +207,26 @@
           "name": "Category"
         }
       ]
+    }
+  },
+  {
+    "id": "JD-shown",
+    "header": "JD",
+    "receiver": "client",
+    "fanta": "JD#1#%",
+    "json": {
+      "$header": "JD",
+      "state": "shown"
+    }
+  },
+  {
+    "id": "JD-by_position",
+    "header": "JD",
+    "receiver": "client",
+    "fanta": "JD#-1#%",
+    "json": {
+      "$header": "JD",
+      "state": "by_position"
     }
   }
 ]

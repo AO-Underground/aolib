@@ -41,6 +41,14 @@ export const Flip = {
   horizontal_and_vertical: "horizontal_and_vertical",
 } as const;
 
+/** Judge-control visibility carried by the JD packet. */
+export type JudgeState = "by_position" | "hidden" | "shown";
+export const JudgeState = {
+  by_position: "by_position",
+  hidden: "hidden",
+  shown: "shown",
+} as const;
+
 /** Shout / objection selector. */
 export type ShoutModifier = "none" | "hold_it" | "objection" | "take_that" | "custom";
 export const ShoutModifier = {
