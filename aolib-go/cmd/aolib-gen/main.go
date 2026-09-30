@@ -377,6 +377,9 @@ func fieldType(p *Prop, enumNames, typeNames map[string]*Schema) string {
 	case "boolean":
 		return "bool"
 	case "array":
+		if s.Items != nil && s.Items.Ref != "" && enumNames != nil && enumNames[refName(s.Items.Ref)] != nil {
+			return "[]" + refName(s.Items.Ref)
+		}
 		if s.Items != nil && (s.Items.TypeStr == "number" || s.Items.TypeStr == "integer") {
 			return "[]int"
 		}
@@ -384,6 +387,15 @@ func fieldType(p *Prop, enumNames, typeNames map[string]*Schema) string {
 	default:
 		return "string"
 	}
+}
+
+// enumArrayOf returns the enum schema an array property's items $ref, if any.
+func enumArrayOf(p *Prop, enumNames map[string]*Schema) *Schema {
+	s := p.Schema
+	if s.TypeStr == "array" && s.Items != nil && s.Items.Ref != "" && enumNames != nil {
+		return enumNames[refName(s.Items.Ref)]
+	}
+	return nil
 }
 
 // enumFor returns the enum schema a property $refs, if any.
@@ -553,6 +565,13 @@ func emitPackets(packets []*Schema, enumNames, typeNames map[string]*Schema) str
 				switch {
 				case isObjectArray(p.Schema):
 					fmt.Fprintf(&b, "\tfor _, it := range p.%s {\n\t\targs = append(args, it.wireFields())\n\t}\n", pascalCase(p.Name))
+				case enumArrayOf(&p, enumNames) != nil:
+					e := enumArrayOf(&p, enumNames)
+					if len(e.XWireInts) > 0 {
+						fmt.Fprintf(&b, "\tfor _, v := range p.%s {\n\t\targs = append(args, itoa(%sToWire[v]))\n\t}\n", pascalCase(p.Name), lowerFirst(e.Name))
+					} else {
+						fmt.Fprintf(&b, "\tfor _, v := range p.%s {\n\t\targs = append(args, string(v))\n\t}\n", pascalCase(p.Name))
+					}
 				case p.Schema.Items != nil && (p.Schema.Items.TypeStr == "number" || p.Schema.Items.TypeStr == "integer"):
 					fmt.Fprintf(&b, "\targs = append(args, intsToStrs(p.%s)...)\n", pascalCase(p.Name))
 				default:
@@ -587,6 +606,16 @@ func emitPackets(packets []*Schema, enumNames, typeNames map[string]*Schema) str
 				if isObjectArray(p.Schema) {
 					item := itemTypeName(s.Name, p.Name)
 					fmt.Fprintf(&b, "\tfor _, slot := range body[cursor:] {\n\t\tp.%s = append(p.%s, parse%s(slot))\n\t}\n", pascalCase(p.Name), pascalCase(p.Name), item)
+					b.WriteString("\tcursor = len(body)\n")
+					continue
+				}
+				if e := enumArrayOf(&p, enumNames); e != nil {
+					fld := pascalCase(p.Name)
+					if len(e.XWireInts) > 0 {
+						fmt.Fprintf(&b, "\tfor _, slot := range body[cursor:] {\n\t\tp.%s = append(p.%s, %sFromWire[atoiOrZero(slot)])\n\t}\n", fld, fld, lowerFirst(e.Name))
+					} else {
+						fmt.Fprintf(&b, "\tfor _, slot := range body[cursor:] {\n\t\tp.%s = append(p.%s, %s(unescapeFanta(slot)))\n\t}\n", fld, fld, e.Name)
+					}
 					b.WriteString("\tcursor = len(body)\n")
 					continue
 				}

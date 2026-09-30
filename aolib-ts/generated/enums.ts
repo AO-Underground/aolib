@@ -9,6 +9,21 @@ export const AreaUpdateType = {
   locked: "locked",
 } as const;
 
+/** Moderator authentication state (AUTH packet). */
+export type AuthState = "logout" | "failed" | "success";
+export const AuthState = {
+  logout: "logout",
+  failed: "failed",
+  success: "success",
+} as const;
+
+/** Per-character availability in a CharsCheck list. */
+export type CharAvailability = "free" | "taken";
+export const CharAvailability = {
+  free: "free",
+  taken: "taken",
+} as const;
+
 /** Desk visibility behavior. */
 export type DeskModifier = "hidden" | "shown" | "hide_during_preanim" | "show_during_preanim" | "hide_and_center_during_preanim" | "show_during_preanim_then_center";
 export const DeskModifier = {
@@ -49,6 +64,29 @@ export const JudgeState = {
   shown: "shown",
 } as const;
 
+/** Which penalty (health) bar an HP packet updates. */
+export type PenaltyBar = "defense" | "prosecution";
+export const PenaltyBar = {
+  defense: "defense",
+  prosecution: "prosecution",
+} as const;
+
+/** PU packet field selector: which playerlist datum the packet updates. */
+export type PlayerDataType = "ooc_name" | "char_name" | "showname" | "area_id";
+export const PlayerDataType = {
+  ooc_name: "ooc_name",
+  char_name: "char_name",
+  showname: "showname",
+  area_id: "area_id",
+} as const;
+
+/** PR packet update type: add or remove a player from the playerlist. */
+export type PlayerListUpdate = "add" | "remove";
+export const PlayerListUpdate = {
+  add: "add",
+  remove: "remove",
+} as const;
+
 /** Shout / objection selector. */
 export type ShoutModifier = "none" | "hold_it" | "objection" | "take_that" | "custom";
 export const ShoutModifier = {
@@ -85,4 +123,13 @@ export const TextColor = {
   cyan: "cyan",
   grey: "grey",
   rainbow: "rainbow",
+} as const;
+
+/** TI packet command: how to manipulate a timer. */
+export type TimerCommand = "start" | "pause" | "show" | "hide";
+export const TimerCommand = {
+  start: "start",
+  pause: "pause",
+  show: "show",
+  hide: "hide",
 } as const;

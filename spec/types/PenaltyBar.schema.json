@@ -1,0 +1,15 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "/types/PenaltyBar.schema.json",
+  "type": "string",
+  "title": "PenaltyBar",
+  "description": "Which penalty (health) bar an HP packet updates.",
+  "enum": [
+    "defense",
+    "prosecution"
+  ],
+  "x-wire-ints": [
+    1,
+    2
+  ]
+}

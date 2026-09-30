@@ -1,0 +1,22 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "/types/AuthState.schema.json",
+  "type": "string",
+  "title": "AuthState",
+  "description": "Moderator authentication state (AUTH packet).",
+  "enum": [
+    "logout",
+    "failed",
+    "success"
+  ],
+  "x-wire-ints": [
+    -1,
+    0,
+    1
+  ],
+  "x-enum-description": [
+    "logout, hides the guard button",
+    "unsuccessful login attempt",
+    "successful login, shows the guard button"
+  ]
+}

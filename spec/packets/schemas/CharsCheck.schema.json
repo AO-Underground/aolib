@@ -11,7 +11,7 @@
     "taken": {
       "type": "array",
       "items": {
-        "type": "number"
+        "$ref": "../../types/CharAvailability.schema.json"
       }
     }
   },

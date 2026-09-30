@@ -62,14 +62,14 @@ func ParseASS(body []string) (*ASS, error) {
 
 // AUTH is
 type AUTH struct {
-	AuthState int `json:"auth_state"`
+	AuthState AuthState `json:"auth_state"`
 }
 
 func (p *AUTH) Header() string { return "AUTH" }
 
 func (p *AUTH) Args() []string {
 	var args []string
-	args = append(args, itoa(p.AuthState))
+	args = append(args, itoa(authStateToWire[p.AuthState]))
 	return args
 }
 
@@ -82,7 +82,7 @@ func ParseAUTH(body []string) (*AUTH, error) {
 		return ""
 	}
 	cursor := 0
-	p.AuthState = atoiOrZero(get(cursor))
+	p.AuthState = authStateFromWire[atoiOrZero(get(cursor))]
 	cursor++
 	return p, nil
 }
@@ -390,21 +390,25 @@ func ParseCTToServer(body []string) (*CTToServer, error) {
 
 // CharsCheck is
 type CharsCheck struct {
-	Taken []int `json:"taken"`
+	Taken []CharAvailability `json:"taken"`
 }
 
 func (p *CharsCheck) Header() string { return "CharsCheck" }
 
 func (p *CharsCheck) Args() []string {
 	var args []string
-	args = append(args, intsToStrs(p.Taken)...)
+	for _, v := range p.Taken {
+		args = append(args, itoa(charAvailabilityToWire[v]))
+	}
 	return args
 }
 
 func ParseCharsCheck(body []string) (*CharsCheck, error) {
 	p := &CharsCheck{}
 	cursor := 0
-	p.Taken = strsToInts(body[cursor:])
+	for _, slot := range body[cursor:] {
+		p.Taken = append(p.Taken, charAvailabilityFromWire[atoiOrZero(slot)])
+	}
 	cursor = len(body)
 	return p, nil
 }
@@ -718,15 +722,15 @@ func ParseHI(body []string) (*HI, error) {
 
 // HPToClient is
 type HPToClient struct {
-	Bar   int `json:"bar"`
-	Value int `json:"value"`
+	Bar   PenaltyBar `json:"bar"`
+	Value int        `json:"value"`
 }
 
 func (p *HPToClient) Header() string { return "HP" }
 
 func (p *HPToClient) Args() []string {
 	var args []string
-	args = append(args, itoa(p.Bar))
+	args = append(args, itoa(penaltyBarToWire[p.Bar]))
 	args = append(args, itoa(p.Value))
 	return args
 }
@@ -740,7 +744,7 @@ func ParseHPToClient(body []string) (*HPToClient, error) {
 		return ""
 	}
 	cursor := 0
-	p.Bar = atoiOrZero(get(cursor))
+	p.Bar = penaltyBarFromWire[atoiOrZero(get(cursor))]
 	cursor++
 	p.Value = atoiOrZero(get(cursor))
 	cursor++
@@ -749,15 +753,15 @@ func ParseHPToClient(body []string) (*HPToClient, error) {
 
 // HPToServer is
 type HPToServer struct {
-	Bar   int `json:"bar"`
-	Value int `json:"value"`
+	Bar   PenaltyBar `json:"bar"`
+	Value int        `json:"value"`
 }
 
 func (p *HPToServer) Header() string { return "HP" }
 
 func (p *HPToServer) Args() []string {
 	var args []string
-	args = append(args, itoa(p.Bar))
+	args = append(args, itoa(penaltyBarToWire[p.Bar]))
 	args = append(args, itoa(p.Value))
 	return args
 }
@@ -771,7 +775,7 @@ func ParseHPToServer(body []string) (*HPToServer, error) {
 		return ""
 	}
 	cursor := 0
-	p.Bar = atoiOrZero(get(cursor))
+	p.Bar = penaltyBarFromWire[atoiOrZero(get(cursor))]
 	cursor++
 	p.Value = atoiOrZero(get(cursor))
 	cursor++
@@ -1438,8 +1442,8 @@ func ParsePN(body []string) (*PN, error) {
 
 // PR is
 type PR struct {
-	ID   int `json:"id"`
-	Type int `json:"type"`
+	ID   int              `json:"id"`
+	Type PlayerListUpdate `json:"type"`
 }
 
 func (p *PR) Header() string { return "PR" }
@@ -1447,7 +1451,7 @@ func (p *PR) Header() string { return "PR" }
 func (p *PR) Args() []string {
 	var args []string
 	args = append(args, itoa(p.ID))
-	args = append(args, itoa(p.Type))
+	args = append(args, itoa(playerListUpdateToWire[p.Type]))
 	return args
 }
 
@@ -1462,16 +1466,16 @@ func ParsePR(body []string) (*PR, error) {
 	cursor := 0
 	p.ID = atoiOrZero(get(cursor))
 	cursor++
-	p.Type = atoiOrZero(get(cursor))
+	p.Type = playerListUpdateFromWire[atoiOrZero(get(cursor))]
 	cursor++
 	return p, nil
 }
 
 // PU is
 type PU struct {
-	ID   int    `json:"id"`
-	Type int    `json:"type"`
-	Data string `json:"data"`
+	ID   int            `json:"id"`
+	Type PlayerDataType `json:"type"`
+	Data string         `json:"data"`
 }
 
 func (p *PU) Header() string { return "PU" }
@@ -1479,7 +1483,7 @@ func (p *PU) Header() string { return "PU" }
 func (p *PU) Args() []string {
 	var args []string
 	args = append(args, itoa(p.ID))
-	args = append(args, itoa(p.Type))
+	args = append(args, itoa(playerDataTypeToWire[p.Type]))
 	args = append(args, escapeFanta(p.Data))
 	return args
 }
@@ -1495,7 +1499,7 @@ func ParsePU(body []string) (*PU, error) {
 	cursor := 0
 	p.ID = atoiOrZero(get(cursor))
 	cursor++
-	p.Type = atoiOrZero(get(cursor))
+	p.Type = playerDataTypeFromWire[atoiOrZero(get(cursor))]
 	cursor++
 	p.Data = unescapeFanta(get(cursor))
 	cursor++
@@ -1828,9 +1832,9 @@ func ParseSP(body []string) (*SP, error) {
 
 // TI is
 type TI struct {
-	TimerID int `json:"timer_id"`
-	Command int `json:"command"`
-	Time    int `json:"time"`
+	TimerID int          `json:"timer_id"`
+	Command TimerCommand `json:"command"`
+	Time    int          `json:"time"`
 }
 
 func (p *TI) Header() string { return "TI" }
@@ -1838,7 +1842,7 @@ func (p *TI) Header() string { return "TI" }
 func (p *TI) Args() []string {
 	var args []string
 	args = append(args, itoa(p.TimerID))
-	args = append(args, itoa(p.Command))
+	args = append(args, itoa(timerCommandToWire[p.Command]))
 	args = append(args, itoa(p.Time))
 	return args
 }
@@ -1854,7 +1858,7 @@ func ParseTI(body []string) (*TI, error) {
 	cursor := 0
 	p.TimerID = atoiOrZero(get(cursor))
 	cursor++
-	p.Command = atoiOrZero(get(cursor))
+	p.Command = timerCommandFromWire[atoiOrZero(get(cursor))]
 	cursor++
 	p.Time = atoiOrZero(get(cursor))
 	cursor++

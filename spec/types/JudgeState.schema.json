@@ -4,7 +4,19 @@
   "type": "string",
   "title": "JudgeState",
   "description": "Judge-control visibility carried by the JD packet.",
-  "enum": ["by_position", "hidden", "shown"],
-  "x-wire-ints": [-1, 0, 1],
-  "x-enum-description": ["show or hide by the client's seat (shown when jud)", "hide the judge controls", "show the judge controls"]
+  "enum": [
+    "by_position",
+    "hidden",
+    "shown"
+  ],
+  "x-wire-ints": [
+    -1,
+    0,
+    1
+  ],
+  "x-enum-description": [
+    "show or hide by the client's seat (shown when jud)",
+    "hide the judge controls",
+    "show the judge controls"
+  ]
 }

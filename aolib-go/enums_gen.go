@@ -26,6 +26,45 @@ var areaUpdateTypeFromWire = map[int]AreaUpdateType{
 	3: AreaUpdateTypeLocked,
 }
 
+// AuthState is Moderator authentication state (AUTH packet).
+type AuthState string
+
+const (
+	AuthStateLogout  AuthState = "logout"
+	AuthStateFailed  AuthState = "failed"
+	AuthStateSuccess AuthState = "success"
+)
+
+var authStateToWire = map[AuthState]int{
+	AuthStateLogout:  -1,
+	AuthStateFailed:  0,
+	AuthStateSuccess: 1,
+}
+
+var authStateFromWire = map[int]AuthState{
+	-1: AuthStateLogout,
+	0:  AuthStateFailed,
+	1:  AuthStateSuccess,
+}
+
+// CharAvailability is Per-character availability in a CharsCheck list.
+type CharAvailability string
+
+const (
+	CharAvailabilityFree  CharAvailability = "free"
+	CharAvailabilityTaken CharAvailability = "taken"
+)
+
+var charAvailabilityToWire = map[CharAvailability]int{
+	CharAvailabilityFree:  0,
+	CharAvailabilityTaken: -1,
+}
+
+var charAvailabilityFromWire = map[int]CharAvailability{
+	0:  CharAvailabilityFree,
+	-1: CharAvailabilityTaken,
+}
+
 // DeskModifier is Desk visibility behavior.
 type DeskModifier string
 
@@ -134,6 +173,66 @@ var judgeStateFromWire = map[int]JudgeState{
 	1:  JudgeStateShown,
 }
 
+// PenaltyBar is Which penalty (health) bar an HP packet updates.
+type PenaltyBar string
+
+const (
+	PenaltyBarDefense     PenaltyBar = "defense"
+	PenaltyBarProsecution PenaltyBar = "prosecution"
+)
+
+var penaltyBarToWire = map[PenaltyBar]int{
+	PenaltyBarDefense:     1,
+	PenaltyBarProsecution: 2,
+}
+
+var penaltyBarFromWire = map[int]PenaltyBar{
+	1: PenaltyBarDefense,
+	2: PenaltyBarProsecution,
+}
+
+// PlayerDataType is PU packet field selector: which playerlist datum the packet updates.
+type PlayerDataType string
+
+const (
+	PlayerDataTypeOocName  PlayerDataType = "ooc_name"
+	PlayerDataTypeCharName PlayerDataType = "char_name"
+	PlayerDataTypeShowname PlayerDataType = "showname"
+	PlayerDataTypeAreaID   PlayerDataType = "area_id"
+)
+
+var playerDataTypeToWire = map[PlayerDataType]int{
+	PlayerDataTypeOocName:  0,
+	PlayerDataTypeCharName: 1,
+	PlayerDataTypeShowname: 2,
+	PlayerDataTypeAreaID:   3,
+}
+
+var playerDataTypeFromWire = map[int]PlayerDataType{
+	0: PlayerDataTypeOocName,
+	1: PlayerDataTypeCharName,
+	2: PlayerDataTypeShowname,
+	3: PlayerDataTypeAreaID,
+}
+
+// PlayerListUpdate is PR packet update type: add or remove a player from the playerlist.
+type PlayerListUpdate string
+
+const (
+	PlayerListUpdateAdd    PlayerListUpdate = "add"
+	PlayerListUpdateRemove PlayerListUpdate = "remove"
+)
+
+var playerListUpdateToWire = map[PlayerListUpdate]int{
+	PlayerListUpdateAdd:    0,
+	PlayerListUpdateRemove: 1,
+}
+
+var playerListUpdateFromWire = map[int]PlayerListUpdate{
+	0: PlayerListUpdateAdd,
+	1: PlayerListUpdateRemove,
+}
+
 // ShoutModifier is Shout / objection selector.
 type ShoutModifier string
 
@@ -215,4 +314,28 @@ var textColorFromWire = map[int]TextColor{
 	7: TextColorCyan,
 	8: TextColorGrey,
 	9: TextColorRainbow,
+}
+
+// TimerCommand is TI packet command: how to manipulate a timer.
+type TimerCommand string
+
+const (
+	TimerCommandStart TimerCommand = "start"
+	TimerCommandPause TimerCommand = "pause"
+	TimerCommandShow  TimerCommand = "show"
+	TimerCommandHide  TimerCommand = "hide"
+)
+
+var timerCommandToWire = map[TimerCommand]int{
+	TimerCommandStart: 0,
+	TimerCommandPause: 1,
+	TimerCommandShow:  2,
+	TimerCommandHide:  3,
+}
+
+var timerCommandFromWire = map[int]TimerCommand{
+	0: TimerCommandStart,
+	1: TimerCommandPause,
+	2: TimerCommandShow,
+	3: TimerCommandHide,
 }
