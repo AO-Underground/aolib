@@ -48,11 +48,11 @@ file:
   `$ref` it. The kind is read from the schema shape, not the filename.
 
 Each packet schema declares its direction via `x-receiver` and its wire
-header via the `$header` const. The codegen scans `packets/`, reads
+header via the `$header` const. The codegen scans `packets/schemas/`, reads
 those two fields, and builds the direction maps directly, with no sidecar
-registry. Bidirectional packets (e.g. `MC`, `HP`) live as two schemas
-(`MCToServer`/`MCToClient`, `HPToServer`/`HPToClient`) sharing one
-header.
+registry. Bidirectional packets (e.g. `MC`, `HP`) live as two schemas sharing
+one header, named `<Header>ToServer` and `<Header>ToClient` after the receiving
+side (`MCToServer`/`MCToClient`, `HPToServer`/`HPToClient`).
 
 ## Validation and wire format
 
@@ -129,6 +129,9 @@ the way in but no longer does on the way out. Currently set on
   enforce it; the typed shape on the consumer side may or may not expose
   it (TS strips it on decode).
 
-## Formatting
+## Formatting and validation
 
-Keep all JSON files formatted using `./format.sh`.
+Keep all JSON files formatted with `./format.sh`. Run `./validate.sh` to check
+the invariants above: JSON parses, `$ref`s resolve, each packet's `title`
+matches its `$header`, `x-receiver` is set, `enum`/`x-enum-names` lengths agree,
+and every `x-fanta-codec` is documented in `packets/CODECS.md`.
