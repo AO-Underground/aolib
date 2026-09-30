@@ -120,6 +120,7 @@ func (s jsonSchema) isPair(name string) bool {
 var inboundSchemas = map[string]jsonSchema{
 	"HI": {fields: []string{"hdid"}},
 	"ID": {fields: []string{"software", "version"}},
+	"FL": {tailKey: "features"},
 	"CC": {fields: []string{fieldSkip, "char_id", "char_pw"}},
 	"MS": {fields: []string{
 		"desk_modifier", "preanim", "character", "emote", "message",
