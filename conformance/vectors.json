@@ -1,0 +1,212 @@
+[
+  {
+    "id": "HI",
+    "header": "HI",
+    "receiver": "server",
+    "fanta": "HI#abc123#%",
+    "json": {
+      "$header": "HI",
+      "hdid": "abc123"
+    }
+  },
+  {
+    "id": "IDToServer",
+    "header": "ID",
+    "receiver": "server",
+    "fanta": "ID#client-x#2.0#%",
+    "json": {
+      "$header": "ID",
+      "software": "client-x",
+      "version": "2.0"
+    }
+  },
+  {
+    "id": "IDToClient",
+    "header": "ID",
+    "receiver": "client",
+    "fanta": "ID#7#srv#1.0#%",
+    "json": {
+      "$header": "ID",
+      "player_id": 7,
+      "software": "srv",
+      "version": "1.0"
+    }
+  },
+  {
+    "id": "HPToClient",
+    "header": "HP",
+    "receiver": "client",
+    "fanta": "HP#1#5#%",
+    "json": {
+      "$header": "HP",
+      "bar": 1,
+      "value": 5
+    }
+  },
+  {
+    "id": "FL",
+    "header": "FL",
+    "receiver": "client",
+    "fanta": "FL#multi_pair#y_offset#%",
+    "json": {
+      "$header": "FL",
+      "features": [
+        "multi_pair",
+        "y_offset"
+      ]
+    }
+  },
+  {
+    "id": "CTToServer-escape",
+    "header": "CT",
+    "receiver": "server",
+    "fanta": "CT#Phoenix#Objection! 100\u003cpercent\u003e \u003cnum\u003e1 \u003cand\u003e \u003cdollar\u003ex#%",
+    "json": {
+      "$header": "CT",
+      "message": "Objection! 100% #1 \u0026 $x",
+      "name": "Phoenix"
+    }
+  },
+  {
+    "id": "MSToServer",
+    "header": "MS",
+    "receiver": "server",
+    "fanta": "MS#1##Phoenix#normal#Take that! \u003cnum\u003e1#def##1#1#0#0#0#1#1#2#Nick#-1#5\u0026-3#0#0#0####0##%",
+    "json": {
+      "$header": "MS",
+      "additive": false,
+      "char_id": 1,
+      "character": "Phoenix",
+      "desk_modifier": "shown",
+      "effect": "",
+      "emote": "normal",
+      "emote_modifier": "preanim",
+      "evidence_id": 0,
+      "flip": "horizontal",
+      "frames_realization": "",
+      "frames_sfx": "",
+      "frames_shake": "",
+      "message": "Take that! #1",
+      "noninterrupting_preanim": false,
+      "offset": {
+        "x": 5,
+        "y": -3
+      },
+      "paired_charid": -1,
+      "preanim": "",
+      "realization": true,
+      "screenshake": false,
+      "sfx_delay": 0,
+      "sfx_looping": false,
+      "sfx_name": "",
+      "shout_modifier": "none",
+      "showname": "Nick",
+      "side": "def",
+      "text_color": "red"
+    }
+  },
+  {
+    "id": "SM",
+    "header": "SM",
+    "receiver": "client",
+    "fanta": "SM#track1.mp3#track2.mp3#%",
+    "json": {
+      "$header": "SM",
+      "music_list": [
+        {
+          "name": "track1.mp3"
+        },
+        {
+          "name": "track2.mp3"
+        }
+      ]
+    }
+  },
+  {
+    "id": "FM",
+    "header": "FM",
+    "receiver": "client",
+    "fanta": "FM#song.opus#%",
+    "json": {
+      "$header": "FM",
+      "music_list": [
+        {
+          "name": "song.opus"
+        }
+      ]
+    }
+  },
+  {
+    "id": "SC",
+    "header": "SC",
+    "receiver": "client",
+    "fanta": "SC#A\u003cand\u003eB\u0026prosecutor\u0026e1#Maya\u0026\u0026#%",
+    "json": {
+      "$header": "SC",
+      "char_data": [
+        {
+          "name": "A\u0026B",
+          "desc": "prosecutor",
+          "evidence": "e1"
+        },
+        {
+          "name": "Maya",
+          "desc": "",
+          "evidence": ""
+        }
+      ]
+    }
+  },
+  {
+    "id": "LE",
+    "header": "LE",
+    "receiver": "client",
+    "fanta": "LE#Knife\u0026bloody\u0026knife.png#%",
+    "json": {
+      "$header": "LE",
+      "evidence": [
+        {
+          "name": "Knife",
+          "description": "bloody",
+          "image": "knife.png"
+        }
+      ]
+    }
+  },
+  {
+    "id": "CI",
+    "header": "CI",
+    "receiver": "client",
+    "fanta": "CI#0#0\u0026Phoenix#1\u0026Maya#%",
+    "json": {
+      "$header": "CI",
+      "batchIndex": 0,
+      "entries": [
+        {
+          "index": 0,
+          "data": "Phoenix"
+        },
+        {
+          "index": 1,
+          "data": "Maya"
+        }
+      ]
+    }
+  },
+  {
+    "id": "EM",
+    "header": "EM",
+    "receiver": "client",
+    "fanta": "EM#0#0\u0026Category#%",
+    "json": {
+      "$header": "EM",
+      "batchIndex": 0,
+      "entries": [
+        {
+          "index": 0,
+          "name": "Category"
+        }
+      ]
+    }
+  }
+]

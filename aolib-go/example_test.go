@@ -15,7 +15,7 @@ func TestExampleServerClient(t *testing.T) {
 
 	// Client: handle packets the server sends us (typed, IDE-autocompleted).
 	var playerID int
-	var tracks []string
+	var tracks []SMMusicListItem
 	done := false
 	clientSide.OnID(func(p *IDToClient) { playerID = p.PlayerID })
 	clientSide.OnSM(func(p *SM) { tracks = p.MusicList })
@@ -24,7 +24,7 @@ func TestExampleServerClient(t *testing.T) {
 	// Server: answer the client's HI with the join handshake.
 	serverSide.OnHI(func(_ *HI) {
 		serverSide.SendID(&IDToClient{PlayerID: 7, Software: "example-server", Version: "1.0"})
-		serverSide.SendSM(&SM{MusicList: []string{"track1.mp3", "track2.mp3"}})
+		serverSide.SendSM(&SM{MusicList: []SMMusicListItem{{Name: "track1.mp3"}, {Name: "track2.mp3"}}})
 		serverSide.SendDONE(&DONE{})
 	})
 
@@ -33,7 +33,7 @@ func TestExampleServerClient(t *testing.T) {
 	if playerID != 7 {
 		t.Fatalf("player id = %d, want 7", playerID)
 	}
-	if len(tracks) != 2 || tracks[0] != "track1.mp3" {
+	if len(tracks) != 2 || tracks[0].Name != "track1.mp3" {
 		t.Fatalf("tracks = %v", tracks)
 	}
 	if !done {

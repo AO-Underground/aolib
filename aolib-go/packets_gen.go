@@ -266,10 +266,31 @@ func ParseCHECK(body []string) (*CHECK, error) {
 	return p, nil
 }
 
+type CIEntriesItem struct {
+	Index int    `json:"index"`
+	Data  string `json:"data"`
+}
+
+func (it CIEntriesItem) wireFields() string {
+	return joinAmp([]string{itoa(it.Index), escapeFanta(it.Data)})
+}
+
+func parseCIEntriesItem(s string) CIEntriesItem {
+	parts := splitAmp(s, 2)
+	var it CIEntriesItem
+	if len(parts) > 0 {
+		it.Index = atoiOrZero(parts[0])
+	}
+	if len(parts) > 1 {
+		it.Data = unescapeFanta(parts[1])
+	}
+	return it
+}
+
 // CI is
 type CI struct {
-	BatchIndex int      `json:"batchIndex"`
-	Entries    []string `json:"entries"`
+	BatchIndex int             `json:"batchIndex"`
+	Entries    []CIEntriesItem `json:"entries"`
 }
 
 func (p *CI) Header() string { return "CI" }
@@ -277,7 +298,9 @@ func (p *CI) Header() string { return "CI" }
 func (p *CI) Args() []string {
 	var args []string
 	args = append(args, itoa(p.BatchIndex))
-	args = append(args, p.Entries...)
+	for _, it := range p.Entries {
+		args = append(args, it.wireFields())
+	}
 	return args
 }
 
@@ -292,7 +315,9 @@ func ParseCI(body []string) (*CI, error) {
 	cursor := 0
 	p.BatchIndex = atoiOrZero(get(cursor))
 	cursor++
-	p.Entries = body[cursor:]
+	for _, slot := range body[cursor:] {
+		p.Entries = append(p.Entries, parseCIEntriesItem(slot))
+	}
 	cursor = len(body)
 	return p, nil
 }
@@ -524,10 +549,31 @@ func ParseEI(body []string) (*EI, error) {
 	return p, nil
 }
 
+type EMEntriesItem struct {
+	Index int    `json:"index"`
+	Name  string `json:"name"`
+}
+
+func (it EMEntriesItem) wireFields() string {
+	return joinAmp([]string{itoa(it.Index), escapeFanta(it.Name)})
+}
+
+func parseEMEntriesItem(s string) EMEntriesItem {
+	parts := splitAmp(s, 2)
+	var it EMEntriesItem
+	if len(parts) > 0 {
+		it.Index = atoiOrZero(parts[0])
+	}
+	if len(parts) > 1 {
+		it.Name = unescapeFanta(parts[1])
+	}
+	return it
+}
+
 // EM is
 type EM struct {
-	BatchIndex int      `json:"batchIndex"`
-	Entries    []string `json:"entries"`
+	BatchIndex int             `json:"batchIndex"`
+	Entries    []EMEntriesItem `json:"entries"`
 }
 
 func (p *EM) Header() string { return "EM" }
@@ -535,7 +581,9 @@ func (p *EM) Header() string { return "EM" }
 func (p *EM) Args() []string {
 	var args []string
 	args = append(args, itoa(p.BatchIndex))
-	args = append(args, p.Entries...)
+	for _, it := range p.Entries {
+		args = append(args, it.wireFields())
+	}
 	return args
 }
 
@@ -550,7 +598,9 @@ func ParseEM(body []string) (*EM, error) {
 	cursor := 0
 	p.BatchIndex = atoiOrZero(get(cursor))
 	cursor++
-	p.Entries = body[cursor:]
+	for _, slot := range body[cursor:] {
+		p.Entries = append(p.Entries, parseEMEntriesItem(slot))
+	}
 	cursor = len(body)
 	return p, nil
 }
@@ -597,23 +647,44 @@ func ParseFL(body []string) (*FL, error) {
 	return p, nil
 }
 
+type FMMusicListItem struct {
+	Name string `json:"name"`
+}
+
+func (it FMMusicListItem) wireFields() string {
+	return joinAmp([]string{escapeFanta(it.Name)})
+}
+
+func parseFMMusicListItem(s string) FMMusicListItem {
+	parts := splitAmp(s, 1)
+	var it FMMusicListItem
+	if len(parts) > 0 {
+		it.Name = unescapeFanta(parts[0])
+	}
+	return it
+}
+
 // FM is
 type FM struct {
-	MusicList []string `json:"music_list"`
+	MusicList []FMMusicListItem `json:"music_list"`
 }
 
 func (p *FM) Header() string { return "FM" }
 
 func (p *FM) Args() []string {
 	var args []string
-	args = append(args, p.MusicList...)
+	for _, it := range p.MusicList {
+		args = append(args, it.wireFields())
+	}
 	return args
 }
 
 func ParseFM(body []string) (*FM, error) {
 	p := &FM{}
 	cursor := 0
-	p.MusicList = body[cursor:]
+	for _, slot := range body[cursor:] {
+		p.MusicList = append(p.MusicList, parseFMMusicListItem(slot))
+	}
 	cursor = len(body)
 	return p, nil
 }
@@ -854,23 +925,52 @@ func ParseKK(body []string) (*KK, error) {
 	return p, nil
 }
 
+type LEEvidenceItem struct {
+	Name        string `json:"name"`
+	Description string `json:"description"`
+	Image       string `json:"image"`
+}
+
+func (it LEEvidenceItem) wireFields() string {
+	return joinAmp([]string{escapeFanta(it.Name), escapeFanta(it.Description), escapeFanta(it.Image)})
+}
+
+func parseLEEvidenceItem(s string) LEEvidenceItem {
+	parts := splitAmp(s, 3)
+	var it LEEvidenceItem
+	if len(parts) > 0 {
+		it.Name = unescapeFanta(parts[0])
+	}
+	if len(parts) > 1 {
+		it.Description = unescapeFanta(parts[1])
+	}
+	if len(parts) > 2 {
+		it.Image = unescapeFanta(parts[2])
+	}
+	return it
+}
+
 // LE is
 type LE struct {
-	Evidence []string `json:"evidence"`
+	Evidence []LEEvidenceItem `json:"evidence"`
 }
 
 func (p *LE) Header() string { return "LE" }
 
 func (p *LE) Args() []string {
 	var args []string
-	args = append(args, p.Evidence...)
+	for _, it := range p.Evidence {
+		args = append(args, it.wireFields())
+	}
 	return args
 }
 
 func ParseLE(body []string) (*LE, error) {
 	p := &LE{}
 	cursor := 0
-	p.Evidence = body[cursor:]
+	for _, slot := range body[cursor:] {
+		p.Evidence = append(p.Evidence, parseLEEvidenceItem(slot))
+	}
 	cursor = len(body)
 	return p, nil
 }
@@ -1572,23 +1672,52 @@ func ParseRTToServer(body []string) (*RTToServer, error) {
 	return p, nil
 }
 
+type SCCharDataItem struct {
+	Name     string `json:"name"`
+	Desc     string `json:"desc"`
+	Evidence string `json:"evidence"`
+}
+
+func (it SCCharDataItem) wireFields() string {
+	return joinAmp([]string{escapeFanta(it.Name), escapeFanta(it.Desc), escapeFanta(it.Evidence)})
+}
+
+func parseSCCharDataItem(s string) SCCharDataItem {
+	parts := splitAmp(s, 3)
+	var it SCCharDataItem
+	if len(parts) > 0 {
+		it.Name = unescapeFanta(parts[0])
+	}
+	if len(parts) > 1 {
+		it.Desc = unescapeFanta(parts[1])
+	}
+	if len(parts) > 2 {
+		it.Evidence = unescapeFanta(parts[2])
+	}
+	return it
+}
+
 // SC is
 type SC struct {
-	CharData []string `json:"char_data"`
+	CharData []SCCharDataItem `json:"char_data"`
 }
 
 func (p *SC) Header() string { return "SC" }
 
 func (p *SC) Args() []string {
 	var args []string
-	args = append(args, p.CharData...)
+	for _, it := range p.CharData {
+		args = append(args, it.wireFields())
+	}
 	return args
 }
 
 func ParseSC(body []string) (*SC, error) {
 	p := &SC{}
 	cursor := 0
-	p.CharData = body[cursor:]
+	for _, slot := range body[cursor:] {
+		p.CharData = append(p.CharData, parseSCCharDataItem(slot))
+	}
 	cursor = len(body)
 	return p, nil
 }
@@ -1628,23 +1757,44 @@ func ParseSI(body []string) (*SI, error) {
 	return p, nil
 }
 
+type SMMusicListItem struct {
+	Name string `json:"name"`
+}
+
+func (it SMMusicListItem) wireFields() string {
+	return joinAmp([]string{escapeFanta(it.Name)})
+}
+
+func parseSMMusicListItem(s string) SMMusicListItem {
+	parts := splitAmp(s, 1)
+	var it SMMusicListItem
+	if len(parts) > 0 {
+		it.Name = unescapeFanta(parts[0])
+	}
+	return it
+}
+
 // SM is
 type SM struct {
-	MusicList []string `json:"music_list"`
+	MusicList []SMMusicListItem `json:"music_list"`
 }
 
 func (p *SM) Header() string { return "SM" }
 
 func (p *SM) Args() []string {
 	var args []string
-	args = append(args, p.MusicList...)
+	for _, it := range p.MusicList {
+		args = append(args, it.wireFields())
+	}
 	return args
 }
 
 func ParseSM(body []string) (*SM, error) {
 	p := &SM{}
 	cursor := 0
-	p.MusicList = body[cursor:]
+	for _, slot := range body[cursor:] {
+		p.MusicList = append(p.MusicList, parseSMMusicListItem(slot))
+	}
 	cursor = len(body)
 	return p, nil
 }

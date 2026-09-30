@@ -80,6 +80,14 @@ func offsetFromWire(s string) Offset {
 	return o
 }
 
+// joinAmp joins an object item's already-encoded subfields with "&", the
+// generic wire form for an object slot.
+func joinAmp(parts []string) string { return strings.Join(parts, "&") }
+
+// splitAmp splits an object slot into at most n subfields on "&". Escaped
+// ampersands survive as "<and>" and are not separators.
+func splitAmp(s string, n int) []string { return strings.SplitN(s, "&", n) }
+
 // intsToStrs maps an int slice to its decimal string form.
 func intsToStrs(ns []int) []string {
 	out := make([]string, len(ns))
