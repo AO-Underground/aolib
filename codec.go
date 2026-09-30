@@ -43,6 +43,14 @@ func Encode(p Outgoing, mode WireMode) ([]byte, error) {
 //	fl := v.(*aolib.FL)
 //	_ = fl.Features
 func Decode(raw []byte, mode WireMode) (any, error) {
+	_, p, err := decodeWire(raw, mode, true)
+	return p, err
+}
+
+// decodeWire parses raw and returns the packet header plus its typed struct,
+// decoding bidirectionally-ambiguous headers (ID, MC, …) according to the
+// session's side.
+func decodeWire(raw []byte, mode WireMode, serverSide bool) (string, any, error) {
 	var pkt *Packet
 	var err error
 	switch mode {
@@ -54,12 +62,37 @@ func Decode(raw []byte, mode WireMode) (any, error) {
 		// so Decode round-trips Encode's output.
 		pkt, err = NewPacket(strings.TrimSuffix(string(raw), "%"))
 	default:
-		return nil, fmt.Errorf("aolib: unknown wire mode %d", mode)
+		return "", nil, fmt.Errorf("aolib: unknown wire mode %d", mode)
 	}
 	if err != nil {
-		return nil, err
+		return "", nil, err
 	}
-	return decodeBody(pkt.Header, pkt.Body)
+	var p any
+	if serverSide {
+		p, err = decodeBody(pkt.Header, pkt.Body)
+	} else {
+		p, err = decodeClientInbound(pkt.Header, pkt.Body)
+	}
+	return pkt.Header, p, err
+}
+
+// decodeClientInbound dispatches a server→client body (what a client receives).
+func decodeClientInbound(header string, body []string) (any, error) {
+	switch header {
+	case "ID":
+		return ParseIDClient(body)
+	case "SM":
+		return &SM{Items: body}, nil
+	case "DONE":
+		return &DONE{}, nil
+	case "BB":
+		if len(body) < 1 {
+			return nil, fmt.Errorf("BB: missing message")
+		}
+		return &BB{Message: body[0]}, nil
+	default:
+		return &Packet{Header: header, Body: body}, nil
+	}
 }
 
 // frameFanta frames header + positional args into HEADER#a#b#...#%.

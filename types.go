@@ -103,6 +103,10 @@ func ParseHI(body []string) (*HI, error) {
 	return &HI{HDID: body[0]}, nil
 }
 
+// Header/Args make HI an Outgoing packet (client→server). Wire: HI#{hdid}#%.
+func (p *HI) Header() string          { return "HI" }
+func (p *HI) Args() []string          { return []string{p.HDID} }
+
 // IDServer is the client-sent ID handshake packet ("ID (Server)" in the
 // AO2 docs — receiver=Server). Wire: ID#{software}#{version}#%.
 type IDServer struct {
@@ -116,6 +120,22 @@ func ParseIDServer(body []string) (*IDServer, error) {
 		return nil, fmt.Errorf("ID: expected 2 fields, got %d", len(body))
 	}
 	return &IDServer{Software: body[0], Version: body[1]}, nil
+}
+
+// Header/Args make IDServer an Outgoing packet (client→server). Wire: ID#{software}#{version}#%.
+func (p *IDServer) Header() string { return "ID" }
+func (p *IDServer) Args() []string { return []string{p.Software, p.Version} }
+
+// ParseIDClient decodes the server→client ID form: ID#{player_id}#{software}#{version}#%.
+func ParseIDClient(body []string) (*IDClient, error) {
+	if len(body) < 3 {
+		return nil, fmt.Errorf("ID: expected 3 fields, got %d", len(body))
+	}
+	pid, err := strconv.Atoi(strings.TrimSpace(body[0]))
+	if err != nil {
+		return nil, fmt.Errorf("ID: player_id: %w", err)
+	}
+	return &IDClient{PlayerNumber: pid, Software: body[1], Version: body[2]}, nil
 }
 
 // CC selects a character. Wire: CC#0#{char_id}#{char_pw}#%. The leading
@@ -140,6 +160,10 @@ func ParseCC(body []string) (*CC, error) {
 	}
 	return &CC{CharID: id, CharPW: pw}, nil
 }
+
+// Header/Args make CC an Outgoing packet (client→server). Wire: CC#0#{char_id}#{char_pw}#%.
+func (p *CC) Header() string { return "CC" }
+func (p *CC) Args() []string { return []string{"0", itoa(p.CharID), p.CharPW} }
 
 // MCFromClient is the music-or-area-change packet sent by a client.
 // Wire: MC#{songname}#{char_id}#{showname}#{effects}#% (last two optional).
