@@ -1,25 +1,25 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "/packets/schemas/ZZBroadcast.schema.json",
-  "title": "ZZBroadcast",
+  "$id": "/packets/schemas/RTToServer.schema.json",
+  "title": "RT",
   "type": "object",
   "properties": {
     "$header": {
       "type": "string",
-      "const": "ZZ"
+      "const": "RT"
     },
-    "reason": {
+    "animation": {
       "type": "string"
     },
-    "target": {
+    "judgeId": {
       "type": "number",
       "default": -1
     }
   },
   "required": [
     "$header",
-    "reason"
+    "animation"
   ],
   "additionalProperties": false,
-  "x-receiver": "client"
+  "x-receiver": "server"
 }

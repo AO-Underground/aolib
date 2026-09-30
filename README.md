@@ -51,7 +51,7 @@ Each packet schema declares its direction via `x-receiver` and its wire
 header via the `$header` const. The codegen scans `packets/`, reads
 those two fields, and builds the direction maps directly, with no sidecar
 registry. Bidirectional packets (e.g. `MC`, `HP`) live as two schemas
-(`MCRequest`/`MCBroadcast`, `HPRequest`/`HPBroadcast`) sharing one
+(`MCToServer`/`MCToClient`, `HPToServer`/`HPToClient`) sharing one
 header.
 
 ## Validation and wire format
@@ -110,8 +110,8 @@ On a packet schema. Names which side receives this packet on the wire
 flow server->client). Combined with the packet's `$header` const, this
 fully describes routing: codegen builds the c2s/s2c maps from it
 directly. Symmetric bidirectional packets are split into two schemas
-sharing a header (e.g. `HPRequest` with `x-receiver: "server"` and
-`HPBroadcast` with `x-receiver: "client"`).
+sharing a header (e.g. `HPToServer` with `x-receiver: "server"` and
+`HPToClient` with `x-receiver: "client"`).
 
 ### `x-fanta-unescape-amp: true`
 

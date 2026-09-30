@@ -1,24 +1,16 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "/packets/schemas/IDClient.schema.json",
-  "title": "ID",
+  "$id": "/packets/schemas/VS_JOINToServer.schema.json",
+  "title": "VS_JOIN",
   "type": "object",
   "properties": {
     "$header": {
       "type": "string",
-      "const": "ID"
-    },
-    "software": {
-      "type": "string"
-    },
-    "version": {
-      "type": "string"
+      "const": "VS_JOIN"
     }
   },
   "required": [
-    "$header",
-    "software",
-    "version"
+    "$header"
   ],
   "additionalProperties": false,
   "x-receiver": "server"

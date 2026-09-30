@@ -1,28 +1,24 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "/packets/schemas/IDServer.schema.json",
-  "title": "ID",
+  "$id": "/packets/schemas/VS_SPEAKToClient.schema.json",
+  "title": "VS_SPEAK",
   "type": "object",
   "properties": {
     "$header": {
       "type": "string",
-      "const": "ID"
+      "const": "VS_SPEAK"
     },
-    "player_id": {
+    "uid": {
       "type": "number"
     },
-    "software": {
-      "type": "string"
-    },
-    "version": {
-      "type": "string"
+    "on": {
+      "type": "boolean"
     }
   },
   "required": [
     "$header",
-    "player_id",
-    "software",
-    "version"
+    "uid",
+    "on"
   ],
   "additionalProperties": false,
   "x-receiver": "client"

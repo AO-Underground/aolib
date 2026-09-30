@@ -1,24 +1,24 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "/packets/schemas/HPBroadcast.schema.json",
-  "title": "HPBroadcast",
+  "$id": "/packets/schemas/ZZToClient.schema.json",
+  "title": "ZZ",
   "type": "object",
   "properties": {
     "$header": {
       "type": "string",
-      "const": "HP"
+      "const": "ZZ"
     },
-    "bar": {
-      "type": "number"
+    "reason": {
+      "type": "string"
     },
-    "value": {
-      "type": "number"
+    "target": {
+      "type": "number",
+      "default": -1
     }
   },
   "required": [
     "$header",
-    "bar",
-    "value"
+    "reason"
   ],
   "additionalProperties": false,
   "x-receiver": "client"
