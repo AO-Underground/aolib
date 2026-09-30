@@ -1,0 +1,25 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "/packets/schemas/HPRequest.schema.json",
+  "title": "HPRequest",
+  "type": "object",
+  "properties": {
+    "$header": {
+      "type": "string",
+      "const": "HP"
+    },
+    "bar": {
+      "type": "number"
+    },
+    "value": {
+      "type": "number"
+    }
+  },
+  "required": [
+    "$header",
+    "bar",
+    "value"
+  ],
+  "additionalProperties": false,
+  "x-receiver": "server"
+}
