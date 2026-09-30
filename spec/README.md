@@ -13,6 +13,7 @@ validators, and wire encoders/decoders.
 packets/
   schemas/<Name>.schema.json   one per AO packet
   CODECS.md                    wire forms for x-fanta-codec packets
+  EFFECTS.md                   the MS `effect` (`fx|folder|sound`) field
 types/<Name>.schema.json       shared enums and object types, $ref'd from packets
 assets/<Name>.schema.json      character asset-file formats (char.ini)
 ```
