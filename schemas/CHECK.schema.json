@@ -1,0 +1,15 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "CHECK",
+  "type": "object",
+  "properties": {
+    "$header": {
+      "type": "string",
+      "const": "CHECK"
+    }
+  },
+  "required": [
+    "$header"
+  ],
+  "additionalProperties": false
+}

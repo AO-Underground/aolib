@@ -1,0 +1,27 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "PN",
+  "type": "object",
+  "properties": {
+    "$header": {
+      "type": "string",
+      "const": "PN"
+    },
+    "player_count": {
+      "type": "number"
+    },
+    "max_players": {
+      "type": "number"
+    },
+    "server_description": {
+      "type": "string",
+      "default": ""
+    }
+  },
+  "required": [
+    "$header",
+    "player_count",
+    "max_players"
+  ],
+  "additionalProperties": false
+}

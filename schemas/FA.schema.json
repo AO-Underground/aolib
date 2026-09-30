@@ -1,0 +1,22 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "FA",
+  "type": "object",
+  "properties": {
+    "$header": {
+      "type": "string",
+      "const": "FA"
+    },
+    "areas": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "$header",
+    "areas"
+  ],
+  "additionalProperties": false
+}

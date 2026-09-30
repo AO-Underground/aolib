@@ -1,0 +1,27 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "PE",
+  "type": "object",
+  "properties": {
+    "$header": {
+      "type": "string",
+      "const": "PE"
+    },
+    "name": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "image": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "$header",
+    "name",
+    "description",
+    "image"
+  ],
+  "additionalProperties": false
+}

@@ -1,0 +1,27 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "PU",
+  "type": "object",
+  "properties": {
+    "$header": {
+      "type": "string",
+      "const": "PU"
+    },
+    "id": {
+      "type": "number"
+    },
+    "type": {
+      "type": "number"
+    },
+    "data": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "$header",
+    "id",
+    "type",
+    "data"
+  ],
+  "additionalProperties": false
+}

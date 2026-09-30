@@ -1,0 +1,23 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "PR",
+  "type": "object",
+  "properties": {
+    "$header": {
+      "type": "string",
+      "const": "PR"
+    },
+    "id": {
+      "type": "number"
+    },
+    "type": {
+      "type": "number"
+    }
+  },
+  "required": [
+    "$header",
+    "id",
+    "type"
+  ],
+  "additionalProperties": false
+}

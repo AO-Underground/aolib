@@ -1,0 +1,39 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "EM",
+  "type": "object",
+  "properties": {
+    "$header": {
+      "type": "string",
+      "const": "EM"
+    },
+    "batchIndex": {
+      "type": "number"
+    },
+    "entries": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "index": {
+            "type": "number"
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "index",
+          "name"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "$header",
+    "batchIndex",
+    "entries"
+  ],
+  "additionalProperties": false
+}

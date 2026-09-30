@@ -1,0 +1,27 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "SI",
+  "type": "object",
+  "properties": {
+    "$header": {
+      "type": "string",
+      "const": "SI"
+    },
+    "char_count": {
+      "type": "number"
+    },
+    "evi_count": {
+      "type": "number"
+    },
+    "mus_count": {
+      "type": "number"
+    }
+  },
+  "required": [
+    "$header",
+    "char_count",
+    "evi_count",
+    "mus_count"
+  ],
+  "additionalProperties": false
+}

@@ -1,0 +1,19 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "BB",
+  "type": "object",
+  "properties": {
+    "$header": {
+      "type": "string",
+      "const": "BB"
+    },
+    "message": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "$header",
+    "message"
+  ],
+  "additionalProperties": false
+}

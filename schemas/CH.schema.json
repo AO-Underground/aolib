@@ -1,0 +1,19 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "CH",
+  "type": "object",
+  "properties": {
+    "$header": {
+      "type": "string",
+      "const": "CH"
+    },
+    "char_id": {
+      "type": "number"
+    }
+  },
+  "required": [
+    "$header",
+    "char_id"
+  ],
+  "additionalProperties": false
+}

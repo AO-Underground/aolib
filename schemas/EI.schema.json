@@ -1,0 +1,44 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "EI",
+  "type": "object",
+  "properties": {
+    "$header": {
+      "type": "string",
+      "const": "EI"
+    },
+    "id": {
+      "type": "number"
+    },
+    "details": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "image": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "description",
+        "type",
+        "image"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "$header",
+    "id",
+    "details"
+  ],
+  "additionalProperties": false
+}

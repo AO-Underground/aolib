@@ -1,0 +1,23 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "HP",
+  "type": "object",
+  "properties": {
+    "$header": {
+      "type": "string",
+      "const": "HP"
+    },
+    "bar": {
+      "type": "number"
+    },
+    "value": {
+      "type": "number"
+    }
+  },
+  "required": [
+    "$header",
+    "bar",
+    "value"
+  ],
+  "additionalProperties": false
+}

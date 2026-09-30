@@ -1,0 +1,27 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "CC",
+  "type": "object",
+  "properties": {
+    "$header": {
+      "type": "string",
+      "const": "CC"
+    },
+    "player_id": {
+      "type": "number"
+    },
+    "char_id": {
+      "type": "number"
+    },
+    "char_password": {
+      "type": "string",
+      "default": ""
+    }
+  },
+  "required": [
+    "$header",
+    "player_id",
+    "char_id"
+  ],
+  "additionalProperties": false
+}

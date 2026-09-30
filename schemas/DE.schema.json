@@ -1,0 +1,19 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "DE",
+  "type": "object",
+  "properties": {
+    "$header": {
+      "type": "string",
+      "const": "DE"
+    },
+    "id": {
+      "type": "number"
+    }
+  },
+  "required": [
+    "$header",
+    "id"
+  ],
+  "additionalProperties": false
+}

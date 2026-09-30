@@ -1,0 +1,15 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "RC",
+  "type": "object",
+  "properties": {
+    "$header": {
+      "type": "string",
+      "const": "RC"
+    }
+  },
+  "required": [
+    "$header"
+  ],
+  "additionalProperties": false
+}

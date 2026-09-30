@@ -1,0 +1,35 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ARUP",
+  "type": "object",
+  "properties": {
+    "$header": {
+      "type": "string",
+      "const": "ARUP"
+    },
+    "update_type": {
+      "type": "integer",
+      "enum": [
+        0,
+        1,
+        2,
+        3
+      ]
+    },
+    "update_data": {
+      "type": "array",
+      "items": {
+        "type": [
+          "integer",
+          "string"
+        ]
+      }
+    }
+  },
+  "required": [
+    "$header",
+    "update_type",
+    "update_data"
+  ],
+  "additionalProperties": false
+}

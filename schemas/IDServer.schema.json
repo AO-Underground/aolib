@@ -1,0 +1,27 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ID",
+  "type": "object",
+  "properties": {
+    "$header": {
+      "type": "string",
+      "const": "ID"
+    },
+    "player_id": {
+      "type": "number"
+    },
+    "software": {
+      "type": "string"
+    },
+    "version": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "$header",
+    "player_id",
+    "software",
+    "version"
+  ],
+  "additionalProperties": false
+}

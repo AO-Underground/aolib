@@ -1,0 +1,19 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ASS",
+  "type": "object",
+  "properties": {
+    "$header": {
+      "type": "string",
+      "const": "ASS"
+    },
+    "asset_url": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "$header",
+    "asset_url"
+  ],
+  "additionalProperties": false
+}

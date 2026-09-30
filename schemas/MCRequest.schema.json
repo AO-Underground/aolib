@@ -1,0 +1,31 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "MC",
+  "type": "object",
+  "properties": {
+    "$header": {
+      "type": "string",
+      "const": "MC"
+    },
+    "name": {
+      "type": "string"
+    },
+    "char_id": {
+      "type": "number"
+    },
+    "showname": {
+      "type": "string",
+      "default": ""
+    },
+    "effects": {
+      "type": "number",
+      "default": 0
+    }
+  },
+  "required": [
+    "$header",
+    "name",
+    "char_id"
+  ],
+  "additionalProperties": false
+}

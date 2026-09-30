@@ -1,0 +1,19 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "AUTH",
+  "type": "object",
+  "properties": {
+    "$header": {
+      "type": "string",
+      "const": "AUTH"
+    },
+    "auth_state": {
+      "type": "number"
+    }
+  },
+  "required": [
+    "$header",
+    "auth_state"
+  ],
+  "additionalProperties": false
+}

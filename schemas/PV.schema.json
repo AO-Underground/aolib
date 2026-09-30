@@ -1,0 +1,23 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "PV",
+  "type": "object",
+  "properties": {
+    "$header": {
+      "type": "string",
+      "const": "PV"
+    },
+    "player_id": {
+      "type": "number"
+    },
+    "char_id": {
+      "type": "number"
+    }
+  },
+  "required": [
+    "$header",
+    "player_id",
+    "char_id"
+  ],
+  "additionalProperties": false
+}

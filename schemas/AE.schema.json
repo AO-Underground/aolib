@@ -1,0 +1,19 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "AE",
+  "type": "object",
+  "properties": {
+    "$header": {
+      "type": "string",
+      "const": "AE"
+    },
+    "id": {
+      "type": "number"
+    }
+  },
+  "required": [
+    "$header",
+    "id"
+  ],
+  "additionalProperties": false
+}

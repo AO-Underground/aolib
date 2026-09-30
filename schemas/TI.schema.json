@@ -1,0 +1,27 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "TI",
+  "type": "object",
+  "properties": {
+    "$header": {
+      "type": "string",
+      "const": "TI"
+    },
+    "timer_id": {
+      "type": "number"
+    },
+    "command": {
+      "type": "number"
+    },
+    "time": {
+      "type": "number"
+    }
+  },
+  "required": [
+    "$header",
+    "timer_id",
+    "command",
+    "time"
+  ],
+  "additionalProperties": false
+}

@@ -1,0 +1,19 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "JD",
+  "type": "object",
+  "properties": {
+    "$header": {
+      "type": "string",
+      "const": "JD"
+    },
+    "state": {
+      "type": "number"
+    }
+  },
+  "required": [
+    "$header",
+    "state"
+  ],
+  "additionalProperties": false
+}

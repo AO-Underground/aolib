@@ -1,0 +1,185 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "MS",
+  "type": "object",
+  "properties": {
+    "$header": {
+      "type": "string",
+      "const": "MS"
+    },
+    "desk_modifier": {
+      "type": "integer",
+      "enum": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "default": 1
+    },
+    "preanim": {
+      "type": "string",
+      "default": ""
+    },
+    "character": {
+      "type": "string"
+    },
+    "emote": {
+      "type": "string"
+    },
+    "message": {
+      "type": "string"
+    },
+    "side": {
+      "type": "string",
+      "enum": [
+        "def",
+        "pro",
+        "hld",
+        "hlp",
+        "wit",
+        "jud",
+        "jur",
+        "sea"
+      ]
+    },
+    "sfx_name": {
+      "type": "string",
+      "default": ""
+    },
+    "emote_modifier": {
+      "type": "integer",
+      "enum": [
+        0,
+        1,
+        2,
+        5,
+        6
+      ],
+      "default": 0
+    },
+    "char_id": {
+      "type": "number"
+    },
+    "sfx_delay": {
+      "type": "number",
+      "default": 0
+    },
+    "shout_modifier": {
+      "type": "integer",
+      "enum": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "default": 0
+    },
+    "evidence_id": {
+      "type": "number",
+      "default": 0
+    },
+    "flip": {
+      "type": "integer",
+      "enum": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "default": 0
+    },
+    "realization": {
+      "type": "boolean",
+      "default": false
+    },
+    "text_color": {
+      "type": "integer",
+      "enum": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "default": 0
+    },
+    "showname": {
+      "type": "string",
+      "default": ""
+    },
+    "paired_charid": {
+      "type": "number",
+      "default": -1
+    },
+    "offset": {
+      "type": "object",
+      "properties": {
+        "x": {
+          "type": "number"
+        },
+        "y": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "x",
+        "y"
+      ],
+      "additionalProperties": false,
+      "default": {
+        "x": 0,
+        "y": 0
+      }
+    },
+    "noninterrupting_preanim": {
+      "type": "boolean",
+      "default": false
+    },
+    "sfx_looping": {
+      "type": "boolean",
+      "default": false
+    },
+    "screenshake": {
+      "type": "boolean",
+      "default": false
+    },
+    "frames_shake": {
+      "type": "string",
+      "default": ""
+    },
+    "frames_realization": {
+      "type": "string",
+      "default": ""
+    },
+    "frames_sfx": {
+      "type": "string",
+      "default": ""
+    },
+    "additive": {
+      "type": "boolean",
+      "default": false
+    },
+    "effect": {
+      "type": "string",
+      "default": ""
+    }
+  },
+  "required": [
+    "$header",
+    "character",
+    "emote",
+    "message",
+    "side",
+    "char_id"
+  ],
+  "additionalProperties": false
+}
