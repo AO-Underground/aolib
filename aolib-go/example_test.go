@@ -81,4 +81,3 @@ func TestWrongDirectionUnhandled(t *testing.T) {
 
 	// No panic, no handler ran — the unknown-header hook fired instead.
 }
-

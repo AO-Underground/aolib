@@ -10,7 +10,10 @@ import { registerCodec, escapeFanta, unescapeFanta } from "../src/wire";
 
 // TT#{type}#{title}#%
 registerCodec("TT", {
-  encodeFanta: (p) => [escapeFanta(String(p.type ?? "")), escapeFanta(String(p.title ?? ""))],
+  encodeFanta: (p) => {
+    const t = p as { type?: string; title?: string };
+    return [escapeFanta(t.type ?? ""), escapeFanta(t.title ?? "")];
+  },
   decodeFanta: (args) => ({
     $header: "TT",
     type: unescapeFanta(args[0] ?? ""),

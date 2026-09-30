@@ -6,25 +6,24 @@ package aolib
 // calls don't compile and IDEs autocomplete the header.
 
 // ServerSession is the client-side view (remote server): send C2S, on S2C.
-func (s *ServerSession) OnBB(h func(*BB)) { s.s.on("BB", func(p any) { h(p.(*BB)) }) }
-func (s *ServerSession) SendCC(p *CC) { s.s.send(p) }
+func (s *ServerSession) OnBB(h func(*BB))         { s.s.on("BB", func(p any) { h(p.(*BB)) }) }
+func (s *ServerSession) SendCC(p *CC)             { s.s.send(p) }
 func (s *ServerSession) OnCT(h func(*CTToClient)) { s.s.on("CT", func(p any) { h(p.(*CTToClient)) }) }
-func (s *ServerSession) OnDONE(h func(*DONE)) { s.s.on("DONE", func(p any) { h(p.(*DONE)) }) }
-func (s *ServerSession) OnFL(h func(*FL)) { s.s.on("FL", func(p any) { h(p.(*FL)) }) }
-func (s *ServerSession) SendHI(p *HI) { s.s.send(p) }
-func (s *ServerSession) SendHP(p *HPToServer) { s.s.send(p) }
+func (s *ServerSession) OnDONE(h func(*DONE))     { s.s.on("DONE", func(p any) { h(p.(*DONE)) }) }
+func (s *ServerSession) OnFL(h func(*FL))         { s.s.on("FL", func(p any) { h(p.(*FL)) }) }
+func (s *ServerSession) SendHI(p *HI)             { s.s.send(p) }
+func (s *ServerSession) SendHP(p *HPToServer)     { s.s.send(p) }
 func (s *ServerSession) OnHP(h func(*HPToClient)) { s.s.on("HP", func(p any) { h(p.(*HPToClient)) }) }
-func (s *ServerSession) SendID(p *IDToServer) { s.s.send(p) }
+func (s *ServerSession) SendID(p *IDToServer)     { s.s.send(p) }
 func (s *ServerSession) OnID(h func(*IDToClient)) { s.s.on("ID", func(p any) { h(p.(*IDToClient)) }) }
-func (s *ServerSession) SendMA(p *MA) { s.s.send(p) }
-func (s *ServerSession) SendMC(p *MCToServer) { s.s.send(p) }
+func (s *ServerSession) SendMA(p *MA)             { s.s.send(p) }
+func (s *ServerSession) SendMC(p *MCToServer)     { s.s.send(p) }
 func (s *ServerSession) OnMC(h func(*MCToClient)) { s.s.on("MC", func(p any) { h(p.(*MCToClient)) }) }
-func (s *ServerSession) SendMS(p *MSToServer) { s.s.send(p) }
+func (s *ServerSession) SendMS(p *MSToServer)     { s.s.send(p) }
 func (s *ServerSession) OnMS(h func(*MSToClient)) { s.s.on("MS", func(p any) { h(p.(*MSToClient)) }) }
-func (s *ServerSession) OnPV(h func(*PV)) { s.s.on("PV", func(p any) { h(p.(*PV)) }) }
-func (s *ServerSession) SendRT(p *RTToServer) { s.s.send(p) }
+func (s *ServerSession) OnPV(h func(*PV))         { s.s.on("PV", func(p any) { h(p.(*PV)) }) }
+func (s *ServerSession) SendRT(p *RTToServer)     { s.s.send(p) }
 func (s *ServerSession) OnRT(h func(*RTToClient)) { s.s.on("RT", func(p any) { h(p.(*RTToClient)) }) }
-func (s *ServerSession) OnSM(h func(*SM)) { s.s.on("SM", func(p any) { h(p.(*SM)) }) }
-func (s *ServerSession) SendZZ(p *ZZToServer) { s.s.send(p) }
+func (s *ServerSession) OnSM(h func(*SM))         { s.s.on("SM", func(p any) { h(p.(*SM)) }) }
+func (s *ServerSession) SendZZ(p *ZZToServer)     { s.s.send(p) }
 func (s *ServerSession) OnZZ(h func(*ZZToClient)) { s.s.on("ZZ", func(p any) { h(p.(*ZZToClient)) }) }
-

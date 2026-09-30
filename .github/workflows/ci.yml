@@ -1,0 +1,75 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  spec:
+    name: spec
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate schemas
+        working-directory: spec
+        run: ./validate.sh
+      - name: Check schema formatting
+        working-directory: spec
+        run: |
+          ./format.sh >/dev/null
+          git diff --exit-code || { echo "::error::spec JSON is not formatted; run spec/format.sh"; exit 1; }
+
+  go:
+    name: aolib-go
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: aolib-go
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: stable
+      - name: gofmt
+        run: |
+          unformatted=$(gofmt -l .)
+          if [ -n "$unformatted" ]; then
+            echo "::error::gofmt needed on:"; echo "$unformatted"; exit 1
+          fi
+      - name: go vet
+        run: go vet ./...
+      - name: build
+        run: go build ./...
+      - name: test
+        run: go test ./...
+      - name: codegen matches spec
+        run: |
+          go run ./cmd/aolib-gen -meta ../spec -out .
+          gofmt -w ./*_gen.go
+          git diff --exit-code || { echo "::error::generated Go is out of date; run cmd/aolib-gen against ../spec"; exit 1; }
+
+  ts:
+    name: aolib-ts
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: aolib-ts
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - name: install
+        run: bun install --frozen-lockfile
+      - name: typecheck
+        run: bun run typecheck
+      - name: lint
+        run: bun run lint
+      - name: test
+        run: bun test
+      - name: codegen matches spec
+        run: |
+          bun run codegen
+          git diff --exit-code || { echo "::error::generated TS is out of date; run bun codegen against ../spec"; exit 1; }

@@ -38,13 +38,13 @@ interface Ping extends Packet {
 // forms; for JSON the object round-trips through stringify/parse, and the
 // FantaCode form is defined explicitly.
 registerCodec("BB", {
-  encodeFanta: (p) => [escapeFanta(String(p.message ?? ""))],
+  encodeFanta: (p) => [escapeFanta((p as { message?: string }).message ?? "")],
   decodeFanta: (args) => ({ $header: "BB", message: unescapeFanta(args[0] ?? "") }),
   encodeJson: (p) => JSON.stringify(p),
   decodeJson: (raw) => JSON.parse(raw) as Record<string, unknown>,
 });
 registerCodec("PING", {
-  encodeFanta: (p) => [String(p.seq ?? 0)],
+  encodeFanta: (p) => [String((p as { seq?: number }).seq ?? 0)],
   decodeFanta: (args) => ({ $header: "PING", seq: Number(args[0] ?? 0) }),
   encodeJson: (p) => JSON.stringify(p),
   decodeJson: (raw) => JSON.parse(raw) as Record<string, unknown>,
