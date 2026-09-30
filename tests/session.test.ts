@@ -6,6 +6,7 @@ import {
   type ServerSession,
   type ClientSession,
 } from "../src/session";
+import { Side } from "../src/enums";
 
 // ---------------------------------------------------------------------
 // Tiny config-builder. Each test wires up its own outbound buffer + hooks.
@@ -480,74 +481,152 @@ describe("defaults: missing hooks fall back to console (no throw)", () => {
 // ---------------------------------------------------------------------
 
 describe("loopback: a JSON client and a fanta client share one server", () => {
-  // The server: assigns a player id per connection, answers HI with ID.
-  let nextPlayerId = 0;
-  const serve = (cs: ClientSession): void => {
-    cs.on.HI(() => {
-      cs.send.ID({
-        player_id: nextPlayerId++,
-        software: "aolib-test",
-        version: "1",
-      });
-    });
-  };
+  // A fresh server per test: it keeps a room of connected client sessions,
+  // answers HI with ID, and fans MS/MC out to every client in the room.
+  function makeServer() {
+    let nextPlayerId = 0;
+    const room: ClientSession[] = [];
 
-  // Wire one client<->server pair: each side's `send` feeds the other's
-  // `receive`. Returns the client's session (to drive) and the wire the
-  // server sent back to that client (to inspect its encoding).
-  function connect(json: boolean): { srv: ServerSession; responses: string[] } {
-    const responses: string[] = [];
-    const link = { toServer(_: string): void {}, toClient(_: string): void {} };
-    const srv = server({
-      send: (w) => {
-        link.toServer(w);
-      },
-    });
-    const cs = client({
-      send: (w) => {
-        responses.push(w);
-        link.toClient(w);
-      },
-    });
-    link.toServer = (w) => {
-      cs.receive(w);
-    };
-    link.toClient = (w) => {
-      srv.receive(w);
-    };
-    if (json) {
-      srv.setJsonMode(true);
-      cs.setJsonMode(true);
+    // Wire one client<->server pair: each side's `send` feeds the other's
+    // `receive`. Returns the client's session (to drive) and the wire the
+    // server sent back to that client (to inspect its encoding).
+    function connect(json: boolean): { srv: ServerSession; responses: string[] } {
+      const responses: string[] = [];
+      const link = { toServer(_: string): void {}, toClient(_: string): void {} };
+      const srv = server({
+        send: (w) => {
+          link.toServer(w);
+        },
+      });
+      const cs = client({
+        send: (w) => {
+          responses.push(w);
+          link.toClient(w);
+        },
+      });
+      link.toServer = (w) => {
+        cs.receive(w);
+      };
+      link.toClient = (w) => {
+        srv.receive(w);
+      };
+      if (json) {
+        srv.setJsonMode(true);
+        cs.setJsonMode(true);
+      }
+
+      room.push(cs);
+      cs.on.HI(() => {
+        cs.send.ID({
+          player_id: nextPlayerId++,
+          software: "aolib-test",
+          version: "1",
+        });
+      });
+      cs.on.MS((req) => {
+        for (const peer of room) {
+          peer.send.MS({
+            character: req.character,
+            emote: req.emote,
+            message: req.message,
+            side: req.side,
+            char_id: req.char_id,
+            showname: req.showname,
+          });
+        }
+      });
+      cs.on.MC((req) => {
+        for (const peer of room) {
+          peer.send.MC({ name: req.name, char_id: req.char_id });
+        }
+      });
+      return { srv, responses };
     }
-    serve(cs);
-    return { srv, responses };
+
+    return { connect };
   }
 
-  it("delivers typed responses to each client in its own encoding", () => {
+  it("delivers typed ID + MS responses to each client in its own encoding", () => {
+    const { connect } = makeServer();
     const a = connect(true); // JSON on both ends
     const b = connect(false); // fanta (the default)
 
-    // Each client records its typed ID response.
     let idA: { player_id: number; software: string; version: string } | undefined;
     let idB: typeof idA;
+    const heardA: { character: string; message: string; side: string; char_id: number }[] = [];
+    const heardB: typeof heardA = [];
     a.srv.on.ID((p) => {
       idA = p;
     });
     b.srv.on.ID((p) => {
       idB = p;
     });
+    a.srv.on.MS((p) => {
+      heardA.push(p);
+    });
+    b.srv.on.MS((p) => {
+      heardB.push(p);
+    });
 
     // Both clients join the same server.
     a.srv.send.HI({ hdid: "json-client" });
     b.srv.send.HI({ hdid: "fanta-client" });
 
-    // Proper, fully typed responses, each with its own assigned id.
+    // Proper, fully typed handshake responses, each with its own id.
     expect(idA).toEqual({ player_id: 0, software: "aolib-test", version: "1" });
     expect(idB).toEqual({ player_id: 1, software: "aolib-test", version: "1" });
 
-    // And each connection carried its own wire encoding.
-    expect(a.responses).toHaveLength(1);
-    expect(a.responses[0]?.startsWith("{")).toBe(true); // JSON envelope
-    expect(b.responses).toEqual(["ID#1#aolib-test#1#%"]); // fanta positional
+    // The JSON client speaks; the server fans the MS out to both clients.
+    a.srv.send.MS({
+      character: "Phoenix",
+      emote: "point",
+      message: "Objection!",
+      side: Side.defense,
+      char_id: 0,
+    });
+
+    // Both clients received the typed MSBroadcast, same content.
+    const said = { character: "Phoenix", message: "Objection!", side: Side.defense, char_id: 0 };
+    expect(heardA).toHaveLength(1);
+    expect(heardB).toHaveLength(1);
+    expect(heardA[0]).toMatchObject(said);
+    expect(heardB[0]).toMatchObject(said);
+
+    // Each connection carried its own wire encoding across both packets.
+    expect(a.responses).toHaveLength(2); // ID, MS
+    expect(a.responses.every((w) => w.startsWith("{"))).toBe(true); // JSON
+    expect(b.responses).toHaveLength(2);
+    expect(b.responses[0]?.startsWith("ID#")).toBe(true); // fanta
+    expect(b.responses[1]?.startsWith("MS#")).toBe(true);
+  });
+
+  it("routes a bidirectional MC broadcast to both clients", () => {
+    const { connect } = makeServer();
+    const a = connect(true); // JSON
+    const b = connect(false); // fanta
+
+    const musicA: { name: string; char_id: number }[] = [];
+    const musicB: typeof musicA = [];
+    a.srv.on.MC((p) => {
+      musicA.push(p);
+    });
+    b.srv.on.MC((p) => {
+      musicB.push(p);
+    });
+
+    // (Both clients are in the room from connect(); no handshake needed for MC.)
+    // The fanta client changes the music (MC request); the server
+    // broadcasts an MC (broadcast shape) to everyone.
+    b.srv.send.MC({ name: "cross-examination.mp3", char_id: 1 });
+
+    const track = { name: "cross-examination.mp3", char_id: 1 };
+    expect(musicA).toHaveLength(1);
+    expect(musicB).toHaveLength(1);
+    expect(musicA[0]).toMatchObject(track);
+    expect(musicB[0]).toMatchObject(track);
+
+    // The broadcast reached the JSON client as JSON, the fanta client as fanta.
+    expect(a.responses.at(-1)?.startsWith("{")).toBe(true);
+    expect(b.responses.at(-1)?.startsWith("MC#")).toBe(true);
   });
 });
