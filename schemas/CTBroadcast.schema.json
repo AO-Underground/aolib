@@ -1,5 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "/packets/CTBroadcast.schema.json",
   "title": "CT",
   "type": "object",
   "properties": {
@@ -23,5 +24,6 @@
     "name",
     "message"
   ],
-  "additionalProperties": false
+  "additionalProperties": false,
+  "x-receiver": "client"
 }

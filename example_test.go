@@ -17,14 +17,14 @@ func TestExampleServerClient(t *testing.T) {
 	var playerID int
 	var tracks []string
 	done := false
-	clientSide.OnID(func(p *IDClient) { playerID = p.PlayerNumber })
-	clientSide.OnSM(func(p *SM) { tracks = p.Items })
+	clientSide.OnID(func(p *IDToClient) { playerID = p.PlayerID })
+	clientSide.OnSM(func(p *SM) { tracks = p.MusicList })
 	clientSide.OnDONE(func(_ *DONE) { done = true })
 
 	// Server: answer the client's HI with the join handshake.
 	serverSide.OnHI(func(_ *HI) {
-		serverSide.SendID(&IDClient{PlayerNumber: 7, Software: "example-server", Version: "1.0"})
-		serverSide.SendSM(&SM{Items: []string{"track1.mp3", "track2.mp3"}})
+		serverSide.SendID(&IDToClient{PlayerID: 7, Software: "example-server", Version: "1.0"})
+		serverSide.SendSM(&SM{MusicList: []string{"track1.mp3", "track2.mp3"}})
 		serverSide.SendDONE(&DONE{})
 	})
 

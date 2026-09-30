@@ -1,5 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "/packets/VS_JOINBroadcast.schema.json",
   "title": "VS_JOIN",
   "type": "object",
   "properties": {
@@ -15,5 +16,6 @@
     "$header",
     "uid"
   ],
-  "additionalProperties": false
+  "additionalProperties": false,
+  "x-receiver": "client"
 }

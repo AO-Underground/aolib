@@ -1,14 +1,24 @@
 {
+  "$id": "/packets/MSRequest.schema.json",
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "MS",
-  "type": "object",
+  "additionalProperties": false,
   "properties": {
     "$header": {
-      "type": "string",
-      "const": "MS"
+      "const": "MS",
+      "type": "string"
+    },
+    "additive": {
+      "default": false,
+      "type": "boolean"
+    },
+    "char_id": {
+      "type": "number"
+    },
+    "character": {
+      "type": "string"
     },
     "desk_modifier": {
-      "type": "integer",
+      "default": 1,
       "enum": [
         0,
         1,
@@ -17,87 +27,17 @@
         4,
         5
       ],
-      "default": 1
+      "type": "integer"
     },
-    "preanim": {
-      "type": "string",
-      "default": ""
-    },
-    "character": {
+    "effect": {
+      "default": "",
       "type": "string"
     },
     "emote": {
       "type": "string"
     },
-    "message": {
-      "type": "string"
-    },
-    "side": {
-      "type": "string",
-      "enum": [
-        "def",
-        "pro",
-        "hld",
-        "hlp",
-        "wit",
-        "jud",
-        "jur",
-        "sea"
-      ]
-    },
-    "sfx_name": {
-      "type": "string",
-      "default": ""
-    },
     "emote_modifier": {
-      "type": "integer",
-      "enum": [
-        0,
-        1,
-        2,
-        5,
-        6
-      ],
-      "default": 0
-    },
-    "char_id": {
-      "type": "number"
-    },
-    "sfx_delay": {
-      "type": "number",
-      "default": 0
-    },
-    "shout_modifier": {
-      "type": "integer",
-      "enum": [
-        0,
-        1,
-        2,
-        3,
-        4
-      ],
-      "default": 0
-    },
-    "evidence_id": {
-      "type": "number",
-      "default": 0
-    },
-    "flip": {
-      "type": "integer",
-      "enum": [
-        0,
-        1,
-        2,
-        3
-      ],
-      "default": 0
-    },
-    "realization": {
-      "type": "boolean",
-      "default": false
-    },
-    "text_color": {
-      "type": "integer",
+      "default": 0,
       "enum": [
         0,
         1,
@@ -105,23 +45,49 @@
         3,
         4,
         5,
-        6,
-        7,
-        8,
-        9
+        6
       ],
-      "default": 0
+      "type": "integer"
     },
-    "showname": {
-      "type": "string",
-      "default": ""
+    "evidence_id": {
+      "default": 0,
+      "type": "number"
     },
-    "paired_charid": {
-      "type": "number",
-      "default": -1
+    "flip": {
+      "default": 0,
+      "enum": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "type": "integer"
+    },
+    "frames_realization": {
+      "default": "",
+      "type": "string"
+    },
+    "frames_sfx": {
+      "default": "",
+      "type": "string"
+    },
+    "frames_shake": {
+      "default": "",
+      "type": "string"
+    },
+    "message": {
+      "type": "string"
+    },
+    "noninterrupting_preanim": {
+      "default": false,
+      "type": "boolean"
     },
     "offset": {
-      "type": "object",
+      "additionalProperties": false,
+      "default": {
+        "x": 0,
+        "y": 0
+      },
       "properties": {
         "x": {
           "type": "number"
@@ -134,43 +100,79 @@
         "x",
         "y"
       ],
-      "additionalProperties": false,
-      "default": {
-        "x": 0,
-        "y": 0
-      }
+      "type": "object"
     },
-    "noninterrupting_preanim": {
-      "type": "boolean",
-      "default": false
+    "paired_charid": {
+      "default": -1,
+      "type": "number"
     },
-    "sfx_looping": {
-      "type": "boolean",
-      "default": false
+    "preanim": {
+      "default": "",
+      "type": "string"
+    },
+    "realization": {
+      "default": false,
+      "type": "boolean"
     },
     "screenshake": {
-      "type": "boolean",
-      "default": false
+      "default": false,
+      "type": "boolean"
     },
-    "frames_shake": {
-      "type": "string",
-      "default": ""
+    "sfx_delay": {
+      "default": 0,
+      "type": "number"
     },
-    "frames_realization": {
-      "type": "string",
-      "default": ""
+    "sfx_looping": {
+      "default": false,
+      "type": "boolean"
     },
-    "frames_sfx": {
-      "type": "string",
-      "default": ""
+    "sfx_name": {
+      "default": "",
+      "type": "string"
     },
-    "additive": {
-      "type": "boolean",
-      "default": false
+    "shout_modifier": {
+      "default": 0,
+      "enum": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "type": "integer"
     },
-    "effect": {
-      "type": "string",
-      "default": ""
+    "showname": {
+      "default": "",
+      "type": "string"
+    },
+    "side": {
+      "enum": [
+        "def",
+        "pro",
+        "hld",
+        "hlp",
+        "wit",
+        "jud",
+        "jur",
+        "sea"
+      ],
+      "type": "string"
+    },
+    "text_color": {
+      "default": 0,
+      "enum": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "type": "integer"
     }
   },
   "required": [
@@ -181,5 +183,7 @@
     "side",
     "char_id"
   ],
-  "additionalProperties": false
+  "title": "MS",
+  "type": "object",
+  "x-receiver": "server"
 }

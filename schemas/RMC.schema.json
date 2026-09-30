@@ -1,5 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "/packets/RMC.schema.json",
   "title": "RMC",
   "type": "object",
   "properties": {
@@ -15,5 +16,6 @@
     "$header",
     "toTime"
   ],
-  "additionalProperties": false
+  "additionalProperties": false,
+  "x-receiver": "client"
 }

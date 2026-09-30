@@ -1,6 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "HP",
+  "$id": "/packets/HPRequest.schema.json",
+  "title": "HPRequest",
   "type": "object",
   "properties": {
     "$header": {
@@ -19,5 +20,6 @@
     "bar",
     "value"
   ],
-  "additionalProperties": false
+  "additionalProperties": false,
+  "x-receiver": "server"
 }

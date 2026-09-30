@@ -1,5 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "/packets/decryptor.schema.json",
   "title": "decryptor",
   "type": "object",
   "properties": {
@@ -15,5 +16,6 @@
     "$header",
     "value"
   ],
-  "additionalProperties": false
+  "additionalProperties": false,
+  "x-receiver": "client"
 }

@@ -1,5 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "/packets/CI.schema.json",
   "title": "CI",
   "type": "object",
   "properties": {
@@ -35,5 +36,6 @@
     "batchIndex",
     "entries"
   ],
-  "additionalProperties": false
+  "additionalProperties": false,
+  "x-receiver": "client"
 }

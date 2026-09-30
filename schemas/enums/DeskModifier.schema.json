@@ -1,0 +1,23 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "/enums/DeskModifier.schema.json",
+  "title": "DeskModifier",
+  "description": "Desk visibility behavior.",
+  "type": "integer",
+  "enum": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "x-enum-names": [
+    "HIDDEN",
+    "SHOWN",
+    "HIDE_DURING_PREANIM",
+    "SHOW_DURING_PREANIM",
+    "HIDE_AND_CENTER_DURING_PREANIM",
+    "SHOW_DURING_PREANIM_THEN_CENTER"
+  ]
+}

@@ -1,5 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "/packets/DE.schema.json",
   "title": "DE",
   "type": "object",
   "properties": {
@@ -15,5 +16,6 @@
     "$header",
     "id"
   ],
-  "additionalProperties": false
+  "additionalProperties": false,
+  "x-receiver": "server"
 }

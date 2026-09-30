@@ -1,5 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "/packets/IDClient.schema.json",
   "title": "ID",
   "type": "object",
   "properties": {
@@ -19,5 +20,6 @@
     "software",
     "version"
   ],
-  "additionalProperties": false
+  "additionalProperties": false,
+  "x-receiver": "server"
 }

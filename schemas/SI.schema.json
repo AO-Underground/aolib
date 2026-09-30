@@ -1,5 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "/packets/SI.schema.json",
   "title": "SI",
   "type": "object",
   "properties": {
@@ -23,5 +24,6 @@
     "evi_count",
     "mus_count"
   ],
-  "additionalProperties": false
+  "additionalProperties": false,
+  "x-receiver": "client"
 }

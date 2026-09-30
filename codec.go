@@ -36,8 +36,8 @@ func Encode(p Outgoing, mode WireMode) ([]byte, error) {
 }
 
 // Decode parses a raw packet into its typed struct, dispatching on the header.
-// The concrete return type depends on the packet header (e.g. *FL, *MSPacket,
-// *HPPacket); unrecognised headers fall back to the generic *Packet.
+// The concrete return type depends on the packet header (e.g. *FL, *MSToClient,
+// *HPToServer); unrecognised headers fall back to the generic *Packet.
 //
 //	v, _ := aolib.Decode([]byte("FL#multi_pair#%"), aolib.WireFanta)
 //	fl := v.(*aolib.FL)

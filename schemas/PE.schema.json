@@ -1,5 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "/packets/PE.schema.json",
   "title": "PE",
   "type": "object",
   "properties": {
@@ -23,5 +24,6 @@
     "description",
     "image"
   ],
-  "additionalProperties": false
+  "additionalProperties": false,
+  "x-receiver": "server"
 }

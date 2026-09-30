@@ -19,8 +19,9 @@ import "github.com/SyntaxNyah/aolib-go"
 - `aolib.NewPacket(raw)` / `Packet.String()` — FantaCode framing.
 - `aolib.ParseJSON(raw)` / `aolib.BuildJSON(header, args)` /
   `aolib.BuildJSONPacket(packet)` — JSON wire.
-- `aolib.MSPacket` — the in-character (`MS`) packet, with
-  `ParseMSClient` / `ParseMSServer` / `ServerArgs` / `JSONExtra`.
+- `aolib.MSToServer` / `aolib.MSToClient` — the in-character (`MS`) packet,
+  split by direction, with `ParseMSToServer` / `ParseMSToClient` / `Args` /
+  `JSONExtra`.
 - `aolib.AdditionalChar` / `aolib.PairOffset` — multi-pair partners carried in
   the JSON-only `additional_chars` list.
 - `aolib.LoadSchemas()` — enable `ValidateMSRequest` / `ValidateMSBroadcast`.
@@ -54,14 +55,14 @@ client := aolib.NewClient(aolib.SessionConfig{ Send: func(wire []byte) { conn.Wr
 client.SendDecryptor(&aolib.Decryptor{}) // advertise JSON support
 
 client.OnHI(func(_ *aolib.HI) {
-    client.SendID(&aolib.IDClient{PlayerNumber: 1, Software: "my-server", Version: "1.0"})
+    client.SendID(&aolib.IDToClient{PlayerNumber: 1, Software: "my-server", Version: "1.0"})
     client.SendSM(&aolib.SM{Items: []string{"track1.mp3"}})
     client.SendDONE(&aolib.DONE{})
 })
 
 // Client side — one session representing the remote server.
 server := aolib.NewServer(aolib.SessionConfig{ Send: func(wire []byte) { ws.Write(wire) } })
-server.OnID(func(p *aolib.IDClient) { playerID = p.PlayerNumber })
+server.OnID(func(p *aolib.IDToClient) { playerID = p.PlayerNumber })
 server.SendHI(&aolib.HI{HDID: "abc123"})
 ```
 
@@ -72,9 +73,9 @@ schemas by `cmd/aolib-gen`, so the schema stays the single source of truth.
 ## Example
 
 ```go
-ms := &aolib.MSPacket{
+ms := &aolib.MSToClient{
     Character: "Phoenix", Emote: "normal", Message: "Objection!",
-    Side: "def", CharID: "0",
+    Side: aolib.SideDefense, CharID: "0",
     AdditionalChars: []aolib.AdditionalChar{
         {CharID: 5, Name: "Maya", Emote: "normal", Offset: aolib.PairOffset{X: 10, Y: 0}, Flip: 0},
     },

@@ -1,5 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "/packets/ARUP.schema.json",
   "title": "ARUP",
   "type": "object",
   "properties": {
@@ -8,13 +9,7 @@
       "const": "ARUP"
     },
     "update_type": {
-      "type": "integer",
-      "enum": [
-        0,
-        1,
-        2,
-        3
-      ]
+      "$ref": "../enums/AreaUpdateType.schema.json"
     },
     "update_data": {
       "type": "array",
@@ -31,5 +26,7 @@
     "update_type",
     "update_data"
   ],
-  "additionalProperties": false
+  "additionalProperties": false,
+  "x-fanta-codec": "ARUP",
+  "x-receiver": "client"
 }

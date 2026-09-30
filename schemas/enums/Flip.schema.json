@@ -1,0 +1,19 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "/enums/Flip.schema.json",
+  "title": "Flip",
+  "description": "Sprite mirroring.",
+  "type": "integer",
+  "enum": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "x-enum-names": [
+    "NONE",
+    "HORIZONTAL",
+    "VERTICAL",
+    "HORIZONTAL_AND_VERTICAL"
+  ]
+}

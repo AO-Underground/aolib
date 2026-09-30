@@ -1,5 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "/packets/VS_CAPS.schema.json",
   "title": "VS_CAPS",
   "type": "object",
   "properties": {
@@ -39,5 +40,6 @@
     "frameMs",
     "maxFrameBytes"
   ],
-  "additionalProperties": false
+  "additionalProperties": false,
+  "x-receiver": "client"
 }

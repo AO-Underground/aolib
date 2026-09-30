@@ -1,5 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "/packets/HI.schema.json",
   "title": "HI",
   "type": "object",
   "properties": {
@@ -15,5 +16,6 @@
     "$header",
     "hdid"
   ],
-  "additionalProperties": false
+  "additionalProperties": false,
+  "x-receiver": "server"
 }

@@ -1,5 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "/packets/VS_LEAVERequest.schema.json",
   "title": "VS_LEAVE",
   "type": "object",
   "properties": {
@@ -11,5 +12,6 @@
   "required": [
     "$header"
   ],
-  "additionalProperties": false
+  "additionalProperties": false,
+  "x-receiver": "server"
 }

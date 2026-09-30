@@ -22,8 +22,8 @@ func main() {
 
 	// Handlers — what the server does with packets FROM this client.
 	client.OnHI(func(_ *aolib.HI) {
-		client.SendID(&aolib.IDClient{PlayerNumber: 1, Software: "example-server", Version: "1.0"})
-		client.SendSM(&aolib.SM{Items: []string{"track1.mp3", "track2.mp3"}})
+		client.SendID(&aolib.IDToClient{PlayerID: 1, Software: "example-server", Version: "1.0"})
+		client.SendSM(&aolib.SM{MusicList: []string{"track1.mp3", "track2.mp3"}})
 		client.SendDONE(&aolib.DONE{})
 	})
 	client.OnCC(func(p *aolib.CC) {

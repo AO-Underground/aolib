@@ -1,5 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "/packets/SP.schema.json",
   "title": "SP",
   "type": "object",
   "properties": {
@@ -7,11 +8,14 @@
       "type": "string",
       "const": "SP"
     },
-    "side": {}
+    "side": {
+      "$ref": "../enums/Side.schema.json"
+    }
   },
   "required": [
     "$header",
     "side"
   ],
-  "additionalProperties": false
+  "additionalProperties": false,
+  "x-receiver": "client"
 }

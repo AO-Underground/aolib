@@ -1,5 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "/packets/MCBroadcast.schema.json",
   "title": "MC",
   "type": "object",
   "properties": {
@@ -35,5 +36,6 @@
     "name",
     "char_id"
   ],
-  "additionalProperties": false
+  "additionalProperties": false,
+  "x-receiver": "client"
 }

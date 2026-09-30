@@ -23,10 +23,10 @@ func main() {
 	})
 
 	// Handlers for packets the SERVER sends us — typed, IDE-autocompleted.
-	server.OnID(func(p *aolib.IDClient) { playerID = p.PlayerNumber })
+	server.OnID(func(p *aolib.IDToClient) { playerID = p.PlayerID })
 	server.OnMC(func(p *aolib.MCToClient) { fmt.Printf("play %q\n", p.Name) })
 	server.OnBB(func(p *aolib.BB) { fmt.Printf("popup: %s\n", p.Message) })
-	server.OnSM(func(p *aolib.SM) { fmt.Printf("music list: %v\n", p.Items) })
+	server.OnSM(func(p *aolib.SM) { fmt.Printf("music list: %v\n", p.MusicList) })
 	server.OnDONE(func(_ *aolib.DONE) { fmt.Println("handshake done") })
 
 	// Send packets TO the server. The compiler enforces the C2S shape.
