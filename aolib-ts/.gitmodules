@@ -1,0 +1,3 @@
+[submodule "aolib-meta"]
+	path = aolib-meta
+	url = git@github.com:OmniTroid/aolib-meta.git

@@ -1,0 +1,70 @@
+{
+  "name": "aolib-ts",
+  "version": "2.2.0",
+  "description": "Self-contained TypeScript library for the Attorney Online protocol. Owns every packet schema, both wire formats (fantacode + JSON), encode/decode, and the typed dispatch surface.",
+  "type": "module",
+  "sideEffects": [
+    "**/codecs/**"
+  ],
+  "main": "./src/index.ts",
+  "module": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "import": "./src/index.ts",
+      "default": "./src/index.ts"
+    },
+    "./wire": {
+      "types": "./src/wire.ts",
+      "import": "./src/wire.ts",
+      "default": "./src/wire.ts"
+    }
+  },
+  "files": [
+    "src/**/*.ts",
+    "generated/**/*.ts",
+    "aolib-meta/**/*.json",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "test": "bun test",
+    "typecheck": "tsc --noEmit",
+    "lint": "bunx --bun eslint .",
+    "codegen": "bun scripts/codegen.ts"
+  },
+  "author": "OmniTroid",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SyntaxNyah/aolib-ts.git"
+  },
+  "bugs": {
+    "url": "https://github.com/SyntaxNyah/aolib-ts/issues"
+  },
+  "keywords": [
+    "attorney-online",
+    "ao",
+    "ao1",
+    "ao2",
+    "websocket",
+    "protocol",
+    "typescript"
+  ],
+  "license": "MIT",
+  "engines": {
+    "bun": ">=1.0.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.18.0",
+    "@types/bun": "^1.3.14",
+    "eslint": "^9.18.0",
+    "typescript": "^5.0.0",
+    "typescript-eslint": "^8.60.0"
+  },
+  "dependencies": {
+    "ajv": "^8.20.0",
+    "js-ini": "^1.6.0"
+  }
+}
