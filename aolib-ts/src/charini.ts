@@ -12,7 +12,7 @@
  * then a tuning pass folds the flat sections into a typed `CharIni`.
  *
  * Two emote encodings are normalized to one `CharEmote[]` (per the spec
- * in aolib-meta `schemas/assets`):
+ * in spec `schemas/assets`):
  *
  *   - `[emote <name>]` blocks (preferred): each `[emote <blockname>]`
  *     section carries `anim` / `preanim` / `postanim` / `camera` / `sound` /
@@ -31,8 +31,8 @@
  */
 
 import { parse as parseIni } from "js-ini";
-import EmoteModifierSchema from "../aolib-meta/types/EmoteModifier.schema.json";
-import DeskModifierSchema from "../aolib-meta/types/DeskModifier.schema.json";
+import EmoteModifierSchema from "../../spec/types/EmoteModifier.schema.json";
+import DeskModifierSchema from "../../spec/types/DeskModifier.schema.json";
 
 // One AO tick in milliseconds: the message text update interval that
 // drives sound/preanim timing (LemmyAO's `UPDATE_INTERVAL`). Legacy
@@ -43,7 +43,7 @@ const TICK_MS = 60;
  * Case-insensitive enum-name -> legacy integer map, so a char.ini field
  * can write `modifier = zoom` (or `deskmod = shown`) and resolve to the
  * numeric emote/desk modifier. The enums are string-first with their
- * integers in `x-wire-ints` (see aolib-meta); char.ini keeps the number.
+ * integers in `x-wire-ints` (see spec); char.ini keeps the number.
  */
 function nameMap(schema: { enum: string[]; "x-wire-ints": number[] }): Record<string, number> {
   const m: Record<string, number> = {};

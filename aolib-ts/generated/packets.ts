@@ -1,287 +1,287 @@
-// AUTO-GENERATED from aolib-meta/. Do not edit; run `bun run codegen`.
+// AUTO-GENERATED from spec/. Do not edit; run `bun run codegen`.
 
 /* eslint-disable */
 
 import { AreaUpdateType, DeskModifier, EmoteModifier, Flip, ShoutModifier, Side, TextColor } from "./enums";
 import { Offset } from "./types";
 
-import AreaUpdateTypeEnumSchema from "../aolib-meta/types/AreaUpdateType.schema.json";
+import AreaUpdateTypeEnumSchema from "../../spec/types/AreaUpdateType.schema.json";
 
-import DeskModifierEnumSchema from "../aolib-meta/types/DeskModifier.schema.json";
+import DeskModifierEnumSchema from "../../spec/types/DeskModifier.schema.json";
 
-import EmoteModifierEnumSchema from "../aolib-meta/types/EmoteModifier.schema.json";
+import EmoteModifierEnumSchema from "../../spec/types/EmoteModifier.schema.json";
 
-import FlipEnumSchema from "../aolib-meta/types/Flip.schema.json";
+import FlipEnumSchema from "../../spec/types/Flip.schema.json";
 
-import ShoutModifierEnumSchema from "../aolib-meta/types/ShoutModifier.schema.json";
+import ShoutModifierEnumSchema from "../../spec/types/ShoutModifier.schema.json";
 
-import SideEnumSchema from "../aolib-meta/types/Side.schema.json";
+import SideEnumSchema from "../../spec/types/Side.schema.json";
 
-import TextColorEnumSchema from "../aolib-meta/types/TextColor.schema.json";
+import TextColorEnumSchema from "../../spec/types/TextColor.schema.json";
 
-import OffsetTypeSchema from "../aolib-meta/types/Offset.schema.json";
+import OffsetTypeSchema from "../../spec/types/Offset.schema.json";
 
 
-import ARUPSchema from "../aolib-meta/packets/schemas/ARUP.schema.json";
+import ARUPSchema from "../../spec/packets/schemas/ARUP.schema.json";
 
-import ASSSchema from "../aolib-meta/packets/schemas/ASS.schema.json";
+import ASSSchema from "../../spec/packets/schemas/ASS.schema.json";
 
-import AUTHSchema from "../aolib-meta/packets/schemas/AUTH.schema.json";
+import AUTHSchema from "../../spec/packets/schemas/AUTH.schema.json";
 
-import BBSchema from "../aolib-meta/packets/schemas/BB.schema.json";
+import BBSchema from "../../spec/packets/schemas/BB.schema.json";
 
-import BDSchema from "../aolib-meta/packets/schemas/BD.schema.json";
+import BDSchema from "../../spec/packets/schemas/BD.schema.json";
 
-import BNSchema from "../aolib-meta/packets/schemas/BN.schema.json";
+import BNSchema from "../../spec/packets/schemas/BN.schema.json";
 
-import CCSchema from "../aolib-meta/packets/schemas/CC.schema.json";
+import CCSchema from "../../spec/packets/schemas/CC.schema.json";
 
-import CHSchema from "../aolib-meta/packets/schemas/CH.schema.json";
+import CHSchema from "../../spec/packets/schemas/CH.schema.json";
 
-import CHECKSchema from "../aolib-meta/packets/schemas/CHECK.schema.json";
+import CHECKSchema from "../../spec/packets/schemas/CHECK.schema.json";
 
-import CISchema from "../aolib-meta/packets/schemas/CI.schema.json";
+import CISchema from "../../spec/packets/schemas/CI.schema.json";
 
-import CTToClientSchema from "../aolib-meta/packets/schemas/CTToClient.schema.json";
+import CTToClientSchema from "../../spec/packets/schemas/CTToClient.schema.json";
 
-import CTToServerSchema from "../aolib-meta/packets/schemas/CTToServer.schema.json";
+import CTToServerSchema from "../../spec/packets/schemas/CTToServer.schema.json";
 
-import CharsCheckSchema from "../aolib-meta/packets/schemas/CharsCheck.schema.json";
+import CharsCheckSchema from "../../spec/packets/schemas/CharsCheck.schema.json";
 
-import DESchema from "../aolib-meta/packets/schemas/DE.schema.json";
+import DESchema from "../../spec/packets/schemas/DE.schema.json";
 
-import DONESchema from "../aolib-meta/packets/schemas/DONE.schema.json";
+import DONESchema from "../../spec/packets/schemas/DONE.schema.json";
 
-import EESchema from "../aolib-meta/packets/schemas/EE.schema.json";
+import EESchema from "../../spec/packets/schemas/EE.schema.json";
 
-import EISchema from "../aolib-meta/packets/schemas/EI.schema.json";
+import EISchema from "../../spec/packets/schemas/EI.schema.json";
 
-import EMSchema from "../aolib-meta/packets/schemas/EM.schema.json";
+import EMSchema from "../../spec/packets/schemas/EM.schema.json";
 
-import FASchema from "../aolib-meta/packets/schemas/FA.schema.json";
+import FASchema from "../../spec/packets/schemas/FA.schema.json";
 
-import FLSchema from "../aolib-meta/packets/schemas/FL.schema.json";
+import FLSchema from "../../spec/packets/schemas/FL.schema.json";
 
-import FMSchema from "../aolib-meta/packets/schemas/FM.schema.json";
+import FMSchema from "../../spec/packets/schemas/FM.schema.json";
 
-import HISchema from "../aolib-meta/packets/schemas/HI.schema.json";
+import HISchema from "../../spec/packets/schemas/HI.schema.json";
 
-import HPToClientSchema from "../aolib-meta/packets/schemas/HPToClient.schema.json";
+import HPToClientSchema from "../../spec/packets/schemas/HPToClient.schema.json";
 
-import HPToServerSchema from "../aolib-meta/packets/schemas/HPToServer.schema.json";
+import HPToServerSchema from "../../spec/packets/schemas/HPToServer.schema.json";
 
-import IDToClientSchema from "../aolib-meta/packets/schemas/IDToClient.schema.json";
+import IDToClientSchema from "../../spec/packets/schemas/IDToClient.schema.json";
 
-import IDToServerSchema from "../aolib-meta/packets/schemas/IDToServer.schema.json";
+import IDToServerSchema from "../../spec/packets/schemas/IDToServer.schema.json";
 
-import JDSchema from "../aolib-meta/packets/schemas/JD.schema.json";
+import JDSchema from "../../spec/packets/schemas/JD.schema.json";
 
-import KBSchema from "../aolib-meta/packets/schemas/KB.schema.json";
+import KBSchema from "../../spec/packets/schemas/KB.schema.json";
 
-import KKSchema from "../aolib-meta/packets/schemas/KK.schema.json";
+import KKSchema from "../../spec/packets/schemas/KK.schema.json";
 
-import LESchema from "../aolib-meta/packets/schemas/LE.schema.json";
+import LESchema from "../../spec/packets/schemas/LE.schema.json";
 
-import MASchema from "../aolib-meta/packets/schemas/MA.schema.json";
+import MASchema from "../../spec/packets/schemas/MA.schema.json";
 
-import MCToClientSchema from "../aolib-meta/packets/schemas/MCToClient.schema.json";
+import MCToClientSchema from "../../spec/packets/schemas/MCToClient.schema.json";
 
-import MCToServerSchema from "../aolib-meta/packets/schemas/MCToServer.schema.json";
+import MCToServerSchema from "../../spec/packets/schemas/MCToServer.schema.json";
 
-import MSToClientSchema from "../aolib-meta/packets/schemas/MSToClient.schema.json";
+import MSToClientSchema from "../../spec/packets/schemas/MSToClient.schema.json";
 
-import MSToServerSchema from "../aolib-meta/packets/schemas/MSToServer.schema.json";
+import MSToServerSchema from "../../spec/packets/schemas/MSToServer.schema.json";
 
-import PESchema from "../aolib-meta/packets/schemas/PE.schema.json";
+import PESchema from "../../spec/packets/schemas/PE.schema.json";
 
-import PNSchema from "../aolib-meta/packets/schemas/PN.schema.json";
+import PNSchema from "../../spec/packets/schemas/PN.schema.json";
 
-import PRSchema from "../aolib-meta/packets/schemas/PR.schema.json";
+import PRSchema from "../../spec/packets/schemas/PR.schema.json";
 
-import PUSchema from "../aolib-meta/packets/schemas/PU.schema.json";
+import PUSchema from "../../spec/packets/schemas/PU.schema.json";
 
-import PVSchema from "../aolib-meta/packets/schemas/PV.schema.json";
+import PVSchema from "../../spec/packets/schemas/PV.schema.json";
 
-import RCSchema from "../aolib-meta/packets/schemas/RC.schema.json";
+import RCSchema from "../../spec/packets/schemas/RC.schema.json";
 
-import RDSchema from "../aolib-meta/packets/schemas/RD.schema.json";
+import RDSchema from "../../spec/packets/schemas/RD.schema.json";
 
-import RMSchema from "../aolib-meta/packets/schemas/RM.schema.json";
+import RMSchema from "../../spec/packets/schemas/RM.schema.json";
 
-import RMCSchema from "../aolib-meta/packets/schemas/RMC.schema.json";
+import RMCSchema from "../../spec/packets/schemas/RMC.schema.json";
 
-import RTToClientSchema from "../aolib-meta/packets/schemas/RTToClient.schema.json";
+import RTToClientSchema from "../../spec/packets/schemas/RTToClient.schema.json";
 
-import RTToServerSchema from "../aolib-meta/packets/schemas/RTToServer.schema.json";
+import RTToServerSchema from "../../spec/packets/schemas/RTToServer.schema.json";
 
-import SCSchema from "../aolib-meta/packets/schemas/SC.schema.json";
+import SCSchema from "../../spec/packets/schemas/SC.schema.json";
 
-import SISchema from "../aolib-meta/packets/schemas/SI.schema.json";
+import SISchema from "../../spec/packets/schemas/SI.schema.json";
 
-import SMSchema from "../aolib-meta/packets/schemas/SM.schema.json";
+import SMSchema from "../../spec/packets/schemas/SM.schema.json";
 
-import SPSchema from "../aolib-meta/packets/schemas/SP.schema.json";
+import SPSchema from "../../spec/packets/schemas/SP.schema.json";
 
-import TISchema from "../aolib-meta/packets/schemas/TI.schema.json";
+import TISchema from "../../spec/packets/schemas/TI.schema.json";
 
-import VS_AUDIOSchema from "../aolib-meta/packets/schemas/VS_AUDIO.schema.json";
+import VS_AUDIOSchema from "../../spec/packets/schemas/VS_AUDIO.schema.json";
 
-import VS_CAPSSchema from "../aolib-meta/packets/schemas/VS_CAPS.schema.json";
+import VS_CAPSSchema from "../../spec/packets/schemas/VS_CAPS.schema.json";
 
-import VS_FRAMESchema from "../aolib-meta/packets/schemas/VS_FRAME.schema.json";
+import VS_FRAMESchema from "../../spec/packets/schemas/VS_FRAME.schema.json";
 
-import VS_JOINToClientSchema from "../aolib-meta/packets/schemas/VS_JOINToClient.schema.json";
+import VS_JOINToClientSchema from "../../spec/packets/schemas/VS_JOINToClient.schema.json";
 
-import VS_JOINToServerSchema from "../aolib-meta/packets/schemas/VS_JOINToServer.schema.json";
+import VS_JOINToServerSchema from "../../spec/packets/schemas/VS_JOINToServer.schema.json";
 
-import VS_LEAVEToClientSchema from "../aolib-meta/packets/schemas/VS_LEAVEToClient.schema.json";
+import VS_LEAVEToClientSchema from "../../spec/packets/schemas/VS_LEAVEToClient.schema.json";
 
-import VS_LEAVEToServerSchema from "../aolib-meta/packets/schemas/VS_LEAVEToServer.schema.json";
+import VS_LEAVEToServerSchema from "../../spec/packets/schemas/VS_LEAVEToServer.schema.json";
 
-import VS_PEERSSchema from "../aolib-meta/packets/schemas/VS_PEERS.schema.json";
+import VS_PEERSSchema from "../../spec/packets/schemas/VS_PEERS.schema.json";
 
-import VS_SPEAKToClientSchema from "../aolib-meta/packets/schemas/VS_SPEAKToClient.schema.json";
+import VS_SPEAKToClientSchema from "../../spec/packets/schemas/VS_SPEAKToClient.schema.json";
 
-import VS_SPEAKToServerSchema from "../aolib-meta/packets/schemas/VS_SPEAKToServer.schema.json";
+import VS_SPEAKToServerSchema from "../../spec/packets/schemas/VS_SPEAKToServer.schema.json";
 
-import ZZToClientSchema from "../aolib-meta/packets/schemas/ZZToClient.schema.json";
+import ZZToClientSchema from "../../spec/packets/schemas/ZZToClient.schema.json";
 
-import ZZToServerSchema from "../aolib-meta/packets/schemas/ZZToServer.schema.json";
+import ZZToServerSchema from "../../spec/packets/schemas/ZZToServer.schema.json";
 
-import askchaaSchema from "../aolib-meta/packets/schemas/askchaa.schema.json";
+import askchaaSchema from "../../spec/packets/schemas/askchaa.schema.json";
 
-import decryptorSchema from "../aolib-meta/packets/schemas/decryptor.schema.json";
+import decryptorSchema from "../../spec/packets/schemas/decryptor.schema.json";
 
 
-export { default as ARUPSchema } from "../aolib-meta/packets/schemas/ARUP.schema.json";
+export { default as ARUPSchema } from "../../spec/packets/schemas/ARUP.schema.json";
 
-export { default as ASSSchema } from "../aolib-meta/packets/schemas/ASS.schema.json";
+export { default as ASSSchema } from "../../spec/packets/schemas/ASS.schema.json";
 
-export { default as AUTHSchema } from "../aolib-meta/packets/schemas/AUTH.schema.json";
+export { default as AUTHSchema } from "../../spec/packets/schemas/AUTH.schema.json";
 
-export { default as BBSchema } from "../aolib-meta/packets/schemas/BB.schema.json";
+export { default as BBSchema } from "../../spec/packets/schemas/BB.schema.json";
 
-export { default as BDSchema } from "../aolib-meta/packets/schemas/BD.schema.json";
+export { default as BDSchema } from "../../spec/packets/schemas/BD.schema.json";
 
-export { default as BNSchema } from "../aolib-meta/packets/schemas/BN.schema.json";
+export { default as BNSchema } from "../../spec/packets/schemas/BN.schema.json";
 
-export { default as CCSchema } from "../aolib-meta/packets/schemas/CC.schema.json";
+export { default as CCSchema } from "../../spec/packets/schemas/CC.schema.json";
 
-export { default as CHSchema } from "../aolib-meta/packets/schemas/CH.schema.json";
+export { default as CHSchema } from "../../spec/packets/schemas/CH.schema.json";
 
-export { default as CHECKSchema } from "../aolib-meta/packets/schemas/CHECK.schema.json";
+export { default as CHECKSchema } from "../../spec/packets/schemas/CHECK.schema.json";
 
-export { default as CISchema } from "../aolib-meta/packets/schemas/CI.schema.json";
+export { default as CISchema } from "../../spec/packets/schemas/CI.schema.json";
 
-export { default as CTToClientSchema } from "../aolib-meta/packets/schemas/CTToClient.schema.json";
+export { default as CTToClientSchema } from "../../spec/packets/schemas/CTToClient.schema.json";
 
-export { default as CTToServerSchema } from "../aolib-meta/packets/schemas/CTToServer.schema.json";
+export { default as CTToServerSchema } from "../../spec/packets/schemas/CTToServer.schema.json";
 
-export { default as CharsCheckSchema } from "../aolib-meta/packets/schemas/CharsCheck.schema.json";
+export { default as CharsCheckSchema } from "../../spec/packets/schemas/CharsCheck.schema.json";
 
-export { default as DESchema } from "../aolib-meta/packets/schemas/DE.schema.json";
+export { default as DESchema } from "../../spec/packets/schemas/DE.schema.json";
 
-export { default as DONESchema } from "../aolib-meta/packets/schemas/DONE.schema.json";
+export { default as DONESchema } from "../../spec/packets/schemas/DONE.schema.json";
 
-export { default as EESchema } from "../aolib-meta/packets/schemas/EE.schema.json";
+export { default as EESchema } from "../../spec/packets/schemas/EE.schema.json";
 
-export { default as EISchema } from "../aolib-meta/packets/schemas/EI.schema.json";
+export { default as EISchema } from "../../spec/packets/schemas/EI.schema.json";
 
-export { default as EMSchema } from "../aolib-meta/packets/schemas/EM.schema.json";
+export { default as EMSchema } from "../../spec/packets/schemas/EM.schema.json";
 
-export { default as FASchema } from "../aolib-meta/packets/schemas/FA.schema.json";
+export { default as FASchema } from "../../spec/packets/schemas/FA.schema.json";
 
-export { default as FLSchema } from "../aolib-meta/packets/schemas/FL.schema.json";
+export { default as FLSchema } from "../../spec/packets/schemas/FL.schema.json";
 
-export { default as FMSchema } from "../aolib-meta/packets/schemas/FM.schema.json";
+export { default as FMSchema } from "../../spec/packets/schemas/FM.schema.json";
 
-export { default as HISchema } from "../aolib-meta/packets/schemas/HI.schema.json";
+export { default as HISchema } from "../../spec/packets/schemas/HI.schema.json";
 
-export { default as HPToClientSchema } from "../aolib-meta/packets/schemas/HPToClient.schema.json";
+export { default as HPToClientSchema } from "../../spec/packets/schemas/HPToClient.schema.json";
 
-export { default as HPToServerSchema } from "../aolib-meta/packets/schemas/HPToServer.schema.json";
+export { default as HPToServerSchema } from "../../spec/packets/schemas/HPToServer.schema.json";
 
-export { default as IDToClientSchema } from "../aolib-meta/packets/schemas/IDToClient.schema.json";
+export { default as IDToClientSchema } from "../../spec/packets/schemas/IDToClient.schema.json";
 
-export { default as IDToServerSchema } from "../aolib-meta/packets/schemas/IDToServer.schema.json";
+export { default as IDToServerSchema } from "../../spec/packets/schemas/IDToServer.schema.json";
 
-export { default as JDSchema } from "../aolib-meta/packets/schemas/JD.schema.json";
+export { default as JDSchema } from "../../spec/packets/schemas/JD.schema.json";
 
-export { default as KBSchema } from "../aolib-meta/packets/schemas/KB.schema.json";
+export { default as KBSchema } from "../../spec/packets/schemas/KB.schema.json";
 
-export { default as KKSchema } from "../aolib-meta/packets/schemas/KK.schema.json";
+export { default as KKSchema } from "../../spec/packets/schemas/KK.schema.json";
 
-export { default as LESchema } from "../aolib-meta/packets/schemas/LE.schema.json";
+export { default as LESchema } from "../../spec/packets/schemas/LE.schema.json";
 
-export { default as MASchema } from "../aolib-meta/packets/schemas/MA.schema.json";
+export { default as MASchema } from "../../spec/packets/schemas/MA.schema.json";
 
-export { default as MCToClientSchema } from "../aolib-meta/packets/schemas/MCToClient.schema.json";
+export { default as MCToClientSchema } from "../../spec/packets/schemas/MCToClient.schema.json";
 
-export { default as MCToServerSchema } from "../aolib-meta/packets/schemas/MCToServer.schema.json";
+export { default as MCToServerSchema } from "../../spec/packets/schemas/MCToServer.schema.json";
 
-export { default as MSToClientSchema } from "../aolib-meta/packets/schemas/MSToClient.schema.json";
+export { default as MSToClientSchema } from "../../spec/packets/schemas/MSToClient.schema.json";
 
-export { default as MSToServerSchema } from "../aolib-meta/packets/schemas/MSToServer.schema.json";
+export { default as MSToServerSchema } from "../../spec/packets/schemas/MSToServer.schema.json";
 
-export { default as PESchema } from "../aolib-meta/packets/schemas/PE.schema.json";
+export { default as PESchema } from "../../spec/packets/schemas/PE.schema.json";
 
-export { default as PNSchema } from "../aolib-meta/packets/schemas/PN.schema.json";
+export { default as PNSchema } from "../../spec/packets/schemas/PN.schema.json";
 
-export { default as PRSchema } from "../aolib-meta/packets/schemas/PR.schema.json";
+export { default as PRSchema } from "../../spec/packets/schemas/PR.schema.json";
 
-export { default as PUSchema } from "../aolib-meta/packets/schemas/PU.schema.json";
+export { default as PUSchema } from "../../spec/packets/schemas/PU.schema.json";
 
-export { default as PVSchema } from "../aolib-meta/packets/schemas/PV.schema.json";
+export { default as PVSchema } from "../../spec/packets/schemas/PV.schema.json";
 
-export { default as RCSchema } from "../aolib-meta/packets/schemas/RC.schema.json";
+export { default as RCSchema } from "../../spec/packets/schemas/RC.schema.json";
 
-export { default as RDSchema } from "../aolib-meta/packets/schemas/RD.schema.json";
+export { default as RDSchema } from "../../spec/packets/schemas/RD.schema.json";
 
-export { default as RMSchema } from "../aolib-meta/packets/schemas/RM.schema.json";
+export { default as RMSchema } from "../../spec/packets/schemas/RM.schema.json";
 
-export { default as RMCSchema } from "../aolib-meta/packets/schemas/RMC.schema.json";
+export { default as RMCSchema } from "../../spec/packets/schemas/RMC.schema.json";
 
-export { default as RTToClientSchema } from "../aolib-meta/packets/schemas/RTToClient.schema.json";
+export { default as RTToClientSchema } from "../../spec/packets/schemas/RTToClient.schema.json";
 
-export { default as RTToServerSchema } from "../aolib-meta/packets/schemas/RTToServer.schema.json";
+export { default as RTToServerSchema } from "../../spec/packets/schemas/RTToServer.schema.json";
 
-export { default as SCSchema } from "../aolib-meta/packets/schemas/SC.schema.json";
+export { default as SCSchema } from "../../spec/packets/schemas/SC.schema.json";
 
-export { default as SISchema } from "../aolib-meta/packets/schemas/SI.schema.json";
+export { default as SISchema } from "../../spec/packets/schemas/SI.schema.json";
 
-export { default as SMSchema } from "../aolib-meta/packets/schemas/SM.schema.json";
+export { default as SMSchema } from "../../spec/packets/schemas/SM.schema.json";
 
-export { default as SPSchema } from "../aolib-meta/packets/schemas/SP.schema.json";
+export { default as SPSchema } from "../../spec/packets/schemas/SP.schema.json";
 
-export { default as TISchema } from "../aolib-meta/packets/schemas/TI.schema.json";
+export { default as TISchema } from "../../spec/packets/schemas/TI.schema.json";
 
-export { default as VS_AUDIOSchema } from "../aolib-meta/packets/schemas/VS_AUDIO.schema.json";
+export { default as VS_AUDIOSchema } from "../../spec/packets/schemas/VS_AUDIO.schema.json";
 
-export { default as VS_CAPSSchema } from "../aolib-meta/packets/schemas/VS_CAPS.schema.json";
+export { default as VS_CAPSSchema } from "../../spec/packets/schemas/VS_CAPS.schema.json";
 
-export { default as VS_FRAMESchema } from "../aolib-meta/packets/schemas/VS_FRAME.schema.json";
+export { default as VS_FRAMESchema } from "../../spec/packets/schemas/VS_FRAME.schema.json";
 
-export { default as VS_JOINToClientSchema } from "../aolib-meta/packets/schemas/VS_JOINToClient.schema.json";
+export { default as VS_JOINToClientSchema } from "../../spec/packets/schemas/VS_JOINToClient.schema.json";
 
-export { default as VS_JOINToServerSchema } from "../aolib-meta/packets/schemas/VS_JOINToServer.schema.json";
+export { default as VS_JOINToServerSchema } from "../../spec/packets/schemas/VS_JOINToServer.schema.json";
 
-export { default as VS_LEAVEToClientSchema } from "../aolib-meta/packets/schemas/VS_LEAVEToClient.schema.json";
+export { default as VS_LEAVEToClientSchema } from "../../spec/packets/schemas/VS_LEAVEToClient.schema.json";
 
-export { default as VS_LEAVEToServerSchema } from "../aolib-meta/packets/schemas/VS_LEAVEToServer.schema.json";
+export { default as VS_LEAVEToServerSchema } from "../../spec/packets/schemas/VS_LEAVEToServer.schema.json";
 
-export { default as VS_PEERSSchema } from "../aolib-meta/packets/schemas/VS_PEERS.schema.json";
+export { default as VS_PEERSSchema } from "../../spec/packets/schemas/VS_PEERS.schema.json";
 
-export { default as VS_SPEAKToClientSchema } from "../aolib-meta/packets/schemas/VS_SPEAKToClient.schema.json";
+export { default as VS_SPEAKToClientSchema } from "../../spec/packets/schemas/VS_SPEAKToClient.schema.json";
 
-export { default as VS_SPEAKToServerSchema } from "../aolib-meta/packets/schemas/VS_SPEAKToServer.schema.json";
+export { default as VS_SPEAKToServerSchema } from "../../spec/packets/schemas/VS_SPEAKToServer.schema.json";
 
-export { default as ZZToClientSchema } from "../aolib-meta/packets/schemas/ZZToClient.schema.json";
+export { default as ZZToClientSchema } from "../../spec/packets/schemas/ZZToClient.schema.json";
 
-export { default as ZZToServerSchema } from "../aolib-meta/packets/schemas/ZZToServer.schema.json";
+export { default as ZZToServerSchema } from "../../spec/packets/schemas/ZZToServer.schema.json";
 
-export { default as askchaaSchema } from "../aolib-meta/packets/schemas/askchaa.schema.json";
+export { default as askchaaSchema } from "../../spec/packets/schemas/askchaa.schema.json";
 
-export { default as decryptorSchema } from "../aolib-meta/packets/schemas/decryptor.schema.json";
+export { default as decryptorSchema } from "../../spec/packets/schemas/decryptor.schema.json";
 
 
 export const enumSchemas = [AreaUpdateTypeEnumSchema, DeskModifierEnumSchema, EmoteModifierEnumSchema, FlipEnumSchema, ShoutModifierEnumSchema, SideEnumSchema, TextColorEnumSchema];

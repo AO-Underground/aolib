@@ -144,7 +144,7 @@ Each session type exposes exactly the packets that direction sees:
     `ServerSession.send`).
 
 The mapping is derived from each schema's `x-receiver` annotation in
-[`aolib-meta`](./aolib-meta/README.md), so adding a new packet
+[`spec`](./spec/README.md), so adding a new packet
 automatically lands it in the right namespace on the right session
 type, no boilerplate to keep in sync. Symmetric bidirectional packets
 (e.g. `MC`, `HP`) live as two schemas sharing one header, named after the
@@ -197,7 +197,7 @@ char.sections;           // every section, for blocks not modelled above
 ```
 
 Two emote encodings normalize to one `CharEmote[]` (per the
-[`CharIni` spec](./aolib-meta/assets/README.md)): the preferred
+[`CharIni` spec](./spec/assets/README.md)): the preferred
 `[emote <name>]` blocks, and the legacy `#`-delimited
 `[Emotions]`/`[SoundN]`/`[SoundT]` banks used when no block is present.
 The parser prefers blocks and falls back to the banks.
@@ -217,14 +217,14 @@ asset URLs.
 aolib-ts/
 ├── README.md                  ← you are here
 ├── package.json
-├── aolib-meta/                ← git submodule: protocol schemas (source of truth)
+├── spec/                ← git submodule: protocol schemas (source of truth)
 │   ├── README.md              ← schema layout, $id/$ref conventions, x-* extensions
 │   ├── format.sh
 │   ├── packets/schemas/<Name>.schema.json
 │   ├── types/<Name>.schema.json   ← enums and shared object types
 │   └── assets/<Name>.schema.json  ← char.ini and other asset formats
 ├── scripts/
-│   └── codegen.ts             ← reads aolib-meta/, writes generated/
+│   └── codegen.ts             ← reads spec/, writes generated/
 ├── generated/                 ← committed; regenerate with `bun codegen`
 │   ├── packets.ts             ← packet types + Init, c2s/s2c schema maps
 │   ├── enums.ts               ← enum union+const from types/*.schema.json
@@ -245,11 +245,11 @@ aolib-ts/
 └── tests/
 ```
 
-`aolib-meta/` is the protocol source of truth, shared across every
+`spec/` is the protocol source of truth, shared across every
 language binding via a git submodule. Each `aolib-*` library has its
 own codegen step that consumes those schemas and emits native types,
 validators, and wire encoders/decoders. See
-[`aolib-meta/README.md`](./aolib-meta/README.md) for the schema layout
+[`spec/README.md`](./spec/README.md) for the schema layout
 and custom `x-*` extensions in full.
 
 ## Anatomy of a packet definition (for library contributors)
@@ -257,12 +257,12 @@ and custom `x-*` extensions in full.
 Packets are JSON Schema (draft-07). A schema is the *only* source of
 truth, the TS types, the Ajv validator, and the fanta walker all read
 from it. Add a packet by dropping one file under
-`aolib-meta/packets/schemas/` and running `bun codegen`.
+`spec/packets/schemas/` and running `bun codegen`.
 
 A minimal packet:
 
 ```json
-// aolib-meta/packets/schemas/MCToServer.schema.json
+// spec/packets/schemas/MCToServer.schema.json
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/MCToServer.schema.json",
@@ -305,13 +305,13 @@ Shared structures live under `enums/` and `types/` and are pulled in
 with `$ref`:
 
 ```json
-// aolib-meta/packets/schemas/MSToServer.schema.json, excerpt
+// spec/packets/schemas/MSToServer.schema.json, excerpt
 "side":      { "$ref": "../../types/Side.schema.json" },
 "offset":    { "$ref": "../../types/Offset.schema.json" }
 ```
 
 Spec quirks that recur become custom extensions (see
-[`aolib-meta/README.md`](./aolib-meta/README.md) for the full set):
+[`spec/README.md`](./spec/README.md) for the full set):
 
 - **`x-receiver: "client" | "server"`**, direction.
 - **`x-wire-ints: integer[]`**, on a string enum, the parallel legacy
@@ -335,7 +335,7 @@ bun run lint
 
 ## JSON Schema as documentation
 
-The schemas under `aolib-meta/` *are* the documentation
+The schemas under `spec/` *are* the documentation
 export, they're standards-compliant JSON Schema (draft-07) and drop
 straight into AsyncAPI (purpose-built for WebSocket protocols),
 Stoplight, Redoc, or any other JSON Schema renderer. No build step
@@ -414,7 +414,7 @@ symmetrically.
   Inbound always auto-detects.
 
 - **Schemas don't disagree with types.** The JSON Schema files under
-  `aolib-meta/` are the source for both runtime walks and the
+  `spec/` are the source for both runtime walks and the
   generated TS types. There's no hand-written type that can drift;
   if a field set changes, `bun codegen` propagates the change to
   every consumer (sender, handler, encode, decode, validator) in one

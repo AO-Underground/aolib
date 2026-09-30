@@ -3,7 +3,7 @@
  * non-schema helpers.
  *
  * The named enums (Side, DeskModifier, etc.) and shared object types
- * (Offset, etc.) come from aolib-meta/types/* via `../generated/enums`
+ * (Offset, etc.) come from spec/types/* via `../generated/enums`
  * and `../generated/types`.
  */
 

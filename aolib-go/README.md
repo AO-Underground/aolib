@@ -2,7 +2,7 @@
 
 The Attorney Online 2 wire protocol in Go — the Go counterpart to
 [`aolib-ts`](https://github.com/OmniTroid/aolib-ts), generated from the
-canonical [`aolib-meta`](https://github.com/OmniTroid/aolib-meta) schemas so the
+canonical [`spec/`](../spec) schemas so the
 two libraries stay in lockstep.
 
 It decodes and encodes AO2 packets in both wire forms:
@@ -70,11 +70,11 @@ server.SendHI(&aolib.HI{HDID: "abc123"})
 ```
 
 The typed surface (`session_server.go` / `session_client.go`) and the direction
-registries (`registry_gen.go`) are regenerated from the `aolib-meta` schemas by
+registries (`registry_gen.go`) are regenerated from the `spec` schemas by
 `cmd/aolib-gen`, so the schema stays the single source of truth:
 
 ```
-go run ./cmd/aolib-gen -meta ../aolib-meta -out .
+go run ./cmd/aolib-gen -meta ../spec -out .
 ```
 
 ## Custom packets

@@ -1,4 +1,4 @@
-// AUTO-GENERATED from aolib-meta/types/* (enums). Do not edit; run `bun run codegen`.
+// AUTO-GENERATED from spec/types/* (enums). Do not edit; run `bun run codegen`.
 
 /** Discriminator for ARUP payloads: 0 = player counts (numbers), 1/2/3 = area metadata strings. */
 export type AreaUpdateType = "player_count" | "status" | "case_manager" | "locked";

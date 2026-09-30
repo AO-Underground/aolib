@@ -1,9 +1,9 @@
 /**
- * Codegen: reads aolib-meta/ and emits generated/packets.ts + generated/enums.ts.
+ * Codegen: reads spec/ and emits generated/packets.ts + generated/enums.ts.
  *
  * Inputs:
- *   - aolib-meta/packets/schemas/<Name>.schema.json, one per packet
- *   - aolib-meta/types/<Name>.schema.json, shared enums and object types.
+ *   - spec/packets/schemas/<Name>.schema.json, one per packet
+ *   - spec/types/<Name>.schema.json, shared enums and object types.
  *     A schema carrying an `enum` is a string-first enum (member names and
  *     values both come from `enum`; legacy integer wire encoding, if any,
  *     lives in `x-wire-ints` and is applied by the fanta walker). Anything
@@ -37,7 +37,7 @@ import { fileURLToPath } from "node:url";
 
 const SCRIPTS_DIR = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(SCRIPTS_DIR, "..");
-const META_ROOT = join(ROOT, "aolib-meta");
+const META_ROOT = join(ROOT, "..", "spec");
 const PACKETS_DIR = join(META_ROOT, "packets/schemas");
 // Enums and shared object types share the `types/` directory; a schema
 // is an enum when it carries an `enum`, otherwise an object type.
@@ -291,7 +291,7 @@ function emitPacketTypes(name: string, schema: JsonSchema, ctx: RenderCtx): stri
 
 function emitTypesFile(types: Map<string, TypeDef>): string {
   const parts: string[] = [
-    "// AUTO-GENERATED from aolib-meta/types/* (object types). Do not edit; run `bun run codegen`.\n",
+    "// AUTO-GENERATED from spec/types/* (object types). Do not edit; run `bun run codegen`.\n",
   ];
   const sorted = [...types.values()].sort((a, b) => a.name.localeCompare(b.name));
   for (const t of sorted) {
@@ -311,7 +311,7 @@ function emitTypesFile(types: Map<string, TypeDef>): string {
 
 function emitEnumsFile(enums: Map<string, EnumDef>): string {
   const parts: string[] = [
-    "// AUTO-GENERATED from aolib-meta/types/* (enums). Do not edit; run `bun run codegen`.\n",
+    "// AUTO-GENERATED from spec/types/* (enums). Do not edit; run `bun run codegen`.\n",
   ];
   // Sort by name for deterministic output.
   const sorted = [...enums.values()].sort((a, b) => a.name.localeCompare(b.name));
@@ -407,7 +407,7 @@ function main(): void {
     : `import { ${[...ctx.typeImports].sort().join(", ")} } from "./types";\n`;
 
   const parts: string[] = [
-    "// AUTO-GENERATED from aolib-meta/. Do not edit; run `bun run codegen`.\n",
+    "// AUTO-GENERATED from spec/. Do not edit; run `bun run codegen`.\n",
     "/* eslint-disable */\n",
     enumImports + typeImports,
   ];
@@ -417,20 +417,20 @@ function main(): void {
   const enumNames = [...enums.values()].map((e) => e.name).sort();
   const typeNames = [...types.values()].map((t) => t.name).sort();
   for (const name of enumNames) {
-    parts.push(`import ${name}EnumSchema from "../aolib-meta/types/${name}.schema.json";\n`);
+    parts.push(`import ${name}EnumSchema from "../../spec/types/${name}.schema.json";\n`);
   }
   for (const name of typeNames) {
-    parts.push(`import ${name}TypeSchema from "../aolib-meta/types/${name}.schema.json";\n`);
+    parts.push(`import ${name}TypeSchema from "../../spec/types/${name}.schema.json";\n`);
   }
   parts.push("");
 
   for (const name of packets) {
-    parts.push(`import ${name}Schema from "../aolib-meta/packets/schemas/${name}.schema.json";\n`);
+    parts.push(`import ${name}Schema from "../../spec/packets/schemas/${name}.schema.json";\n`);
   }
   parts.push("");
 
   for (const name of packets) {
-    parts.push(`export { default as ${name}Schema } from "../aolib-meta/packets/schemas/${name}.schema.json";\n`);
+    parts.push(`export { default as ${name}Schema } from "../../spec/packets/schemas/${name}.schema.json";\n`);
   }
   parts.push("");
 

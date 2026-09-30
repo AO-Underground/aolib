@@ -1,4 +1,4 @@
-# aolib-meta
+# spec
 
 Schemas for the Attorney Online wire protocol. Used as a git submodule by
 each language-specific `aolib-*` library so all bindings stay in sync.

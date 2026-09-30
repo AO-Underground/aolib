@@ -15,7 +15,7 @@ func TestEncodeDecodeFLRoundTripFanta(t *testing.T) {
 		t.Fatalf("Encode(Fanta) = %q", raw)
 	}
 
-	// FL travels server->client in aolib-meta, so it decodes through the s2c
+	// FL travels server->client in spec, so it decodes through the s2c
 	// direction rather than the c2s-only top-level Decode.
 	_, v, err := decodeFanta(raw, s2cDecoders)
 	if err != nil {
