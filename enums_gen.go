@@ -7,16 +7,16 @@ type AreaUpdateType string
 
 const (
 	AreaUpdateTypePlayerCount AreaUpdateType = "player_count"
-	AreaUpdateTypeStatus AreaUpdateType = "status"
+	AreaUpdateTypeStatus      AreaUpdateType = "status"
 	AreaUpdateTypeCaseManager AreaUpdateType = "case_manager"
-	AreaUpdateTypeLocked AreaUpdateType = "locked"
+	AreaUpdateTypeLocked      AreaUpdateType = "locked"
 )
 
 var areaUpdateTypeToWire = map[AreaUpdateType]int{
 	AreaUpdateTypePlayerCount: 0,
-	AreaUpdateTypeStatus: 1,
+	AreaUpdateTypeStatus:      1,
 	AreaUpdateTypeCaseManager: 2,
-	AreaUpdateTypeLocked: 3,
+	AreaUpdateTypeLocked:      3,
 }
 
 var areaUpdateTypeFromWire = map[int]AreaUpdateType{
@@ -30,20 +30,20 @@ var areaUpdateTypeFromWire = map[int]AreaUpdateType{
 type DeskModifier string
 
 const (
-	DeskModifierHidden DeskModifier = "hidden"
-	DeskModifierShown DeskModifier = "shown"
-	DeskModifierHideDuringPreanim DeskModifier = "hide_during_preanim"
-	DeskModifierShowDuringPreanim DeskModifier = "show_during_preanim"
-	DeskModifierHideAndCenterDuringPreanim DeskModifier = "hide_and_center_during_preanim"
+	DeskModifierHidden                      DeskModifier = "hidden"
+	DeskModifierShown                       DeskModifier = "shown"
+	DeskModifierHideDuringPreanim           DeskModifier = "hide_during_preanim"
+	DeskModifierShowDuringPreanim           DeskModifier = "show_during_preanim"
+	DeskModifierHideAndCenterDuringPreanim  DeskModifier = "hide_and_center_during_preanim"
 	DeskModifierShowDuringPreanimThenCenter DeskModifier = "show_during_preanim_then_center"
 )
 
 var deskModifierToWire = map[DeskModifier]int{
-	DeskModifierHidden: 0,
-	DeskModifierShown: 1,
-	DeskModifierHideDuringPreanim: 2,
-	DeskModifierShowDuringPreanim: 3,
-	DeskModifierHideAndCenterDuringPreanim: 4,
+	DeskModifierHidden:                      0,
+	DeskModifierShown:                       1,
+	DeskModifierHideDuringPreanim:           2,
+	DeskModifierShowDuringPreanim:           3,
+	DeskModifierHideAndCenterDuringPreanim:  4,
 	DeskModifierShowDuringPreanimThenCenter: 5,
 }
 
@@ -60,23 +60,23 @@ var deskModifierFromWire = map[int]DeskModifier{
 type EmoteModifier string
 
 const (
-	EmoteModifierNoPreanim EmoteModifier = "no_preanim"
-	EmoteModifierPreanim EmoteModifier = "preanim"
+	EmoteModifierNoPreanim           EmoteModifier = "no_preanim"
+	EmoteModifierPreanim             EmoteModifier = "preanim"
 	EmoteModifierPreanimAndObjection EmoteModifier = "preanim_and_objection"
-	EmoteModifierUnused3 EmoteModifier = "unused_3"
-	EmoteModifierUnused4 EmoteModifier = "unused_4"
-	EmoteModifierZoom EmoteModifier = "zoom"
-	EmoteModifierObjectionZoom EmoteModifier = "objection_zoom"
+	EmoteModifierUnused3             EmoteModifier = "unused_3"
+	EmoteModifierUnused4             EmoteModifier = "unused_4"
+	EmoteModifierZoom                EmoteModifier = "zoom"
+	EmoteModifierObjectionZoom       EmoteModifier = "objection_zoom"
 )
 
 var emoteModifierToWire = map[EmoteModifier]int{
-	EmoteModifierNoPreanim: 0,
-	EmoteModifierPreanim: 1,
+	EmoteModifierNoPreanim:           0,
+	EmoteModifierPreanim:             1,
 	EmoteModifierPreanimAndObjection: 2,
-	EmoteModifierUnused3: 3,
-	EmoteModifierUnused4: 4,
-	EmoteModifierZoom: 5,
-	EmoteModifierObjectionZoom: 6,
+	EmoteModifierUnused3:             3,
+	EmoteModifierUnused4:             4,
+	EmoteModifierZoom:                5,
+	EmoteModifierObjectionZoom:       6,
 }
 
 var emoteModifierFromWire = map[int]EmoteModifier{
@@ -93,16 +93,16 @@ var emoteModifierFromWire = map[int]EmoteModifier{
 type Flip string
 
 const (
-	FlipNone Flip = "none"
-	FlipHorizontal Flip = "horizontal"
-	FlipVertical Flip = "vertical"
+	FlipNone                  Flip = "none"
+	FlipHorizontal            Flip = "horizontal"
+	FlipVertical              Flip = "vertical"
 	FlipHorizontalAndVertical Flip = "horizontal_and_vertical"
 )
 
 var flipToWire = map[Flip]int{
-	FlipNone: 0,
-	FlipHorizontal: 1,
-	FlipVertical: 2,
+	FlipNone:                  0,
+	FlipHorizontal:            1,
+	FlipVertical:              2,
 	FlipHorizontalAndVertical: 3,
 }
 
@@ -117,19 +117,19 @@ var flipFromWire = map[int]Flip{
 type ShoutModifier string
 
 const (
-	ShoutModifierNone ShoutModifier = "none"
-	ShoutModifierHoldIt ShoutModifier = "hold_it"
+	ShoutModifierNone      ShoutModifier = "none"
+	ShoutModifierHoldIt    ShoutModifier = "hold_it"
 	ShoutModifierObjection ShoutModifier = "objection"
-	ShoutModifierTakeThat ShoutModifier = "take_that"
-	ShoutModifierCustom ShoutModifier = "custom"
+	ShoutModifierTakeThat  ShoutModifier = "take_that"
+	ShoutModifierCustom    ShoutModifier = "custom"
 )
 
 var shoutModifierToWire = map[ShoutModifier]int{
-	ShoutModifierNone: 0,
-	ShoutModifierHoldIt: 1,
+	ShoutModifierNone:      0,
+	ShoutModifierHoldIt:    1,
 	ShoutModifierObjection: 2,
-	ShoutModifierTakeThat: 3,
-	ShoutModifierCustom: 4,
+	ShoutModifierTakeThat:  3,
+	ShoutModifierCustom:    4,
 }
 
 var shoutModifierFromWire = map[int]ShoutModifier{
@@ -158,28 +158,28 @@ const (
 type TextColor string
 
 const (
-	TextColorWhite TextColor = "white"
-	TextColorGreen TextColor = "green"
-	TextColorRed TextColor = "red"
-	TextColorOrange TextColor = "orange"
-	TextColorBlue TextColor = "blue"
-	TextColorYellow TextColor = "yellow"
-	TextColorPink TextColor = "pink"
-	TextColorCyan TextColor = "cyan"
-	TextColorGrey TextColor = "grey"
+	TextColorWhite   TextColor = "white"
+	TextColorGreen   TextColor = "green"
+	TextColorRed     TextColor = "red"
+	TextColorOrange  TextColor = "orange"
+	TextColorBlue    TextColor = "blue"
+	TextColorYellow  TextColor = "yellow"
+	TextColorPink    TextColor = "pink"
+	TextColorCyan    TextColor = "cyan"
+	TextColorGrey    TextColor = "grey"
 	TextColorRainbow TextColor = "rainbow"
 )
 
 var textColorToWire = map[TextColor]int{
-	TextColorWhite: 0,
-	TextColorGreen: 1,
-	TextColorRed: 2,
-	TextColorOrange: 3,
-	TextColorBlue: 4,
-	TextColorYellow: 5,
-	TextColorPink: 6,
-	TextColorCyan: 7,
-	TextColorGrey: 8,
+	TextColorWhite:   0,
+	TextColorGreen:   1,
+	TextColorRed:     2,
+	TextColorOrange:  3,
+	TextColorBlue:    4,
+	TextColorYellow:  5,
+	TextColorPink:    6,
+	TextColorCyan:    7,
+	TextColorGrey:    8,
 	TextColorRainbow: 9,
 }
 
@@ -195,4 +195,3 @@ var textColorFromWire = map[int]TextColor{
 	8: TextColorGrey,
 	9: TextColorRainbow,
 }
-

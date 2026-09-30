@@ -2,10 +2,10 @@
 
 package aolib
 
-// ARUP is 
+// ARUP is
 type ARUP struct {
 	UpdateType AreaUpdateType `json:"update_type"`
-	UpdateData []string `json:"update_data"`
+	UpdateData []string       `json:"update_data"`
 }
 
 func (p *ARUP) Header() string { return "ARUP" }
@@ -19,7 +19,12 @@ func (p *ARUP) Args() []string {
 
 func ParseARUP(body []string) (*ARUP, error) {
 	p := &ARUP{}
-	get := func(i int) string { if i < len(body) { return body[i] }; return "" }
+	get := func(i int) string {
+		if i < len(body) {
+			return body[i]
+		}
+		return ""
+	}
 	cursor := 0
 	p.UpdateType = areaUpdateTypeFromWire[atoiOrZero(get(cursor))]
 	cursor++
@@ -28,7 +33,7 @@ func ParseARUP(body []string) (*ARUP, error) {
 	return p, nil
 }
 
-// ASS is 
+// ASS is
 type ASS struct {
 	AssetUrl string `json:"asset_url"`
 }
@@ -43,14 +48,19 @@ func (p *ASS) Args() []string {
 
 func ParseASS(body []string) (*ASS, error) {
 	p := &ASS{}
-	get := func(i int) string { if i < len(body) { return body[i] }; return "" }
+	get := func(i int) string {
+		if i < len(body) {
+			return body[i]
+		}
+		return ""
+	}
 	cursor := 0
 	p.AssetUrl = unescapeFanta(get(cursor))
 	cursor++
 	return p, nil
 }
 
-// AUTH is 
+// AUTH is
 type AUTH struct {
 	AuthState int `json:"auth_state"`
 }
@@ -65,14 +75,19 @@ func (p *AUTH) Args() []string {
 
 func ParseAUTH(body []string) (*AUTH, error) {
 	p := &AUTH{}
-	get := func(i int) string { if i < len(body) { return body[i] }; return "" }
+	get := func(i int) string {
+		if i < len(body) {
+			return body[i]
+		}
+		return ""
+	}
 	cursor := 0
 	p.AuthState = atoiOrZero(get(cursor))
 	cursor++
 	return p, nil
 }
 
-// Askchaa is 
+// Askchaa is
 type Askchaa struct {
 }
 
@@ -88,7 +103,7 @@ func ParseAskchaa(body []string) (*Askchaa, error) {
 	return p, nil
 }
 
-// BB is 
+// BB is
 type BB struct {
 	Message string `json:"message"`
 }
@@ -103,14 +118,19 @@ func (p *BB) Args() []string {
 
 func ParseBB(body []string) (*BB, error) {
 	p := &BB{}
-	get := func(i int) string { if i < len(body) { return body[i] }; return "" }
+	get := func(i int) string {
+		if i < len(body) {
+			return body[i]
+		}
+		return ""
+	}
 	cursor := 0
 	p.Message = unescapeFanta(get(cursor))
 	cursor++
 	return p, nil
 }
 
-// BD is 
+// BD is
 type BD struct {
 	Reason string `json:"reason"`
 }
@@ -125,17 +145,22 @@ func (p *BD) Args() []string {
 
 func ParseBD(body []string) (*BD, error) {
 	p := &BD{}
-	get := func(i int) string { if i < len(body) { return body[i] }; return "" }
+	get := func(i int) string {
+		if i < len(body) {
+			return body[i]
+		}
+		return ""
+	}
 	cursor := 0
 	p.Reason = unescapeFanta(get(cursor))
 	cursor++
 	return p, nil
 }
 
-// BN is 
+// BN is
 type BN struct {
 	Background string `json:"background"`
-	Position string `json:"position"`
+	Position   string `json:"position"`
 }
 
 func (p *BN) Header() string { return "BN" }
@@ -149,7 +174,12 @@ func (p *BN) Args() []string {
 
 func ParseBN(body []string) (*BN, error) {
 	p := &BN{}
-	get := func(i int) string { if i < len(body) { return body[i] }; return "" }
+	get := func(i int) string {
+		if i < len(body) {
+			return body[i]
+		}
+		return ""
+	}
 	cursor := 0
 	p.Background = unescapeFanta(get(cursor))
 	cursor++
@@ -158,10 +188,10 @@ func ParseBN(body []string) (*BN, error) {
 	return p, nil
 }
 
-// CC is 
+// CC is
 type CC struct {
-	PlayerID int `json:"player_id"`
-	CharID int `json:"char_id"`
+	PlayerID     int    `json:"player_id"`
+	CharID       int    `json:"char_id"`
 	CharPassword string `json:"char_password"`
 }
 
@@ -177,7 +207,12 @@ func (p *CC) Args() []string {
 
 func ParseCC(body []string) (*CC, error) {
 	p := &CC{}
-	get := func(i int) string { if i < len(body) { return body[i] }; return "" }
+	get := func(i int) string {
+		if i < len(body) {
+			return body[i]
+		}
+		return ""
+	}
 	cursor := 0
 	p.PlayerID = atoiOrZero(get(cursor))
 	cursor++
@@ -188,7 +223,7 @@ func ParseCC(body []string) (*CC, error) {
 	return p, nil
 }
 
-// CH is 
+// CH is
 type CH struct {
 	CharID int `json:"char_id"`
 }
@@ -203,14 +238,19 @@ func (p *CH) Args() []string {
 
 func ParseCH(body []string) (*CH, error) {
 	p := &CH{}
-	get := func(i int) string { if i < len(body) { return body[i] }; return "" }
+	get := func(i int) string {
+		if i < len(body) {
+			return body[i]
+		}
+		return ""
+	}
 	cursor := 0
 	p.CharID = atoiOrZero(get(cursor))
 	cursor++
 	return p, nil
 }
 
-// CHECK is 
+// CHECK is
 type CHECK struct {
 }
 
@@ -226,10 +266,10 @@ func ParseCHECK(body []string) (*CHECK, error) {
 	return p, nil
 }
 
-// CI is 
+// CI is
 type CI struct {
-	BatchIndex int `json:"batchIndex"`
-	Entries []string `json:"entries"`
+	BatchIndex int      `json:"batchIndex"`
+	Entries    []string `json:"entries"`
 }
 
 func (p *CI) Header() string { return "CI" }
@@ -243,7 +283,12 @@ func (p *CI) Args() []string {
 
 func ParseCI(body []string) (*CI, error) {
 	p := &CI{}
-	get := func(i int) string { if i < len(body) { return body[i] }; return "" }
+	get := func(i int) string {
+		if i < len(body) {
+			return body[i]
+		}
+		return ""
+	}
 	cursor := 0
 	p.BatchIndex = atoiOrZero(get(cursor))
 	cursor++
@@ -252,11 +297,11 @@ func ParseCI(body []string) (*CI, error) {
 	return p, nil
 }
 
-// CTToClient is 
+// CTToClient is
 type CTToClient struct {
-	Name string `json:"name"`
-	Message string `json:"message"`
-	IsFromServer bool `json:"is_from_server"`
+	Name         string `json:"name"`
+	Message      string `json:"message"`
+	IsFromServer bool   `json:"is_from_server"`
 }
 
 func (p *CTToClient) Header() string { return "CT" }
@@ -271,7 +316,12 @@ func (p *CTToClient) Args() []string {
 
 func ParseCTToClient(body []string) (*CTToClient, error) {
 	p := &CTToClient{}
-	get := func(i int) string { if i < len(body) { return body[i] }; return "" }
+	get := func(i int) string {
+		if i < len(body) {
+			return body[i]
+		}
+		return ""
+	}
 	cursor := 0
 	p.Name = unescapeFanta(get(cursor))
 	cursor++
@@ -282,9 +332,9 @@ func ParseCTToClient(body []string) (*CTToClient, error) {
 	return p, nil
 }
 
-// CTToServer is 
+// CTToServer is
 type CTToServer struct {
-	Name string `json:"name"`
+	Name    string `json:"name"`
 	Message string `json:"message"`
 }
 
@@ -299,7 +349,12 @@ func (p *CTToServer) Args() []string {
 
 func ParseCTToServer(body []string) (*CTToServer, error) {
 	p := &CTToServer{}
-	get := func(i int) string { if i < len(body) { return body[i] }; return "" }
+	get := func(i int) string {
+		if i < len(body) {
+			return body[i]
+		}
+		return ""
+	}
 	cursor := 0
 	p.Name = unescapeFanta(get(cursor))
 	cursor++
@@ -308,7 +363,7 @@ func ParseCTToServer(body []string) (*CTToServer, error) {
 	return p, nil
 }
 
-// CharsCheck is 
+// CharsCheck is
 type CharsCheck struct {
 	Taken []int `json:"taken"`
 }
@@ -329,7 +384,7 @@ func ParseCharsCheck(body []string) (*CharsCheck, error) {
 	return p, nil
 }
 
-// DE is 
+// DE is
 type DE struct {
 	ID int `json:"id"`
 }
@@ -344,14 +399,19 @@ func (p *DE) Args() []string {
 
 func ParseDE(body []string) (*DE, error) {
 	p := &DE{}
-	get := func(i int) string { if i < len(body) { return body[i] }; return "" }
+	get := func(i int) string {
+		if i < len(body) {
+			return body[i]
+		}
+		return ""
+	}
 	cursor := 0
 	p.ID = atoiOrZero(get(cursor))
 	cursor++
 	return p, nil
 }
 
-// DONE is 
+// DONE is
 type DONE struct {
 }
 
@@ -367,7 +427,7 @@ func ParseDONE(body []string) (*DONE, error) {
 	return p, nil
 }
 
-// Decryptor is 
+// Decryptor is
 type Decryptor struct {
 	Value string `json:"value"`
 }
@@ -382,19 +442,24 @@ func (p *Decryptor) Args() []string {
 
 func ParseDecryptor(body []string) (*Decryptor, error) {
 	p := &Decryptor{}
-	get := func(i int) string { if i < len(body) { return body[i] }; return "" }
+	get := func(i int) string {
+		if i < len(body) {
+			return body[i]
+		}
+		return ""
+	}
 	cursor := 0
 	p.Value = unescapeFanta(get(cursor))
 	cursor++
 	return p, nil
 }
 
-// EE is 
+// EE is
 type EE struct {
-	ID int `json:"id"`
-	Name string `json:"name"`
+	ID          int    `json:"id"`
+	Name        string `json:"name"`
 	Description string `json:"description"`
-	Image string `json:"image"`
+	Image       string `json:"image"`
 }
 
 func (p *EE) Header() string { return "EE" }
@@ -410,7 +475,12 @@ func (p *EE) Args() []string {
 
 func ParseEE(body []string) (*EE, error) {
 	p := &EE{}
-	get := func(i int) string { if i < len(body) { return body[i] }; return "" }
+	get := func(i int) string {
+		if i < len(body) {
+			return body[i]
+		}
+		return ""
+	}
 	cursor := 0
 	p.ID = atoiOrZero(get(cursor))
 	cursor++
@@ -423,9 +493,9 @@ func ParseEE(body []string) (*EE, error) {
 	return p, nil
 }
 
-// EI is 
+// EI is
 type EI struct {
-	ID int `json:"id"`
+	ID      int    `json:"id"`
 	Details string `json:"details"`
 }
 
@@ -440,7 +510,12 @@ func (p *EI) Args() []string {
 
 func ParseEI(body []string) (*EI, error) {
 	p := &EI{}
-	get := func(i int) string { if i < len(body) { return body[i] }; return "" }
+	get := func(i int) string {
+		if i < len(body) {
+			return body[i]
+		}
+		return ""
+	}
 	cursor := 0
 	p.ID = atoiOrZero(get(cursor))
 	cursor++
@@ -449,10 +524,10 @@ func ParseEI(body []string) (*EI, error) {
 	return p, nil
 }
 
-// EM is 
+// EM is
 type EM struct {
-	BatchIndex int `json:"batchIndex"`
-	Entries []string `json:"entries"`
+	BatchIndex int      `json:"batchIndex"`
+	Entries    []string `json:"entries"`
 }
 
 func (p *EM) Header() string { return "EM" }
@@ -466,7 +541,12 @@ func (p *EM) Args() []string {
 
 func ParseEM(body []string) (*EM, error) {
 	p := &EM{}
-	get := func(i int) string { if i < len(body) { return body[i] }; return "" }
+	get := func(i int) string {
+		if i < len(body) {
+			return body[i]
+		}
+		return ""
+	}
 	cursor := 0
 	p.BatchIndex = atoiOrZero(get(cursor))
 	cursor++
@@ -475,7 +555,7 @@ func ParseEM(body []string) (*EM, error) {
 	return p, nil
 }
 
-// FA is 
+// FA is
 type FA struct {
 	Areas []string `json:"areas"`
 }
@@ -496,7 +576,7 @@ func ParseFA(body []string) (*FA, error) {
 	return p, nil
 }
 
-// FL is 
+// FL is
 type FL struct {
 	Features []string `json:"features"`
 }
@@ -517,7 +597,7 @@ func ParseFL(body []string) (*FL, error) {
 	return p, nil
 }
 
-// FM is 
+// FM is
 type FM struct {
 	MusicList []string `json:"music_list"`
 }
@@ -538,7 +618,7 @@ func ParseFM(body []string) (*FM, error) {
 	return p, nil
 }
 
-// HI is 
+// HI is
 type HI struct {
 	HDID string `json:"hdid"`
 }
@@ -553,16 +633,21 @@ func (p *HI) Args() []string {
 
 func ParseHI(body []string) (*HI, error) {
 	p := &HI{}
-	get := func(i int) string { if i < len(body) { return body[i] }; return "" }
+	get := func(i int) string {
+		if i < len(body) {
+			return body[i]
+		}
+		return ""
+	}
 	cursor := 0
 	p.HDID = unescapeFanta(get(cursor))
 	cursor++
 	return p, nil
 }
 
-// HPToClient is 
+// HPToClient is
 type HPToClient struct {
-	Bar int `json:"bar"`
+	Bar   int `json:"bar"`
 	Value int `json:"value"`
 }
 
@@ -577,7 +662,12 @@ func (p *HPToClient) Args() []string {
 
 func ParseHPToClient(body []string) (*HPToClient, error) {
 	p := &HPToClient{}
-	get := func(i int) string { if i < len(body) { return body[i] }; return "" }
+	get := func(i int) string {
+		if i < len(body) {
+			return body[i]
+		}
+		return ""
+	}
 	cursor := 0
 	p.Bar = atoiOrZero(get(cursor))
 	cursor++
@@ -586,9 +676,9 @@ func ParseHPToClient(body []string) (*HPToClient, error) {
 	return p, nil
 }
 
-// HPToServer is 
+// HPToServer is
 type HPToServer struct {
-	Bar int `json:"bar"`
+	Bar   int `json:"bar"`
 	Value int `json:"value"`
 }
 
@@ -603,7 +693,12 @@ func (p *HPToServer) Args() []string {
 
 func ParseHPToServer(body []string) (*HPToServer, error) {
 	p := &HPToServer{}
-	get := func(i int) string { if i < len(body) { return body[i] }; return "" }
+	get := func(i int) string {
+		if i < len(body) {
+			return body[i]
+		}
+		return ""
+	}
 	cursor := 0
 	p.Bar = atoiOrZero(get(cursor))
 	cursor++
@@ -612,11 +707,11 @@ func ParseHPToServer(body []string) (*HPToServer, error) {
 	return p, nil
 }
 
-// IDToClient is 
+// IDToClient is
 type IDToClient struct {
-	PlayerID int `json:"player_id"`
+	PlayerID int    `json:"player_id"`
 	Software string `json:"software"`
-	Version string `json:"version"`
+	Version  string `json:"version"`
 }
 
 func (p *IDToClient) Header() string { return "ID" }
@@ -631,7 +726,12 @@ func (p *IDToClient) Args() []string {
 
 func ParseIDToClient(body []string) (*IDToClient, error) {
 	p := &IDToClient{}
-	get := func(i int) string { if i < len(body) { return body[i] }; return "" }
+	get := func(i int) string {
+		if i < len(body) {
+			return body[i]
+		}
+		return ""
+	}
 	cursor := 0
 	p.PlayerID = atoiOrZero(get(cursor))
 	cursor++
@@ -642,10 +742,10 @@ func ParseIDToClient(body []string) (*IDToClient, error) {
 	return p, nil
 }
 
-// IDToServer is 
+// IDToServer is
 type IDToServer struct {
 	Software string `json:"software"`
-	Version string `json:"version"`
+	Version  string `json:"version"`
 }
 
 func (p *IDToServer) Header() string { return "ID" }
@@ -659,7 +759,12 @@ func (p *IDToServer) Args() []string {
 
 func ParseIDToServer(body []string) (*IDToServer, error) {
 	p := &IDToServer{}
-	get := func(i int) string { if i < len(body) { return body[i] }; return "" }
+	get := func(i int) string {
+		if i < len(body) {
+			return body[i]
+		}
+		return ""
+	}
 	cursor := 0
 	p.Software = unescapeFanta(get(cursor))
 	cursor++
@@ -668,7 +773,7 @@ func ParseIDToServer(body []string) (*IDToServer, error) {
 	return p, nil
 }
 
-// JD is 
+// JD is
 type JD struct {
 	State int `json:"state"`
 }
@@ -683,14 +788,19 @@ func (p *JD) Args() []string {
 
 func ParseJD(body []string) (*JD, error) {
 	p := &JD{}
-	get := func(i int) string { if i < len(body) { return body[i] }; return "" }
+	get := func(i int) string {
+		if i < len(body) {
+			return body[i]
+		}
+		return ""
+	}
 	cursor := 0
 	p.State = atoiOrZero(get(cursor))
 	cursor++
 	return p, nil
 }
 
-// KB is 
+// KB is
 type KB struct {
 	Reason string `json:"reason"`
 }
@@ -705,14 +815,19 @@ func (p *KB) Args() []string {
 
 func ParseKB(body []string) (*KB, error) {
 	p := &KB{}
-	get := func(i int) string { if i < len(body) { return body[i] }; return "" }
+	get := func(i int) string {
+		if i < len(body) {
+			return body[i]
+		}
+		return ""
+	}
 	cursor := 0
 	p.Reason = unescapeFanta(get(cursor))
 	cursor++
 	return p, nil
 }
 
-// KK is 
+// KK is
 type KK struct {
 	Reason string `json:"reason"`
 }
@@ -727,14 +842,19 @@ func (p *KK) Args() []string {
 
 func ParseKK(body []string) (*KK, error) {
 	p := &KK{}
-	get := func(i int) string { if i < len(body) { return body[i] }; return "" }
+	get := func(i int) string {
+		if i < len(body) {
+			return body[i]
+		}
+		return ""
+	}
 	cursor := 0
 	p.Reason = unescapeFanta(get(cursor))
 	cursor++
 	return p, nil
 }
 
-// LE is 
+// LE is
 type LE struct {
 	Evidence []string `json:"evidence"`
 }
@@ -755,11 +875,11 @@ func ParseLE(body []string) (*LE, error) {
 	return p, nil
 }
 
-// MA is 
+// MA is
 type MA struct {
-	ID int `json:"id"`
-	Duration int `json:"duration"`
-	Reason string `json:"reason"`
+	ID       int    `json:"id"`
+	Duration int    `json:"duration"`
+	Reason   string `json:"reason"`
 }
 
 func (p *MA) Header() string { return "MA" }
@@ -774,7 +894,12 @@ func (p *MA) Args() []string {
 
 func ParseMA(body []string) (*MA, error) {
 	p := &MA{}
-	get := func(i int) string { if i < len(body) { return body[i] }; return "" }
+	get := func(i int) string {
+		if i < len(body) {
+			return body[i]
+		}
+		return ""
+	}
 	cursor := 0
 	p.ID = atoiOrZero(get(cursor))
 	cursor++
@@ -785,14 +910,14 @@ func ParseMA(body []string) (*MA, error) {
 	return p, nil
 }
 
-// MCToClient is 
+// MCToClient is
 type MCToClient struct {
-	Name string `json:"name"`
-	CharID int `json:"char_id"`
+	Name     string `json:"name"`
+	CharID   int    `json:"char_id"`
 	Showname string `json:"showname"`
-	Looping bool `json:"looping"`
-	Channel int `json:"channel"`
-	Effects int `json:"effects"`
+	Looping  bool   `json:"looping"`
+	Channel  int    `json:"channel"`
+	Effects  int    `json:"effects"`
 }
 
 func (p *MCToClient) Header() string { return "MC" }
@@ -810,7 +935,12 @@ func (p *MCToClient) Args() []string {
 
 func ParseMCToClient(body []string) (*MCToClient, error) {
 	p := &MCToClient{}
-	get := func(i int) string { if i < len(body) { return body[i] }; return "" }
+	get := func(i int) string {
+		if i < len(body) {
+			return body[i]
+		}
+		return ""
+	}
 	cursor := 0
 	p.Name = unescapeFanta(get(cursor))
 	cursor++
@@ -827,12 +957,12 @@ func ParseMCToClient(body []string) (*MCToClient, error) {
 	return p, nil
 }
 
-// MCToServer is 
+// MCToServer is
 type MCToServer struct {
-	Name string `json:"name"`
-	CharID int `json:"char_id"`
+	Name     string `json:"name"`
+	CharID   int    `json:"char_id"`
 	Showname string `json:"showname"`
-	Effects int `json:"effects"`
+	Effects  int    `json:"effects"`
 }
 
 func (p *MCToServer) Header() string { return "MC" }
@@ -848,7 +978,12 @@ func (p *MCToServer) Args() []string {
 
 func ParseMCToServer(body []string) (*MCToServer, error) {
 	p := &MCToServer{}
-	get := func(i int) string { if i < len(body) { return body[i] }; return "" }
+	get := func(i int) string {
+		if i < len(body) {
+			return body[i]
+		}
+		return ""
+	}
 	cursor := 0
 	p.Name = unescapeFanta(get(cursor))
 	cursor++
@@ -861,11 +996,281 @@ func ParseMCToServer(body []string) (*MCToServer, error) {
 	return p, nil
 }
 
-// PE is 
+// MSToClient is
+type MSToClient struct {
+	DeskModifier           DeskModifier  `json:"desk_modifier"`
+	Preanim                string        `json:"preanim"`
+	Character              string        `json:"character"`
+	Emote                  string        `json:"emote"`
+	Message                string        `json:"message"`
+	Side                   Side          `json:"side"`
+	SfxName                string        `json:"sfx_name"`
+	EmoteModifier          EmoteModifier `json:"emote_modifier"`
+	CharID                 int           `json:"char_id"`
+	SfxDelay               int           `json:"sfx_delay"`
+	ShoutModifier          ShoutModifier `json:"shout_modifier"`
+	EvidenceID             int           `json:"evidence_id"`
+	Flip                   Flip          `json:"flip"`
+	Realization            bool          `json:"realization"`
+	TextColor              TextColor     `json:"text_color"`
+	Showname               string        `json:"showname"`
+	PairedCharID           int           `json:"paired_charid"`
+	PairedName             string        `json:"paired_name"`
+	PairedEmote            string        `json:"paired_emote"`
+	Offset                 Offset        `json:"offset"`
+	PairedOffset           Offset        `json:"paired_offset"`
+	PairedFlip             Flip          `json:"paired_flip"`
+	NoninterruptingPreanim bool          `json:"noninterrupting_preanim"`
+	SfxLooping             bool          `json:"sfx_looping"`
+	Screenshake            bool          `json:"screenshake"`
+	FramesShake            string        `json:"frames_shake"`
+	FramesRealization      string        `json:"frames_realization"`
+	FramesSfx              string        `json:"frames_sfx"`
+	Additive               bool          `json:"additive"`
+	Effect                 string        `json:"effect"`
+}
+
+func (p *MSToClient) Header() string { return "MS" }
+
+func (p *MSToClient) Args() []string {
+	var args []string
+	args = append(args, itoa(deskModifierToWire[p.DeskModifier]))
+	args = append(args, escapeFanta(p.Preanim))
+	args = append(args, escapeFanta(p.Character))
+	args = append(args, escapeFanta(p.Emote))
+	args = append(args, escapeFanta(p.Message))
+	args = append(args, string(p.Side))
+	args = append(args, escapeFanta(p.SfxName))
+	args = append(args, itoa(emoteModifierToWire[p.EmoteModifier]))
+	args = append(args, itoa(p.CharID))
+	args = append(args, itoa(p.SfxDelay))
+	args = append(args, itoa(shoutModifierToWire[p.ShoutModifier]))
+	args = append(args, itoa(p.EvidenceID))
+	args = append(args, itoa(flipToWire[p.Flip]))
+	args = append(args, boolToWire(p.Realization))
+	args = append(args, itoa(textColorToWire[p.TextColor]))
+	args = append(args, escapeFanta(p.Showname))
+	args = append(args, itoa(p.PairedCharID))
+	args = append(args, escapeFanta(p.PairedName))
+	args = append(args, escapeFanta(p.PairedEmote))
+	args = append(args, offsetToWire(p.Offset))
+	args = append(args, offsetToWire(p.PairedOffset))
+	args = append(args, itoa(flipToWire[p.PairedFlip]))
+	args = append(args, boolToWire(p.NoninterruptingPreanim))
+	args = append(args, boolToWire(p.SfxLooping))
+	args = append(args, boolToWire(p.Screenshake))
+	args = append(args, escapeFanta(p.FramesShake))
+	args = append(args, escapeFanta(p.FramesRealization))
+	args = append(args, escapeFanta(p.FramesSfx))
+	args = append(args, boolToWire(p.Additive))
+	args = append(args, escapeFanta(p.Effect))
+	return args
+}
+
+func ParseMSToClient(body []string) (*MSToClient, error) {
+	p := &MSToClient{}
+	get := func(i int) string {
+		if i < len(body) {
+			return body[i]
+		}
+		return ""
+	}
+	cursor := 0
+	p.DeskModifier = deskModifierFromWire[atoiOrZero(get(cursor))]
+	cursor++
+	p.Preanim = unescapeFanta(get(cursor))
+	cursor++
+	p.Character = unescapeFanta(get(cursor))
+	cursor++
+	p.Emote = unescapeFanta(get(cursor))
+	cursor++
+	p.Message = unescapeFanta(get(cursor))
+	cursor++
+	p.Side = Side(get(cursor))
+	cursor++
+	p.SfxName = unescapeFanta(get(cursor))
+	cursor++
+	p.EmoteModifier = emoteModifierFromWire[atoiOrZero(get(cursor))]
+	cursor++
+	p.CharID = atoiOrZero(get(cursor))
+	cursor++
+	p.SfxDelay = atoiOrZero(get(cursor))
+	cursor++
+	p.ShoutModifier = shoutModifierFromWire[atoiOrZero(get(cursor))]
+	cursor++
+	p.EvidenceID = atoiOrZero(get(cursor))
+	cursor++
+	p.Flip = flipFromWire[atoiOrZero(get(cursor))]
+	cursor++
+	p.Realization = wireToBool(get(cursor))
+	cursor++
+	p.TextColor = textColorFromWire[atoiOrZero(get(cursor))]
+	cursor++
+	p.Showname = unescapeFanta(get(cursor))
+	cursor++
+	p.PairedCharID = atoiOrZero(get(cursor))
+	cursor++
+	p.PairedName = unescapeFanta(get(cursor))
+	cursor++
+	p.PairedEmote = unescapeFanta(get(cursor))
+	cursor++
+	p.Offset = offsetFromWire(get(cursor))
+	cursor++
+	p.PairedOffset = offsetFromWire(get(cursor))
+	cursor++
+	p.PairedFlip = flipFromWire[atoiOrZero(get(cursor))]
+	cursor++
+	p.NoninterruptingPreanim = wireToBool(get(cursor))
+	cursor++
+	p.SfxLooping = wireToBool(get(cursor))
+	cursor++
+	p.Screenshake = wireToBool(get(cursor))
+	cursor++
+	p.FramesShake = unescapeFanta(get(cursor))
+	cursor++
+	p.FramesRealization = unescapeFanta(get(cursor))
+	cursor++
+	p.FramesSfx = unescapeFanta(get(cursor))
+	cursor++
+	p.Additive = wireToBool(get(cursor))
+	cursor++
+	p.Effect = unescapeFanta(get(cursor))
+	cursor++
+	return p, nil
+}
+
+// MSToServer is
+type MSToServer struct {
+	DeskModifier           DeskModifier  `json:"desk_modifier"`
+	Preanim                string        `json:"preanim"`
+	Character              string        `json:"character"`
+	Emote                  string        `json:"emote"`
+	Message                string        `json:"message"`
+	Side                   Side          `json:"side"`
+	SfxName                string        `json:"sfx_name"`
+	EmoteModifier          EmoteModifier `json:"emote_modifier"`
+	CharID                 int           `json:"char_id"`
+	SfxDelay               int           `json:"sfx_delay"`
+	ShoutModifier          ShoutModifier `json:"shout_modifier"`
+	EvidenceID             int           `json:"evidence_id"`
+	Flip                   Flip          `json:"flip"`
+	Realization            bool          `json:"realization"`
+	TextColor              TextColor     `json:"text_color"`
+	Showname               string        `json:"showname"`
+	PairedCharID           int           `json:"paired_charid"`
+	Offset                 Offset        `json:"offset"`
+	NoninterruptingPreanim bool          `json:"noninterrupting_preanim"`
+	SfxLooping             bool          `json:"sfx_looping"`
+	Screenshake            bool          `json:"screenshake"`
+	FramesShake            string        `json:"frames_shake"`
+	FramesRealization      string        `json:"frames_realization"`
+	FramesSfx              string        `json:"frames_sfx"`
+	Additive               bool          `json:"additive"`
+	Effect                 string        `json:"effect"`
+}
+
+func (p *MSToServer) Header() string { return "MS" }
+
+func (p *MSToServer) Args() []string {
+	var args []string
+	args = append(args, itoa(deskModifierToWire[p.DeskModifier]))
+	args = append(args, escapeFanta(p.Preanim))
+	args = append(args, escapeFanta(p.Character))
+	args = append(args, escapeFanta(p.Emote))
+	args = append(args, escapeFanta(p.Message))
+	args = append(args, string(p.Side))
+	args = append(args, escapeFanta(p.SfxName))
+	args = append(args, itoa(emoteModifierToWire[p.EmoteModifier]))
+	args = append(args, itoa(p.CharID))
+	args = append(args, itoa(p.SfxDelay))
+	args = append(args, itoa(shoutModifierToWire[p.ShoutModifier]))
+	args = append(args, itoa(p.EvidenceID))
+	args = append(args, itoa(flipToWire[p.Flip]))
+	args = append(args, boolToWire(p.Realization))
+	args = append(args, itoa(textColorToWire[p.TextColor]))
+	args = append(args, escapeFanta(p.Showname))
+	args = append(args, itoa(p.PairedCharID))
+	args = append(args, offsetToWire(p.Offset))
+	args = append(args, boolToWire(p.NoninterruptingPreanim))
+	args = append(args, boolToWire(p.SfxLooping))
+	args = append(args, boolToWire(p.Screenshake))
+	args = append(args, escapeFanta(p.FramesShake))
+	args = append(args, escapeFanta(p.FramesRealization))
+	args = append(args, escapeFanta(p.FramesSfx))
+	args = append(args, boolToWire(p.Additive))
+	args = append(args, escapeFanta(p.Effect))
+	return args
+}
+
+func ParseMSToServer(body []string) (*MSToServer, error) {
+	p := &MSToServer{}
+	get := func(i int) string {
+		if i < len(body) {
+			return body[i]
+		}
+		return ""
+	}
+	cursor := 0
+	p.DeskModifier = deskModifierFromWire[atoiOrZero(get(cursor))]
+	cursor++
+	p.Preanim = unescapeFanta(get(cursor))
+	cursor++
+	p.Character = unescapeFanta(get(cursor))
+	cursor++
+	p.Emote = unescapeFanta(get(cursor))
+	cursor++
+	p.Message = unescapeFanta(get(cursor))
+	cursor++
+	p.Side = Side(get(cursor))
+	cursor++
+	p.SfxName = unescapeFanta(get(cursor))
+	cursor++
+	p.EmoteModifier = emoteModifierFromWire[atoiOrZero(get(cursor))]
+	cursor++
+	p.CharID = atoiOrZero(get(cursor))
+	cursor++
+	p.SfxDelay = atoiOrZero(get(cursor))
+	cursor++
+	p.ShoutModifier = shoutModifierFromWire[atoiOrZero(get(cursor))]
+	cursor++
+	p.EvidenceID = atoiOrZero(get(cursor))
+	cursor++
+	p.Flip = flipFromWire[atoiOrZero(get(cursor))]
+	cursor++
+	p.Realization = wireToBool(get(cursor))
+	cursor++
+	p.TextColor = textColorFromWire[atoiOrZero(get(cursor))]
+	cursor++
+	p.Showname = unescapeFanta(get(cursor))
+	cursor++
+	p.PairedCharID = atoiOrZero(get(cursor))
+	cursor++
+	p.Offset = offsetFromWire(get(cursor))
+	cursor++
+	p.NoninterruptingPreanim = wireToBool(get(cursor))
+	cursor++
+	p.SfxLooping = wireToBool(get(cursor))
+	cursor++
+	p.Screenshake = wireToBool(get(cursor))
+	cursor++
+	p.FramesShake = unescapeFanta(get(cursor))
+	cursor++
+	p.FramesRealization = unescapeFanta(get(cursor))
+	cursor++
+	p.FramesSfx = unescapeFanta(get(cursor))
+	cursor++
+	p.Additive = wireToBool(get(cursor))
+	cursor++
+	p.Effect = unescapeFanta(get(cursor))
+	cursor++
+	return p, nil
+}
+
+// PE is
 type PE struct {
-	Name string `json:"name"`
+	Name        string `json:"name"`
 	Description string `json:"description"`
-	Image string `json:"image"`
+	Image       string `json:"image"`
 }
 
 func (p *PE) Header() string { return "PE" }
@@ -880,7 +1285,12 @@ func (p *PE) Args() []string {
 
 func ParsePE(body []string) (*PE, error) {
 	p := &PE{}
-	get := func(i int) string { if i < len(body) { return body[i] }; return "" }
+	get := func(i int) string {
+		if i < len(body) {
+			return body[i]
+		}
+		return ""
+	}
 	cursor := 0
 	p.Name = unescapeFanta(get(cursor))
 	cursor++
@@ -891,10 +1301,10 @@ func ParsePE(body []string) (*PE, error) {
 	return p, nil
 }
 
-// PN is 
+// PN is
 type PN struct {
-	PlayerCount int `json:"player_count"`
-	MaxPlayers int `json:"max_players"`
+	PlayerCount       int    `json:"player_count"`
+	MaxPlayers        int    `json:"max_players"`
 	ServerDescription string `json:"server_description"`
 }
 
@@ -910,7 +1320,12 @@ func (p *PN) Args() []string {
 
 func ParsePN(body []string) (*PN, error) {
 	p := &PN{}
-	get := func(i int) string { if i < len(body) { return body[i] }; return "" }
+	get := func(i int) string {
+		if i < len(body) {
+			return body[i]
+		}
+		return ""
+	}
 	cursor := 0
 	p.PlayerCount = atoiOrZero(get(cursor))
 	cursor++
@@ -921,9 +1336,9 @@ func ParsePN(body []string) (*PN, error) {
 	return p, nil
 }
 
-// PR is 
+// PR is
 type PR struct {
-	ID int `json:"id"`
+	ID   int `json:"id"`
 	Type int `json:"type"`
 }
 
@@ -938,7 +1353,12 @@ func (p *PR) Args() []string {
 
 func ParsePR(body []string) (*PR, error) {
 	p := &PR{}
-	get := func(i int) string { if i < len(body) { return body[i] }; return "" }
+	get := func(i int) string {
+		if i < len(body) {
+			return body[i]
+		}
+		return ""
+	}
 	cursor := 0
 	p.ID = atoiOrZero(get(cursor))
 	cursor++
@@ -947,10 +1367,10 @@ func ParsePR(body []string) (*PR, error) {
 	return p, nil
 }
 
-// PU is 
+// PU is
 type PU struct {
-	ID int `json:"id"`
-	Type int `json:"type"`
+	ID   int    `json:"id"`
+	Type int    `json:"type"`
 	Data string `json:"data"`
 }
 
@@ -966,7 +1386,12 @@ func (p *PU) Args() []string {
 
 func ParsePU(body []string) (*PU, error) {
 	p := &PU{}
-	get := func(i int) string { if i < len(body) { return body[i] }; return "" }
+	get := func(i int) string {
+		if i < len(body) {
+			return body[i]
+		}
+		return ""
+	}
 	cursor := 0
 	p.ID = atoiOrZero(get(cursor))
 	cursor++
@@ -977,10 +1402,10 @@ func ParsePU(body []string) (*PU, error) {
 	return p, nil
 }
 
-// PV is 
+// PV is
 type PV struct {
 	PlayerID int `json:"player_id"`
-	CharID int `json:"char_id"`
+	CharID   int `json:"char_id"`
 }
 
 func (p *PV) Header() string { return "PV" }
@@ -995,7 +1420,12 @@ func (p *PV) Args() []string {
 
 func ParsePV(body []string) (*PV, error) {
 	p := &PV{}
-	get := func(i int) string { if i < len(body) { return body[i] }; return "" }
+	get := func(i int) string {
+		if i < len(body) {
+			return body[i]
+		}
+		return ""
+	}
 	cursor := 0
 	p.PlayerID = atoiOrZero(get(cursor))
 	cursor++
@@ -1005,7 +1435,7 @@ func ParsePV(body []string) (*PV, error) {
 	return p, nil
 }
 
-// RC is 
+// RC is
 type RC struct {
 }
 
@@ -1021,7 +1451,7 @@ func ParseRC(body []string) (*RC, error) {
 	return p, nil
 }
 
-// RD is 
+// RD is
 type RD struct {
 }
 
@@ -1037,7 +1467,7 @@ func ParseRD(body []string) (*RD, error) {
 	return p, nil
 }
 
-// RM is 
+// RM is
 type RM struct {
 }
 
@@ -1053,7 +1483,7 @@ func ParseRM(body []string) (*RM, error) {
 	return p, nil
 }
 
-// RMC is 
+// RMC is
 type RMC struct {
 	ToTime string `json:"toTime"`
 }
@@ -1068,17 +1498,22 @@ func (p *RMC) Args() []string {
 
 func ParseRMC(body []string) (*RMC, error) {
 	p := &RMC{}
-	get := func(i int) string { if i < len(body) { return body[i] }; return "" }
+	get := func(i int) string {
+		if i < len(body) {
+			return body[i]
+		}
+		return ""
+	}
 	cursor := 0
 	p.ToTime = unescapeFanta(get(cursor))
 	cursor++
 	return p, nil
 }
 
-// RTToClient is 
+// RTToClient is
 type RTToClient struct {
 	Animation string `json:"animation"`
-	JudgeID int `json:"judgeId"`
+	JudgeID   int    `json:"judgeId"`
 }
 
 func (p *RTToClient) Header() string { return "RT" }
@@ -1092,7 +1527,12 @@ func (p *RTToClient) Args() []string {
 
 func ParseRTToClient(body []string) (*RTToClient, error) {
 	p := &RTToClient{}
-	get := func(i int) string { if i < len(body) { return body[i] }; return "" }
+	get := func(i int) string {
+		if i < len(body) {
+			return body[i]
+		}
+		return ""
+	}
 	cursor := 0
 	p.Animation = unescapeFanta(get(cursor))
 	cursor++
@@ -1101,10 +1541,10 @@ func ParseRTToClient(body []string) (*RTToClient, error) {
 	return p, nil
 }
 
-// RTToServer is 
+// RTToServer is
 type RTToServer struct {
 	Animation string `json:"animation"`
-	JudgeID int `json:"judgeId"`
+	JudgeID   int    `json:"judgeId"`
 }
 
 func (p *RTToServer) Header() string { return "RT" }
@@ -1118,7 +1558,12 @@ func (p *RTToServer) Args() []string {
 
 func ParseRTToServer(body []string) (*RTToServer, error) {
 	p := &RTToServer{}
-	get := func(i int) string { if i < len(body) { return body[i] }; return "" }
+	get := func(i int) string {
+		if i < len(body) {
+			return body[i]
+		}
+		return ""
+	}
 	cursor := 0
 	p.Animation = unescapeFanta(get(cursor))
 	cursor++
@@ -1127,7 +1572,7 @@ func ParseRTToServer(body []string) (*RTToServer, error) {
 	return p, nil
 }
 
-// SC is 
+// SC is
 type SC struct {
 	CharData []string `json:"char_data"`
 }
@@ -1148,11 +1593,11 @@ func ParseSC(body []string) (*SC, error) {
 	return p, nil
 }
 
-// SI is 
+// SI is
 type SI struct {
 	CharCount int `json:"char_count"`
-	EviCount int `json:"evi_count"`
-	MusCount int `json:"mus_count"`
+	EviCount  int `json:"evi_count"`
+	MusCount  int `json:"mus_count"`
 }
 
 func (p *SI) Header() string { return "SI" }
@@ -1167,7 +1612,12 @@ func (p *SI) Args() []string {
 
 func ParseSI(body []string) (*SI, error) {
 	p := &SI{}
-	get := func(i int) string { if i < len(body) { return body[i] }; return "" }
+	get := func(i int) string {
+		if i < len(body) {
+			return body[i]
+		}
+		return ""
+	}
 	cursor := 0
 	p.CharCount = atoiOrZero(get(cursor))
 	cursor++
@@ -1178,7 +1628,7 @@ func ParseSI(body []string) (*SI, error) {
 	return p, nil
 }
 
-// SM is 
+// SM is
 type SM struct {
 	MusicList []string `json:"music_list"`
 }
@@ -1199,7 +1649,7 @@ func ParseSM(body []string) (*SM, error) {
 	return p, nil
 }
 
-// SP is 
+// SP is
 type SP struct {
 	Side Side `json:"side"`
 }
@@ -1214,18 +1664,23 @@ func (p *SP) Args() []string {
 
 func ParseSP(body []string) (*SP, error) {
 	p := &SP{}
-	get := func(i int) string { if i < len(body) { return body[i] }; return "" }
+	get := func(i int) string {
+		if i < len(body) {
+			return body[i]
+		}
+		return ""
+	}
 	cursor := 0
 	p.Side = Side(get(cursor))
 	cursor++
 	return p, nil
 }
 
-// TI is 
+// TI is
 type TI struct {
 	TimerID int `json:"timer_id"`
 	Command int `json:"command"`
-	Time int `json:"time"`
+	Time    int `json:"time"`
 }
 
 func (p *TI) Header() string { return "TI" }
@@ -1240,7 +1695,12 @@ func (p *TI) Args() []string {
 
 func ParseTI(body []string) (*TI, error) {
 	p := &TI{}
-	get := func(i int) string { if i < len(body) { return body[i] }; return "" }
+	get := func(i int) string {
+		if i < len(body) {
+			return body[i]
+		}
+		return ""
+	}
 	cursor := 0
 	p.TimerID = atoiOrZero(get(cursor))
 	cursor++
@@ -1251,9 +1711,9 @@ func ParseTI(body []string) (*TI, error) {
 	return p, nil
 }
 
-// VS_AUDIO is 
+// VS_AUDIO is
 type VS_AUDIO struct {
-	FromUID int `json:"fromUid"`
+	FromUID int    `json:"fromUid"`
 	Payload string `json:"payload"`
 }
 
@@ -1268,7 +1728,12 @@ func (p *VS_AUDIO) Args() []string {
 
 func ParseVS_AUDIO(body []string) (*VS_AUDIO, error) {
 	p := &VS_AUDIO{}
-	get := func(i int) string { if i < len(body) { return body[i] }; return "" }
+	get := func(i int) string {
+		if i < len(body) {
+			return body[i]
+		}
+		return ""
+	}
 	cursor := 0
 	p.FromUID = atoiOrZero(get(cursor))
 	cursor++
@@ -1277,15 +1742,15 @@ func ParseVS_AUDIO(body []string) (*VS_AUDIO, error) {
 	return p, nil
 }
 
-// VS_CAPS is 
+// VS_CAPS is
 type VS_CAPS struct {
-	Enabled bool `json:"enabled"`
-	PttOnly bool `json:"pttOnly"`
-	MaxPeers int `json:"maxPeers"`
-	Codec string `json:"codec"`
-	SampleRate int `json:"sampleRate"`
-	FrameMs int `json:"frameMs"`
-	MaxFrameBytes int `json:"maxFrameBytes"`
+	Enabled       bool   `json:"enabled"`
+	PttOnly       bool   `json:"pttOnly"`
+	MaxPeers      int    `json:"maxPeers"`
+	Codec         string `json:"codec"`
+	SampleRate    int    `json:"sampleRate"`
+	FrameMs       int    `json:"frameMs"`
+	MaxFrameBytes int    `json:"maxFrameBytes"`
 }
 
 func (p *VS_CAPS) Header() string { return "VS_CAPS" }
@@ -1304,7 +1769,12 @@ func (p *VS_CAPS) Args() []string {
 
 func ParseVS_CAPS(body []string) (*VS_CAPS, error) {
 	p := &VS_CAPS{}
-	get := func(i int) string { if i < len(body) { return body[i] }; return "" }
+	get := func(i int) string {
+		if i < len(body) {
+			return body[i]
+		}
+		return ""
+	}
 	cursor := 0
 	p.Enabled = wireToBool(get(cursor))
 	cursor++
@@ -1323,7 +1793,7 @@ func ParseVS_CAPS(body []string) (*VS_CAPS, error) {
 	return p, nil
 }
 
-// VS_FRAME is 
+// VS_FRAME is
 type VS_FRAME struct {
 	Payload string `json:"payload"`
 }
@@ -1338,14 +1808,19 @@ func (p *VS_FRAME) Args() []string {
 
 func ParseVS_FRAME(body []string) (*VS_FRAME, error) {
 	p := &VS_FRAME{}
-	get := func(i int) string { if i < len(body) { return body[i] }; return "" }
+	get := func(i int) string {
+		if i < len(body) {
+			return body[i]
+		}
+		return ""
+	}
 	cursor := 0
 	p.Payload = unescapeFanta(get(cursor))
 	cursor++
 	return p, nil
 }
 
-// VS_JOINToClient is 
+// VS_JOINToClient is
 type VS_JOINToClient struct {
 	UID int `json:"uid"`
 }
@@ -1360,14 +1835,19 @@ func (p *VS_JOINToClient) Args() []string {
 
 func ParseVS_JOINToClient(body []string) (*VS_JOINToClient, error) {
 	p := &VS_JOINToClient{}
-	get := func(i int) string { if i < len(body) { return body[i] }; return "" }
+	get := func(i int) string {
+		if i < len(body) {
+			return body[i]
+		}
+		return ""
+	}
 	cursor := 0
 	p.UID = atoiOrZero(get(cursor))
 	cursor++
 	return p, nil
 }
 
-// VS_JOINToServer is 
+// VS_JOINToServer is
 type VS_JOINToServer struct {
 }
 
@@ -1383,7 +1863,7 @@ func ParseVS_JOINToServer(body []string) (*VS_JOINToServer, error) {
 	return p, nil
 }
 
-// VS_LEAVEToClient is 
+// VS_LEAVEToClient is
 type VS_LEAVEToClient struct {
 	UID int `json:"uid"`
 }
@@ -1398,14 +1878,19 @@ func (p *VS_LEAVEToClient) Args() []string {
 
 func ParseVS_LEAVEToClient(body []string) (*VS_LEAVEToClient, error) {
 	p := &VS_LEAVEToClient{}
-	get := func(i int) string { if i < len(body) { return body[i] }; return "" }
+	get := func(i int) string {
+		if i < len(body) {
+			return body[i]
+		}
+		return ""
+	}
 	cursor := 0
 	p.UID = atoiOrZero(get(cursor))
 	cursor++
 	return p, nil
 }
 
-// VS_LEAVEToServer is 
+// VS_LEAVEToServer is
 type VS_LEAVEToServer struct {
 }
 
@@ -1421,7 +1906,7 @@ func ParseVS_LEAVEToServer(body []string) (*VS_LEAVEToServer, error) {
 	return p, nil
 }
 
-// VS_PEERS is 
+// VS_PEERS is
 type VS_PEERS struct {
 	Uids []int `json:"uids"`
 }
@@ -1442,10 +1927,10 @@ func ParseVS_PEERS(body []string) (*VS_PEERS, error) {
 	return p, nil
 }
 
-// VS_SPEAKToClient is 
+// VS_SPEAKToClient is
 type VS_SPEAKToClient struct {
-	UID int `json:"uid"`
-	On bool `json:"on"`
+	UID int  `json:"uid"`
+	On  bool `json:"on"`
 }
 
 func (p *VS_SPEAKToClient) Header() string { return "VS_SPEAK" }
@@ -1459,7 +1944,12 @@ func (p *VS_SPEAKToClient) Args() []string {
 
 func ParseVS_SPEAKToClient(body []string) (*VS_SPEAKToClient, error) {
 	p := &VS_SPEAKToClient{}
-	get := func(i int) string { if i < len(body) { return body[i] }; return "" }
+	get := func(i int) string {
+		if i < len(body) {
+			return body[i]
+		}
+		return ""
+	}
 	cursor := 0
 	p.UID = atoiOrZero(get(cursor))
 	cursor++
@@ -1468,7 +1958,7 @@ func ParseVS_SPEAKToClient(body []string) (*VS_SPEAKToClient, error) {
 	return p, nil
 }
 
-// VS_SPEAKToServer is 
+// VS_SPEAKToServer is
 type VS_SPEAKToServer struct {
 	On bool `json:"on"`
 }
@@ -1483,17 +1973,22 @@ func (p *VS_SPEAKToServer) Args() []string {
 
 func ParseVS_SPEAKToServer(body []string) (*VS_SPEAKToServer, error) {
 	p := &VS_SPEAKToServer{}
-	get := func(i int) string { if i < len(body) { return body[i] }; return "" }
+	get := func(i int) string {
+		if i < len(body) {
+			return body[i]
+		}
+		return ""
+	}
 	cursor := 0
 	p.On = wireToBool(get(cursor))
 	cursor++
 	return p, nil
 }
 
-// ZZToClient is 
+// ZZToClient is
 type ZZToClient struct {
 	Reason string `json:"reason"`
-	Target int `json:"target"`
+	Target int    `json:"target"`
 }
 
 func (p *ZZToClient) Header() string { return "ZZ" }
@@ -1507,7 +2002,12 @@ func (p *ZZToClient) Args() []string {
 
 func ParseZZToClient(body []string) (*ZZToClient, error) {
 	p := &ZZToClient{}
-	get := func(i int) string { if i < len(body) { return body[i] }; return "" }
+	get := func(i int) string {
+		if i < len(body) {
+			return body[i]
+		}
+		return ""
+	}
 	cursor := 0
 	p.Reason = unescapeFanta(get(cursor))
 	cursor++
@@ -1516,10 +2016,10 @@ func ParseZZToClient(body []string) (*ZZToClient, error) {
 	return p, nil
 }
 
-// ZZToServer is 
+// ZZToServer is
 type ZZToServer struct {
 	Reason string `json:"reason"`
-	Target int `json:"target"`
+	Target int    `json:"target"`
 }
 
 func (p *ZZToServer) Header() string { return "ZZ" }
@@ -1533,7 +2033,12 @@ func (p *ZZToServer) Args() []string {
 
 func ParseZZToServer(body []string) (*ZZToServer, error) {
 	p := &ZZToServer{}
-	get := func(i int) string { if i < len(body) { return body[i] }; return "" }
+	get := func(i int) string {
+		if i < len(body) {
+			return body[i]
+		}
+		return ""
+	}
 	cursor := 0
 	p.Reason = unescapeFanta(get(cursor))
 	cursor++
@@ -1541,4 +2046,3 @@ func ParseZZToServer(body []string) (*ZZToServer, error) {
 	cursor++
 	return p, nil
 }
-

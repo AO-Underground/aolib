@@ -243,13 +243,11 @@ func loadTypes(meta string) (enums, types []*Schema, err error) {
 	return enums, types, nil
 }
 
-// skipPackets lists schemas the codegen must not emit. The MS packet is
-// hand-written (it carries Nyathena extensions — blips, additional_chars, the
-// "^" pair-order suffix — that are not part of canonical aolib-meta).
-var skipPackets = map[string]bool{
-	"MSToServer": true,
-	"MSToClient": true,
-}
+// skipPackets lists schemas the codegen must not emit. Empty: every packet,
+// including MS, is generated straight from aolib-meta. Nonstandard behavior
+// (Nyathena blips, multi-pair, Athena-only packets) is not modeled here;
+// servers layer it on via the session's SendCustom/OnCustom facility.
+var skipPackets = map[string]bool{}
 
 func loadPackets(meta string) ([]*Schema, error) {
 	dir := filepath.Join(meta, "packets", "schemas")
@@ -547,6 +545,19 @@ func emitRegistry(packets []*Schema) string {
 	for _, s := range s2c {
 		fmt.Fprintf(&b, "\t%q: func(b []string) (any, error) { return Parse%s(b) },\n", s.Header, s.Name)
 	}
+	b.WriteString("}\n\n")
+	b.WriteString("// c2sJSON / s2cJSON decode the JSON wire form straight into the typed\n")
+	b.WriteString("// struct, so enum fields keep their meta string values and Offset stays\n")
+	b.WriteString("// an {x,y} object. Keyed by direction like the FantaCode decoders.\n")
+	b.WriteString("var c2sJSON = map[string]jsonDecoder{\n")
+	for _, s := range c2s {
+		fmt.Fprintf(&b, "\t%q: jsonDecoderFor[%s],\n", s.Header, s.Name)
+	}
+	b.WriteString("}\n\n")
+	b.WriteString("var s2cJSON = map[string]jsonDecoder{\n")
+	for _, s := range s2c {
+		fmt.Fprintf(&b, "\t%q: jsonDecoderFor[%s],\n", s.Header, s.Name)
+	}
 	b.WriteString("}\n")
 	return b.String()
 }
@@ -597,4 +608,3 @@ func emitTypes(types []*Schema) string {
 	}
 	return b.String()
 }
-
