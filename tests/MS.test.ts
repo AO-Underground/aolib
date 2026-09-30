@@ -3,8 +3,10 @@ import { encode } from "../src/encode";
 import { decode } from "../src/decode";
 import { server, client } from "../src/session";
 import {
-  MSToServer as MSToServerClass,
-  MSToClient as MSToClientClass,
+  type MSToServer as MSToServerType,
+  type MSToClient as MSToClientType,
+  type MSToServerInit,
+  type MSToClientInit,
   MSToServerSchema as MSToServer,
   MSToClientSchema as MSToClient,
 } from "../generated/packets";
@@ -19,8 +21,6 @@ import {
   type Offset,
 } from "../src/enums";
 
-type MSToServerType = MSToServerClass;
-type MSToClientType = MSToClientClass;
 
 // Enums round-trip on every wire format.
 
@@ -100,6 +100,32 @@ describe("MS: enum values round-trip", () => {
       expect(w.split("#")[6]).toBe(v);
       expect((decode(MSToServer, w) as unknown as MSToServerType).side).toBe(v);
     }
+  });
+
+  it("accepts bare string literals for enum fields at a typed send", () => {
+    // The enums are unions, so a plain "wit"/"zoom"/"shown" type-checks
+    // without importing the enum. This test compiling is the assertion;
+    // it also confirms the wire encoding matches the enum-member path.
+    const out: string[] = [];
+    const c = client({ send: (w) => out.push(w) }); // send.MS => MSToClientInit
+    c.send.MS({
+      character: "Phoenix",
+      emote: "normal",
+      message: "hi",
+      side: "wit",
+      char_id: 0,
+      emote_modifier: "zoom",
+      desk_modifier: "shown",
+      text_color: "red",
+      flip: "none",
+    });
+    expect(decode(MSToClient, out[0] ?? "")).toMatchObject({
+      side: "wit",
+      emote_modifier: "zoom",
+      desk_modifier: "shown",
+      text_color: "red",
+      flip: "none",
+    });
   });
 });
 
@@ -351,7 +377,7 @@ describe("MS: chat-meta in user fields round-trips", () => {
 
 describe("MS: JSON envelope round-trip", () => {
   it("MSToClient: all fields preserved", () => {
-    const p: ConstructorParameters<typeof MSToClientClass>[0] = {
+    const p: MSToClientInit = {
       desk_modifier: DeskModifier.shown,
       preanim: "phoenix-confident",
       character: "Phoenix",
@@ -389,7 +415,7 @@ describe("MS: JSON envelope round-trip", () => {
   });
 
   it("enums survive a JSON round-trip with the correct typed value", () => {
-    const p: ConstructorParameters<typeof MSToServerClass>[0] = {
+    const p: MSToServerInit = {
       character: "Phoenix",
       emote: "normal",
       message: "Objection!",
@@ -406,7 +432,7 @@ describe("MS: JSON envelope round-trip", () => {
   });
 
   it("string-first: JSON carries enum strings; the legacy ints live only on fanta", () => {
-    const p: ConstructorParameters<typeof MSToServerClass>[0] = {
+    const p: MSToServerInit = {
       character: "Phoenix",
       emote: "normal",
       message: "Hello",

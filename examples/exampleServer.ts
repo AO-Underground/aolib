@@ -10,7 +10,8 @@
  * land in `packets/`, more `.on.X` / `.send.X` calls become valid.
  */
 
-import { aolib, type ClientSession } from "../src/index";
+import * as aolib from "../src/index";
+type ClientSession = aolib.ClientSession;
 
 // Minimal inline declarations for the Node `ws` package's
 // `WebSocketServer` API. The real example would do

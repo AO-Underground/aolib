@@ -86,6 +86,7 @@ Number = 1
   it("preserves value case (only names are lowercased)", () => {
     const { options } = parseCharIni(`
 [options]
+name = Matt
 showname = MATT
 side = WIT
 `);
@@ -128,7 +129,9 @@ number = 1
   });
 
   it("skips emote ids that have no definition", () => {
-    const { emotes } = parseCharIni(`
+    const { emotes } = parseCharIni(`[options]
+name = T
+
 [emotions]
 number = 3
 1 = one#-#one#0
@@ -138,17 +141,31 @@ number = 3
   });
 
   it("keeps unmodeled sections in `sections`", () => {
-    const { sections } = parseCharIni(`
+    const { sections } = parseCharIni(`[options]
+name = T
+
 [shouts]
 holdit = Hold it!!
 `);
     expect(sections.shouts?.holdit).toBe("Hold it!!");
   });
 
-  it("returns empty options/emotes for empty input", () => {
-    const { options, emotes } = parseCharIni("");
+  it("parses an options-only file to empty emotes", () => {
+    const { emotes } = parseCharIni("[options]\nname = T\n");
     expect(emotes).toEqual([]);
-    expect(options.name).toBe("");
+  });
+
+  it("throws when the [options] section is missing", () => {
+    expect(() => parseCharIni("")).toThrow(/missing required \[options\]/);
+    expect(() => parseCharIni("[emotions]\nnumber = 0\n")).toThrow(
+      /missing required \[options\]/,
+    );
+  });
+
+  it("throws when [options] has no name", () => {
+    expect(() => parseCharIni("[options]\nshowname = X\n")).toThrow(
+      /missing the required `name`/,
+    );
   });
 });
 
@@ -158,14 +175,14 @@ holdit = Hold it!!
 describe("parseCharIni: real-world edge cases", () => {
   it("defaults deskmod to 1 when the emote has only 4 fields", () => {
     const { emotes } = parseCharIni(
-      "[emotions]\nnumber = 1\n1 = normal#pre#normal#0\n",
+      "[options]\nname = T\n[emotions]\nnumber = 1\n1 = normal#pre#normal#0\n",
     );
     expect(emotes[0]?.deskmod).toBe(1);
   });
 
   it("reads a trailing empty deskmod field as 0", () => {
     const { emotes } = parseCharIni(
-      "[emotions]\nnumber = 1\n1 = #-#void#0#\n",
+      "[options]\nname = T\n[emotions]\nnumber = 1\n1 = #-#void#0#\n",
     );
     expect(emotes[0]).toMatchObject({ name: "", anim: "void", deskmod: 0 });
   });
@@ -179,18 +196,19 @@ describe("parseCharIni: real-world edge cases", () => {
   });
 
   it("parses tab-separated `key<tab>= value`", () => {
-    const { options } = parseCharIni("[options]\nshowname\t = Matt\n");
-    expect(options.showname).toBe("Matt");
+    const { options } = parseCharIni("[options]\nname\t = Matt\n");
+    expect(options.name).toBe("Matt");
   });
 
   it("falls back to the obsolete `gender` key for blips", () => {
     // No blips: gender supplies it.
-    expect(parseCharIni("[options]\ngender = female\n").options.blips).toBe(
-      "female",
-    );
+    expect(
+      parseCharIni("[options]\nname = T\ngender = female\n").options.blips,
+    ).toBe("female");
     // blips wins when both are present.
     expect(
-      parseCharIni("[options]\nblips = male\ngender = female\n").options.blips,
+      parseCharIni("[options]\nname = T\nblips = male\ngender = female\n")
+        .options.blips,
     ).toBe("male");
   });
 
@@ -202,14 +220,14 @@ describe("parseCharIni: real-world edge cases", () => {
 
   it("trims trailing whitespace from values", () => {
     const { emotes } = parseCharIni(
-      "[emotions]\nnumber = 1\n1 = a#-#a#0\n[soundt]\n1 = 3 \n",
+      "[options]\nname = T\n[emotions]\nnumber = 1\n1 = a#-#a#0\n[soundt]\n1 = 3 \n",
     );
     expect(emotes[0]?.sounddelayms).toBe(180); // 3 ticks * 60ms
   });
 
   it("keeps named [Time] keys in sections, not emotes", () => {
     const { emotes, sections } = parseCharIni(
-      "[time]\npre-smh = 0\npre-shout = 0\n[emotions]\nnumber = 1\n1 = a#-#a#0\n",
+      "[options]\nname = T\n[time]\npre-smh = 0\npre-shout = 0\n[emotions]\nnumber = 1\n1 = a#-#a#0\n",
     );
     expect(emotes).toHaveLength(1);
     expect(sections.time?.["pre-smh"]).toBe("0");
@@ -217,19 +235,19 @@ describe("parseCharIni: real-world edge cases", () => {
 
   it("preserves emote names containing spaces", () => {
     const { emotes } = parseCharIni(
-      "[emotions]\nnumber = 1\n1 = Book Worried Down#-#bWorriedDown#0#0\n",
+      "[options]\nname = T\n[emotions]\nnumber = 1\n1 = Book Worried Down#-#bWorriedDown#0#0\n",
     );
     expect(emotes[0]?.name).toBe("Book Worried Down");
   });
 
   it("keeps a numeric emote name as a string", () => {
-    const { emotes } = parseCharIni("[emotions]\nnumber = 1\n1 = 1#-#1#0#1\n");
+    const { emotes } = parseCharIni("[options]\nname = T\n[emotions]\nnumber = 1\n1 = 1#-#1#0#1\n");
     expect(emotes[0]?.name).toBe("1");
   });
 
   it("keeps a named sound and nulls a missing one", () => {
     const { emotes } = parseCharIni(
-      "[emotions]\nnumber = 2\n1 = a#-#a#0\n2 = b#-#b#0\n[soundn]\n1 = et-objection\n",
+      "[options]\nname = T\n[emotions]\nnumber = 2\n1 = a#-#a#0\n2 = b#-#b#0\n[soundn]\n1 = et-objection\n",
     );
     expect(emotes[0]?.sound).toBe("et-objection");
     expect(emotes[1]?.sound).toBeNull();
@@ -245,14 +263,14 @@ describe("parseCharIni: real-world edge cases", () => {
 
   it("ignores emote lines beyond the declared number", () => {
     const { emotes } = parseCharIni(
-      "[emotions]\nnumber = 1\n1 = a#-#a#0\n2 = b#-#b#0\n",
+      "[options]\nname = T\n[emotions]\nnumber = 1\n1 = a#-#a#0\n2 = b#-#b#0\n",
     );
     expect(emotes.map((e) => e.key)).toEqual(["1"]);
   });
 
   it("defaults a non-numeric modifier to 0", () => {
     const { emotes } = parseCharIni(
-      "[emotions]\nnumber = 1\n1 = a#-#a#x\n",
+      "[options]\nname = T\n[emotions]\nnumber = 1\n1 = a#-#a#x\n",
     );
     expect(emotes[0]?.modifier).toBe(0);
   });
@@ -276,23 +294,22 @@ describe("parseCharIni: real-world edge cases", () => {
 
   it("tolerates `#`-led header lines mid-file", () => {
     const { emotes } = parseCharIni(
-      "# Comment#Preanimation#Animation#Modifier\n[emotions]\nnumber = 1\n1 = a#-#a#0\n",
+      "[options]\nname = T\n# Comment#Preanimation#Animation#Modifier\n[emotions]\nnumber = 1\n1 = a#-#a#0\n",
     );
     expect(emotes).toHaveLength(1);
   });
 
-  it("degrades to empty options on a malformed [options] header", () => {
-    // e.g. `+[Options]` or `Options]` seen in the wild.
-    const { options, emotes } = parseCharIni(
-      "+[Options]\nname = Broken\n[emotions]\nnumber = 1\n1 = a#-#a#0\n",
-    );
-    expect(options.name).toBe("");
-    expect(emotes).toHaveLength(1);
+  it("throws on a malformed [options] header (no valid options section)", () => {
+    // e.g. `+[Options]` or `Options]` seen in the wild parse as a different
+    // section name, so the required [options] is effectively missing.
+    expect(() =>
+      parseCharIni("+[Options]\nname = Broken\n[emotions]\nnumber = 1\n1 = a#-#a#0\n"),
+    ).toThrow(/missing required \[options\]/);
   });
 
   it("keeps the last of duplicate emote ids", () => {
     const { emotes } = parseCharIni(
-      "[emotions]\nnumber = 1\n1 = first#-#first#0\n1 = second#-#second#0\n",
+      "[options]\nname = T\n[emotions]\nnumber = 1\n1 = first#-#first#0\n1 = second#-#second#0\n",
     );
     expect(emotes).toHaveLength(1);
     expect(emotes[0]?.anim).toBe("second");
@@ -300,7 +317,7 @@ describe("parseCharIni: real-world edge cases", () => {
 
   it("normalizes a legacy `-` preanim to null and keys by id", () => {
     const { emotes } = parseCharIni(
-      "[emotions]\nnumber = 2\n1 = a#-#a#0\n2 = b#pre#b#1\n",
+      "[options]\nname = T\n[emotions]\nnumber = 2\n1 = a#-#a#0\n2 = b#pre#b#1\n",
     );
     expect(emotes[0]).toMatchObject({ key: "1", preanim: null });
     expect(emotes[1]).toMatchObject({ key: "2", preanim: "pre" });
@@ -374,7 +391,7 @@ anim = think_loop.vmd
 
   it("lets `name =` override the display label", () => {
     const { emotes } = parseCharIni(
-      "[emotions]\nnumber = 1\n1 = obj\n[emote obj]\nanim = obj.gif\nname = Objection!\n",
+      "[options]\nname = T\n[emotions]\nnumber = 1\n1 = obj\n[emote obj]\nanim = obj.gif\nname = Objection!\n",
     );
     expect(emotes[0]?.key).toBe("obj");
     expect(emotes[0]?.name).toBe("Objection!");
@@ -382,7 +399,7 @@ anim = think_loop.vmd
 
   it("matches block sections case-insensitively", () => {
     const { emotes } = parseCharIni(
-      "[Emotions]\nnumber = 1\n1 = Wave\n[Emote Wave]\nAnim = wave.gif\n",
+      "[options]\nname = T\n[Emotions]\nnumber = 1\n1 = Wave\n[Emote Wave]\nAnim = wave.gif\n",
     );
     expect(emotes[0]?.anim).toBe("wave.gif");
   });
@@ -391,14 +408,14 @@ anim = think_loop.vmd
     // A file mixing the two: blocks win, so the `#` value is treated as a
     // block name (no such block), not split into legacy fields.
     const { emotes } = parseCharIni(
-      "[emotions]\nnumber = 1\n1 = real\n[emote real]\nanim = real.gif\n",
+      "[options]\nname = T\n[emotions]\nnumber = 1\n1 = real\n[emote real]\nanim = real.gif\n",
     );
     expect(emotes[0]?.anim).toBe("real.gif");
   });
 
   it("accepts a named EmoteModifier in the block `modifier` field", () => {
     const { emotes } = parseCharIni(
-      "[emotions]\nnumber = 3\n1 = a\n2 = b\n3 = c\n" +
+      "[options]\nname = T\n[emotions]\nnumber = 3\n1 = a\n2 = b\n3 = c\n" +
         "[emote a]\nanim = a.gif\nmodifier = zoom\n" +
         "[emote b]\nanim = b.gif\nmodifier = objection_zoom\n" +
         "[emote c]\nanim = c.gif\nmodifier = preanim\n",
@@ -410,19 +427,19 @@ anim = think_loop.vmd
 
   it("rejects a bare number for a block `modifier`", () => {
     expect(() =>
-      parseCharIni("[emotions]\nnumber = 1\n1 = a\n[emote a]\nanim = a.gif\nmodifier = 5\n"),
+      parseCharIni("[options]\nname = T\n[emotions]\nnumber = 1\n1 = a\n[emote a]\nanim = a.gif\nmodifier = 5\n"),
     ).toThrow(/modifier "5" must be one of/);
   });
 
   it("rejects a bare number for a block `deskmod`", () => {
     expect(() =>
-      parseCharIni("[emotions]\nnumber = 1\n1 = a\n[emote a]\nanim = a.gif\ndeskmod = 0\n"),
+      parseCharIni("[options]\nname = T\n[emotions]\nnumber = 1\n1 = a\n[emote a]\nanim = a.gif\ndeskmod = 0\n"),
     ).toThrow(/deskmod "0" must be one of/);
   });
 
   it("accepts a named DeskModifier in the block `deskmod` field", () => {
     const { emotes } = parseCharIni(
-      "[emotions]\nnumber = 2\n1 = a\n2 = b\n" +
+      "[options]\nname = T\n[emotions]\nnumber = 2\n1 = a\n2 = b\n" +
         "[emote a]\nanim = a.gif\ndeskmod = shown\n" +
         "[emote b]\nanim = b.gif\ndeskmod = show_during_preanim\n",
     );
@@ -432,14 +449,14 @@ anim = think_loop.vmd
 
   it("rejects a block `anim` without a file extension", () => {
     expect(() =>
-      parseCharIni("[emotions]\nnumber = 1\n1 = obj\n[emote obj]\nanim = obj\n"),
+      parseCharIni("[options]\nname = T\n[emotions]\nnumber = 1\n1 = obj\n[emote obj]\nanim = obj\n"),
     ).toThrow(/must include a file extension/);
   });
 
   it("rejects a block `preanim` without a file extension", () => {
     expect(() =>
       parseCharIni(
-        "[emotions]\nnumber = 1\n1 = obj\n[emote obj]\nanim = obj.gif\npreanim = point\n",
+        "[options]\nname = T\n[emotions]\nnumber = 1\n1 = obj\n[emote obj]\nanim = obj.gif\npreanim = point\n",
       ),
     ).toThrow(/preanim .* must include a file extension/);
   });
@@ -447,14 +464,32 @@ anim = think_loop.vmd
   it("rejects a block `sound` without a file extension", () => {
     expect(() =>
       parseCharIni(
-        "[emotions]\nnumber = 1\n1 = obj\n[emote obj]\nanim = obj.gif\nsound = boom\n",
+        "[options]\nname = T\n[emotions]\nnumber = 1\n1 = obj\n[emote obj]\nanim = obj.gif\nsound = boom\n",
       ),
     ).toThrow(/sound .* must include a file extension/);
   });
 
+  it("parses a minimal block: only anim, everything else defaulted", () => {
+    // No [emotions]; the sole required field is `anim` (with extension).
+    const { emotes } = parseCharIni("[options]\nname = T\n[emote objection]\nanim = objection.gif\n");
+    expect(emotes).toHaveLength(1);
+    expect(emotes[0]).toEqual({
+      key: "objection",
+      name: "objection", // defaults to the block name
+      anim: "objection.gif",
+      preanim: null,
+      postanim: null,
+      camera: null,
+      modifier: 0, // no_preanim
+      deskmod: 1, // shown
+      sound: null,
+      sounddelayms: 0,
+    });
+  });
+
   it("still allows an absent preanim/postanim/sound in a block", () => {
     const { emotes } = parseCharIni(
-      "[emotions]\nnumber = 1\n1 = obj\n[emote obj]\nanim = obj.gif\n",
+      "[options]\nname = T\n[emotions]\nnumber = 1\n1 = obj\n[emote obj]\nanim = obj.gif\n",
     );
     expect(emotes[0]).toMatchObject({
       preanim: null,
@@ -465,7 +500,7 @@ anim = think_loop.vmd
 
   it("reads a block `postanim` (exit animation)", () => {
     const { emotes } = parseCharIni(
-      "[emotions]\nnumber = 1\n1 = obj\n[emote obj]\nanim = obj.gif\npostanim = bow.gif\n",
+      "[options]\nname = T\n[emotions]\nnumber = 1\n1 = obj\n[emote obj]\nanim = obj.gif\npostanim = bow.gif\n",
     );
     expect(emotes[0]?.postanim).toBe("bow.gif");
   });
@@ -473,19 +508,19 @@ anim = think_loop.vmd
   it("rejects a block `postanim` without a file extension", () => {
     expect(() =>
       parseCharIni(
-        "[emotions]\nnumber = 1\n1 = obj\n[emote obj]\nanim = obj.gif\npostanim = bow\n",
+        "[options]\nname = T\n[emotions]\nnumber = 1\n1 = obj\n[emote obj]\nanim = obj.gif\npostanim = bow\n",
       ),
     ).toThrow(/postanim .* must include a file extension/);
   });
 
   it("leaves postanim null for legacy emotes", () => {
-    const { emotes } = parseCharIni("[emotions]\nnumber = 1\n1 = a#-#a#0\n");
+    const { emotes } = parseCharIni("[options]\nname = T\n[emotions]\nnumber = 1\n1 = a#-#a#0\n");
     expect(emotes[0]?.postanim).toBeNull();
   });
 
   it("reads a block `camera` (camera-motion VMD)", () => {
     const { emotes } = parseCharIni(
-      "[emotions]\nnumber = 1\n1 = obj\n[emote obj]\nanim = obj.vmd\ncamera = obj_cam.vmd\n",
+      "[options]\nname = T\n[emotions]\nnumber = 1\n1 = obj\n[emote obj]\nanim = obj.vmd\ncamera = obj_cam.vmd\n",
     );
     expect(emotes[0]?.camera).toBe("obj_cam.vmd");
   });
@@ -493,19 +528,19 @@ anim = think_loop.vmd
   it("rejects a block `camera` without a file extension", () => {
     expect(() =>
       parseCharIni(
-        "[emotions]\nnumber = 1\n1 = obj\n[emote obj]\nanim = obj.vmd\ncamera = obj_cam\n",
+        "[options]\nname = T\n[emotions]\nnumber = 1\n1 = obj\n[emote obj]\nanim = obj.vmd\ncamera = obj_cam\n",
       ),
     ).toThrow(/camera .* must include a file extension/);
   });
 
   it("leaves camera null for legacy emotes", () => {
-    const { emotes } = parseCharIni("[emotions]\nnumber = 1\n1 = a#-#a#0\n");
+    const { emotes } = parseCharIni("[options]\nname = T\n[emotions]\nnumber = 1\n1 = a#-#a#0\n");
     expect(emotes[0]?.camera).toBeNull();
   });
 
   it("uses every block in file order when `[emotions]` is absent", () => {
     const { emotes } = parseCharIni(
-      "[options]\nmodel = model.pmx\n" +
+      "[options]\nname = T\nmodel = model.pmx\n" +
         "[emote jog]\nanim = run16.vmd\n" +
         "[emote wave]\nanim = wave.vmd\n",
     );
@@ -519,7 +554,7 @@ anim = think_loop.vmd
     const { emotes } = parseCharIni(
       // `[emotions]` lists only `wave`, but blocks win: both emotes, in
       // file order (jog then wave), and the section is not consulted.
-      "[emotions]\nnumber = 1\n1 = wave\n" +
+      "[options]\nname = T\n[emotions]\nnumber = 1\n1 = wave\n" +
         "[emote jog]\nanim = run16.vmd\n" +
         "[emote wave]\nanim = wave.vmd\n",
     );

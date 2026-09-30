@@ -35,16 +35,12 @@ import { decode, readHeader } from "./decode";
 import {
   c2sSchemas,
   s2cSchemas,
-  c2sClasses,
-  s2cClasses,
   type C2SInputs,
   type S2CInputs,
   type C2SOutputs,
   type S2COutputs,
 } from "../generated/packets";
 import type { JsonSchema } from "./types";
-
-type ClassCtor = { prototype: object };
 
 // Public types
 
@@ -96,7 +92,6 @@ export interface ClientSession {
 type Role = "client" | "server";
 
 type SchemaMap = Record<string, JsonSchema>;
-type ClassMap = Record<string, ClassCtor>;
 
 function makeSession(role: Role, config: SessionConfig): ServerSession & ClientSession {
   // role "server" → this represents the remote server → from us-as-client.
@@ -107,7 +102,6 @@ function makeSession(role: Role, config: SessionConfig): ServerSession & ClientS
   //   inbound: C2S
   const outboundSchemas = (role === "server" ? c2sSchemas : s2cSchemas) as SchemaMap;
   const inboundSchemas = (role === "server" ? s2cSchemas : c2sSchemas) as SchemaMap;
-  const inboundClasses = (role === "server" ? s2cClasses : c2sClasses) as unknown as ClassMap;
   const oppositeOutbound = role === "server" ? s2cSchemas : c2sSchemas;
   const oppositeInbound = role === "server" ? c2sSchemas : s2cSchemas;
 
@@ -175,13 +169,9 @@ function makeSession(role: Role, config: SessionConfig): ServerSession & ClientS
 
     let packet: object;
     try {
-      const parsed = decode(schema, wire);
-      const ctor = inboundClasses[header];
-      // Rehydrate as a class instance so handlers can rely on
-      // `instanceof` and the typed shape matches the OutMap.
-      packet = ctor
-        ? Object.assign(Object.create(ctor.prototype) as object, parsed)
-        : parsed;
+      // Packets are plain data: the decoded, Ajv-defaulted object matches
+      // the OutMap type directly, no class rehydration.
+      packet = decode(schema, wire);
     } catch (err) {
       if (!callHook(config.onDecodeError, header, err as Error, wire)) {
         defaultDecodeError(header, err as Error, wire);

@@ -289,1050 +289,846 @@ export const enumSchemas = [AreaUpdateTypeEnumSchema, DeskModifierEnumSchema, Em
 export const typeSchemas = [OffsetTypeSchema];
 
 
-export class ARUP {
-  update_type!: AreaUpdateType;
-  update_data!: (number | string)[];
+export interface ARUP {
+  update_type: AreaUpdateType;
+  update_data: (number | string)[];
+}
 
-  constructor(input: {
-    update_type: AreaUpdateType;
-    update_data: (number | string)[];
-  }) {
-    this.update_type = input.update_type;
-    this.update_data = input.update_data;
-  }
+export interface ARUPInit {
+  update_type: AreaUpdateType;
+  update_data: (number | string)[];
 }
 
 
-export class ASS {
-  asset_url!: string;
+export interface ASS {
+  asset_url: string;
+}
 
-  constructor(input: {
-    asset_url: string;
-  }) {
-    this.asset_url = input.asset_url;
-  }
+export interface ASSInit {
+  asset_url: string;
 }
 
 
-export class AUTH {
-  auth_state!: number;
+export interface AUTH {
+  auth_state: number;
+}
 
-  constructor(input: {
-    auth_state: number;
-  }) {
-    this.auth_state = input.auth_state;
-  }
+export interface AUTHInit {
+  auth_state: number;
 }
 
 
-export class BB {
-  message!: string;
+export interface BB {
+  message: string;
+}
 
-  constructor(input: {
-    message: string;
-  }) {
-    this.message = input.message;
-  }
+export interface BBInit {
+  message: string;
 }
 
 
-export class BD {
-  reason!: string;
+export interface BD {
+  reason: string;
+}
 
-  constructor(input: {
-    reason: string;
-  }) {
-    this.reason = input.reason;
-  }
+export interface BDInit {
+  reason: string;
 }
 
 
-export class BN {
-  background!: string;
-  position!: string;
+export interface BN {
+  background: string;
+  position: string;
+}
 
-  constructor(input: {
-    background: string;
-    position?: string;
-  }) {
-    this.background = input.background;
-    this.position = input.position ?? "";
-  }
+export interface BNInit {
+  background: string;
+  position?: string;
 }
 
 
-export class CC {
-  player_id!: number;
-  char_id!: number;
-  char_password!: string;
+export interface CC {
+  player_id: number;
+  char_id: number;
+  char_password: string;
+}
 
-  constructor(input: {
-    player_id: number;
-    char_id: number;
-    char_password?: string;
-  }) {
-    this.player_id = input.player_id;
-    this.char_id = input.char_id;
-    this.char_password = input.char_password ?? "";
-  }
+export interface CCInit {
+  player_id: number;
+  char_id: number;
+  char_password?: string;
 }
 
 
-export class CH {
-  char_id!: number;
+export interface CH {
+  char_id: number;
+}
 
-  constructor(input: {
-    char_id: number;
-  }) {
-    this.char_id = input.char_id;
-  }
+export interface CHInit {
+  char_id: number;
 }
 
 
-export class CHECK {
-  constructor(_input: Record<string, never> = {}) {
-    void _input;
-  }
+export interface CHECK {
+
+}
+
+export interface CHECKInit {
+
 }
 
 
-export class CI {
-  batchIndex!: number;
-  entries!: {
+export interface CI {
+  batchIndex: number;
+  entries: {
     index: number;
     data: string;
   }[];
+}
 
-  constructor(input: {
-    batchIndex: number;
-    entries: {
+export interface CIInit {
+  batchIndex: number;
+  entries: {
     index: number;
     data: string;
   }[];
-  }) {
-    this.batchIndex = input.batchIndex;
-    this.entries = input.entries;
-  }
 }
 
 
-export class CTToClient {
-  name!: string;
-  message!: string;
-  is_from_server!: boolean;
+export interface CTToClient {
+  name: string;
+  message: string;
+  is_from_server: boolean;
+}
 
-  constructor(input: {
-    name: string;
-    message: string;
-    is_from_server?: boolean;
-  }) {
-    this.name = input.name;
-    this.message = input.message;
-    this.is_from_server = input.is_from_server ?? false;
-  }
+export interface CTToClientInit {
+  name: string;
+  message: string;
+  is_from_server?: boolean;
 }
 
 
-export class CTToServer {
-  name!: string;
-  message!: string;
+export interface CTToServer {
+  name: string;
+  message: string;
+}
 
-  constructor(input: {
-    name: string;
-    message: string;
-  }) {
-    this.name = input.name;
-    this.message = input.message;
-  }
+export interface CTToServerInit {
+  name: string;
+  message: string;
 }
 
 
-export class CharsCheck {
-  taken!: number[];
+export interface CharsCheck {
+  taken: number[];
+}
 
-  constructor(input: {
-    taken: number[];
-  }) {
-    this.taken = input.taken;
-  }
+export interface CharsCheckInit {
+  taken: number[];
 }
 
 
-export class DE {
-  id!: number;
+export interface DE {
+  id: number;
+}
 
-  constructor(input: {
-    id: number;
-  }) {
-    this.id = input.id;
-  }
+export interface DEInit {
+  id: number;
 }
 
 
-export class DONE {
-  constructor(_input: Record<string, never> = {}) {
-    void _input;
-  }
+export interface DONE {
+
+}
+
+export interface DONEInit {
+
 }
 
 
-export class EE {
-  id!: number;
-  name!: string;
-  description!: string;
-  image!: string;
+export interface EE {
+  id: number;
+  name: string;
+  description: string;
+  image: string;
+}
 
-  constructor(input: {
-    id: number;
-    name: string;
-    description: string;
-    image: string;
-  }) {
-    this.id = input.id;
-    this.name = input.name;
-    this.description = input.description;
-    this.image = input.image;
-  }
+export interface EEInit {
+  id: number;
+  name: string;
+  description: string;
+  image: string;
 }
 
 
-export class EI {
-  id!: number;
-  details!: {
+export interface EI {
+  id: number;
+  details: {
     name: string;
     description: string;
     type: string;
     image: string;
   };
+}
 
-  constructor(input: {
-    id: number;
-    details: {
+export interface EIInit {
+  id: number;
+  details: {
     name: string;
     description: string;
     type: string;
     image: string;
   };
-  }) {
-    this.id = input.id;
-    this.details = input.details;
-  }
 }
 
 
-export class EM {
-  batchIndex!: number;
-  entries!: {
+export interface EM {
+  batchIndex: number;
+  entries: {
     index: number;
     name: string;
   }[];
+}
 
-  constructor(input: {
-    batchIndex: number;
-    entries: {
+export interface EMInit {
+  batchIndex: number;
+  entries: {
     index: number;
     name: string;
   }[];
-  }) {
-    this.batchIndex = input.batchIndex;
-    this.entries = input.entries;
-  }
 }
 
 
-export class FA {
-  areas!: string[];
+export interface FA {
+  areas: string[];
+}
 
-  constructor(input: {
-    areas: string[];
-  }) {
-    this.areas = input.areas;
-  }
+export interface FAInit {
+  areas: string[];
 }
 
 
-export class FL {
-  features!: string[];
+export interface FL {
+  features: string[];
+}
 
-  constructor(input: {
-    features: string[];
-  }) {
-    this.features = input.features;
-  }
+export interface FLInit {
+  features: string[];
 }
 
 
-export class FM {
-  music_list!: {
+export interface FM {
+  music_list: {
     name: string;
   }[];
+}
 
-  constructor(input: {
-    music_list: {
+export interface FMInit {
+  music_list: {
     name: string;
   }[];
-  }) {
-    this.music_list = input.music_list;
-  }
 }
 
 
-export class HI {
-  hdid!: string;
+export interface HI {
+  hdid: string;
+}
 
-  constructor(input: {
-    hdid: string;
-  }) {
-    this.hdid = input.hdid;
-  }
+export interface HIInit {
+  hdid: string;
 }
 
 
-export class HPToClient {
-  bar!: number;
-  value!: number;
+export interface HPToClient {
+  bar: number;
+  value: number;
+}
 
-  constructor(input: {
-    bar: number;
-    value: number;
-  }) {
-    this.bar = input.bar;
-    this.value = input.value;
-  }
+export interface HPToClientInit {
+  bar: number;
+  value: number;
 }
 
 
-export class HPToServer {
-  bar!: number;
-  value!: number;
+export interface HPToServer {
+  bar: number;
+  value: number;
+}
 
-  constructor(input: {
-    bar: number;
-    value: number;
-  }) {
-    this.bar = input.bar;
-    this.value = input.value;
-  }
+export interface HPToServerInit {
+  bar: number;
+  value: number;
 }
 
 
-export class IDToClient {
-  player_id!: number;
-  software!: string;
-  version!: string;
+export interface IDToClient {
+  player_id: number;
+  software: string;
+  version: string;
+}
 
-  constructor(input: {
-    player_id: number;
-    software: string;
-    version: string;
-  }) {
-    this.player_id = input.player_id;
-    this.software = input.software;
-    this.version = input.version;
-  }
+export interface IDToClientInit {
+  player_id: number;
+  software: string;
+  version: string;
 }
 
 
-export class IDToServer {
-  software!: string;
-  version!: string;
+export interface IDToServer {
+  software: string;
+  version: string;
+}
 
-  constructor(input: {
-    software: string;
-    version: string;
-  }) {
-    this.software = input.software;
-    this.version = input.version;
-  }
+export interface IDToServerInit {
+  software: string;
+  version: string;
 }
 
 
-export class JD {
-  state!: number;
+export interface JD {
+  state: number;
+}
 
-  constructor(input: {
-    state: number;
-  }) {
-    this.state = input.state;
-  }
+export interface JDInit {
+  state: number;
 }
 
 
-export class KB {
-  reason!: string;
+export interface KB {
+  reason: string;
+}
 
-  constructor(input: {
-    reason: string;
-  }) {
-    this.reason = input.reason;
-  }
+export interface KBInit {
+  reason: string;
 }
 
 
-export class KK {
-  reason!: string;
+export interface KK {
+  reason: string;
+}
 
-  constructor(input: {
-    reason: string;
-  }) {
-    this.reason = input.reason;
-  }
+export interface KKInit {
+  reason: string;
 }
 
 
-export class LE {
-  evidence!: {
+export interface LE {
+  evidence: {
     name: string;
     description: string;
     image: string;
   }[];
+}
 
-  constructor(input: {
-    evidence: {
+export interface LEInit {
+  evidence: {
     name: string;
     description: string;
     image: string;
   }[];
-  }) {
-    this.evidence = input.evidence;
-  }
 }
 
 
-export class MA {
-  id!: number;
-  duration!: number;
-  reason!: string;
+export interface MA {
+  id: number;
+  duration: number;
+  reason: string;
+}
 
-  constructor(input: {
-    id: number;
-    duration: number;
-    reason: string;
-  }) {
-    this.id = input.id;
-    this.duration = input.duration;
-    this.reason = input.reason;
-  }
+export interface MAInit {
+  id: number;
+  duration: number;
+  reason: string;
 }
 
 
-export class MCToClient {
-  name!: string;
-  char_id!: number;
-  showname!: string;
-  looping!: boolean;
-  channel!: number;
-  effects!: number;
+export interface MCToClient {
+  name: string;
+  char_id: number;
+  showname: string;
+  looping: boolean;
+  channel: number;
+  effects: number;
+}
 
-  constructor(input: {
-    name: string;
-    char_id: number;
-    showname?: string;
-    looping?: boolean;
-    channel?: number;
-    effects?: number;
-  }) {
-    this.name = input.name;
-    this.char_id = input.char_id;
-    this.showname = input.showname ?? "";
-    this.looping = input.looping ?? false;
-    this.channel = input.channel ?? 0;
-    this.effects = input.effects ?? 0;
-  }
+export interface MCToClientInit {
+  name: string;
+  char_id: number;
+  showname?: string;
+  looping?: boolean;
+  channel?: number;
+  effects?: number;
 }
 
 
-export class MCToServer {
-  name!: string;
-  char_id!: number;
-  showname!: string;
-  effects!: number;
+export interface MCToServer {
+  name: string;
+  char_id: number;
+  showname: string;
+  effects: number;
+}
 
-  constructor(input: {
-    name: string;
-    char_id: number;
-    showname?: string;
-    effects?: number;
-  }) {
-    this.name = input.name;
-    this.char_id = input.char_id;
-    this.showname = input.showname ?? "";
-    this.effects = input.effects ?? 0;
-  }
+export interface MCToServerInit {
+  name: string;
+  char_id: number;
+  showname?: string;
+  effects?: number;
 }
 
 
-export class MSToClient {
-  desk_modifier!: DeskModifier;
-  preanim!: string;
-  character!: string;
-  emote!: string;
-  message!: string;
-  side!: Side;
-  sfx_name!: string;
-  emote_modifier!: EmoteModifier;
-  char_id!: number;
-  sfx_delay!: number;
-  shout_modifier!: ShoutModifier;
-  evidence_id!: number;
-  flip!: Flip;
-  realization!: boolean;
-  text_color!: TextColor;
-  showname!: string;
-  paired_charid!: number;
-  paired_name!: string;
-  paired_emote!: string;
-  offset!: Offset;
-  paired_offset!: Offset;
-  paired_flip!: Flip;
-  noninterrupting_preanim!: boolean;
-  sfx_looping!: boolean;
-  screenshake!: boolean;
-  frames_shake!: string;
-  frames_realization!: string;
-  frames_sfx!: string;
-  additive!: boolean;
-  effect!: string;
+export interface MSToClient {
+  desk_modifier: DeskModifier;
+  preanim: string;
+  character: string;
+  emote: string;
+  message: string;
+  side: Side;
+  sfx_name: string;
+  emote_modifier: EmoteModifier;
+  char_id: number;
+  sfx_delay: number;
+  shout_modifier: ShoutModifier;
+  evidence_id: number;
+  flip: Flip;
+  realization: boolean;
+  text_color: TextColor;
+  showname: string;
+  paired_charid: number;
+  paired_name: string;
+  paired_emote: string;
+  offset: Offset;
+  paired_offset: Offset;
+  paired_flip: Flip;
+  noninterrupting_preanim: boolean;
+  sfx_looping: boolean;
+  screenshake: boolean;
+  frames_shake: string;
+  frames_realization: string;
+  frames_sfx: string;
+  additive: boolean;
+  effect: string;
+}
 
-  constructor(input: {
-    desk_modifier?: DeskModifier;
-    preanim?: string;
-    character: string;
-    emote: string;
-    message: string;
-    side: Side;
-    sfx_name?: string;
-    emote_modifier?: EmoteModifier;
-    char_id: number;
-    sfx_delay?: number;
-    shout_modifier?: ShoutModifier;
-    evidence_id?: number;
-    flip?: Flip;
-    realization?: boolean;
-    text_color?: TextColor;
-    showname?: string;
-    paired_charid?: number;
-    paired_name?: string;
-    paired_emote?: string;
-    offset?: Offset;
-    paired_offset?: Offset;
-    paired_flip?: Flip;
-    noninterrupting_preanim?: boolean;
-    sfx_looping?: boolean;
-    screenshake?: boolean;
-    frames_shake?: string;
-    frames_realization?: string;
-    frames_sfx?: string;
-    additive?: boolean;
-    effect?: string;
-  }) {
-    this.desk_modifier = input.desk_modifier ?? DeskModifier.shown;
-    this.preanim = input.preanim ?? "";
-    this.character = input.character;
-    this.emote = input.emote;
-    this.message = input.message;
-    this.side = input.side;
-    this.sfx_name = input.sfx_name ?? "";
-    this.emote_modifier = input.emote_modifier ?? EmoteModifier.no_preanim;
-    this.char_id = input.char_id;
-    this.sfx_delay = input.sfx_delay ?? 0;
-    this.shout_modifier = input.shout_modifier ?? ShoutModifier.none;
-    this.evidence_id = input.evidence_id ?? 0;
-    this.flip = input.flip ?? Flip.none;
-    this.realization = input.realization ?? false;
-    this.text_color = input.text_color ?? TextColor.white;
-    this.showname = input.showname ?? "";
-    this.paired_charid = input.paired_charid ?? -1;
-    this.paired_name = input.paired_name ?? "";
-    this.paired_emote = input.paired_emote ?? "";
-    this.offset = input.offset ?? {"x":0,"y":0};
-    this.paired_offset = input.paired_offset ?? {"x":0,"y":0};
-    this.paired_flip = input.paired_flip ?? Flip.none;
-    this.noninterrupting_preanim = input.noninterrupting_preanim ?? false;
-    this.sfx_looping = input.sfx_looping ?? false;
-    this.screenshake = input.screenshake ?? false;
-    this.frames_shake = input.frames_shake ?? "";
-    this.frames_realization = input.frames_realization ?? "";
-    this.frames_sfx = input.frames_sfx ?? "";
-    this.additive = input.additive ?? false;
-    this.effect = input.effect ?? "";
-  }
+export interface MSToClientInit {
+  desk_modifier?: DeskModifier;
+  preanim?: string;
+  character: string;
+  emote: string;
+  message: string;
+  side: Side;
+  sfx_name?: string;
+  emote_modifier?: EmoteModifier;
+  char_id: number;
+  sfx_delay?: number;
+  shout_modifier?: ShoutModifier;
+  evidence_id?: number;
+  flip?: Flip;
+  realization?: boolean;
+  text_color?: TextColor;
+  showname?: string;
+  paired_charid?: number;
+  paired_name?: string;
+  paired_emote?: string;
+  offset?: Offset;
+  paired_offset?: Offset;
+  paired_flip?: Flip;
+  noninterrupting_preanim?: boolean;
+  sfx_looping?: boolean;
+  screenshake?: boolean;
+  frames_shake?: string;
+  frames_realization?: string;
+  frames_sfx?: string;
+  additive?: boolean;
+  effect?: string;
 }
 
 
-export class MSToServer {
-  desk_modifier!: DeskModifier;
-  preanim!: string;
-  character!: string;
-  emote!: string;
-  message!: string;
-  side!: Side;
-  sfx_name!: string;
-  emote_modifier!: EmoteModifier;
-  char_id!: number;
-  sfx_delay!: number;
-  shout_modifier!: ShoutModifier;
-  evidence_id!: number;
-  flip!: Flip;
-  realization!: boolean;
-  text_color!: TextColor;
-  showname!: string;
-  paired_charid!: number;
-  offset!: Offset;
-  noninterrupting_preanim!: boolean;
-  sfx_looping!: boolean;
-  screenshake!: boolean;
-  frames_shake!: string;
-  frames_realization!: string;
-  frames_sfx!: string;
-  additive!: boolean;
-  effect!: string;
+export interface MSToServer {
+  desk_modifier: DeskModifier;
+  preanim: string;
+  character: string;
+  emote: string;
+  message: string;
+  side: Side;
+  sfx_name: string;
+  emote_modifier: EmoteModifier;
+  char_id: number;
+  sfx_delay: number;
+  shout_modifier: ShoutModifier;
+  evidence_id: number;
+  flip: Flip;
+  realization: boolean;
+  text_color: TextColor;
+  showname: string;
+  paired_charid: number;
+  offset: Offset;
+  noninterrupting_preanim: boolean;
+  sfx_looping: boolean;
+  screenshake: boolean;
+  frames_shake: string;
+  frames_realization: string;
+  frames_sfx: string;
+  additive: boolean;
+  effect: string;
+}
 
-  constructor(input: {
-    desk_modifier?: DeskModifier;
-    preanim?: string;
-    character: string;
-    emote: string;
-    message: string;
-    side: Side;
-    sfx_name?: string;
-    emote_modifier?: EmoteModifier;
-    char_id: number;
-    sfx_delay?: number;
-    shout_modifier?: ShoutModifier;
-    evidence_id?: number;
-    flip?: Flip;
-    realization?: boolean;
-    text_color?: TextColor;
-    showname?: string;
-    paired_charid?: number;
-    offset?: Offset;
-    noninterrupting_preanim?: boolean;
-    sfx_looping?: boolean;
-    screenshake?: boolean;
-    frames_shake?: string;
-    frames_realization?: string;
-    frames_sfx?: string;
-    additive?: boolean;
-    effect?: string;
-  }) {
-    this.desk_modifier = input.desk_modifier ?? DeskModifier.shown;
-    this.preanim = input.preanim ?? "";
-    this.character = input.character;
-    this.emote = input.emote;
-    this.message = input.message;
-    this.side = input.side;
-    this.sfx_name = input.sfx_name ?? "";
-    this.emote_modifier = input.emote_modifier ?? EmoteModifier.no_preanim;
-    this.char_id = input.char_id;
-    this.sfx_delay = input.sfx_delay ?? 0;
-    this.shout_modifier = input.shout_modifier ?? ShoutModifier.none;
-    this.evidence_id = input.evidence_id ?? 0;
-    this.flip = input.flip ?? Flip.none;
-    this.realization = input.realization ?? false;
-    this.text_color = input.text_color ?? TextColor.white;
-    this.showname = input.showname ?? "";
-    this.paired_charid = input.paired_charid ?? -1;
-    this.offset = input.offset ?? {"x":0,"y":0};
-    this.noninterrupting_preanim = input.noninterrupting_preanim ?? false;
-    this.sfx_looping = input.sfx_looping ?? false;
-    this.screenshake = input.screenshake ?? false;
-    this.frames_shake = input.frames_shake ?? "";
-    this.frames_realization = input.frames_realization ?? "";
-    this.frames_sfx = input.frames_sfx ?? "";
-    this.additive = input.additive ?? false;
-    this.effect = input.effect ?? "";
-  }
+export interface MSToServerInit {
+  desk_modifier?: DeskModifier;
+  preanim?: string;
+  character: string;
+  emote: string;
+  message: string;
+  side: Side;
+  sfx_name?: string;
+  emote_modifier?: EmoteModifier;
+  char_id: number;
+  sfx_delay?: number;
+  shout_modifier?: ShoutModifier;
+  evidence_id?: number;
+  flip?: Flip;
+  realization?: boolean;
+  text_color?: TextColor;
+  showname?: string;
+  paired_charid?: number;
+  offset?: Offset;
+  noninterrupting_preanim?: boolean;
+  sfx_looping?: boolean;
+  screenshake?: boolean;
+  frames_shake?: string;
+  frames_realization?: string;
+  frames_sfx?: string;
+  additive?: boolean;
+  effect?: string;
 }
 
 
-export class PE {
-  name!: string;
-  description!: string;
-  image!: string;
+export interface PE {
+  name: string;
+  description: string;
+  image: string;
+}
 
-  constructor(input: {
-    name: string;
-    description: string;
-    image: string;
-  }) {
-    this.name = input.name;
-    this.description = input.description;
-    this.image = input.image;
-  }
+export interface PEInit {
+  name: string;
+  description: string;
+  image: string;
 }
 
 
-export class PN {
-  player_count!: number;
-  max_players!: number;
-  server_description!: string;
+export interface PN {
+  player_count: number;
+  max_players: number;
+  server_description: string;
+}
 
-  constructor(input: {
-    player_count: number;
-    max_players: number;
-    server_description?: string;
-  }) {
-    this.player_count = input.player_count;
-    this.max_players = input.max_players;
-    this.server_description = input.server_description ?? "";
-  }
+export interface PNInit {
+  player_count: number;
+  max_players: number;
+  server_description?: string;
 }
 
 
-export class PR {
-  id!: number;
-  type!: number;
+export interface PR {
+  id: number;
+  type: number;
+}
 
-  constructor(input: {
-    id: number;
-    type: number;
-  }) {
-    this.id = input.id;
-    this.type = input.type;
-  }
+export interface PRInit {
+  id: number;
+  type: number;
 }
 
 
-export class PU {
-  id!: number;
-  type!: number;
-  data!: string;
+export interface PU {
+  id: number;
+  type: number;
+  data: string;
+}
 
-  constructor(input: {
-    id: number;
-    type: number;
-    data: string;
-  }) {
-    this.id = input.id;
-    this.type = input.type;
-    this.data = input.data;
-  }
+export interface PUInit {
+  id: number;
+  type: number;
+  data: string;
 }
 
 
-export class PV {
-  player_id!: number;
-  char_id!: number;
+export interface PV {
+  player_id: number;
+  char_id: number;
+}
 
-  constructor(input: {
-    player_id: number;
-    char_id: number;
-  }) {
-    this.player_id = input.player_id;
-    this.char_id = input.char_id;
-  }
+export interface PVInit {
+  player_id: number;
+  char_id: number;
 }
 
 
-export class RC {
-  constructor(_input: Record<string, never> = {}) {
-    void _input;
-  }
+export interface RC {
+
+}
+
+export interface RCInit {
+
 }
 
 
-export class RD {
-  constructor(_input: Record<string, never> = {}) {
-    void _input;
-  }
+export interface RD {
+
+}
+
+export interface RDInit {
+
 }
 
 
-export class RM {
-  constructor(_input: Record<string, never> = {}) {
-    void _input;
-  }
+export interface RM {
+
+}
+
+export interface RMInit {
+
 }
 
 
-export class RMC {
-  toTime!: string;
+export interface RMC {
+  toTime: string;
+}
 
-  constructor(input: {
-    toTime: string;
-  }) {
-    this.toTime = input.toTime;
-  }
+export interface RMCInit {
+  toTime: string;
 }
 
 
-export class RTToClient {
-  animation!: string;
-  judgeId!: number;
+export interface RTToClient {
+  animation: string;
+  judgeId: number;
+}
 
-  constructor(input: {
-    animation: string;
-    judgeId?: number;
-  }) {
-    this.animation = input.animation;
-    this.judgeId = input.judgeId ?? -1;
-  }
+export interface RTToClientInit {
+  animation: string;
+  judgeId?: number;
 }
 
 
-export class RTToServer {
-  animation!: string;
-  judgeId!: number;
+export interface RTToServer {
+  animation: string;
+  judgeId: number;
+}
 
-  constructor(input: {
-    animation: string;
-    judgeId?: number;
-  }) {
-    this.animation = input.animation;
-    this.judgeId = input.judgeId ?? -1;
-  }
+export interface RTToServerInit {
+  animation: string;
+  judgeId?: number;
 }
 
 
-export class SC {
-  char_data!: {
+export interface SC {
+  char_data: {
     name: string;
     desc?: string;
     evidence?: string;
   }[];
+}
 
-  constructor(input: {
-    char_data: {
+export interface SCInit {
+  char_data: {
     name: string;
     desc?: string;
     evidence?: string;
   }[];
-  }) {
-    this.char_data = input.char_data;
-  }
 }
 
 
-export class SI {
-  char_count!: number;
-  evi_count!: number;
-  mus_count!: number;
+export interface SI {
+  char_count: number;
+  evi_count: number;
+  mus_count: number;
+}
 
-  constructor(input: {
-    char_count: number;
-    evi_count: number;
-    mus_count: number;
-  }) {
-    this.char_count = input.char_count;
-    this.evi_count = input.evi_count;
-    this.mus_count = input.mus_count;
-  }
+export interface SIInit {
+  char_count: number;
+  evi_count: number;
+  mus_count: number;
 }
 
 
-export class SM {
-  music_list!: {
+export interface SM {
+  music_list: {
     name: string;
   }[];
+}
 
-  constructor(input: {
-    music_list: {
+export interface SMInit {
+  music_list: {
     name: string;
   }[];
-  }) {
-    this.music_list = input.music_list;
-  }
 }
 
 
-export class SP {
-  side!: Side;
+export interface SP {
+  side: Side;
+}
 
-  constructor(input: {
-    side: Side;
-  }) {
-    this.side = input.side;
-  }
+export interface SPInit {
+  side: Side;
 }
 
 
-export class TI {
-  timer_id!: number;
-  command!: number;
-  time!: number;
+export interface TI {
+  timer_id: number;
+  command: number;
+  time: number;
+}
 
-  constructor(input: {
-    timer_id: number;
-    command: number;
-    time: number;
-  }) {
-    this.timer_id = input.timer_id;
-    this.command = input.command;
-    this.time = input.time;
-  }
+export interface TIInit {
+  timer_id: number;
+  command: number;
+  time: number;
 }
 
 
-export class VS_AUDIO {
-  fromUid!: number;
-  payload!: string;
+export interface VS_AUDIO {
+  fromUid: number;
+  payload: string;
+}
 
-  constructor(input: {
-    fromUid: number;
-    payload: string;
-  }) {
-    this.fromUid = input.fromUid;
-    this.payload = input.payload;
-  }
+export interface VS_AUDIOInit {
+  fromUid: number;
+  payload: string;
 }
 
 
-export class VS_CAPS {
-  enabled!: boolean;
-  pttOnly!: boolean;
-  maxPeers!: number;
-  codec!: string;
-  sampleRate!: number;
-  frameMs!: number;
-  maxFrameBytes!: number;
+export interface VS_CAPS {
+  enabled: boolean;
+  pttOnly: boolean;
+  maxPeers: number;
+  codec: string;
+  sampleRate: number;
+  frameMs: number;
+  maxFrameBytes: number;
+}
 
-  constructor(input: {
-    enabled: boolean;
-    pttOnly: boolean;
-    maxPeers: number;
-    codec: string;
-    sampleRate: number;
-    frameMs: number;
-    maxFrameBytes: number;
-  }) {
-    this.enabled = input.enabled;
-    this.pttOnly = input.pttOnly;
-    this.maxPeers = input.maxPeers;
-    this.codec = input.codec;
-    this.sampleRate = input.sampleRate;
-    this.frameMs = input.frameMs;
-    this.maxFrameBytes = input.maxFrameBytes;
-  }
+export interface VS_CAPSInit {
+  enabled: boolean;
+  pttOnly: boolean;
+  maxPeers: number;
+  codec: string;
+  sampleRate: number;
+  frameMs: number;
+  maxFrameBytes: number;
 }
 
 
-export class VS_FRAME {
-  payload!: string;
+export interface VS_FRAME {
+  payload: string;
+}
 
-  constructor(input: {
-    payload: string;
-  }) {
-    this.payload = input.payload;
-  }
+export interface VS_FRAMEInit {
+  payload: string;
 }
 
 
-export class VS_JOINToClient {
-  uid!: number;
+export interface VS_JOINToClient {
+  uid: number;
+}
 
-  constructor(input: {
-    uid: number;
-  }) {
-    this.uid = input.uid;
-  }
+export interface VS_JOINToClientInit {
+  uid: number;
 }
 
 
-export class VS_JOINToServer {
-  constructor(_input: Record<string, never> = {}) {
-    void _input;
-  }
+export interface VS_JOINToServer {
+
+}
+
+export interface VS_JOINToServerInit {
+
 }
 
 
-export class VS_LEAVEToClient {
-  uid!: number;
+export interface VS_LEAVEToClient {
+  uid: number;
+}
 
-  constructor(input: {
-    uid: number;
-  }) {
-    this.uid = input.uid;
-  }
+export interface VS_LEAVEToClientInit {
+  uid: number;
 }
 
 
-export class VS_LEAVEToServer {
-  constructor(_input: Record<string, never> = {}) {
-    void _input;
-  }
+export interface VS_LEAVEToServer {
+
+}
+
+export interface VS_LEAVEToServerInit {
+
 }
 
 
-export class VS_PEERS {
-  uids!: number[];
+export interface VS_PEERS {
+  uids: number[];
+}
 
-  constructor(input: {
-    uids: number[];
-  }) {
-    this.uids = input.uids;
-  }
+export interface VS_PEERSInit {
+  uids: number[];
 }
 
 
-export class VS_SPEAKToClient {
-  uid!: number;
-  on!: boolean;
+export interface VS_SPEAKToClient {
+  uid: number;
+  on: boolean;
+}
 
-  constructor(input: {
-    uid: number;
-    on: boolean;
-  }) {
-    this.uid = input.uid;
-    this.on = input.on;
-  }
+export interface VS_SPEAKToClientInit {
+  uid: number;
+  on: boolean;
 }
 
 
-export class VS_SPEAKToServer {
-  on!: boolean;
+export interface VS_SPEAKToServer {
+  on: boolean;
+}
 
-  constructor(input: {
-    on: boolean;
-  }) {
-    this.on = input.on;
-  }
+export interface VS_SPEAKToServerInit {
+  on: boolean;
 }
 
 
-export class ZZToClient {
-  reason!: string;
-  target!: number;
+export interface ZZToClient {
+  reason: string;
+  target: number;
+}
 
-  constructor(input: {
-    reason: string;
-    target?: number;
-  }) {
-    this.reason = input.reason;
-    this.target = input.target ?? -1;
-  }
+export interface ZZToClientInit {
+  reason: string;
+  target?: number;
 }
 
 
-export class ZZToServer {
-  reason!: string;
-  target!: number;
+export interface ZZToServer {
+  reason: string;
+  target: number;
+}
 
-  constructor(input: {
-    reason: string;
-    target?: number;
-  }) {
-    this.reason = input.reason;
-    this.target = input.target ?? -1;
-  }
+export interface ZZToServerInit {
+  reason: string;
+  target?: number;
 }
 
 
-export class askchaa {
-  constructor(_input: Record<string, never> = {}) {
-    void _input;
-  }
+export interface askchaa {
+
+}
+
+export interface askchaaInit {
+
 }
 
 
-export class decryptor {
-  value!: string;
+export interface decryptor {
+  value: string;
+}
 
-  constructor(input: {
-    value: string;
-  }) {
-    this.value = input.value;
-  }
+export interface decryptorInit {
+  value: string;
 }
 
 
@@ -1408,146 +1204,75 @@ export const s2cSchemas = {
   ZZ: ZZToClientSchema,
 } as const;
 
-export const c2sClasses = {
-  askchaa: askchaa,
-  CC: CC,
-  CH: CH,
-  CT: CTToServer,
-  DE: DE,
-  EE: EE,
-  HI: HI,
-  HP: HPToServer,
-  ID: IDToServer,
-  MA: MA,
-  MC: MCToServer,
-  MS: MSToServer,
-  PE: PE,
-  RC: RC,
-  RD: RD,
-  RM: RM,
-  RT: RTToServer,
-  VS_FRAME: VS_FRAME,
-  VS_JOIN: VS_JOINToServer,
-  VS_LEAVE: VS_LEAVEToServer,
-  VS_SPEAK: VS_SPEAKToServer,
-  ZZ: ZZToServer,
-} as const;
-
-export const s2cClasses = {
-  ARUP: ARUP,
-  ASS: ASS,
-  AUTH: AUTH,
-  BB: BB,
-  BD: BD,
-  BN: BN,
-  CharsCheck: CharsCheck,
-  CHECK: CHECK,
-  CI: CI,
-  CT: CTToClient,
-  decryptor: decryptor,
-  DONE: DONE,
-  EI: EI,
-  EM: EM,
-  FA: FA,
-  FL: FL,
-  FM: FM,
-  HP: HPToClient,
-  ID: IDToClient,
-  JD: JD,
-  KB: KB,
-  KK: KK,
-  LE: LE,
-  MC: MCToClient,
-  MS: MSToClient,
-  PN: PN,
-  PR: PR,
-  PU: PU,
-  PV: PV,
-  RMC: RMC,
-  RT: RTToClient,
-  SC: SC,
-  SI: SI,
-  SM: SM,
-  SP: SP,
-  TI: TI,
-  VS_AUDIO: VS_AUDIO,
-  VS_CAPS: VS_CAPS,
-  VS_JOIN: VS_JOINToClient,
-  VS_LEAVE: VS_LEAVEToClient,
-  VS_PEERS: VS_PEERS,
-  VS_SPEAK: VS_SPEAKToClient,
-  ZZ: ZZToClient,
-} as const;
-
 export type C2SInputs = {
-  askchaa: ConstructorParameters<typeof askchaa>[0];
-  CC: ConstructorParameters<typeof CC>[0];
-  CH: ConstructorParameters<typeof CH>[0];
-  CT: ConstructorParameters<typeof CTToServer>[0];
-  DE: ConstructorParameters<typeof DE>[0];
-  EE: ConstructorParameters<typeof EE>[0];
-  HI: ConstructorParameters<typeof HI>[0];
-  HP: ConstructorParameters<typeof HPToServer>[0];
-  ID: ConstructorParameters<typeof IDToServer>[0];
-  MA: ConstructorParameters<typeof MA>[0];
-  MC: ConstructorParameters<typeof MCToServer>[0];
-  MS: ConstructorParameters<typeof MSToServer>[0];
-  PE: ConstructorParameters<typeof PE>[0];
-  RC: ConstructorParameters<typeof RC>[0];
-  RD: ConstructorParameters<typeof RD>[0];
-  RM: ConstructorParameters<typeof RM>[0];
-  RT: ConstructorParameters<typeof RTToServer>[0];
-  VS_FRAME: ConstructorParameters<typeof VS_FRAME>[0];
-  VS_JOIN: ConstructorParameters<typeof VS_JOINToServer>[0];
-  VS_LEAVE: ConstructorParameters<typeof VS_LEAVEToServer>[0];
-  VS_SPEAK: ConstructorParameters<typeof VS_SPEAKToServer>[0];
-  ZZ: ConstructorParameters<typeof ZZToServer>[0];
+  askchaa: askchaaInit;
+  CC: CCInit;
+  CH: CHInit;
+  CT: CTToServerInit;
+  DE: DEInit;
+  EE: EEInit;
+  HI: HIInit;
+  HP: HPToServerInit;
+  ID: IDToServerInit;
+  MA: MAInit;
+  MC: MCToServerInit;
+  MS: MSToServerInit;
+  PE: PEInit;
+  RC: RCInit;
+  RD: RDInit;
+  RM: RMInit;
+  RT: RTToServerInit;
+  VS_FRAME: VS_FRAMEInit;
+  VS_JOIN: VS_JOINToServerInit;
+  VS_LEAVE: VS_LEAVEToServerInit;
+  VS_SPEAK: VS_SPEAKToServerInit;
+  ZZ: ZZToServerInit;
 };
 
 export type S2CInputs = {
-  ARUP: ConstructorParameters<typeof ARUP>[0];
-  ASS: ConstructorParameters<typeof ASS>[0];
-  AUTH: ConstructorParameters<typeof AUTH>[0];
-  BB: ConstructorParameters<typeof BB>[0];
-  BD: ConstructorParameters<typeof BD>[0];
-  BN: ConstructorParameters<typeof BN>[0];
-  CharsCheck: ConstructorParameters<typeof CharsCheck>[0];
-  CHECK: ConstructorParameters<typeof CHECK>[0];
-  CI: ConstructorParameters<typeof CI>[0];
-  CT: ConstructorParameters<typeof CTToClient>[0];
-  decryptor: ConstructorParameters<typeof decryptor>[0];
-  DONE: ConstructorParameters<typeof DONE>[0];
-  EI: ConstructorParameters<typeof EI>[0];
-  EM: ConstructorParameters<typeof EM>[0];
-  FA: ConstructorParameters<typeof FA>[0];
-  FL: ConstructorParameters<typeof FL>[0];
-  FM: ConstructorParameters<typeof FM>[0];
-  HP: ConstructorParameters<typeof HPToClient>[0];
-  ID: ConstructorParameters<typeof IDToClient>[0];
-  JD: ConstructorParameters<typeof JD>[0];
-  KB: ConstructorParameters<typeof KB>[0];
-  KK: ConstructorParameters<typeof KK>[0];
-  LE: ConstructorParameters<typeof LE>[0];
-  MC: ConstructorParameters<typeof MCToClient>[0];
-  MS: ConstructorParameters<typeof MSToClient>[0];
-  PN: ConstructorParameters<typeof PN>[0];
-  PR: ConstructorParameters<typeof PR>[0];
-  PU: ConstructorParameters<typeof PU>[0];
-  PV: ConstructorParameters<typeof PV>[0];
-  RMC: ConstructorParameters<typeof RMC>[0];
-  RT: ConstructorParameters<typeof RTToClient>[0];
-  SC: ConstructorParameters<typeof SC>[0];
-  SI: ConstructorParameters<typeof SI>[0];
-  SM: ConstructorParameters<typeof SM>[0];
-  SP: ConstructorParameters<typeof SP>[0];
-  TI: ConstructorParameters<typeof TI>[0];
-  VS_AUDIO: ConstructorParameters<typeof VS_AUDIO>[0];
-  VS_CAPS: ConstructorParameters<typeof VS_CAPS>[0];
-  VS_JOIN: ConstructorParameters<typeof VS_JOINToClient>[0];
-  VS_LEAVE: ConstructorParameters<typeof VS_LEAVEToClient>[0];
-  VS_PEERS: ConstructorParameters<typeof VS_PEERS>[0];
-  VS_SPEAK: ConstructorParameters<typeof VS_SPEAKToClient>[0];
-  ZZ: ConstructorParameters<typeof ZZToClient>[0];
+  ARUP: ARUPInit;
+  ASS: ASSInit;
+  AUTH: AUTHInit;
+  BB: BBInit;
+  BD: BDInit;
+  BN: BNInit;
+  CharsCheck: CharsCheckInit;
+  CHECK: CHECKInit;
+  CI: CIInit;
+  CT: CTToClientInit;
+  decryptor: decryptorInit;
+  DONE: DONEInit;
+  EI: EIInit;
+  EM: EMInit;
+  FA: FAInit;
+  FL: FLInit;
+  FM: FMInit;
+  HP: HPToClientInit;
+  ID: IDToClientInit;
+  JD: JDInit;
+  KB: KBInit;
+  KK: KKInit;
+  LE: LEInit;
+  MC: MCToClientInit;
+  MS: MSToClientInit;
+  PN: PNInit;
+  PR: PRInit;
+  PU: PUInit;
+  PV: PVInit;
+  RMC: RMCInit;
+  RT: RTToClientInit;
+  SC: SCInit;
+  SI: SIInit;
+  SM: SMInit;
+  SP: SPInit;
+  TI: TIInit;
+  VS_AUDIO: VS_AUDIOInit;
+  VS_CAPS: VS_CAPSInit;
+  VS_JOIN: VS_JOINToClientInit;
+  VS_LEAVE: VS_LEAVEToClientInit;
+  VS_PEERS: VS_PEERSInit;
+  VS_SPEAK: VS_SPEAKToClientInit;
+  ZZ: ZZToClientInit;
 };
 
 export type C2SOutputs = {

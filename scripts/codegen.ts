@@ -259,44 +259,25 @@ function classifyProperties(schema: JsonSchema, ctx: RenderCtx): PropInfo[] {
   });
 }
 
-function emitClass(name: string, schema: JsonSchema, ctx: RenderCtx): string {
-  const props = classifyProperties(schema, ctx);
-  // Const-typed properties (`$header`, PV's `_cid`) are protocol
-  // metadata. They're real schema fields the wire carries, but they
-  // never appear on the user-facing instance type or in the
-  // constructor input.
-  const visible = props.filter((p) => !p.hasConst);
+/**
+ * Two interfaces per packet: `<Name>` is the decoded shape (every visible
+ * field present, defaults filled by Ajv on decode) and `<Name>Init` is the
+ * send shape (default-bearing or non-required fields optional). Const-typed
+ * properties (`$header`, PV's `_cid`) are protocol padding and appear on
+ * neither. Packets are plain data; there is no class or constructor.
+ */
+function emitPacketTypes(name: string, schema: JsonSchema, ctx: RenderCtx): string {
+  const visible = classifyProperties(schema, ctx).filter((p) => !p.hasConst);
 
-  const declarations = visible
-    .map((p) => `  ${quoteKey(p.key)}!: ${p.type};`)
-    .join("\n");
-
-  const ctorParamLines = visible.map((p) => {
-    const optional = !p.required || p.hasDefault;
-    return `    ${quoteKey(p.key)}${optional ? "?" : ""}: ${p.type};`;
+  const decoded = visible.map((p) => `  ${quoteKey(p.key)}: ${p.type};`);
+  const init = visible.map((p) => {
+    const optional = p.hasDefault || !p.required;
+    return `  ${quoteKey(p.key)}${optional ? "?" : ""}: ${p.type};`;
   });
-  const ctorParam = ctorParamLines.length === 0
-    ? "_input: Record<string, never> = {}"
-    : `input: {\n${ctorParamLines.join("\n")}\n  }`;
-
-  const ctorBodyLines = visible.map((p) => {
-    const accessor = `this.${quoteKey(p.key)}`;
-    if (p.hasDefault) {
-      return `    ${accessor} = input.${quoteKey(p.key)} ?? ${p.defaultLiteral};`;
-    }
-    return `    ${accessor} = input.${quoteKey(p.key)};`;
-  });
-  const ctorBody = ctorParamLines.length === 0
-    ? `    void _input;`
-    : ctorBodyLines.join("\n");
 
   return (
-    `export class ${name} {\n` +
-    (declarations ? `${declarations}\n\n` : "") +
-    `  constructor(${ctorParam}) {\n` +
-    `${ctorBody}\n` +
-    `  }\n` +
-    `}\n`
+    `export interface ${name} {\n${decoded.join("\n")}\n}\n\n` +
+    `export interface ${name}Init {\n${init.join("\n")}\n}\n`
   );
 }
 
@@ -330,14 +311,16 @@ function emitEnumsFile(enums: Map<string, EnumDef>): string {
   const sorted = [...enums.values()].sort((a, b) => a.name.localeCompare(b.name));
   for (const e of sorted) {
     if (e.description) parts.push(`/** ${e.description} */`);
-    parts.push(`export enum ${e.name} {`);
-    // Enums are string-first: the member name and its value are both the
-    // string in `enum`. Legacy integer wire encoding lives in the schema's
+    // String-first enums as a union type plus a value object sharing the
+    // name, so `x: Side` and `Side.wit` both work and a bare `"wit"` is
+    // assignable. Legacy integer wire encoding lives in the schema's
     // `x-wire-ints` and is applied by the fanta walker, not here.
-    for (const v of e.values) {
-      parts.push(`  ${String(v)} = ${JSON.stringify(v)},`);
-    }
-    parts.push("}\n");
+    parts.push(
+      `export type ${e.name} = ${e.values.map((v) => JSON.stringify(v)).join(" | ")};`,
+    );
+    parts.push(`export const ${e.name} = {`);
+    for (const v of e.values) parts.push(`  ${String(v)}: ${JSON.stringify(v)},`);
+    parts.push("} as const;\n");
   }
   return parts.join("\n");
 }
@@ -350,8 +333,7 @@ function emitDirectionMaps(packets: PacketMeta[]): string {
   const s2c = packets.filter((p) => p.receiver === "client");
 
   const schemaLine = (p: PacketMeta) => `  ${quoteKey(p.header)}: ${p.name}Schema,`;
-  const classLine  = (p: PacketMeta) => `  ${quoteKey(p.header)}: ${p.name},`;
-  const inputLine  = (p: PacketMeta) => `  ${quoteKey(p.header)}: ConstructorParameters<typeof ${p.name}>[0];`;
+  const inputLine  = (p: PacketMeta) => `  ${quoteKey(p.header)}: ${p.name}Init;`;
   const outputLine = (p: PacketMeta) => `  ${quoteKey(p.header)}: ${p.name};`;
 
   return `
@@ -361,14 +343,6 @@ ${c2s.map(schemaLine).join("\n")}
 
 export const s2cSchemas = {
 ${s2c.map(schemaLine).join("\n")}
-} as const;
-
-export const c2sClasses = {
-${c2s.map(classLine).join("\n")}
-} as const;
-
-export const s2cClasses = {
-${s2c.map(classLine).join("\n")}
 } as const;
 
 export type C2SInputs = {
@@ -408,10 +382,10 @@ function main(): void {
     enumImports: new Set(),
     typeImports: new Set(),
   };
-  const classBlocks: string[] = [];
+  const packetBlocks: string[] = [];
   for (const name of packets) {
     const schema = loadJson(join(PACKETS_DIR, `${name}.schema.json`));
-    classBlocks.push(emitClass(name, schema, ctx));
+    packetBlocks.push(emitPacketTypes(name, schema, ctx));
   }
 
   const enumImports = ctx.enumImports.size === 0
@@ -457,7 +431,7 @@ function main(): void {
   );
   parts.push("");
 
-  for (const block of classBlocks) {
+  for (const block of packetBlocks) {
     parts.push(block);
     parts.push("");
   }

@@ -174,13 +174,13 @@ function requireExtension(value: string, field: string, key: string): void {
 /**
  * Parse char.ini text into a typed {@link CharIni}.
  *
- * Missing `[options]` keys default to empty strings so the shape is
- * stable. Emotes are read for ids `1..number`; ids without a definition
- * are skipped rather than emitted as blanks.
+ * Requires an `[options]` section with a non-empty `name`; throws
+ * otherwise. Other `[options]` keys default so the shape is stable.
  *
- * Throws when a `[emote <name>]` block references an animation or sound
- * without a file extension (the block format requires real filenames).
- * The legacy stem encoding is read leniently and never throws.
+ * Also throws when a `[emote <name>]` block references an animation or
+ * sound without a file extension, or gives `modifier`/`deskmod` as a
+ * bare number (the block format requires real filenames and named
+ * enums). The legacy stem encoding is otherwise read leniently.
  */
 export function parseCharIni(data: string): CharIni {
   // `;` is the canonical INI comment; `//` shows up in real char.ini
@@ -217,7 +217,15 @@ export function parseCharIni(data: string): CharIni {
     if (name.startsWith("emote ")) blockOrder.push(section.slice(6));
   }
 
-  const opt = sections.options ?? {};
+  // `[options]` and a non-empty `name` are mandatory: a char.ini without
+  // them is malformed (a nameless or option-less character).
+  const opt = sections.options;
+  if (!opt) {
+    throw new Error("char.ini: missing required [options] section");
+  }
+  if (!opt.name) {
+    throw new Error("char.ini: [options] is missing the required `name` key");
+  }
   const options: CharIniOptions = {
     name: "",
     showname: "",

@@ -79,6 +79,21 @@ The highlights:
 
 ## Public API
 
+Import the namespace so call sites read `aolib.server`, `aolib.Side`, etc.,
+and typing `aolib.` autocompletes the common surface:
+
+```ts
+import * as aolib from "aolib-ts";        // everyday surface
+import * as wire from "aolib-ts/wire";    // only to bypass the session layer
+```
+
+The root (`aolib.`) is the common surface: `server`/`client`, the enums
+(`Side`, `EmoteModifier`, ...), `parseCharIni`, and the session types.
+Packet types are grouped under `aolib.packets.*` (you rarely name them; the
+session infers them). Low-level encode/decode, codec registration, and the
+header→schema registries live under `aolib-ts/wire`. Named imports
+(`import { server } from "aolib-ts"`) work too and are equivalent.
+
 ```ts
 // Session factories, named for the REMOTE party. Pick the one that
 // matches who's on the other end; the typed surface follows.
@@ -138,22 +153,29 @@ session keys both by the bare header, so `server.send.MC({...})` takes
 `MCToServer`'s input shape and `server.on.MC((p) => ...)` receives
 `MCToClient`'s decoded shape.
 
-Packet classes are re-exported for handler signatures and `instanceof`
-checks, the class name *is* the type name:
+Packets are plain typed objects (no classes, no `instanceof`). You rarely
+name a packet type: the session infers it. Handlers get the decoded packet
+typed for you; senders take the send shape (`...Init`, default-bearing
+fields optional):
 
 ```ts
-import { aolib, MSToClient, PV } from "aolib-ts";
+import * as aolib from "aolib-ts";
 
-function handleChatMessage(packet: MSToClient) { /* ... */ }
-session.on.MS(handleChatMessage);
+const server = aolib.server({ send: (w) => ws.send(w) });
 
-session.on.PV((packet) => {
-  console.assert(packet instanceof PV);
+server.on.MS((p) => {            // p is inferred as packets.MSToClient
+  if (p.side === aolib.Side.def) { /* ... */ }   // or: p.side === "def"
 });
+server.send.HI({ hdid });        // arg checked against packets.HIInit
 ```
 
-Inbound packets are rehydrated as instances of their generated class
-before the handler runs, so `instanceof` works out of the box.
+When you do need a packet type by name (e.g. a standalone handler), it
+lives under `aolib.packets`:
+
+```ts
+function handleChatMessage(p: aolib.packets.MSToClient) { /* ... */ }
+server.on.MS(handleChatMessage);
+```
 
 ### char.ini
 
@@ -165,9 +187,9 @@ the comment set, then a tuning pass folds the flat sections into
 structure.
 
 ```ts
-import { parseCharIni } from "aolib-ts";
+import * as aolib from "aolib-ts";
 
-const char = parseCharIni(text);
+const char = aolib.parseCharIni(text);
 char.options.showname;   // typed [options] block (values verbatim)
 char.options.model;      // set => 3D character
 char.emotes;             // normalized emote table, in button order
@@ -204,8 +226,8 @@ aolib-ts/
 ├── scripts/
 │   └── codegen.ts             ← reads aolib-meta/, writes generated/
 ├── generated/                 ← committed; regenerate with `bun codegen`
-│   ├── packets.ts             ← packet classes, c2s/s2c schema & class maps
-│   ├── enums.ts               ← TS enums from types/*.schema.json (enum schemas)
+│   ├── packets.ts             ← packet types + Init, c2s/s2c schema maps
+│   ├── enums.ts               ← enum union+const from types/*.schema.json
 │   └── types.ts               ← shared object types from types/*.schema.json
 ├── src/
 │   ├── index.ts               ← public exports
@@ -233,7 +255,7 @@ and custom `x-*` extensions in full.
 ## Anatomy of a packet definition (for library contributors)
 
 Packets are JSON Schema (draft-07). A schema is the *only* source of
-truth, TS classes, the Ajv validator, and the fanta walker all read
+truth, the TS types, the Ajv validator, and the fanta walker all read
 from it. Add a packet by dropping one file under
 `aolib-meta/packets/schemas/` and running `bun codegen`.
 
@@ -329,7 +351,7 @@ symmetrically.
 ## Design principles
 
 1. **Schema is data, not a class.** A schema is a JSON file. The
-   generated TS classes, the Ajv validator, and the fanta walker all
+   generated TS types, the Ajv validator, and the fanta walker all
    read the same source, they can't disagree.
 
 2. **The client never sees wire concerns.** No positional slots, no
@@ -393,7 +415,7 @@ symmetrically.
 
 - **Schemas don't disagree with types.** The JSON Schema files under
   `aolib-meta/` are the source for both runtime walks and the
-  generated TS classes. There's no hand-written type that can drift;
+  generated TS types. There's no hand-written type that can drift;
   if a field set changes, `bun codegen` propagates the change to
   every consumer (sender, handler, encode, decode, validator) in one
   pass.
