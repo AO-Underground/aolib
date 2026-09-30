@@ -8,7 +8,7 @@
 
 /**
  * The subset of JSON Schema keywords the fanta walker understands,
- * plus the project's `x-fanta-*` extensions. Permissive on purpose —
+ * plus the project's `x-fanta-*` extensions. Permissive on purpose,
  * Ajv is the validator.
  */
 export interface JsonSchema {

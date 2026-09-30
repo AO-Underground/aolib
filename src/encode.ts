@@ -44,7 +44,7 @@ function headerOf(schema: JsonSchema): string {
 
 /**
  * `HEADER#a#b#%` for non-empty args, `HEADER#%` for zero args.
- * Spec-canonical — the trailing `%` is the wire terminator.
+ * Spec-canonical, the trailing `%` is the wire terminator.
  */
 function frameFanta(header: string, args: string[]): string {
   if (args.length === 0) return `${header}#%`;

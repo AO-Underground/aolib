@@ -89,7 +89,7 @@ function decodeFanta(
   schema: JsonSchema,
   wire: string,
 ): Record<string, unknown> {
-  // Peel terminator forms — accept canonical `HEADER#a#b#%`, plus the
+  // Peel terminator forms, accept canonical `HEADER#a#b#%`, plus the
   // legacy variants `HEADER#a#b#` and `HEADER#a#b`.
   let trimmed = wire;
   if (trimmed.endsWith("%")) trimmed = trimmed.slice(0, -1);

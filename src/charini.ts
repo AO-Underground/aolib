@@ -31,28 +31,33 @@
  */
 
 import { parse as parseIni } from "js-ini";
-import { DeskModifier, EmoteModifier } from "../generated/enums";
+import EmoteModifierSchema from "../aolib-meta/types/EmoteModifier.schema.json";
+import DeskModifierSchema from "../aolib-meta/types/DeskModifier.schema.json";
 
 // One AO tick in milliseconds: the message text update interval that
 // drives sound/preanim timing (LemmyAO's `UPDATE_INTERVAL`). Legacy
 // `[soundt]` is expressed in ticks; `sounddelayms` is normalized to ms.
 const TICK_MS = 60;
 
-/** Case-insensitive enum-name -> value map, so a field can write
- * `modifier = zoom` (or `deskmod = shown`) instead of a bare number. */
-function nameMap(e: Record<string, string | number>): Record<string, number> {
+/**
+ * Case-insensitive enum-name -> legacy integer map, so a char.ini field
+ * can write `modifier = zoom` (or `deskmod = shown`) and resolve to the
+ * numeric emote/desk modifier. The enums are string-first with their
+ * integers in `x-wire-ints` (see aolib-meta); char.ini keeps the number.
+ */
+function nameMap(schema: { enum: string[]; "x-wire-ints": number[] }): Record<string, number> {
   const m: Record<string, number> = {};
-  for (const [name, value] of Object.entries(e)) {
-    if (typeof value === "number") m[name.toLowerCase()] = value;
-  }
+  schema.enum.forEach((name, i) => {
+    m[name] = schema["x-wire-ints"][i] ?? 0;
+  });
   return m;
 }
-const MODIFIER_NAMES = nameMap(EmoteModifier);
-const DESKMOD_NAMES = nameMap(DeskModifier);
+const MODIFIER_NAMES = nameMap(EmoteModifierSchema);
+const DESKMOD_NAMES = nameMap(DeskModifierSchema);
 
 /**
  * One normalized emote, from a block or a legacy bank row. Emotes are a sorted
- * list (button order), so position is the array index — there is no id. Only
+ * list (button order), so position is the array index, there is no id. Only
  * `key` and `anim` come from the file without a default.
  */
 export interface CharEmote {
@@ -125,11 +130,11 @@ function parseEnum(
   names: Record<string, number>,
 ): number {
   if (value === undefined || value === "") return 0;
-  return names[value.toLowerCase()] ?? toInt(value, 0);
+  return names[value] ?? toInt(value, 0);
 }
 
 /**
- * Block enum field: require the named identifier — no bare magic numbers.
+ * Block enum field: require the named identifier, no bare magic numbers.
  * Absent/empty returns undefined (caller applies the default); a present
  * value must be a known enum name, else it throws.
  */
@@ -140,7 +145,7 @@ function requireEnumName(
   key: string,
 ): number | undefined {
   if (value === undefined || value === "") return undefined;
-  const named = names[value.toLowerCase()];
+  const named = names[value];
   if (named === undefined) {
     throw new Error(
       `char.ini emote "${key}": ${field} "${value}" must be one of: ${Object.keys(names).join(", ")}`,
@@ -243,7 +248,7 @@ export function parseCharIni(data: string): CharIni {
 /**
  * `[emote <name>]` encoding: every `[emote <blockname>]` section is an emote,
  * in the order the blocks appear in the file. The presence of any block
- * invalidates `[emotions]` completely — it is never consulted here, so it
+ * invalidates `[emotions]` completely, it is never consulted here, so it
  * cannot select, reorder, or exclude blocks.
  */
 function readBlockEmotes(
@@ -254,7 +259,7 @@ function readBlockEmotes(
   for (const key of blockOrder) {
     const block = sections[`emote ${key.toLowerCase()}`] ?? {};
 
-    // The block format requires real filenames — reject bare stems.
+    // The block format requires real filenames, reject bare stems.
     const anim = block.anim ?? "";
     requireExtension(anim, "anim", key);
     const preanim = normPreanim(block.preanim);
@@ -273,7 +278,7 @@ function readBlockEmotes(
       preanim,
       postanim,
       camera,
-      // Blocks require named enum identifiers — no bare magic numbers.
+      // Blocks require named enum identifiers, no bare magic numbers.
       modifier: requireEnumName(block.modifier, MODIFIER_NAMES, "modifier", key) ?? 0,
       deskmod: requireEnumName(block.deskmod, DESKMOD_NAMES, "deskmod", key) ?? 1,
       sound,

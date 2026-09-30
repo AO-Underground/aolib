@@ -1,7 +1,7 @@
 /**
  * Ajv-driven validation, driven directly by JSON Schema.
  *
- * `validate(schema, value)` mutates `value` in place — Ajv fills
+ * `validate(schema, value)` mutates `value` in place, Ajv fills
  * defaults and strips additional properties when configured. The same
  * compiled validator is used by both encode (pre-serialize) and decode
  * (post-parse) so the typed packet shape is identical on both ends.
@@ -30,11 +30,11 @@ const ajv = new Ajv({
 
 // Register shared enum + type schemas so packet `$ref`s resolve at
 // both the validator (Ajv) and the wire walker (fanta). Each schema's
-// `$id` is its absolute path from the schemas root (e.g.
-// `/enums/Foo.schema.json`); packet `$ref`s use relative paths
-// (`../enums/Foo.schema.json`) which Ajv resolves against the parent
-// packet's `$id` (`/packets/X.schema.json`) per RFC 3986, producing the
-// shared schema's `$id` exactly.
+// `$id` is its absolute path (e.g. `/types/Foo.schema.json`); packet
+// `$ref`s use relative paths (`../../types/Foo.schema.json`) which Ajv
+// resolves against the parent packet's `$id`
+// (`/packets/schemas/X.schema.json`) per RFC 3986, producing the shared
+// schema's `$id` exactly.
 for (const s of [...enumSchemas, ...typeSchemas] as JsonSchema[]) {
   ajv.addSchema(s);
   if (typeof s.$id === "string") registerRefSchema(s.$id, s);

@@ -2,10 +2,8 @@ import { describe, it, expect } from "bun:test";
 import { readFileSync } from "node:fs";
 import { parseCharIni } from "../src/charini";
 
-// ---------------------------------------------------------------------
 // The AO-specific quirk: emote values are `#`-delimited, so the parser
 // must not treat `#` as an inline comment.
-// ---------------------------------------------------------------------
 
 describe("parseCharIni: emote records survive the `#` delimiter", () => {
   const ini = `
@@ -67,9 +65,7 @@ number = 2
   });
 });
 
-// ---------------------------------------------------------------------
 // Tuning: case-insensitive sections/keys, defaults, comments.
-// ---------------------------------------------------------------------
 
 describe("parseCharIni: tuning", () => {
   it("matches sections and keys case-insensitively", () => {
@@ -156,10 +152,8 @@ holdit = Hold it!!
   });
 });
 
-// ---------------------------------------------------------------------
 // Edge cases drawn from real char.ini files on public bases (empty emote
 // names, `//` comments, tab separators, named [Time] keys, etc.).
-// ---------------------------------------------------------------------
 
 describe("parseCharIni: real-world edge cases", () => {
   it("defaults deskmod to 1 when the emote has only 4 fields", () => {
@@ -318,9 +312,7 @@ describe("parseCharIni: real-world edge cases", () => {
   });
 });
 
-// ---------------------------------------------------------------------
 // Extended spec: `[emote <name>]` blocks (preferred over legacy banks).
-// ---------------------------------------------------------------------
 
 describe("parseCharIni: [emote <name>] blocks", () => {
   const ini = `
@@ -408,7 +400,7 @@ anim = think_loop.vmd
     const { emotes } = parseCharIni(
       "[emotions]\nnumber = 3\n1 = a\n2 = b\n3 = c\n" +
         "[emote a]\nanim = a.gif\nmodifier = zoom\n" +
-        "[emote b]\nanim = b.gif\nmodifier = OBJECTION_ZOOM\n" +
+        "[emote b]\nanim = b.gif\nmodifier = objection_zoom\n" +
         "[emote c]\nanim = c.gif\nmodifier = preanim\n",
     );
     expect(emotes[0]?.modifier).toBe(5);
@@ -535,10 +527,8 @@ anim = think_loop.vmd
   });
 });
 
-// ---------------------------------------------------------------------
 // The committed example characters in examples/characters/, parsed from
 // disk (a real on-disk regression, not an inline string).
-// ---------------------------------------------------------------------
 
 describe("parseCharIni: example fixtures", () => {
   const read = (name: string) =>

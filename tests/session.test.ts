@@ -8,9 +8,7 @@ import {
 } from "../src/session";
 import { Side } from "../src/enums";
 
-// ---------------------------------------------------------------------
 // Tiny config-builder. Each test wires up its own outbound buffer + hooks.
-// ---------------------------------------------------------------------
 
 function makeBuf(overrides: Partial<SessionConfig> = {}): {
   out: string[];
@@ -26,9 +24,7 @@ function makeBuf(overrides: Partial<SessionConfig> = {}): {
   };
 }
 
-// ---------------------------------------------------------------------
-// server() — represents the remote server. Send C2S, receive S2C.
-// ---------------------------------------------------------------------
+// server(), represents the remote server. Send C2S, receive S2C.
 
 describe("server(): send (C2S)", () => {
   it("send.HI encodes and emits to the transport", () => {
@@ -119,9 +115,7 @@ describe("server(): on (S2C)", () => {
   });
 });
 
-// ---------------------------------------------------------------------
-// client() — represents a remote client. Send S2C, receive C2S.
-// ---------------------------------------------------------------------
+// client(), represents a remote client. Send S2C, receive C2S.
 
 describe("client(): send (S2C)", () => {
   it("send.BB encodes and emits", () => {
@@ -179,20 +173,18 @@ describe("client(): on (C2S)", () => {
   });
 });
 
-// ---------------------------------------------------------------------
 // Bidirectional MC: same header, different per-direction shapes.
-// ---------------------------------------------------------------------
 
 describe("bidirectional MC", () => {
   it("server.send.MC takes the client-shape; server.on.MC delivers server-shape", () => {
     const { out, config } = makeBuf();
     const s = server(config);
 
-    // Client (us) sends an MC request — has no `channel` / `looping`.
+    // Client (us) sends an MC request, has no `channel` / `looping`.
     s.send.MC({ name: "track1", char_id: 5 });
     expect(out).toEqual(["MC#track1#5##0#%"]);
 
-    // Server (them) broadcasts an MC — has `channel` and `looping`.
+    // Server (them) broadcasts an MC, has `channel` and `looping`.
     let received: unknown;
     s.on.MC((p) => {
       received = p;
@@ -236,9 +228,7 @@ describe("bidirectional MC", () => {
   });
 });
 
-// ---------------------------------------------------------------------
 // receive: dispatch + observability hooks
-// ---------------------------------------------------------------------
 
 describe("receive: dispatch", () => {
   it("dispatches based on header to the right handler", () => {
@@ -303,7 +293,7 @@ describe("receive: hooks", () => {
   });
 
   it("onUnknownHeader fires when the wrong-direction packet arrives", () => {
-    // server-session receives HI? That's c2s — not in our inbound map.
+    // server-session receives HI? That's c2s, not in our inbound map.
     const calls: string[] = [];
     const s = server(makeBuf({
       onUnknownHeader: (header) => calls.push(header),
@@ -381,9 +371,7 @@ describe("receive: hooks", () => {
   });
 });
 
-// ---------------------------------------------------------------------
 // Wire mode (setJsonMode)
-// ---------------------------------------------------------------------
 
 describe("setJsonMode: explicit outbound-format switching", () => {
   it("starts in fanta", () => {
@@ -410,7 +398,7 @@ describe("setJsonMode: explicit outbound-format switching", () => {
     expect(out[0]).toBe("HI#x#%");
   });
 
-  it("the library does NOT auto-flip on decryptor — it's the app's job", () => {
+  it("the library does NOT auto-flip on decryptor, it's the app's job", () => {
     // Receiving decryptor("JSON") used to flip outbound mode. That
     // magic is gone: aolib no longer inspects packet bodies for
     // protocol meaning. The application's handler is responsible for
@@ -422,7 +410,7 @@ describe("setJsonMode: explicit outbound-format switching", () => {
     expect(out[0]).toBe("HI#x#%");
   });
 
-  it("mode is per-session — two sessions don't share state", () => {
+  it("mode is per-session, two sessions don't share state", () => {
     const a = makeBuf();
     const b = makeBuf();
     const sa = server(a.config);
@@ -435,9 +423,7 @@ describe("setJsonMode: explicit outbound-format switching", () => {
   });
 });
 
-// ---------------------------------------------------------------------
 // Hookless defaults: no hook = default console behavior, no throw.
-// ---------------------------------------------------------------------
 
 describe("defaults: missing hooks fall back to console (no throw)", () => {
   // These tests verify the default-console fallback. We silence the
@@ -473,12 +459,10 @@ describe("defaults: missing hooks fall back to console (no throw)", () => {
   });
 });
 
-// ---------------------------------------------------------------------
 // End-to-end loopback: real sessions wired together (each side's `send`
-// feeds the other's `receive`), one server serving two clients at once —
-// one on JSON, one on fanta — each getting proper typed responses in its
+// feeds the other's `receive`), one server serving two clients at once,
+// one on JSON, one on fanta, each getting proper typed responses in its
 // own encoding.
-// ---------------------------------------------------------------------
 
 describe("loopback: a JSON client and a fanta client share one server", () => {
   // A fresh server per test: it keeps a room of connected client sessions,
@@ -581,12 +565,12 @@ describe("loopback: a JSON client and a fanta client share one server", () => {
       character: "Phoenix",
       emote: "point",
       message: "Objection!",
-      side: Side.defense,
+      side: Side.def,
       char_id: 0,
     });
 
-    // Both clients received the typed MSBroadcast, same content.
-    const said = { character: "Phoenix", message: "Objection!", side: Side.defense, char_id: 0 };
+    // Both clients received the typed MSToClient, same content.
+    const said = { character: "Phoenix", message: "Objection!", side: Side.def, char_id: 0 };
     expect(heardA).toHaveLength(1);
     expect(heardB).toHaveLength(1);
     expect(heardA[0]).toMatchObject(said);

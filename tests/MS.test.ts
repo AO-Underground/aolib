@@ -3,10 +3,10 @@ import { encode } from "../src/encode";
 import { decode } from "../src/decode";
 import { server, client } from "../src/session";
 import {
-  MSRequest as MSRequestClass,
-  MSBroadcast as MSBroadcastClass,
-  MSRequestSchema as MSRequest,
-  MSBroadcastSchema as MSBroadcast,
+  MSToServer as MSToServerClass,
+  MSToClient as MSToClientClass,
+  MSToServerSchema as MSToServer,
+  MSToClientSchema as MSToClient,
 } from "../generated/packets";
 import {
   Side,
@@ -19,31 +19,29 @@ import {
   type Offset,
 } from "../src/enums";
 
-type MSRequestType = MSRequestClass;
-type MSBroadcastType = MSBroadcastClass;
+type MSToServerType = MSToServerClass;
+type MSToClientType = MSToClientClass;
 
-// ---------------------------------------------------------------------
 // Enums round-trip on every wire format.
-// ---------------------------------------------------------------------
 
 describe("MS: enum values round-trip", () => {
   const minimal = {
     character: "Phoenix",
     emote: "normal",
     message: "Objection!",
-    side: Side.defense,
+    side: Side.def,
     char_id: 1,
   };
 
   it("DeskModifier maps to its underlying integer on the wire", () => {
     const fanta = encode(
-      MSRequest,
+      MSToServer,
       { ...minimal, desk_modifier: DeskModifier.hide_during_preanim },
       "fanta",
     );
     // Slot 0 (after `MS#`) holds the desk_modifier value, `2`.
     expect(fanta.startsWith("MS#2#")).toBe(true);
-    const decoded = decode(MSRequest, fanta) as unknown as MSRequestType;
+    const decoded = decode(MSToServer, fanta) as unknown as MSToServerType;
     expect(decoded.desk_modifier).toBe(DeskModifier.hide_during_preanim);
   });
 
@@ -55,8 +53,8 @@ describe("MS: enum values round-trip", () => {
       EmoteModifier.zoom,
       EmoteModifier.objection_zoom,
     ]) {
-      const w = encode(MSRequest, { ...minimal, emote_modifier: v }, "fanta");
-      expect((decode(MSRequest, w) as unknown as MSRequestType).emote_modifier).toBe(v);
+      const w = encode(MSToServer, { ...minimal, emote_modifier: v }, "fanta");
+      expect((decode(MSToServer, w) as unknown as MSToServerType).emote_modifier).toBe(v);
     }
   });
 
@@ -68,15 +66,15 @@ describe("MS: enum values round-trip", () => {
       ShoutModifier.take_that,
       ShoutModifier.custom,
     ]) {
-      const w = encode(MSRequest, { ...minimal, shout_modifier: v }, "fanta");
-      expect((decode(MSRequest, w) as unknown as MSRequestType).shout_modifier).toBe(v);
+      const w = encode(MSToServer, { ...minimal, shout_modifier: v }, "fanta");
+      expect((decode(MSToServer, w) as unknown as MSToServerType).shout_modifier).toBe(v);
     }
   });
 
   it("Flip round-trips", () => {
     for (const v of [Flip.none, Flip.horizontal, Flip.vertical, Flip.horizontal_and_vertical]) {
-      const w = encode(MSRequest, { ...minimal, flip: v }, "fanta");
-      expect((decode(MSRequest, w) as unknown as MSRequestType).flip).toBe(v);
+      const w = encode(MSToServer, { ...minimal, flip: v }, "fanta");
+      expect((decode(MSToServer, w) as unknown as MSToServerType).flip).toBe(v);
     }
   });
 
@@ -86,38 +84,36 @@ describe("MS: enum values round-trip", () => {
       TextColor.blue, TextColor.yellow, TextColor.pink, TextColor.cyan,
       TextColor.grey, TextColor.rainbow,
     ]) {
-      const w = encode(MSRequest, { ...minimal, text_color: v }, "fanta");
-      expect((decode(MSRequest, w) as unknown as MSRequestType).text_color).toBe(v);
+      const w = encode(MSToServer, { ...minimal, text_color: v }, "fanta");
+      expect((decode(MSToServer, w) as unknown as MSToServerType).text_color).toBe(v);
     }
   });
 
   it("Side carries the 3-letter wire value", () => {
     for (const v of [
-      Side.defense, Side.prosecution, Side.defense_helper,
-      Side.prosecution_helper, Side.witness, Side.judge, Side.jury,
-      Side.seance,
+      Side.def, Side.pro, Side.hld,
+      Side.hlp, Side.wit, Side.jud, Side.jur,
+      Side.sea,
     ]) {
-      const w = encode(MSRequest, { ...minimal, side: v }, "fanta");
+      const w = encode(MSToServer, { ...minimal, side: v }, "fanta");
       // Slot 5 (after `MS#`) holds side.
       expect(w.split("#")[6]).toBe(v);
-      expect((decode(MSRequest, w) as unknown as MSRequestType).side).toBe(v);
+      expect((decode(MSToServer, w) as unknown as MSToServerType).side).toBe(v);
     }
   });
 });
 
-// ---------------------------------------------------------------------
-// Optional defaults — caller can omit nearly everything.
-// ---------------------------------------------------------------------
+// Optional defaults, caller can omit nearly everything.
 
 describe("MS: minimal-input encoding fills every default", () => {
-  it("MSRequest with only required fields produces a valid 27-token wire", () => {
+  it("MSToServer with only required fields produces a valid 27-token wire", () => {
     const wire = encode(
-      MSRequest,
+      MSToServer,
       {
         character: "Phoenix",
         emote: "normal",
         message: "Hello",
-        side: Side.witness,
+        side: Side.wit,
         char_id: 5,
       },
       "fanta",
@@ -131,24 +127,24 @@ describe("MS: minimal-input encoding fills every default", () => {
 
   it("decode of that minimal wire fills all defaults", () => {
     const wire = encode(
-      MSRequest,
+      MSToServer,
       {
         character: "Phoenix",
         emote: "normal",
         message: "Hello",
-        side: Side.witness,
+        side: Side.wit,
         char_id: 5,
       },
       "fanta",
     );
-    const decoded = decode(MSRequest, wire) as unknown as MSRequestType;
+    const decoded = decode(MSToServer, wire) as unknown as MSToServerType;
     expect(decoded).toMatchObject({
       desk_modifier: DeskModifier.shown,
       preanim: "",
       character: "Phoenix",
       emote: "normal",
       message: "Hello",
-      side: Side.witness,
+      side: Side.wit,
       sfx_name: "",
       emote_modifier: EmoteModifier.no_preanim,
       char_id: 5,
@@ -173,19 +169,17 @@ describe("MS: minimal-input encoding fills every default", () => {
   });
 });
 
-// ---------------------------------------------------------------------
 // Offset: `x&y` with `<and>` escape on fanta, `{x, y}` native on JSON.
-// ---------------------------------------------------------------------
 
 describe("MS: offset codec", () => {
   it("offset packs as `x&y` on the fanta wire (modern, no `<and>` escape)", () => {
     const wire = encode(
-      MSRequest,
+      MSToServer,
       {
         character: "Phoenix",
         emote: "normal",
         message: "hi",
-        side: Side.witness,
+        side: Side.wit,
         char_id: 0,
         offset: { x: 50, y: -20 },
       },
@@ -201,72 +195,70 @@ describe("MS: offset codec", () => {
     // Older peers (or our own pre-modernisation output) escape the `&`
     // separator to `<and>`. The decoder strips it before splitting.
     const parts = encode(
-      MSRequest,
+      MSToServer,
       {
         character: "Phoenix",
         emote: "normal",
         message: "hi",
-        side: Side.witness,
+        side: Side.wit,
         char_id: 0,
         offset: { x: 50, y: -20 },
       },
       "fanta",
     ).split("#");
     parts[18] = "50<and>-20"; // legacy form
-    const decoded = decode(MSRequest, parts.join("#")) as unknown as MSRequestType;
+    const decoded = decode(MSToServer, parts.join("#")) as unknown as MSToServerType;
     expect(decoded.offset).toEqual({ x: 50, y: -20 });
   });
 
   it("offset decodes from the modern wire form", () => {
     const wire = encode(
-      MSRequest,
+      MSToServer,
       {
         character: "Phoenix",
         emote: "normal",
         message: "hi",
-        side: Side.witness,
+        side: Side.wit,
         char_id: 0,
         offset: { x: 50, y: -20 },
       },
       "fanta",
     );
-    const decoded = decode(MSRequest, wire) as unknown as MSRequestType;
+    const decoded = decode(MSToServer, wire) as unknown as MSToServerType;
     expect(decoded.offset).toEqual({ x: 50, y: -20 });
   });
 
   it("offset is a native object on JSON (no escape dance)", () => {
     const json = encode(
-      MSRequest,
+      MSToServer,
       {
         character: "Phoenix",
         emote: "normal",
         message: "hi",
-        side: Side.witness,
+        side: Side.wit,
         char_id: 0,
         offset: { x: 50, y: -20 },
       },
       "json",
     );
     expect(JSON.parse(json).offset).toEqual({ x: 50, y: -20 });
-    const decoded = decode(MSRequest, json) as unknown as MSRequestType;
+    const decoded = decode(MSToServer, json) as unknown as MSToServerType;
     expect(decoded.offset).toEqual({ x: 50, y: -20 });
   });
 
 });
 
-// ---------------------------------------------------------------------
-// Asymmetric shapes: MSRequest (26 fields) vs MSBroadcast (30 fields).
-// ---------------------------------------------------------------------
+// Asymmetric shapes: MSToServer (26 fields) vs MSToClient (30 fields).
 
 describe("MS: request vs broadcast shape divergence", () => {
-  it("MSRequest wire has exactly 26 positional slots after the header", () => {
+  it("MSToServer wire has exactly 26 positional slots after the header", () => {
     const wire = encode(
-      MSRequest,
+      MSToServer,
       {
         character: "Phoenix",
         emote: "normal",
         message: "hi",
-        side: Side.witness,
+        side: Side.wit,
         char_id: 1,
       },
       "fanta",
@@ -275,14 +267,14 @@ describe("MS: request vs broadcast shape divergence", () => {
     expect(wire.split("#").length).toBe(28);
   });
 
-  it("MSBroadcast wire has exactly 30 positional slots after the header", () => {
+  it("MSToClient wire has exactly 30 positional slots after the header", () => {
     const wire = encode(
-      MSBroadcast,
+      MSToClient,
       {
         character: "Phoenix",
         emote: "normal",
         message: "hi",
-        side: Side.witness,
+        side: Side.wit,
         char_id: 1,
       },
       "fanta",
@@ -290,14 +282,14 @@ describe("MS: request vs broadcast shape divergence", () => {
     expect(wire.split("#").length).toBe(32);
   });
 
-  it("MSBroadcast carries paired_name / paired_emote / paired_offset / paired_flip", () => {
+  it("MSToClient carries paired_name / paired_emote / paired_offset / paired_flip", () => {
     const wire = encode(
-      MSBroadcast,
+      MSToClient,
       {
         character: "Phoenix",
         emote: "normal",
         message: "I am paired",
-        side: Side.witness,
+        side: Side.wit,
         char_id: 1,
         paired_name: "Edgeworth",
         paired_emote: "smirk",
@@ -306,7 +298,7 @@ describe("MS: request vs broadcast shape divergence", () => {
       },
       "fanta",
     );
-    const decoded = decode(MSBroadcast, wire) as unknown as MSBroadcastType;
+    const decoded = decode(MSToClient, wire) as unknown as MSToClientType;
     expect(decoded.paired_name).toBe("Edgeworth");
     expect(decoded.paired_emote).toBe("smirk");
     expect(decoded.paired_offset).toEqual({ x: 100, y: 0 });
@@ -314,17 +306,15 @@ describe("MS: request vs broadcast shape divergence", () => {
   });
 
   it("missing required field on the wire throws (cast guards the boundary)", () => {
-    // Sending MS without `char_id` should be rejected — the typed API
+    // Sending MS without `char_id` should be rejected, the typed API
     // requires character, message, side, char_id at minimum.
     expect(() =>
-      decode(MSBroadcast, "MS#1#preanim#Phoenix##Hello#wit#%"),
+      decode(MSToClient, "MS#1#preanim#Phoenix##Hello#wit#%"),
     ).toThrow(/must have required property 'char_id'/);
   });
 });
 
-// ---------------------------------------------------------------------
 // Chat-escape passes through every string field.
-// ---------------------------------------------------------------------
 
 describe("MS: chat-meta in user fields round-trips", () => {
   it("message field with #, &, %, $ survives", () => {
@@ -332,11 +322,11 @@ describe("MS: chat-meta in user fields round-trips", () => {
       character: "Phoenix",
       emote: "normal",
       message: "100% sure & #1 takes $5",
-      side: Side.witness,
+      side: Side.wit,
       char_id: 1,
     };
-    const wire = encode(MSRequest, p, "fanta");
-    const decoded = decode(MSRequest, wire) as unknown as MSRequestType;
+    const wire = encode(MSToServer, p, "fanta");
+    const decoded = decode(MSToServer, wire) as unknown as MSToServerType;
     expect(decoded.message).toBe("100% sure & #1 takes $5");
   });
 
@@ -345,31 +335,29 @@ describe("MS: chat-meta in user fields round-trips", () => {
       character: "Phoenix",
       emote: "normal",
       message: "hi",
-      side: Side.witness,
+      side: Side.wit,
       char_id: 1,
       showname: "Wright & Co.",
     };
     const decoded = decode(
-      MSRequest,
-      encode(MSRequest, p, "fanta"),
-    ) as unknown as MSRequestType;
+      MSToServer,
+      encode(MSToServer, p, "fanta"),
+    ) as unknown as MSToServerType;
     expect(decoded.showname).toBe("Wright & Co.");
   });
 });
 
-// ---------------------------------------------------------------------
 // JSON round-trips
-// ---------------------------------------------------------------------
 
 describe("MS: JSON envelope round-trip", () => {
-  it("MSBroadcast: all fields preserved", () => {
-    const p: ConstructorParameters<typeof MSBroadcastClass>[0] = {
+  it("MSToClient: all fields preserved", () => {
+    const p: ConstructorParameters<typeof MSToClientClass>[0] = {
       desk_modifier: DeskModifier.shown,
       preanim: "phoenix-confident",
       character: "Phoenix",
       emote: "normal",
       message: "Objection!",
-      side: Side.defense,
+      side: Side.def,
       sfx_name: "objection.opus",
       emote_modifier: EmoteModifier.preanim_and_objection,
       char_id: 5,
@@ -395,42 +383,94 @@ describe("MS: JSON envelope round-trip", () => {
       additive: false,
       effect: "",
     };
-    const json = encode(MSBroadcast, p, "json");
-    const decoded = decode(MSBroadcast, json) as unknown as MSBroadcastType;
-    expect(decoded).toEqual(p as unknown as MSBroadcastType);
+    const json = encode(MSToClient, p, "json");
+    const decoded = decode(MSToClient, json) as unknown as MSToClientType;
+    expect(decoded).toEqual(p as unknown as MSToClientType);
   });
 
   it("enums survive a JSON round-trip with the correct typed value", () => {
-    const p: ConstructorParameters<typeof MSRequestClass>[0] = {
+    const p: ConstructorParameters<typeof MSToServerClass>[0] = {
       character: "Phoenix",
       emote: "normal",
       message: "Objection!",
-      side: Side.prosecution,
+      side: Side.pro,
       char_id: 7,
       shout_modifier: ShoutModifier.hold_it,
       text_color: TextColor.blue,
     };
-    const json = encode(MSRequest, p, "json");
-    const decoded = decode(MSRequest, json) as unknown as MSRequestType;
-    expect(decoded.side).toBe(Side.prosecution);
+    const json = encode(MSToServer, p, "json");
+    const decoded = decode(MSToServer, json) as unknown as MSToServerType;
+    expect(decoded.side).toBe(Side.pro);
     expect(decoded.shout_modifier).toBe(ShoutModifier.hold_it);
     expect(decoded.text_color).toBe(TextColor.blue);
   });
+
+  it("string-first: JSON carries enum strings; the legacy ints live only on fanta", () => {
+    const p: ConstructorParameters<typeof MSToServerClass>[0] = {
+      character: "Phoenix",
+      emote: "normal",
+      message: "Hello",
+      side: Side.wit, // plain enum, no x-wire-ints
+      char_id: 1,
+      desk_modifier: DeskModifier.shown, // wire int 1
+      emote_modifier: EmoteModifier.zoom, // wire int 5
+      shout_modifier: ShoutModifier.objection, // wire int 2
+      flip: Flip.horizontal, // wire int 1
+      text_color: TextColor.red, // wire int 2
+    };
+
+    // JSON envelope: every enum field is its string value, no magic numbers.
+    const obj = JSON.parse(encode(MSToServer, p, "json")) as Record<string, unknown>;
+    expect(obj.side).toBe("wit");
+    expect(obj.desk_modifier).toBe("shown");
+    expect(obj.emote_modifier).toBe("zoom");
+    expect(obj.shout_modifier).toBe("objection");
+    expect(obj.flip).toBe("horizontal");
+    expect(obj.text_color).toBe("red");
+    for (const k of [
+      "side",
+      "desk_modifier",
+      "emote_modifier",
+      "shout_modifier",
+      "flip",
+      "text_color",
+    ]) {
+      expect(typeof obj[k]).toBe("string");
+    }
+
+    // Fanta wire: x-wire-ints enums serialize as the legacy integers (the
+    // string names never appear); Side, having no x-wire-ints, stays a string.
+    const fanta = encode(MSToServer, p, "fanta");
+    for (const name of ["shown", "zoom", "objection", "horizontal", "red"]) {
+      expect(fanta).not.toContain(name);
+    }
+    expect(fanta).toContain("wit");
+
+    // Both wires decode back to the same string enum values.
+    const want = {
+      side: "wit",
+      desk_modifier: "shown",
+      emote_modifier: "zoom",
+      shout_modifier: "objection",
+      flip: "horizontal",
+      text_color: "red",
+    };
+    expect(decode(MSToServer, fanta)).toMatchObject(want);
+    expect(decode(MSToServer, encode(MSToServer, p, "json"))).toMatchObject(want);
+  });
 });
 
-// ---------------------------------------------------------------------
 // Session integration.
-// ---------------------------------------------------------------------
 
 describe("MS: session integration", () => {
-  it("server.send.MS uses MSRequest (no paired_name)", () => {
+  it("server.send.MS uses MSToServer (no paired_name)", () => {
     const out: string[] = [];
     const s = server({ send: (w) => out.push(w) });
     s.send.MS({
       character: "Phoenix",
       emote: "normal",
       message: "hi",
-      side: Side.witness,
+      side: Side.wit,
       char_id: 1,
     });
     expect(out.length).toBe(1);
@@ -438,20 +478,20 @@ describe("MS: session integration", () => {
     expect(out[0]!.split("#").length).toBe(28);
   });
 
-  it("server.on.MS receives MSBroadcast shape (has paired_name)", () => {
+  it("server.on.MS receives MSToClient shape (has paired_name)", () => {
     const s = server({ send: () => {} });
-    let received: MSBroadcastType | undefined;
+    let received: MSToClientType | undefined;
     s.on.MS((p) => {
       received = p;
     });
     // A 30-field broadcast.
     const wire = encode(
-      MSBroadcast,
+      MSToClient,
       {
         character: "Edgeworth",
         emote: "normal",
         message: "I object",
-        side: Side.prosecution,
+        side: Side.pro,
         char_id: 2,
         paired_name: "Phoenix",
         paired_emote: "stunned",
@@ -465,14 +505,14 @@ describe("MS: session integration", () => {
     expect(received!.paired_emote).toBe("stunned");
   });
 
-  it("client.send.MS uses MSBroadcast (has paired_*)", () => {
+  it("client.send.MS uses MSToClient (has paired_*)", () => {
     const out: string[] = [];
     const c = client({ send: (w) => out.push(w) });
     c.send.MS({
       character: "Phoenix",
       emote: "normal",
       message: "broadcast",
-      side: Side.witness,
+      side: Side.wit,
       char_id: 1,
       paired_name: "Edgeworth",
       paired_offset: { x: 50, y: 0 },
@@ -481,19 +521,19 @@ describe("MS: session integration", () => {
     expect(out[0]!.split("#").length).toBe(32);
   });
 
-  it("client.on.MS receives MSRequest shape (no paired_name field present)", () => {
+  it("client.on.MS receives MSToServer shape (no paired_name field present)", () => {
     const c = client({ send: () => {} });
-    let received: MSRequestType | undefined;
+    let received: MSToServerType | undefined;
     c.on.MS((p) => {
       received = p;
     });
     const wire = encode(
-      MSRequest,
+      MSToServer,
       {
         character: "Phoenix",
         emote: "normal",
         message: "from client",
-        side: Side.defense,
+        side: Side.def,
         char_id: 5,
       },
       "fanta",
@@ -505,38 +545,34 @@ describe("MS: session integration", () => {
   });
 });
 
-// ---------------------------------------------------------------------
 // isFullView helper.
-// ---------------------------------------------------------------------
 
 describe("MS: isFullView()", () => {
   it("is true for DEFENSE, PROSECUTION, WITNESS", () => {
-    expect(isFullView(Side.defense)).toBe(true);
-    expect(isFullView(Side.prosecution)).toBe(true);
-    expect(isFullView(Side.witness)).toBe(true);
+    expect(isFullView(Side.def)).toBe(true);
+    expect(isFullView(Side.pro)).toBe(true);
+    expect(isFullView(Side.wit)).toBe(true);
   });
 
   it("is false for everything else", () => {
-    expect(isFullView(Side.judge)).toBe(false);
-    expect(isFullView(Side.jury)).toBe(false);
-    expect(isFullView(Side.seance)).toBe(false);
-    expect(isFullView(Side.defense_helper)).toBe(false);
-    expect(isFullView(Side.prosecution_helper)).toBe(false);
+    expect(isFullView(Side.jud)).toBe(false);
+    expect(isFullView(Side.jur)).toBe(false);
+    expect(isFullView(Side.sea)).toBe(false);
+    expect(isFullView(Side.hld)).toBe(false);
+    expect(isFullView(Side.hlp)).toBe(false);
   });
 });
 
-// ---------------------------------------------------------------------
-// Type-level sanity (compiles only — no runtime effect).
-// ---------------------------------------------------------------------
+// Type-level sanity (compiles only, no runtime effect).
 
 describe("MS: type derivation", () => {
-  it("In<MSRequest>.side is Side; Out<MSRequest>.side is Side", () => {
+  it("In<MSToServer>.side is Side; Out<MSToServer>.side is Side", () => {
     // The point of this test is the TypeScript types; if it
     // compiles, we're good. Runtime is trivial.
-    const sideIn: MSRequestType["side"] = Side.witness;
-    const offIn: MSRequestType["offset"] | undefined = undefined;
+    const sideIn: MSToServerType["side"] = Side.wit;
+    const offIn: MSToServerType["offset"] | undefined = undefined;
     const off: Offset = { x: 1, y: 2 };
-    expect(sideIn).toBe(Side.witness);
+    expect(sideIn).toBe(Side.wit);
     expect(offIn).toBeUndefined();
     expect(off).toEqual({ x: 1, y: 2 });
   });

@@ -2,20 +2,20 @@
  * Session: the role-typed, dispatch-driving surface aolib exposes.
  *
  * Two factories:
- *   `server(config)` — for client-side code; the session represents
+ *   `server(config)`, for client-side code; the session represents
  *     the remote *server*. `.send.<X>` ships C2S packets; `.on.<X>`
  *     registers handlers for S2C packets.
- *   `client(config)` — for server-side code; the session represents
+ *   `client(config)`, for server-side code; the session represents
  *     one remote *client*. `.send.<X>` ships S2C packets; `.on.<X>`
  *     registers handlers for C2S packets.
  *
  * Sessions are named for the *remote* party so that `client.send.MC`
  * reads as "send MC to the client". The role determines which direction
- * lookup we do at every `.send.X` / `.on.X` access — wrong-direction
+ * lookup we do at every `.send.X` / `.on.X` access, wrong-direction
  * calls fail at compile time AND runtime.
  *
  * Wire mode is per-session and starts at fanta. Switching to JSON
- * (or back) is the application's job — call `session.setJsonMode(true)`
+ * (or back) is the application's job, call `session.setJsonMode(true)`
  * from whatever handler reads the protocol's mode-switch signal. The
  * library doesn't inspect packet contents to flip modes on its own.
  *
@@ -46,9 +46,7 @@ import type { JsonSchema } from "./types";
 
 type ClassCtor = { prototype: object };
 
-// ---------------------------------------------------------------------
 // Public types
-// ---------------------------------------------------------------------
 
 export interface SessionConfig {
   send(wire: string): void;
@@ -93,9 +91,7 @@ export interface ClientSession {
   area?: number;
 }
 
-// ---------------------------------------------------------------------
 // Implementation
-// ---------------------------------------------------------------------
 
 type Role = "client" | "server";
 
@@ -231,21 +227,19 @@ function makeSession(role: Role, config: SessionConfig): ServerSession & ClientS
   };
 }
 
-// ---------------------------------------------------------------------
 // Error helpers
-// ---------------------------------------------------------------------
 
 function wrongDirectionSendError(role: Role, header: string): Error {
   if (role === "server") {
     return new Error(
-      `aolib: server-session.send.${header} — '${header}' is server -> client. ` +
+      `aolib: server-session.send.${header}, '${header}' is server -> client. ` +
         `On a server session (representing the remote server), you can only send ` +
         `client -> server packets. Use client(config).send.${header} instead, or ` +
         `register a handler with server.on.${header}(...) to receive this packet.`,
     );
   }
   return new Error(
-    `aolib: client-session.send.${header} — '${header}' is client -> server. ` +
+    `aolib: client-session.send.${header}, '${header}' is client -> server. ` +
       `On a client session (representing a remote client), you can only send ` +
       `server -> client packets. Use server(config).send.${header} instead, or ` +
       `register a handler with client.on.${header}(...) to receive this packet.`,
@@ -255,23 +249,21 @@ function wrongDirectionSendError(role: Role, header: string): Error {
 function wrongDirectionOnError(role: Role, header: string): Error {
   if (role === "server") {
     return new Error(
-      `aolib: server-session.on.${header} — '${header}' is client -> server. ` +
+      `aolib: server-session.on.${header}, '${header}' is client -> server. ` +
         `On a server session (representing the remote server), you can only ` +
         `register handlers for server -> client packets. Use client(config).on.${header} ` +
         `instead, or send the packet with server.send.${header}(...).`,
     );
   }
   return new Error(
-    `aolib: client-session.on.${header} — '${header}' is server -> client. ` +
+    `aolib: client-session.on.${header}, '${header}' is server -> client. ` +
       `On a client session (representing a remote client), you can only register ` +
       `handlers for client -> server packets. Use server(config).on.${header} ` +
       `instead, or send the packet with client.send.${header}(...).`,
   );
 }
 
-// ---------------------------------------------------------------------
 // Hook plumbing
-// ---------------------------------------------------------------------
 
 type Hook<A extends unknown[]> = (...args: A) => void;
 
@@ -314,9 +306,7 @@ function truncate(s: string, max = 200): string {
   return s.length <= max ? s : `${s.slice(0, max)}...`;
 }
 
-// ---------------------------------------------------------------------
 // Factories
-// ---------------------------------------------------------------------
 
 export function server(config: SessionConfig): ServerSession {
   return makeSession("server", config);

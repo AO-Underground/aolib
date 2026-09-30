@@ -6,18 +6,16 @@
  * and outbound transport. Sessions on the same server can be in
  * different formats simultaneously.
  *
- * Uses only the packets currently in the registry — once more schemas
+ * Uses only the packets currently in the registry, once more schemas
  * land in `packets/`, more `.on.X` / `.send.X` calls become valid.
  */
 
 import { aolib, type ClientSession } from "../src/index";
 
-// ---------------------------------------------------------------------
 // Minimal inline declarations for the Node `ws` package's
 // `WebSocketServer` API. The real example would do
 // `import { WebSocketServer } from "ws"`. Inline here so this file
 // typechecks without `ws` being installed.
-// ---------------------------------------------------------------------
 
 interface WSConnection {
   send(data: string): void;
@@ -29,17 +27,13 @@ interface WSS {
 }
 declare const WebSocketServer: { new (opts: { port: number }): WSS };
 
-// ---------------------------------------------------------------------
 // Server state.
-// ---------------------------------------------------------------------
 
 const clients = new Set<ClientSession>();
 const wss = new WebSocketServer({ port: 8080 });
 
-// ---------------------------------------------------------------------
 // Per-connection setup. One `aolib.client(...)` session per accepted
-// WebSocket — the session represents that particular remote client.
-// ---------------------------------------------------------------------
+// WebSocket, the session represents that particular remote client.
 
 wss.on("connection", (ws) => {
   const client = aolib.client({
@@ -59,10 +53,8 @@ wss.on("connection", (ws) => {
   // sessions keep whatever format their respective client picked.
   client.send.decryptor({ value: "JSON" });
 
-  // -------------------------------------------------------------------
-  // Handlers — what the server does with packets received FROM this
+  // Handlers, what the server does with packets received FROM this
   // particular client.
-  // -------------------------------------------------------------------
 
   client.on.HI((_packet) => {
     client.send.ID({
@@ -79,17 +71,15 @@ wss.on("connection", (ws) => {
   });
 
   client.on.MC((packet) => {
-    // Music change request — re-broadcast to every connected client
+    // Music change request, re-broadcast to every connected client
     // in the same area as a server-side MC announcement.
     broadcastMC(client.area ?? 0, packet, client);
   });
 });
 
-// ---------------------------------------------------------------------
-// Broadcast helper. Lives in caller code by design — the library
+// Broadcast helper. Lives in caller code by design, the library
 // doesn't impose a topology (area? room? all?), so fanning out is one
 // loop at the call site.
-// ---------------------------------------------------------------------
 
 function broadcastMC(
   area: number,

@@ -1,287 +1,287 @@
-// AUTO-GENERATED from aolib-meta/schemas/. Do not edit; run `bun run codegen`.
+// AUTO-GENERATED from aolib-meta/. Do not edit; run `bun run codegen`.
 
 /* eslint-disable */
 
 import { AreaUpdateType, DeskModifier, EmoteModifier, Flip, ShoutModifier, Side, TextColor } from "./enums";
 import { Offset } from "./types";
 
-import AreaUpdateTypeEnumSchema from "../aolib-meta/schemas/enums/AreaUpdateType.schema.json";
+import AreaUpdateTypeEnumSchema from "../aolib-meta/types/AreaUpdateType.schema.json";
 
-import DeskModifierEnumSchema from "../aolib-meta/schemas/enums/DeskModifier.schema.json";
+import DeskModifierEnumSchema from "../aolib-meta/types/DeskModifier.schema.json";
 
-import EmoteModifierEnumSchema from "../aolib-meta/schemas/enums/EmoteModifier.schema.json";
+import EmoteModifierEnumSchema from "../aolib-meta/types/EmoteModifier.schema.json";
 
-import FlipEnumSchema from "../aolib-meta/schemas/enums/Flip.schema.json";
+import FlipEnumSchema from "../aolib-meta/types/Flip.schema.json";
 
-import ShoutModifierEnumSchema from "../aolib-meta/schemas/enums/ShoutModifier.schema.json";
+import ShoutModifierEnumSchema from "../aolib-meta/types/ShoutModifier.schema.json";
 
-import SideEnumSchema from "../aolib-meta/schemas/enums/Side.schema.json";
+import SideEnumSchema from "../aolib-meta/types/Side.schema.json";
 
-import TextColorEnumSchema from "../aolib-meta/schemas/enums/TextColor.schema.json";
+import TextColorEnumSchema from "../aolib-meta/types/TextColor.schema.json";
 
-import OffsetTypeSchema from "../aolib-meta/schemas/types/Offset.schema.json";
+import OffsetTypeSchema from "../aolib-meta/types/Offset.schema.json";
 
 
-import ARUPSchema from "../aolib-meta/schemas/packets/ARUP.schema.json";
+import ARUPSchema from "../aolib-meta/packets/schemas/ARUP.schema.json";
 
-import ASSSchema from "../aolib-meta/schemas/packets/ASS.schema.json";
+import ASSSchema from "../aolib-meta/packets/schemas/ASS.schema.json";
 
-import AUTHSchema from "../aolib-meta/schemas/packets/AUTH.schema.json";
+import AUTHSchema from "../aolib-meta/packets/schemas/AUTH.schema.json";
 
-import BBSchema from "../aolib-meta/schemas/packets/BB.schema.json";
+import BBSchema from "../aolib-meta/packets/schemas/BB.schema.json";
 
-import BDSchema from "../aolib-meta/schemas/packets/BD.schema.json";
+import BDSchema from "../aolib-meta/packets/schemas/BD.schema.json";
 
-import BNSchema from "../aolib-meta/schemas/packets/BN.schema.json";
+import BNSchema from "../aolib-meta/packets/schemas/BN.schema.json";
 
-import CCSchema from "../aolib-meta/schemas/packets/CC.schema.json";
+import CCSchema from "../aolib-meta/packets/schemas/CC.schema.json";
 
-import CHSchema from "../aolib-meta/schemas/packets/CH.schema.json";
+import CHSchema from "../aolib-meta/packets/schemas/CH.schema.json";
 
-import CHECKSchema from "../aolib-meta/schemas/packets/CHECK.schema.json";
+import CHECKSchema from "../aolib-meta/packets/schemas/CHECK.schema.json";
 
-import CISchema from "../aolib-meta/schemas/packets/CI.schema.json";
+import CISchema from "../aolib-meta/packets/schemas/CI.schema.json";
 
-import CTBroadcastSchema from "../aolib-meta/schemas/packets/CTBroadcast.schema.json";
+import CTToClientSchema from "../aolib-meta/packets/schemas/CTToClient.schema.json";
 
-import CTRequestSchema from "../aolib-meta/schemas/packets/CTRequest.schema.json";
+import CTToServerSchema from "../aolib-meta/packets/schemas/CTToServer.schema.json";
 
-import CharsCheckSchema from "../aolib-meta/schemas/packets/CharsCheck.schema.json";
+import CharsCheckSchema from "../aolib-meta/packets/schemas/CharsCheck.schema.json";
 
-import DESchema from "../aolib-meta/schemas/packets/DE.schema.json";
+import DESchema from "../aolib-meta/packets/schemas/DE.schema.json";
 
-import DONESchema from "../aolib-meta/schemas/packets/DONE.schema.json";
+import DONESchema from "../aolib-meta/packets/schemas/DONE.schema.json";
 
-import EESchema from "../aolib-meta/schemas/packets/EE.schema.json";
+import EESchema from "../aolib-meta/packets/schemas/EE.schema.json";
 
-import EISchema from "../aolib-meta/schemas/packets/EI.schema.json";
+import EISchema from "../aolib-meta/packets/schemas/EI.schema.json";
 
-import EMSchema from "../aolib-meta/schemas/packets/EM.schema.json";
+import EMSchema from "../aolib-meta/packets/schemas/EM.schema.json";
 
-import FASchema from "../aolib-meta/schemas/packets/FA.schema.json";
+import FASchema from "../aolib-meta/packets/schemas/FA.schema.json";
 
-import FLSchema from "../aolib-meta/schemas/packets/FL.schema.json";
+import FLSchema from "../aolib-meta/packets/schemas/FL.schema.json";
 
-import FMSchema from "../aolib-meta/schemas/packets/FM.schema.json";
+import FMSchema from "../aolib-meta/packets/schemas/FM.schema.json";
 
-import HISchema from "../aolib-meta/schemas/packets/HI.schema.json";
+import HISchema from "../aolib-meta/packets/schemas/HI.schema.json";
 
-import HPBroadcastSchema from "../aolib-meta/schemas/packets/HPBroadcast.schema.json";
+import HPToClientSchema from "../aolib-meta/packets/schemas/HPToClient.schema.json";
 
-import HPRequestSchema from "../aolib-meta/schemas/packets/HPRequest.schema.json";
+import HPToServerSchema from "../aolib-meta/packets/schemas/HPToServer.schema.json";
 
-import IDClientSchema from "../aolib-meta/schemas/packets/IDClient.schema.json";
+import IDToClientSchema from "../aolib-meta/packets/schemas/IDToClient.schema.json";
 
-import IDServerSchema from "../aolib-meta/schemas/packets/IDServer.schema.json";
+import IDToServerSchema from "../aolib-meta/packets/schemas/IDToServer.schema.json";
 
-import JDSchema from "../aolib-meta/schemas/packets/JD.schema.json";
+import JDSchema from "../aolib-meta/packets/schemas/JD.schema.json";
 
-import KBSchema from "../aolib-meta/schemas/packets/KB.schema.json";
+import KBSchema from "../aolib-meta/packets/schemas/KB.schema.json";
 
-import KKSchema from "../aolib-meta/schemas/packets/KK.schema.json";
+import KKSchema from "../aolib-meta/packets/schemas/KK.schema.json";
 
-import LESchema from "../aolib-meta/schemas/packets/LE.schema.json";
+import LESchema from "../aolib-meta/packets/schemas/LE.schema.json";
 
-import MASchema from "../aolib-meta/schemas/packets/MA.schema.json";
+import MASchema from "../aolib-meta/packets/schemas/MA.schema.json";
 
-import MCBroadcastSchema from "../aolib-meta/schemas/packets/MCBroadcast.schema.json";
+import MCToClientSchema from "../aolib-meta/packets/schemas/MCToClient.schema.json";
 
-import MCRequestSchema from "../aolib-meta/schemas/packets/MCRequest.schema.json";
+import MCToServerSchema from "../aolib-meta/packets/schemas/MCToServer.schema.json";
 
-import MSBroadcastSchema from "../aolib-meta/schemas/packets/MSBroadcast.schema.json";
+import MSToClientSchema from "../aolib-meta/packets/schemas/MSToClient.schema.json";
 
-import MSRequestSchema from "../aolib-meta/schemas/packets/MSRequest.schema.json";
+import MSToServerSchema from "../aolib-meta/packets/schemas/MSToServer.schema.json";
 
-import PESchema from "../aolib-meta/schemas/packets/PE.schema.json";
+import PESchema from "../aolib-meta/packets/schemas/PE.schema.json";
 
-import PNSchema from "../aolib-meta/schemas/packets/PN.schema.json";
+import PNSchema from "../aolib-meta/packets/schemas/PN.schema.json";
 
-import PRSchema from "../aolib-meta/schemas/packets/PR.schema.json";
+import PRSchema from "../aolib-meta/packets/schemas/PR.schema.json";
 
-import PUSchema from "../aolib-meta/schemas/packets/PU.schema.json";
+import PUSchema from "../aolib-meta/packets/schemas/PU.schema.json";
 
-import PVSchema from "../aolib-meta/schemas/packets/PV.schema.json";
+import PVSchema from "../aolib-meta/packets/schemas/PV.schema.json";
 
-import RCSchema from "../aolib-meta/schemas/packets/RC.schema.json";
+import RCSchema from "../aolib-meta/packets/schemas/RC.schema.json";
 
-import RDSchema from "../aolib-meta/schemas/packets/RD.schema.json";
+import RDSchema from "../aolib-meta/packets/schemas/RD.schema.json";
 
-import RMSchema from "../aolib-meta/schemas/packets/RM.schema.json";
+import RMSchema from "../aolib-meta/packets/schemas/RM.schema.json";
 
-import RMCSchema from "../aolib-meta/schemas/packets/RMC.schema.json";
+import RMCSchema from "../aolib-meta/packets/schemas/RMC.schema.json";
 
-import RTBroadcastSchema from "../aolib-meta/schemas/packets/RTBroadcast.schema.json";
+import RTToClientSchema from "../aolib-meta/packets/schemas/RTToClient.schema.json";
 
-import RTRequestSchema from "../aolib-meta/schemas/packets/RTRequest.schema.json";
+import RTToServerSchema from "../aolib-meta/packets/schemas/RTToServer.schema.json";
 
-import SCSchema from "../aolib-meta/schemas/packets/SC.schema.json";
+import SCSchema from "../aolib-meta/packets/schemas/SC.schema.json";
 
-import SISchema from "../aolib-meta/schemas/packets/SI.schema.json";
+import SISchema from "../aolib-meta/packets/schemas/SI.schema.json";
 
-import SMSchema from "../aolib-meta/schemas/packets/SM.schema.json";
+import SMSchema from "../aolib-meta/packets/schemas/SM.schema.json";
 
-import SPSchema from "../aolib-meta/schemas/packets/SP.schema.json";
+import SPSchema from "../aolib-meta/packets/schemas/SP.schema.json";
 
-import TISchema from "../aolib-meta/schemas/packets/TI.schema.json";
+import TISchema from "../aolib-meta/packets/schemas/TI.schema.json";
 
-import VS_AUDIOSchema from "../aolib-meta/schemas/packets/VS_AUDIO.schema.json";
+import VS_AUDIOSchema from "../aolib-meta/packets/schemas/VS_AUDIO.schema.json";
 
-import VS_CAPSSchema from "../aolib-meta/schemas/packets/VS_CAPS.schema.json";
+import VS_CAPSSchema from "../aolib-meta/packets/schemas/VS_CAPS.schema.json";
 
-import VS_FRAMESchema from "../aolib-meta/schemas/packets/VS_FRAME.schema.json";
+import VS_FRAMESchema from "../aolib-meta/packets/schemas/VS_FRAME.schema.json";
 
-import VS_JOINBroadcastSchema from "../aolib-meta/schemas/packets/VS_JOINBroadcast.schema.json";
+import VS_JOINToClientSchema from "../aolib-meta/packets/schemas/VS_JOINToClient.schema.json";
 
-import VS_JOINRequestSchema from "../aolib-meta/schemas/packets/VS_JOINRequest.schema.json";
+import VS_JOINToServerSchema from "../aolib-meta/packets/schemas/VS_JOINToServer.schema.json";
 
-import VS_LEAVEBroadcastSchema from "../aolib-meta/schemas/packets/VS_LEAVEBroadcast.schema.json";
+import VS_LEAVEToClientSchema from "../aolib-meta/packets/schemas/VS_LEAVEToClient.schema.json";
 
-import VS_LEAVERequestSchema from "../aolib-meta/schemas/packets/VS_LEAVERequest.schema.json";
+import VS_LEAVEToServerSchema from "../aolib-meta/packets/schemas/VS_LEAVEToServer.schema.json";
 
-import VS_PEERSSchema from "../aolib-meta/schemas/packets/VS_PEERS.schema.json";
+import VS_PEERSSchema from "../aolib-meta/packets/schemas/VS_PEERS.schema.json";
 
-import VS_SPEAKBroadcastSchema from "../aolib-meta/schemas/packets/VS_SPEAKBroadcast.schema.json";
+import VS_SPEAKToClientSchema from "../aolib-meta/packets/schemas/VS_SPEAKToClient.schema.json";
 
-import VS_SPEAKRequestSchema from "../aolib-meta/schemas/packets/VS_SPEAKRequest.schema.json";
+import VS_SPEAKToServerSchema from "../aolib-meta/packets/schemas/VS_SPEAKToServer.schema.json";
 
-import ZZBroadcastSchema from "../aolib-meta/schemas/packets/ZZBroadcast.schema.json";
+import ZZToClientSchema from "../aolib-meta/packets/schemas/ZZToClient.schema.json";
 
-import ZZRequestSchema from "../aolib-meta/schemas/packets/ZZRequest.schema.json";
+import ZZToServerSchema from "../aolib-meta/packets/schemas/ZZToServer.schema.json";
 
-import askchaaSchema from "../aolib-meta/schemas/packets/askchaa.schema.json";
+import askchaaSchema from "../aolib-meta/packets/schemas/askchaa.schema.json";
 
-import decryptorSchema from "../aolib-meta/schemas/packets/decryptor.schema.json";
+import decryptorSchema from "../aolib-meta/packets/schemas/decryptor.schema.json";
 
 
-export { default as ARUPSchema } from "../aolib-meta/schemas/packets/ARUP.schema.json";
+export { default as ARUPSchema } from "../aolib-meta/packets/schemas/ARUP.schema.json";
 
-export { default as ASSSchema } from "../aolib-meta/schemas/packets/ASS.schema.json";
+export { default as ASSSchema } from "../aolib-meta/packets/schemas/ASS.schema.json";
 
-export { default as AUTHSchema } from "../aolib-meta/schemas/packets/AUTH.schema.json";
+export { default as AUTHSchema } from "../aolib-meta/packets/schemas/AUTH.schema.json";
 
-export { default as BBSchema } from "../aolib-meta/schemas/packets/BB.schema.json";
+export { default as BBSchema } from "../aolib-meta/packets/schemas/BB.schema.json";
 
-export { default as BDSchema } from "../aolib-meta/schemas/packets/BD.schema.json";
+export { default as BDSchema } from "../aolib-meta/packets/schemas/BD.schema.json";
 
-export { default as BNSchema } from "../aolib-meta/schemas/packets/BN.schema.json";
+export { default as BNSchema } from "../aolib-meta/packets/schemas/BN.schema.json";
 
-export { default as CCSchema } from "../aolib-meta/schemas/packets/CC.schema.json";
+export { default as CCSchema } from "../aolib-meta/packets/schemas/CC.schema.json";
 
-export { default as CHSchema } from "../aolib-meta/schemas/packets/CH.schema.json";
+export { default as CHSchema } from "../aolib-meta/packets/schemas/CH.schema.json";
 
-export { default as CHECKSchema } from "../aolib-meta/schemas/packets/CHECK.schema.json";
+export { default as CHECKSchema } from "../aolib-meta/packets/schemas/CHECK.schema.json";
 
-export { default as CISchema } from "../aolib-meta/schemas/packets/CI.schema.json";
+export { default as CISchema } from "../aolib-meta/packets/schemas/CI.schema.json";
 
-export { default as CTBroadcastSchema } from "../aolib-meta/schemas/packets/CTBroadcast.schema.json";
+export { default as CTToClientSchema } from "../aolib-meta/packets/schemas/CTToClient.schema.json";
 
-export { default as CTRequestSchema } from "../aolib-meta/schemas/packets/CTRequest.schema.json";
+export { default as CTToServerSchema } from "../aolib-meta/packets/schemas/CTToServer.schema.json";
 
-export { default as CharsCheckSchema } from "../aolib-meta/schemas/packets/CharsCheck.schema.json";
+export { default as CharsCheckSchema } from "../aolib-meta/packets/schemas/CharsCheck.schema.json";
 
-export { default as DESchema } from "../aolib-meta/schemas/packets/DE.schema.json";
+export { default as DESchema } from "../aolib-meta/packets/schemas/DE.schema.json";
 
-export { default as DONESchema } from "../aolib-meta/schemas/packets/DONE.schema.json";
+export { default as DONESchema } from "../aolib-meta/packets/schemas/DONE.schema.json";
 
-export { default as EESchema } from "../aolib-meta/schemas/packets/EE.schema.json";
+export { default as EESchema } from "../aolib-meta/packets/schemas/EE.schema.json";
 
-export { default as EISchema } from "../aolib-meta/schemas/packets/EI.schema.json";
+export { default as EISchema } from "../aolib-meta/packets/schemas/EI.schema.json";
 
-export { default as EMSchema } from "../aolib-meta/schemas/packets/EM.schema.json";
+export { default as EMSchema } from "../aolib-meta/packets/schemas/EM.schema.json";
 
-export { default as FASchema } from "../aolib-meta/schemas/packets/FA.schema.json";
+export { default as FASchema } from "../aolib-meta/packets/schemas/FA.schema.json";
 
-export { default as FLSchema } from "../aolib-meta/schemas/packets/FL.schema.json";
+export { default as FLSchema } from "../aolib-meta/packets/schemas/FL.schema.json";
 
-export { default as FMSchema } from "../aolib-meta/schemas/packets/FM.schema.json";
+export { default as FMSchema } from "../aolib-meta/packets/schemas/FM.schema.json";
 
-export { default as HISchema } from "../aolib-meta/schemas/packets/HI.schema.json";
+export { default as HISchema } from "../aolib-meta/packets/schemas/HI.schema.json";
 
-export { default as HPBroadcastSchema } from "../aolib-meta/schemas/packets/HPBroadcast.schema.json";
+export { default as HPToClientSchema } from "../aolib-meta/packets/schemas/HPToClient.schema.json";
 
-export { default as HPRequestSchema } from "../aolib-meta/schemas/packets/HPRequest.schema.json";
+export { default as HPToServerSchema } from "../aolib-meta/packets/schemas/HPToServer.schema.json";
 
-export { default as IDClientSchema } from "../aolib-meta/schemas/packets/IDClient.schema.json";
+export { default as IDToClientSchema } from "../aolib-meta/packets/schemas/IDToClient.schema.json";
 
-export { default as IDServerSchema } from "../aolib-meta/schemas/packets/IDServer.schema.json";
+export { default as IDToServerSchema } from "../aolib-meta/packets/schemas/IDToServer.schema.json";
 
-export { default as JDSchema } from "../aolib-meta/schemas/packets/JD.schema.json";
+export { default as JDSchema } from "../aolib-meta/packets/schemas/JD.schema.json";
 
-export { default as KBSchema } from "../aolib-meta/schemas/packets/KB.schema.json";
+export { default as KBSchema } from "../aolib-meta/packets/schemas/KB.schema.json";
 
-export { default as KKSchema } from "../aolib-meta/schemas/packets/KK.schema.json";
+export { default as KKSchema } from "../aolib-meta/packets/schemas/KK.schema.json";
 
-export { default as LESchema } from "../aolib-meta/schemas/packets/LE.schema.json";
+export { default as LESchema } from "../aolib-meta/packets/schemas/LE.schema.json";
 
-export { default as MASchema } from "../aolib-meta/schemas/packets/MA.schema.json";
+export { default as MASchema } from "../aolib-meta/packets/schemas/MA.schema.json";
 
-export { default as MCBroadcastSchema } from "../aolib-meta/schemas/packets/MCBroadcast.schema.json";
+export { default as MCToClientSchema } from "../aolib-meta/packets/schemas/MCToClient.schema.json";
 
-export { default as MCRequestSchema } from "../aolib-meta/schemas/packets/MCRequest.schema.json";
+export { default as MCToServerSchema } from "../aolib-meta/packets/schemas/MCToServer.schema.json";
 
-export { default as MSBroadcastSchema } from "../aolib-meta/schemas/packets/MSBroadcast.schema.json";
+export { default as MSToClientSchema } from "../aolib-meta/packets/schemas/MSToClient.schema.json";
 
-export { default as MSRequestSchema } from "../aolib-meta/schemas/packets/MSRequest.schema.json";
+export { default as MSToServerSchema } from "../aolib-meta/packets/schemas/MSToServer.schema.json";
 
-export { default as PESchema } from "../aolib-meta/schemas/packets/PE.schema.json";
+export { default as PESchema } from "../aolib-meta/packets/schemas/PE.schema.json";
 
-export { default as PNSchema } from "../aolib-meta/schemas/packets/PN.schema.json";
+export { default as PNSchema } from "../aolib-meta/packets/schemas/PN.schema.json";
 
-export { default as PRSchema } from "../aolib-meta/schemas/packets/PR.schema.json";
+export { default as PRSchema } from "../aolib-meta/packets/schemas/PR.schema.json";
 
-export { default as PUSchema } from "../aolib-meta/schemas/packets/PU.schema.json";
+export { default as PUSchema } from "../aolib-meta/packets/schemas/PU.schema.json";
 
-export { default as PVSchema } from "../aolib-meta/schemas/packets/PV.schema.json";
+export { default as PVSchema } from "../aolib-meta/packets/schemas/PV.schema.json";
 
-export { default as RCSchema } from "../aolib-meta/schemas/packets/RC.schema.json";
+export { default as RCSchema } from "../aolib-meta/packets/schemas/RC.schema.json";
 
-export { default as RDSchema } from "../aolib-meta/schemas/packets/RD.schema.json";
+export { default as RDSchema } from "../aolib-meta/packets/schemas/RD.schema.json";
 
-export { default as RMSchema } from "../aolib-meta/schemas/packets/RM.schema.json";
+export { default as RMSchema } from "../aolib-meta/packets/schemas/RM.schema.json";
 
-export { default as RMCSchema } from "../aolib-meta/schemas/packets/RMC.schema.json";
+export { default as RMCSchema } from "../aolib-meta/packets/schemas/RMC.schema.json";
 
-export { default as RTBroadcastSchema } from "../aolib-meta/schemas/packets/RTBroadcast.schema.json";
+export { default as RTToClientSchema } from "../aolib-meta/packets/schemas/RTToClient.schema.json";
 
-export { default as RTRequestSchema } from "../aolib-meta/schemas/packets/RTRequest.schema.json";
+export { default as RTToServerSchema } from "../aolib-meta/packets/schemas/RTToServer.schema.json";
 
-export { default as SCSchema } from "../aolib-meta/schemas/packets/SC.schema.json";
+export { default as SCSchema } from "../aolib-meta/packets/schemas/SC.schema.json";
 
-export { default as SISchema } from "../aolib-meta/schemas/packets/SI.schema.json";
+export { default as SISchema } from "../aolib-meta/packets/schemas/SI.schema.json";
 
-export { default as SMSchema } from "../aolib-meta/schemas/packets/SM.schema.json";
+export { default as SMSchema } from "../aolib-meta/packets/schemas/SM.schema.json";
 
-export { default as SPSchema } from "../aolib-meta/schemas/packets/SP.schema.json";
+export { default as SPSchema } from "../aolib-meta/packets/schemas/SP.schema.json";
 
-export { default as TISchema } from "../aolib-meta/schemas/packets/TI.schema.json";
+export { default as TISchema } from "../aolib-meta/packets/schemas/TI.schema.json";
 
-export { default as VS_AUDIOSchema } from "../aolib-meta/schemas/packets/VS_AUDIO.schema.json";
+export { default as VS_AUDIOSchema } from "../aolib-meta/packets/schemas/VS_AUDIO.schema.json";
 
-export { default as VS_CAPSSchema } from "../aolib-meta/schemas/packets/VS_CAPS.schema.json";
+export { default as VS_CAPSSchema } from "../aolib-meta/packets/schemas/VS_CAPS.schema.json";
 
-export { default as VS_FRAMESchema } from "../aolib-meta/schemas/packets/VS_FRAME.schema.json";
+export { default as VS_FRAMESchema } from "../aolib-meta/packets/schemas/VS_FRAME.schema.json";
 
-export { default as VS_JOINBroadcastSchema } from "../aolib-meta/schemas/packets/VS_JOINBroadcast.schema.json";
+export { default as VS_JOINToClientSchema } from "../aolib-meta/packets/schemas/VS_JOINToClient.schema.json";
 
-export { default as VS_JOINRequestSchema } from "../aolib-meta/schemas/packets/VS_JOINRequest.schema.json";
+export { default as VS_JOINToServerSchema } from "../aolib-meta/packets/schemas/VS_JOINToServer.schema.json";
 
-export { default as VS_LEAVEBroadcastSchema } from "../aolib-meta/schemas/packets/VS_LEAVEBroadcast.schema.json";
+export { default as VS_LEAVEToClientSchema } from "../aolib-meta/packets/schemas/VS_LEAVEToClient.schema.json";
 
-export { default as VS_LEAVERequestSchema } from "../aolib-meta/schemas/packets/VS_LEAVERequest.schema.json";
+export { default as VS_LEAVEToServerSchema } from "../aolib-meta/packets/schemas/VS_LEAVEToServer.schema.json";
 
-export { default as VS_PEERSSchema } from "../aolib-meta/schemas/packets/VS_PEERS.schema.json";
+export { default as VS_PEERSSchema } from "../aolib-meta/packets/schemas/VS_PEERS.schema.json";
 
-export { default as VS_SPEAKBroadcastSchema } from "../aolib-meta/schemas/packets/VS_SPEAKBroadcast.schema.json";
+export { default as VS_SPEAKToClientSchema } from "../aolib-meta/packets/schemas/VS_SPEAKToClient.schema.json";
 
-export { default as VS_SPEAKRequestSchema } from "../aolib-meta/schemas/packets/VS_SPEAKRequest.schema.json";
+export { default as VS_SPEAKToServerSchema } from "../aolib-meta/packets/schemas/VS_SPEAKToServer.schema.json";
 
-export { default as ZZBroadcastSchema } from "../aolib-meta/schemas/packets/ZZBroadcast.schema.json";
+export { default as ZZToClientSchema } from "../aolib-meta/packets/schemas/ZZToClient.schema.json";
 
-export { default as ZZRequestSchema } from "../aolib-meta/schemas/packets/ZZRequest.schema.json";
+export { default as ZZToServerSchema } from "../aolib-meta/packets/schemas/ZZToServer.schema.json";
 
-export { default as askchaaSchema } from "../aolib-meta/schemas/packets/askchaa.schema.json";
+export { default as askchaaSchema } from "../aolib-meta/packets/schemas/askchaa.schema.json";
 
-export { default as decryptorSchema } from "../aolib-meta/schemas/packets/decryptor.schema.json";
+export { default as decryptorSchema } from "../aolib-meta/packets/schemas/decryptor.schema.json";
 
 
 export const enumSchemas = [AreaUpdateTypeEnumSchema, DeskModifierEnumSchema, EmoteModifierEnumSchema, FlipEnumSchema, ShoutModifierEnumSchema, SideEnumSchema, TextColorEnumSchema];
@@ -416,7 +416,7 @@ export class CI {
 }
 
 
-export class CTBroadcast {
+export class CTToClient {
   name!: string;
   message!: string;
   is_from_server!: boolean;
@@ -433,7 +433,7 @@ export class CTBroadcast {
 }
 
 
-export class CTRequest {
+export class CTToServer {
   name!: string;
   message!: string;
 
@@ -588,7 +588,7 @@ export class HI {
 }
 
 
-export class HPBroadcast {
+export class HPToClient {
   bar!: number;
   value!: number;
 
@@ -602,7 +602,7 @@ export class HPBroadcast {
 }
 
 
-export class HPRequest {
+export class HPToServer {
   bar!: number;
   value!: number;
 
@@ -616,21 +616,7 @@ export class HPRequest {
 }
 
 
-export class IDClient {
-  software!: string;
-  version!: string;
-
-  constructor(input: {
-    software: string;
-    version: string;
-  }) {
-    this.software = input.software;
-    this.version = input.version;
-  }
-}
-
-
-export class IDServer {
+export class IDToClient {
   player_id!: number;
   software!: string;
   version!: string;
@@ -641,6 +627,20 @@ export class IDServer {
     version: string;
   }) {
     this.player_id = input.player_id;
+    this.software = input.software;
+    this.version = input.version;
+  }
+}
+
+
+export class IDToServer {
+  software!: string;
+  version!: string;
+
+  constructor(input: {
+    software: string;
+    version: string;
+  }) {
     this.software = input.software;
     this.version = input.version;
   }
@@ -716,7 +716,7 @@ export class MA {
 }
 
 
-export class MCBroadcast {
+export class MCToClient {
   name!: string;
   char_id!: number;
   showname!: string;
@@ -742,7 +742,7 @@ export class MCBroadcast {
 }
 
 
-export class MCRequest {
+export class MCToServer {
   name!: string;
   char_id!: number;
   showname!: string;
@@ -762,7 +762,7 @@ export class MCRequest {
 }
 
 
-export class MSBroadcast {
+export class MSToClient {
   desk_modifier!: DeskModifier;
   preanim!: string;
   character!: string;
@@ -826,28 +826,28 @@ export class MSBroadcast {
     additive?: boolean;
     effect?: string;
   }) {
-    this.desk_modifier = input.desk_modifier ?? 1;
+    this.desk_modifier = input.desk_modifier ?? DeskModifier.shown;
     this.preanim = input.preanim ?? "";
     this.character = input.character;
     this.emote = input.emote;
     this.message = input.message;
     this.side = input.side;
     this.sfx_name = input.sfx_name ?? "";
-    this.emote_modifier = input.emote_modifier ?? 0;
+    this.emote_modifier = input.emote_modifier ?? EmoteModifier.no_preanim;
     this.char_id = input.char_id;
     this.sfx_delay = input.sfx_delay ?? 0;
-    this.shout_modifier = input.shout_modifier ?? 0;
+    this.shout_modifier = input.shout_modifier ?? ShoutModifier.none;
     this.evidence_id = input.evidence_id ?? 0;
-    this.flip = input.flip ?? 0;
+    this.flip = input.flip ?? Flip.none;
     this.realization = input.realization ?? false;
-    this.text_color = input.text_color ?? 0;
+    this.text_color = input.text_color ?? TextColor.white;
     this.showname = input.showname ?? "";
     this.paired_charid = input.paired_charid ?? -1;
     this.paired_name = input.paired_name ?? "";
     this.paired_emote = input.paired_emote ?? "";
     this.offset = input.offset ?? {"x":0,"y":0};
     this.paired_offset = input.paired_offset ?? {"x":0,"y":0};
-    this.paired_flip = input.paired_flip ?? 0;
+    this.paired_flip = input.paired_flip ?? Flip.none;
     this.noninterrupting_preanim = input.noninterrupting_preanim ?? false;
     this.sfx_looping = input.sfx_looping ?? false;
     this.screenshake = input.screenshake ?? false;
@@ -860,7 +860,7 @@ export class MSBroadcast {
 }
 
 
-export class MSRequest {
+export class MSToServer {
   desk_modifier!: DeskModifier;
   preanim!: string;
   character!: string;
@@ -916,21 +916,21 @@ export class MSRequest {
     additive?: boolean;
     effect?: string;
   }) {
-    this.desk_modifier = input.desk_modifier ?? 1;
+    this.desk_modifier = input.desk_modifier ?? DeskModifier.shown;
     this.preanim = input.preanim ?? "";
     this.character = input.character;
     this.emote = input.emote;
     this.message = input.message;
     this.side = input.side;
     this.sfx_name = input.sfx_name ?? "";
-    this.emote_modifier = input.emote_modifier ?? 0;
+    this.emote_modifier = input.emote_modifier ?? EmoteModifier.no_preanim;
     this.char_id = input.char_id;
     this.sfx_delay = input.sfx_delay ?? 0;
-    this.shout_modifier = input.shout_modifier ?? 0;
+    this.shout_modifier = input.shout_modifier ?? ShoutModifier.none;
     this.evidence_id = input.evidence_id ?? 0;
-    this.flip = input.flip ?? 0;
+    this.flip = input.flip ?? Flip.none;
     this.realization = input.realization ?? false;
-    this.text_color = input.text_color ?? 0;
+    this.text_color = input.text_color ?? TextColor.white;
     this.showname = input.showname ?? "";
     this.paired_charid = input.paired_charid ?? -1;
     this.offset = input.offset ?? {"x":0,"y":0};
@@ -1057,7 +1057,7 @@ export class RMC {
 }
 
 
-export class RTBroadcast {
+export class RTToClient {
   animation!: string;
   judgeId!: number;
 
@@ -1071,7 +1071,7 @@ export class RTBroadcast {
 }
 
 
-export class RTRequest {
+export class RTToServer {
   animation!: string;
   judgeId!: number;
 
@@ -1218,7 +1218,7 @@ export class VS_FRAME {
 }
 
 
-export class VS_JOINBroadcast {
+export class VS_JOINToClient {
   uid!: number;
 
   constructor(input: {
@@ -1229,14 +1229,14 @@ export class VS_JOINBroadcast {
 }
 
 
-export class VS_JOINRequest {
+export class VS_JOINToServer {
   constructor(_input: Record<string, never> = {}) {
     void _input;
   }
 }
 
 
-export class VS_LEAVEBroadcast {
+export class VS_LEAVEToClient {
   uid!: number;
 
   constructor(input: {
@@ -1247,7 +1247,7 @@ export class VS_LEAVEBroadcast {
 }
 
 
-export class VS_LEAVERequest {
+export class VS_LEAVEToServer {
   constructor(_input: Record<string, never> = {}) {
     void _input;
   }
@@ -1265,7 +1265,7 @@ export class VS_PEERS {
 }
 
 
-export class VS_SPEAKBroadcast {
+export class VS_SPEAKToClient {
   uid!: number;
   on!: boolean;
 
@@ -1279,7 +1279,7 @@ export class VS_SPEAKBroadcast {
 }
 
 
-export class VS_SPEAKRequest {
+export class VS_SPEAKToServer {
   on!: boolean;
 
   constructor(input: {
@@ -1290,7 +1290,7 @@ export class VS_SPEAKRequest {
 }
 
 
-export class ZZBroadcast {
+export class ZZToClient {
   reason!: string;
   target!: number;
 
@@ -1304,7 +1304,7 @@ export class ZZBroadcast {
 }
 
 
-export class ZZRequest {
+export class ZZToServer {
   reason!: string;
   target!: number;
 
@@ -1341,25 +1341,25 @@ export const c2sSchemas = {
   askchaa: askchaaSchema,
   CC: CCSchema,
   CH: CHSchema,
-  CT: CTRequestSchema,
+  CT: CTToServerSchema,
   DE: DESchema,
   EE: EESchema,
   HI: HISchema,
-  HP: HPRequestSchema,
-  ID: IDClientSchema,
+  HP: HPToServerSchema,
+  ID: IDToServerSchema,
   MA: MASchema,
-  MC: MCRequestSchema,
-  MS: MSRequestSchema,
+  MC: MCToServerSchema,
+  MS: MSToServerSchema,
   PE: PESchema,
   RC: RCSchema,
   RD: RDSchema,
   RM: RMSchema,
-  RT: RTRequestSchema,
+  RT: RTToServerSchema,
   VS_FRAME: VS_FRAMESchema,
-  VS_JOIN: VS_JOINRequestSchema,
-  VS_LEAVE: VS_LEAVERequestSchema,
-  VS_SPEAK: VS_SPEAKRequestSchema,
-  ZZ: ZZRequestSchema,
+  VS_JOIN: VS_JOINToServerSchema,
+  VS_LEAVE: VS_LEAVEToServerSchema,
+  VS_SPEAK: VS_SPEAKToServerSchema,
+  ZZ: ZZToServerSchema,
 } as const;
 
 export const s2cSchemas = {
@@ -1372,7 +1372,7 @@ export const s2cSchemas = {
   CharsCheck: CharsCheckSchema,
   CHECK: CHECKSchema,
   CI: CISchema,
-  CT: CTBroadcastSchema,
+  CT: CTToClientSchema,
   decryptor: decryptorSchema,
   DONE: DONESchema,
   EI: EISchema,
@@ -1380,20 +1380,20 @@ export const s2cSchemas = {
   FA: FASchema,
   FL: FLSchema,
   FM: FMSchema,
-  HP: HPBroadcastSchema,
-  ID: IDServerSchema,
+  HP: HPToClientSchema,
+  ID: IDToClientSchema,
   JD: JDSchema,
   KB: KBSchema,
   KK: KKSchema,
   LE: LESchema,
-  MC: MCBroadcastSchema,
-  MS: MSBroadcastSchema,
+  MC: MCToClientSchema,
+  MS: MSToClientSchema,
   PN: PNSchema,
   PR: PRSchema,
   PU: PUSchema,
   PV: PVSchema,
   RMC: RMCSchema,
-  RT: RTBroadcastSchema,
+  RT: RTToClientSchema,
   SC: SCSchema,
   SI: SISchema,
   SM: SMSchema,
@@ -1401,36 +1401,36 @@ export const s2cSchemas = {
   TI: TISchema,
   VS_AUDIO: VS_AUDIOSchema,
   VS_CAPS: VS_CAPSSchema,
-  VS_JOIN: VS_JOINBroadcastSchema,
-  VS_LEAVE: VS_LEAVEBroadcastSchema,
+  VS_JOIN: VS_JOINToClientSchema,
+  VS_LEAVE: VS_LEAVEToClientSchema,
   VS_PEERS: VS_PEERSSchema,
-  VS_SPEAK: VS_SPEAKBroadcastSchema,
-  ZZ: ZZBroadcastSchema,
+  VS_SPEAK: VS_SPEAKToClientSchema,
+  ZZ: ZZToClientSchema,
 } as const;
 
 export const c2sClasses = {
   askchaa: askchaa,
   CC: CC,
   CH: CH,
-  CT: CTRequest,
+  CT: CTToServer,
   DE: DE,
   EE: EE,
   HI: HI,
-  HP: HPRequest,
-  ID: IDClient,
+  HP: HPToServer,
+  ID: IDToServer,
   MA: MA,
-  MC: MCRequest,
-  MS: MSRequest,
+  MC: MCToServer,
+  MS: MSToServer,
   PE: PE,
   RC: RC,
   RD: RD,
   RM: RM,
-  RT: RTRequest,
+  RT: RTToServer,
   VS_FRAME: VS_FRAME,
-  VS_JOIN: VS_JOINRequest,
-  VS_LEAVE: VS_LEAVERequest,
-  VS_SPEAK: VS_SPEAKRequest,
-  ZZ: ZZRequest,
+  VS_JOIN: VS_JOINToServer,
+  VS_LEAVE: VS_LEAVEToServer,
+  VS_SPEAK: VS_SPEAKToServer,
+  ZZ: ZZToServer,
 } as const;
 
 export const s2cClasses = {
@@ -1443,7 +1443,7 @@ export const s2cClasses = {
   CharsCheck: CharsCheck,
   CHECK: CHECK,
   CI: CI,
-  CT: CTBroadcast,
+  CT: CTToClient,
   decryptor: decryptor,
   DONE: DONE,
   EI: EI,
@@ -1451,20 +1451,20 @@ export const s2cClasses = {
   FA: FA,
   FL: FL,
   FM: FM,
-  HP: HPBroadcast,
-  ID: IDServer,
+  HP: HPToClient,
+  ID: IDToClient,
   JD: JD,
   KB: KB,
   KK: KK,
   LE: LE,
-  MC: MCBroadcast,
-  MS: MSBroadcast,
+  MC: MCToClient,
+  MS: MSToClient,
   PN: PN,
   PR: PR,
   PU: PU,
   PV: PV,
   RMC: RMC,
-  RT: RTBroadcast,
+  RT: RTToClient,
   SC: SC,
   SI: SI,
   SM: SM,
@@ -1472,36 +1472,36 @@ export const s2cClasses = {
   TI: TI,
   VS_AUDIO: VS_AUDIO,
   VS_CAPS: VS_CAPS,
-  VS_JOIN: VS_JOINBroadcast,
-  VS_LEAVE: VS_LEAVEBroadcast,
+  VS_JOIN: VS_JOINToClient,
+  VS_LEAVE: VS_LEAVEToClient,
   VS_PEERS: VS_PEERS,
-  VS_SPEAK: VS_SPEAKBroadcast,
-  ZZ: ZZBroadcast,
+  VS_SPEAK: VS_SPEAKToClient,
+  ZZ: ZZToClient,
 } as const;
 
 export type C2SInputs = {
   askchaa: ConstructorParameters<typeof askchaa>[0];
   CC: ConstructorParameters<typeof CC>[0];
   CH: ConstructorParameters<typeof CH>[0];
-  CT: ConstructorParameters<typeof CTRequest>[0];
+  CT: ConstructorParameters<typeof CTToServer>[0];
   DE: ConstructorParameters<typeof DE>[0];
   EE: ConstructorParameters<typeof EE>[0];
   HI: ConstructorParameters<typeof HI>[0];
-  HP: ConstructorParameters<typeof HPRequest>[0];
-  ID: ConstructorParameters<typeof IDClient>[0];
+  HP: ConstructorParameters<typeof HPToServer>[0];
+  ID: ConstructorParameters<typeof IDToServer>[0];
   MA: ConstructorParameters<typeof MA>[0];
-  MC: ConstructorParameters<typeof MCRequest>[0];
-  MS: ConstructorParameters<typeof MSRequest>[0];
+  MC: ConstructorParameters<typeof MCToServer>[0];
+  MS: ConstructorParameters<typeof MSToServer>[0];
   PE: ConstructorParameters<typeof PE>[0];
   RC: ConstructorParameters<typeof RC>[0];
   RD: ConstructorParameters<typeof RD>[0];
   RM: ConstructorParameters<typeof RM>[0];
-  RT: ConstructorParameters<typeof RTRequest>[0];
+  RT: ConstructorParameters<typeof RTToServer>[0];
   VS_FRAME: ConstructorParameters<typeof VS_FRAME>[0];
-  VS_JOIN: ConstructorParameters<typeof VS_JOINRequest>[0];
-  VS_LEAVE: ConstructorParameters<typeof VS_LEAVERequest>[0];
-  VS_SPEAK: ConstructorParameters<typeof VS_SPEAKRequest>[0];
-  ZZ: ConstructorParameters<typeof ZZRequest>[0];
+  VS_JOIN: ConstructorParameters<typeof VS_JOINToServer>[0];
+  VS_LEAVE: ConstructorParameters<typeof VS_LEAVEToServer>[0];
+  VS_SPEAK: ConstructorParameters<typeof VS_SPEAKToServer>[0];
+  ZZ: ConstructorParameters<typeof ZZToServer>[0];
 };
 
 export type S2CInputs = {
@@ -1514,7 +1514,7 @@ export type S2CInputs = {
   CharsCheck: ConstructorParameters<typeof CharsCheck>[0];
   CHECK: ConstructorParameters<typeof CHECK>[0];
   CI: ConstructorParameters<typeof CI>[0];
-  CT: ConstructorParameters<typeof CTBroadcast>[0];
+  CT: ConstructorParameters<typeof CTToClient>[0];
   decryptor: ConstructorParameters<typeof decryptor>[0];
   DONE: ConstructorParameters<typeof DONE>[0];
   EI: ConstructorParameters<typeof EI>[0];
@@ -1522,20 +1522,20 @@ export type S2CInputs = {
   FA: ConstructorParameters<typeof FA>[0];
   FL: ConstructorParameters<typeof FL>[0];
   FM: ConstructorParameters<typeof FM>[0];
-  HP: ConstructorParameters<typeof HPBroadcast>[0];
-  ID: ConstructorParameters<typeof IDServer>[0];
+  HP: ConstructorParameters<typeof HPToClient>[0];
+  ID: ConstructorParameters<typeof IDToClient>[0];
   JD: ConstructorParameters<typeof JD>[0];
   KB: ConstructorParameters<typeof KB>[0];
   KK: ConstructorParameters<typeof KK>[0];
   LE: ConstructorParameters<typeof LE>[0];
-  MC: ConstructorParameters<typeof MCBroadcast>[0];
-  MS: ConstructorParameters<typeof MSBroadcast>[0];
+  MC: ConstructorParameters<typeof MCToClient>[0];
+  MS: ConstructorParameters<typeof MSToClient>[0];
   PN: ConstructorParameters<typeof PN>[0];
   PR: ConstructorParameters<typeof PR>[0];
   PU: ConstructorParameters<typeof PU>[0];
   PV: ConstructorParameters<typeof PV>[0];
   RMC: ConstructorParameters<typeof RMC>[0];
-  RT: ConstructorParameters<typeof RTBroadcast>[0];
+  RT: ConstructorParameters<typeof RTToClient>[0];
   SC: ConstructorParameters<typeof SC>[0];
   SI: ConstructorParameters<typeof SI>[0];
   SM: ConstructorParameters<typeof SM>[0];
@@ -1543,36 +1543,36 @@ export type S2CInputs = {
   TI: ConstructorParameters<typeof TI>[0];
   VS_AUDIO: ConstructorParameters<typeof VS_AUDIO>[0];
   VS_CAPS: ConstructorParameters<typeof VS_CAPS>[0];
-  VS_JOIN: ConstructorParameters<typeof VS_JOINBroadcast>[0];
-  VS_LEAVE: ConstructorParameters<typeof VS_LEAVEBroadcast>[0];
+  VS_JOIN: ConstructorParameters<typeof VS_JOINToClient>[0];
+  VS_LEAVE: ConstructorParameters<typeof VS_LEAVEToClient>[0];
   VS_PEERS: ConstructorParameters<typeof VS_PEERS>[0];
-  VS_SPEAK: ConstructorParameters<typeof VS_SPEAKBroadcast>[0];
-  ZZ: ConstructorParameters<typeof ZZBroadcast>[0];
+  VS_SPEAK: ConstructorParameters<typeof VS_SPEAKToClient>[0];
+  ZZ: ConstructorParameters<typeof ZZToClient>[0];
 };
 
 export type C2SOutputs = {
   askchaa: askchaa;
   CC: CC;
   CH: CH;
-  CT: CTRequest;
+  CT: CTToServer;
   DE: DE;
   EE: EE;
   HI: HI;
-  HP: HPRequest;
-  ID: IDClient;
+  HP: HPToServer;
+  ID: IDToServer;
   MA: MA;
-  MC: MCRequest;
-  MS: MSRequest;
+  MC: MCToServer;
+  MS: MSToServer;
   PE: PE;
   RC: RC;
   RD: RD;
   RM: RM;
-  RT: RTRequest;
+  RT: RTToServer;
   VS_FRAME: VS_FRAME;
-  VS_JOIN: VS_JOINRequest;
-  VS_LEAVE: VS_LEAVERequest;
-  VS_SPEAK: VS_SPEAKRequest;
-  ZZ: ZZRequest;
+  VS_JOIN: VS_JOINToServer;
+  VS_LEAVE: VS_LEAVEToServer;
+  VS_SPEAK: VS_SPEAKToServer;
+  ZZ: ZZToServer;
 };
 
 export type S2COutputs = {
@@ -1585,7 +1585,7 @@ export type S2COutputs = {
   CharsCheck: CharsCheck;
   CHECK: CHECK;
   CI: CI;
-  CT: CTBroadcast;
+  CT: CTToClient;
   decryptor: decryptor;
   DONE: DONE;
   EI: EI;
@@ -1593,20 +1593,20 @@ export type S2COutputs = {
   FA: FA;
   FL: FL;
   FM: FM;
-  HP: HPBroadcast;
-  ID: IDServer;
+  HP: HPToClient;
+  ID: IDToClient;
   JD: JD;
   KB: KB;
   KK: KK;
   LE: LE;
-  MC: MCBroadcast;
-  MS: MSBroadcast;
+  MC: MCToClient;
+  MS: MSToClient;
   PN: PN;
   PR: PR;
   PU: PU;
   PV: PV;
   RMC: RMC;
-  RT: RTBroadcast;
+  RT: RTToClient;
   SC: SC;
   SI: SI;
   SM: SM;
@@ -1614,9 +1614,9 @@ export type S2COutputs = {
   TI: TI;
   VS_AUDIO: VS_AUDIO;
   VS_CAPS: VS_CAPS;
-  VS_JOIN: VS_JOINBroadcast;
-  VS_LEAVE: VS_LEAVEBroadcast;
+  VS_JOIN: VS_JOINToClient;
+  VS_LEAVE: VS_LEAVEToClient;
   VS_PEERS: VS_PEERS;
-  VS_SPEAK: VS_SPEAKBroadcast;
-  ZZ: ZZBroadcast;
+  VS_SPEAK: VS_SPEAKToClient;
+  ZZ: ZZToClient;
 };

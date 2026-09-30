@@ -7,9 +7,7 @@ import { AreaUpdateType, type AreaUpdateData } from "../src/enums";
 
 type ARUPType = ARUPClass;
 
-// ---------------------------------------------------------------------
 // Discriminator: update_type drives the payload type.
-// ---------------------------------------------------------------------
 
 describe("ARUP: update_type discriminates payload", () => {
   it("PLAYER_COUNT carries numbers on the wire", () => {
@@ -70,9 +68,7 @@ describe("ARUP: update_type discriminates payload", () => {
   });
 });
 
-// ---------------------------------------------------------------------
 // Chat-meta escaping inside the string payload values.
-// ---------------------------------------------------------------------
 
 describe("ARUP: chat-escape on string payloads", () => {
   it("string values with #, &, %, $ survive a fanta round-trip", () => {
@@ -115,9 +111,7 @@ describe("ARUP: chat-escape on string payloads", () => {
   });
 });
 
-// ---------------------------------------------------------------------
 // Empty / boundary cases.
-// ---------------------------------------------------------------------
 
 describe("ARUP: edge cases", () => {
   it("zero-length payload is allowed", () => {
@@ -140,16 +134,15 @@ describe("ARUP: edge cases", () => {
 
   it("non-numeric token in PLAYER_COUNT payload becomes 0", () => {
     // Player counts that fail to parse fall back to 0 rather than NaN
-    // — handlers loop over them assuming finite numbers.
+    //, handlers loop over them assuming finite numbers.
     const decoded = decode(ARUP, "ARUP#0#3#oops#5#%") as unknown as ARUPType;
     expect(decoded.update_data).toEqual([3, 0, 5]);
   });
 });
 
-// ---------------------------------------------------------------------
-// JSON wire shape — discriminator is a number, payload is a native
-// heterogeneous JSON array.
-// ---------------------------------------------------------------------
+// JSON wire shape, discriminator is the string enum value, payload is a
+// native heterogeneous JSON array. (The legacy integer lives only on the
+// fanta wire, via the enum's x-wire-ints.)
 
 describe("ARUP: JSON envelope", () => {
   it("PLAYER_COUNT encodes as a JSON object with number[] payload", () => {
@@ -160,7 +153,7 @@ describe("ARUP: JSON envelope", () => {
     );
     expect(JSON.parse(json)).toEqual({
       $header: "ARUP",
-      update_type: 0,
+      update_type: "player_count", // string on the wire, not the legacy int
       update_data: [3, 7],
     });
   });
@@ -176,7 +169,7 @@ describe("ARUP: JSON envelope", () => {
     );
     expect(JSON.parse(json)).toEqual({
       $header: "ARUP",
-      update_type: 1,
+      update_type: "status", // string on the wire, not the legacy int 1
       update_data: ["normal", "battle"],
     });
   });
@@ -194,9 +187,7 @@ describe("ARUP: JSON envelope", () => {
   });
 });
 
-// ---------------------------------------------------------------------
 // Session integration.
-// ---------------------------------------------------------------------
 
 describe("ARUP: session integration", () => {
   it("server.on.ARUP receives the typed packet", () => {

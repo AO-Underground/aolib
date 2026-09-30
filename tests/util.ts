@@ -1,5 +1,5 @@
 /**
- * Test helpers — write small ad-hoc JSON Schemas without the
+ * Test helpers, write small ad-hoc JSON Schemas without the
  * envelope boilerplate.
  *
  * Production schemas live in `schemas/` and are imported via

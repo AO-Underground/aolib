@@ -1,4 +1,4 @@
-// AUTO-GENERATED from aolib-meta/schemas/types/*. Do not edit; run `bun run codegen`.
+// AUTO-GENERATED from aolib-meta/types/* (object types). Do not edit; run `bun run codegen`.
 
 /** Integer (x, y) screen-coordinate pair carried in MS offset / paired_offset slots. */
 export interface Offset {

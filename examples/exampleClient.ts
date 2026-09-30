@@ -2,19 +2,17 @@
  * Example: aolib used from a browser client.
  *
  * Demonstrates the intended public surface for client-side code.
- * Uses only the packets currently in the registry — once more schemas
+ * Uses only the packets currently in the registry, once more schemas
  * land in `packets/`, more `.on.X` / `.send.X` calls become valid.
  *
- * Read this file top-to-bottom — it's documentation that also
+ * Read this file top-to-bottom, it's documentation that also
  * typechecks.
  */
 
 import { aolib } from "../src/index";
 
-// ---------------------------------------------------------------------
-// Application state and stub helpers — what real client code would
+// Application state and stub helpers, what real client code would
 // already have. Defined here so the example is self-contained.
-// ---------------------------------------------------------------------
 
 const state = { charID: -1, playerID: 0 };
 
@@ -30,9 +28,7 @@ declare const WebSocket: { new (url: string): {
   onmessage: ((e: { data: string }) => void) | null;
 } };
 
-// ---------------------------------------------------------------------
 // Setup.
-// ---------------------------------------------------------------------
 
 const ws = new WebSocket("wss://lemmy.example.com");
 
@@ -40,7 +36,7 @@ const ws = new WebSocket("wss://lemmy.example.com");
 const server = aolib.server({
   send: (wire) => { ws.send(wire); },
 
-  // Loud during development — quietly dropping unhandled packets is
+  // Loud during development, quietly dropping unhandled packets is
   // easy to miss when a handler regresses.
   onUnhandled: (header, packet) => {
     console.warn(`[aolib] no handler registered for ${header}`, packet);
@@ -50,10 +46,8 @@ const server = aolib.server({
 // Feed every inbound WebSocket frame to the session. Never throws.
 ws.onmessage = (e) => { server.receive(e.data); };
 
-// ---------------------------------------------------------------------
 // Register handlers for packets the SERVER sends us.
 // Fully typed, defaults filled, literals stripped.
-// ---------------------------------------------------------------------
 
 // Server's ID packet hands us a player slot id; subsequent c2s packets
 // (CC etc.) echo it back, so stash it on local state.
@@ -71,9 +65,7 @@ server.on.PV((packet) => { loadCharacter(packet.char_id); });
 server.on.SM((packet) => { loadMusicList(packet.music_list.map((m) => m.name)); });
 server.on.DONE(() => { console.log("handshake done"); });
 
-// ---------------------------------------------------------------------
 // Send packets TO the server. TS enforces input shape per header.
-// ---------------------------------------------------------------------
 
 server.send.HI({ hdid: getHardwareID() });
 

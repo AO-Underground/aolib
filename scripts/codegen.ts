@@ -2,25 +2,25 @@
  * Codegen: reads aolib-meta/ and emits generated/packets.ts + generated/enums.ts.
  *
  * Inputs:
- *   - aolib-meta/schemas/packets/<Name>.schema.json — one per packet
- *   - aolib-meta/schemas/enums/<Name>.schema.json   — one per named enum;
- *     each carries an `x-enum-names` array parallel to the `enum` values
- *     so codegen can produce a TS `enum`. Packet schemas $ref them as
- *     `../enums/<Name>.schema.json`.
- *   - aolib-meta/schemas/types/<Name>.schema.json   — shared object types,
- *     $ref'd from packets as `../types/<Name>.schema.json`.
+ *   - aolib-meta/packets/schemas/<Name>.schema.json, one per packet
+ *   - aolib-meta/types/<Name>.schema.json, shared enums and object types.
+ *     A schema carrying an `enum` is a string-first enum (member names and
+ *     values both come from `enum`; legacy integer wire encoding, if any,
+ *     lives in `x-wire-ints` and is applied by the fanta walker). Anything
+ *     else is a shared object type. Packets `$ref` these as
+ *     `../../types/<Name>.schema.json`.
  *
  * Direction maps (c2s/s2c) are derived from each packet's `x-receiver`
- * + `$header` const — no sidecar registry.
+ * + `$header` const, no sidecar registry.
  *
  * Outputs:
- *   - generated/enums.ts — one `export enum` per file under enums/
- *   - generated/packets.ts — one class per packet, plus direction maps
+ *   - generated/enums.ts, one `export enum` per file under enums/
+ *   - generated/packets.ts, one class per packet, plus direction maps
  *
  * For each .schema.json this produces a TypeScript class:
- *   - declared properties (`!: T`) carry the *decoded* shape — every
+ *   - declared properties (`!: T`) carry the *decoded* shape, every
  *     visible field present
- *   - the constructor's parameter type carries the *input* shape —
+ *   - the constructor's parameter type carries the *input* shape,
  *     default-bearing fields optional, const-only slots omitted
  *   - the constructor body assigns visible fields with `??` defaults
  *
@@ -37,17 +37,16 @@ import { fileURLToPath } from "node:url";
 
 const SCRIPTS_DIR = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(SCRIPTS_DIR, "..");
-const SCHEMAS_ROOT = join(ROOT, "aolib-meta/schemas");
-const PACKETS_DIR = join(SCHEMAS_ROOT, "packets");
-const ENUMS_DIR = join(SCHEMAS_ROOT, "enums");
-const TYPES_DIR = join(SCHEMAS_ROOT, "types");
+const META_ROOT = join(ROOT, "aolib-meta");
+const PACKETS_DIR = join(META_ROOT, "packets/schemas");
+// Enums and shared object types share the `types/` directory; a schema
+// is an enum when it carries an `enum`, otherwise an object type.
+const TYPES_DIR = join(META_ROOT, "types");
 const OUT_PACKETS = join(ROOT, "generated/packets.ts");
 const OUT_ENUMS = join(ROOT, "generated/enums.ts");
 const OUT_TYPES = join(ROOT, "generated/types.ts");
 
-// ---------------------------------------------------------------------
 // Read input
-// ---------------------------------------------------------------------
 
 interface JsonSchema {
   type?: string | string[];
@@ -63,13 +62,13 @@ interface JsonSchema {
   $ref?: string;
   "x-fanta-escape"?: boolean;
   "x-fanta-codec"?: string;
-  "x-enum-names"?: string[];
+  "x-wire-ints"?: number[];
   "x-receiver"?: "client" | "server";
   [k: string]: unknown;
 }
 
 interface PacketMeta {
-  name: string;             // schema basename (e.g. "MCRequest")
+  name: string;             // schema basename (e.g. "MCToServer")
   header: string;           // wire header (e.g. "MC")
   receiver: "client" | "server";
 }
@@ -77,9 +76,7 @@ interface PacketMeta {
 interface EnumDef {
   name: string;            // TS enum name, also file basename
   filename: string;        // e.g. "Side.schema.json"
-  values: unknown[];       // schema enum values
-  names: string[];         // parallel x-enum-names
-  isString: boolean;       // string vs integer underlying type
+  values: unknown[];       // schema enum values (also the member names)
   description?: string;
 }
 
@@ -123,47 +120,31 @@ function listPacketNames(): string[] {
   return listSchemaFiles(PACKETS_DIR).map((f) => f.replace(/\.schema\.json$/, ""));
 }
 
-function loadTypes(): Map<string, TypeDef> {
-  const out = new Map<string, TypeDef>();
+/**
+ * Read `types/`, splitting each schema into an enum (carries `enum`,
+ * member names and values both come from it) or a shared object type.
+ */
+function loadTypesAndEnums(): {
+  enums: Map<string, EnumDef>;
+  types: Map<string, TypeDef>;
+} {
+  const enums = new Map<string, EnumDef>();
+  const types = new Map<string, TypeDef>();
   for (const filename of listSchemaFiles(TYPES_DIR)) {
     const schema = loadJson(join(TYPES_DIR, filename));
     const name = filename.replace(/\.schema\.json$/, "");
-    out.set(filename, {
-      name,
-      filename,
-      schema,
-      description: typeof schema.description === "string" ? schema.description : undefined,
-    });
+    const description =
+      typeof schema.description === "string" ? schema.description : undefined;
+    if (Array.isArray(schema.enum)) {
+      enums.set(filename, { name, filename, values: schema.enum, description });
+    } else {
+      types.set(filename, { name, filename, schema, description });
+    }
   }
-  return out;
+  return { enums, types };
 }
 
-function loadEnums(): Map<string, EnumDef> {
-  const out = new Map<string, EnumDef>();
-  for (const filename of listSchemaFiles(ENUMS_DIR)) {
-    const schema = loadJson(join(ENUMS_DIR, filename));
-    const name = filename.replace(/\.schema\.json$/, "");
-    if (!schema.enum || !schema["x-enum-names"]) {
-      throw new Error(`Enum schema ${filename} missing 'enum' or 'x-enum-names'`);
-    }
-    if (schema.enum.length !== schema["x-enum-names"].length) {
-      throw new Error(`Enum schema ${filename}: 'enum' and 'x-enum-names' lengths differ`);
-    }
-    out.set(filename, {
-      name,
-      filename,
-      values: schema.enum,
-      names: schema["x-enum-names"],
-      isString: schema.type === "string",
-      description: typeof schema.description === "string" ? schema.description : undefined,
-    });
-  }
-  return out;
-}
-
-// ---------------------------------------------------------------------
 // JSON Schema → TS type rendering
-// ---------------------------------------------------------------------
 
 interface RenderCtx {
   enums: Map<string, EnumDef>;
@@ -174,7 +155,7 @@ interface RenderCtx {
 
 function renderType(s: JsonSchema, indent: number, ctx: RenderCtx): string {
   if (s.$ref) {
-    // Packet `$ref`s are relative paths (`../enums/Foo.schema.json`);
+    // Packet `$ref`s are relative paths (`../../types/Foo.schema.json`);
     // the enum/type maps are keyed by basename.
     const key = s.$ref.replace(/^.*\//, "");
     const enumDef = ctx.enums.get(key);
@@ -235,9 +216,7 @@ function quoteKey(k: string): string {
   return /^[A-Za-z_$][A-Za-z0-9_$]*$/.test(k) ? k : JSON.stringify(k);
 }
 
-// ---------------------------------------------------------------------
 // Class emission
-// ---------------------------------------------------------------------
 
 interface PropInfo {
   key: string;
@@ -249,18 +228,35 @@ interface PropInfo {
   required: boolean;
 }
 
+/** If `sub` is a `$ref` to a (string-first) enum, its TS enum name. */
+function enumRefName(sub: JsonSchema, ctx: RenderCtx): string | undefined {
+  if (!sub.$ref) return undefined;
+  return ctx.enums.get(sub.$ref.replace(/^.*\//, ""))?.name;
+}
+
 function classifyProperties(schema: JsonSchema, ctx: RenderCtx): PropInfo[] {
   const props = schema.properties ?? {};
   const required = new Set(schema.required ?? []);
-  return Object.entries(props).map(([key, sub]) => ({
-    key,
-    type: renderType(sub, 1, ctx),
-    hasDefault: sub.default !== undefined,
-    defaultLiteral: sub.default !== undefined ? JSON.stringify(sub.default) : undefined,
-    hasConst: sub.const !== undefined,
-    constLiteral: sub.const !== undefined ? JSON.stringify(sub.const) : undefined,
-    required: required.has(key),
-  }));
+  return Object.entries(props).map(([key, sub]) => {
+    // An enum default is the string value, which is also the member name;
+    // emit it as the enum member so it types as the enum, not a raw string.
+    const enumName = enumRefName(sub, ctx);
+    const defaultLiteral =
+      sub.default === undefined
+        ? undefined
+        : enumName
+          ? `${enumName}.${sub.default as string}`
+          : JSON.stringify(sub.default);
+    return {
+      key,
+      type: renderType(sub, 1, ctx),
+      hasDefault: sub.default !== undefined,
+      defaultLiteral,
+      hasConst: sub.const !== undefined,
+      constLiteral: sub.const !== undefined ? JSON.stringify(sub.const) : undefined,
+      required: required.has(key),
+    };
+  });
 }
 
 function emitClass(name: string, schema: JsonSchema, ctx: RenderCtx): string {
@@ -304,13 +300,11 @@ function emitClass(name: string, schema: JsonSchema, ctx: RenderCtx): string {
   );
 }
 
-// ---------------------------------------------------------------------
 // Enum file emission
-// ---------------------------------------------------------------------
 
 function emitTypesFile(types: Map<string, TypeDef>): string {
   const parts: string[] = [
-    "// AUTO-GENERATED from aolib-meta/schemas/types/*. Do not edit; run `bun run codegen`.\n",
+    "// AUTO-GENERATED from aolib-meta/types/* (object types). Do not edit; run `bun run codegen`.\n",
   ];
   const sorted = [...types.values()].sort((a, b) => a.name.localeCompare(b.name));
   for (const t of sorted) {
@@ -330,25 +324,25 @@ function emitTypesFile(types: Map<string, TypeDef>): string {
 
 function emitEnumsFile(enums: Map<string, EnumDef>): string {
   const parts: string[] = [
-    "// AUTO-GENERATED from aolib-meta/schemas/enums/*. Do not edit; run `bun run codegen`.\n",
+    "// AUTO-GENERATED from aolib-meta/types/* (enums). Do not edit; run `bun run codegen`.\n",
   ];
   // Sort by name for deterministic output.
   const sorted = [...enums.values()].sort((a, b) => a.name.localeCompare(b.name));
   for (const e of sorted) {
     if (e.description) parts.push(`/** ${e.description} */`);
     parts.push(`export enum ${e.name} {`);
-    for (let i = 0; i < e.names.length; i++) {
-      const lit = e.isString ? JSON.stringify(e.values[i]) : String(e.values[i]);
-      parts.push(`  ${e.names[i]} = ${lit},`);
+    // Enums are string-first: the member name and its value are both the
+    // string in `enum`. Legacy integer wire encoding lives in the schema's
+    // `x-wire-ints` and is applied by the fanta walker, not here.
+    for (const v of e.values) {
+      parts.push(`  ${String(v)} = ${JSON.stringify(v)},`);
     }
     parts.push("}\n");
   }
   return parts.join("\n");
 }
 
-// ---------------------------------------------------------------------
 // Direction maps
-// ---------------------------------------------------------------------
 
 function emitDirectionMaps(packets: PacketMeta[]): string {
   // x-receiver names the *receiver*; c2s = packets the server receives.
@@ -395,21 +389,18 @@ ${s2c.map(outputLine).join("\n")}
 `;
 }
 
-// ---------------------------------------------------------------------
 // Main
-// ---------------------------------------------------------------------
 
 function main(): void {
-  const enums = loadEnums();
-  const types = loadTypes();
+  const { enums, types } = loadTypesAndEnums();
   const packets = [...listPacketNames()].sort();
   const meta = loadPacketMeta().sort((a, b) => a.header.localeCompare(b.header));
 
-  // Enums + types files are straightforward — no per-packet context.
+  // Enums + types files are straightforward, no per-packet context.
   writeFileSync(OUT_ENUMS, emitEnumsFile(enums));
   writeFileSync(OUT_TYPES, emitTypesFile(types));
 
-  // Packets file — render with a shared context so enum + type
+  // Packets file, render with a shared context so enum + type
   // imports accumulate as we walk each packet.
   const ctx: RenderCtx = {
     enums,
@@ -431,30 +422,30 @@ function main(): void {
     : `import { ${[...ctx.typeImports].sort().join(", ")} } from "./types";\n`;
 
   const parts: string[] = [
-    "// AUTO-GENERATED from aolib-meta/schemas/. Do not edit; run `bun run codegen`.\n",
+    "// AUTO-GENERATED from aolib-meta/. Do not edit; run `bun run codegen`.\n",
     "/* eslint-disable */\n",
     enumImports + typeImports,
   ];
 
-  // Enum + type schemas — imported as runtime values so validate.ts
-  // can register them with Ajv for $ref resolution.
+  // Enum + type schemas, imported as runtime values so validate.ts
+  // can register them with Ajv for $ref resolution. Both live in types/.
   const enumNames = [...enums.values()].map((e) => e.name).sort();
   const typeNames = [...types.values()].map((t) => t.name).sort();
   for (const name of enumNames) {
-    parts.push(`import ${name}EnumSchema from "../aolib-meta/schemas/enums/${name}.schema.json";\n`);
+    parts.push(`import ${name}EnumSchema from "../aolib-meta/types/${name}.schema.json";\n`);
   }
   for (const name of typeNames) {
-    parts.push(`import ${name}TypeSchema from "../aolib-meta/schemas/types/${name}.schema.json";\n`);
+    parts.push(`import ${name}TypeSchema from "../aolib-meta/types/${name}.schema.json";\n`);
   }
   parts.push("");
 
   for (const name of packets) {
-    parts.push(`import ${name}Schema from "../aolib-meta/schemas/packets/${name}.schema.json";\n`);
+    parts.push(`import ${name}Schema from "../aolib-meta/packets/schemas/${name}.schema.json";\n`);
   }
   parts.push("");
 
   for (const name of packets) {
-    parts.push(`export { default as ${name}Schema } from "../aolib-meta/schemas/packets/${name}.schema.json";\n`);
+    parts.push(`export { default as ${name}Schema } from "../aolib-meta/packets/schemas/${name}.schema.json";\n`);
   }
   parts.push("");
 

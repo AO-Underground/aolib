@@ -1,7 +1,7 @@
 /**
  * Fanta wire-format walker, driven by JSON Schema.
  *
- * One positional slot per top-level property (skipping `$header` —
+ * One positional slot per top-level property (skipping `$header`,
  * the framing layer carries it). Per-property semantics come from
  * the JSON Schema:
  *
@@ -12,7 +12,7 @@
  *                     `x-fanta-unescape-amp: true` to tolerate the
  *                     legacy `<and>` form on decode (offset slot in
  *                     MS). Encoders never emit `<and>`.
- *   "array"           greedy — consumes all remaining slots
+ *   "array"           greedy, consumes all remaining slots
  *   const             emitted as the const value; on decode the slot
  *                     is consumed but the schema-fixed value is used
  *
@@ -27,9 +27,7 @@
 
 import type { JsonSchema, FantaCodec } from "./types";
 
-// ---------------------------------------------------------------------
-// Chat-escape helpers — public so ARUP-style custom codecs can reuse.
-// ---------------------------------------------------------------------
+// Chat-escape helpers, public so ARUP-style custom codecs can reuse.
 
 export function escapeFanta(s: string): string {
   return s
@@ -53,9 +51,7 @@ export function unescapeUnicode(s: string): string {
   );
 }
 
-// ---------------------------------------------------------------------
 // Custom codec registry.
-// ---------------------------------------------------------------------
 
 const codecs = new Map<string, FantaCodec>();
 
@@ -69,11 +65,9 @@ function getCodec(name: string): FantaCodec {
   return c;
 }
 
-// ---------------------------------------------------------------------
-// $ref registry — mirrors Ajv's schema registry so the walker can look
+// $ref registry, mirrors Ajv's schema registry so the walker can look
 // through `$ref` to find the underlying type / enum. Schemas are keyed
-// by their `$id` (e.g. `/enums/Foo.schema.json`).
-// ---------------------------------------------------------------------
+// by their `$id` (e.g. `/types/Foo.schema.json`).
 
 const refSchemas = new Map<string, JsonSchema>();
 
@@ -83,8 +77,8 @@ export function registerRefSchema(id: string, schema: JsonSchema): void {
 
 /**
  * RFC 3986 §5.2-style path resolution. Schemas use absolute-path `$id`s
- * (e.g. `/packets/MS.schema.json`); refs are relative paths
- * (`../enums/Foo.schema.json`). Resolution gives back another absolute
+ * (e.g. `/packets/schemas/MS.schema.json`); refs are relative paths
+ * (`../../types/Foo.schema.json`). Resolution gives back another absolute
  * path matching the target's `$id`.
  */
 function resolvePath(ref: string, base: string): string {
@@ -110,9 +104,7 @@ function resolveRef(s: JsonSchema, baseId: string): JsonSchema {
   return { ...target, ...s };
 }
 
-// ---------------------------------------------------------------------
 // Per-property token codecs.
-// ---------------------------------------------------------------------
 
 function jsonType(s: JsonSchema): string | undefined {
   if (typeof s.type === "string") return s.type;
@@ -120,12 +112,55 @@ function jsonType(s: JsonSchema): string | undefined {
   return undefined;
 }
 
+/** The parallel legacy integer array for a string enum, or undefined. */
+function wireInts(s: JsonSchema): number[] | undefined {
+  const w = s["x-wire-ints"];
+  return Array.isArray(w) ? (w as number[]) : undefined;
+}
+
+/**
+ * Encode an `x-wire-ints` enum value to its legacy integer token, or
+ * undefined when the schema is not such an enum.
+ */
+function wireIntOf(schema: JsonSchema, value: unknown): string | undefined {
+  const w = wireInts(schema);
+  if (!w || !Array.isArray(schema.enum)) return undefined;
+  const idx = schema.enum.indexOf(value);
+  if (idx === -1 || w[idx] === undefined) {
+    throw new Error(
+      `fanta: value ${JSON.stringify(value)} is not a member of the enum ${schema.$id ?? ""}`,
+    );
+  }
+  return String(w[idx]);
+}
+
+/**
+ * Decode a legacy integer token back to its `x-wire-ints` enum string,
+ * or undefined when the schema is not such an enum.
+ */
+function enumFromWireInt(schema: JsonSchema, token: string, name: string): unknown {
+  const w = wireInts(schema);
+  if (!w || !Array.isArray(schema.enum)) return undefined;
+  const idx = w.indexOf(Number(token));
+  if (idx === -1) {
+    throw new Error(
+      `Invalid enum wire value for field '${name}': ${JSON.stringify(token)}`,
+    );
+  }
+  return schema.enum[idx];
+}
+
 function encodeToken(rawSchema: JsonSchema, value: unknown, baseId: string): string {
   const schema = resolveRef(rawSchema, baseId);
   // `const` properties (literal padding like PV's _cid) emit the const
-  // value regardless of what's in the packet — Ajv guarantees they
+  // value regardless of what's in the packet, Ajv guarantees they
   // match.
   if (schema.const !== undefined) return encodeScalar(typeof schema.const, schema.const);
+
+  // String enum with `x-wire-ints`: JSON carries the string, the wire
+  // carries the parallel legacy integer.
+  const wire = wireIntOf(schema, value);
+  if (wire !== undefined) return wire;
 
   const t = jsonType(schema);
   if (t === "object") {
@@ -152,10 +187,15 @@ function encodeScalar(t: string | undefined, value: unknown): string {
 
 function decodeToken(rawSchema: JsonSchema, token: string, name: string, baseId: string): unknown {
   const schema = resolveRef(rawSchema, baseId);
-  // `const` — fanta wire delivers the const value at this slot; the
+  // `const`, fanta wire delivers the const value at this slot; the
   // schema's const is the source of truth (Ajv would reject anything
   // else anyway).
   if (schema.const !== undefined) return schema.const;
+
+  // String enum with `x-wire-ints`: the wire integer maps back to the
+  // enum's string value.
+  const enumValue = enumFromWireInt(schema, token, name);
+  if (enumValue !== undefined) return enumValue;
 
   const t = jsonType(schema);
   if (t === "object") {
@@ -192,9 +232,7 @@ function decodeScalar(t: string | undefined, token: string, name: string): unkno
   }
 }
 
-// ---------------------------------------------------------------------
 // Args-list walker (top-level).
-// ---------------------------------------------------------------------
 
 /**
  * Walk a packet schema and emit the ordered positional args list.
@@ -214,7 +252,7 @@ export function toFantaArgs(
   for (const [name, sub] of Object.entries(props)) {
     if (name === "$header") continue;
 
-    // Trailing array: greedy — fan out into one slot per element.
+    // Trailing array: greedy, fan out into one slot per element.
     if (jsonType(sub) === "array") {
       const items = (packet[name] as unknown[] | undefined) ?? [];
       const elem = sub.items ?? {};

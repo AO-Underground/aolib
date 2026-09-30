@@ -18,9 +18,7 @@ import { decode } from "../src/decode";
 import { c2sSchemas, s2cSchemas } from "../generated/packets";
 import { server, client } from "../src/session";
 
-// ---------------------------------------------------------------------
-// Registry snapshot — catches accidental removals on PR diffs.
-// ---------------------------------------------------------------------
+// Registry snapshot, catches accidental removals on PR diffs.
 
 describe("registry shape", () => {
   it("c2sSchemas covers the expected headers", () => {
@@ -60,9 +58,7 @@ describe("registry shape", () => {
   });
 });
 
-// ---------------------------------------------------------------------
 // Round-trips for the new shapes (one representative per shape kind).
-// ---------------------------------------------------------------------
 
 describe("round-trips: scalar-only packets", () => {
   it("HP", () => {
@@ -175,9 +171,7 @@ describe("round-trips: empty packets", () => {
   });
 });
 
-// ---------------------------------------------------------------------
 // Session-level: every direction is callable.
-// ---------------------------------------------------------------------
 
 describe("session integration: new packets are reachable", () => {
   it("server.send.<C2S> works for the new c2s packets", () => {
@@ -222,9 +216,7 @@ describe("session integration: new packets are reachable", () => {
   });
 });
 
-// ---------------------------------------------------------------------
 // Bidirectional packets: same header, different shapes.
-// ---------------------------------------------------------------------
 
 describe("bidirectional packets", () => {
   it("CT: c2s has no is_from_server, s2c does", () => {
@@ -258,7 +250,7 @@ describe("bidirectional packets", () => {
     expect(out).toEqual(["VS_SPEAK#5#0#%"]);
   });
 
-  it("HP: symmetric — same schema works in both directions", () => {
+  it("HP: symmetric, same schema works in both directions", () => {
     const fromS: string[] = [];
     const fromC: string[] = [];
     server({ send: (w) => fromS.push(w) }).send.HP({ bar: 1, value: 8 });
@@ -268,9 +260,7 @@ describe("bidirectional packets", () => {
   });
 });
 
-// ---------------------------------------------------------------------
 // Chat-meta escaping survives through the registry.
-// ---------------------------------------------------------------------
 
 describe("chat-meta escaping is applied uniformly", () => {
   it("BB reason with # and & round-trips on fanta", () => {

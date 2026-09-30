@@ -2,9 +2,7 @@ import { describe, it, expect } from "bun:test";
 import { encode } from "../src/encode";
 import { packetSchema } from "./util";
 
-// ---------------------------------------------------------------------
-// Worked schemas — small enough to read, exercise every feature.
-// ---------------------------------------------------------------------
+// Worked schemas, small enough to read, exercise every feature.
 
 const MC = packetSchema("MC", {
   name: { type: "string" },
@@ -46,9 +44,7 @@ const VS_PEERS = packetSchema("VS_PEERS", {
   },
 });
 
-// ---------------------------------------------------------------------
 // JSON mode
-// ---------------------------------------------------------------------
 
 describe("encode: JSON mode", () => {
   it("emits canonical envelope with $header first", () => {
@@ -120,9 +116,7 @@ describe("encode: JSON mode", () => {
   });
 });
 
-// ---------------------------------------------------------------------
 // Fanta mode
-// ---------------------------------------------------------------------
 
 describe("encode: fanta mode", () => {
   it("emits canonical wire `HEADER#a#b#%`", () => {

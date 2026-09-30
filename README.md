@@ -4,7 +4,7 @@ Self-contained TypeScript library for the Attorney Online protocol.
 
 Owns every packet schema, both wire formats (fantacode + JSON), the
 encode/decode logic, and the typed dispatch surface. Clients see only
-typed sender functions and typed receive handlers — never wire bytes,
+typed sender functions and typed receive handlers, never wire bytes,
 positional slots, literals, or format flags.
 
 The runtime dependencies are Ajv, used to validate every packet against
@@ -22,7 +22,7 @@ in this library, not a deliberate fork.
 
 That said, the docs occasionally lag the implementation in real-world
 servers (and clients). Where field-level details diverge, the schema
-file calls it out in a comment — e.g. CC's leading positional slot is
+file calls it out in a comment, e.g. CC's leading positional slot is
 spec'd as a hardcoded `0` but webAO has historically sent the player
 ID there. The library emits the spec value; the comment records the
 historical drift.
@@ -40,7 +40,7 @@ bun add aolib-ts
 ## Usage
 
 The library is used the same way on both sides of the wire. The unit
-of work is a **session** — one logical connection with its own encoding
+of work is a **session**, one logical connection with its own encoding
 mode, its own handler registrations, and its own state. A session is
 named for the **remote party**: a client constructs one `aolib.server`
 representing the server it talks to; a server constructs one
@@ -55,10 +55,10 @@ the call site.
 Two complete worked examples live in `examples/` and typecheck
 end-to-end:
 
-- [`examples/exampleClient.ts`](./examples/exampleClient.ts) — browser
+- [`examples/exampleClient.ts`](./examples/exampleClient.ts), browser
   client with one WebSocket, registering handlers for inbound server
   packets and sending packets back.
-- [`examples/exampleServer.ts`](./examples/exampleServer.ts) — Node
+- [`examples/exampleServer.ts`](./examples/exampleServer.ts), Node
   server using `ws`, one session per accepted connection, with a
   broadcast helper.
 
@@ -72,7 +72,7 @@ The highlights:
   gives the inverse. Wrong-direction calls don't compile.
 - **Each session tracks its own encoding mode independently.** One
   client on JSON, another on fanta, connected to the same server,
-  simultaneously — the library doesn't care.
+  simultaneously, the library doesn't care.
 - **Broadcast is one loop at the call site.** No library helper;
   fanning out depends on the caller's topology (area? room? all?) and
   the library has nothing to add.
@@ -80,7 +80,7 @@ The highlights:
 ## Public API
 
 ```ts
-// Session factories — named for the REMOTE party. Pick the one that
+// Session factories, named for the REMOTE party. Pick the one that
 // matches who's on the other end; the typed surface follows.
 
 // Construct a session representing the server you're connected to.
@@ -131,20 +131,20 @@ Each session type exposes exactly the packets that direction sees:
 The mapping is derived from each schema's `x-receiver` annotation in
 [`aolib-meta`](./aolib-meta/README.md), so adding a new packet
 automatically lands it in the right namespace on the right session
-type — no boilerplate to keep in sync. Symmetric bidirectional packets
-(e.g. `MC`, `HP`) live as two schemas sharing one header
-(`MCRequest`/`MCBroadcast`, `HPRequest`/`HPBroadcast`); the session
-keys both by the bare header, so `server.send.MC({...})` takes
-`MCRequest`'s input shape and `server.on.MC((p) => ...)` receives
-`MCBroadcast`'s decoded shape.
+type, no boilerplate to keep in sync. Symmetric bidirectional packets
+(e.g. `MC`, `HP`) live as two schemas sharing one header, named after the
+receiving side (`MCToServer`/`MCToClient`, `HPToServer`/`HPToClient`); the
+session keys both by the bare header, so `server.send.MC({...})` takes
+`MCToServer`'s input shape and `server.on.MC((p) => ...)` receives
+`MCToClient`'s decoded shape.
 
 Packet classes are re-exported for handler signatures and `instanceof`
-checks — the class name *is* the type name:
+checks, the class name *is* the type name:
 
 ```ts
-import { aolib, MSBroadcast, PV } from "aolib-ts";
+import { aolib, MSToClient, PV } from "aolib-ts";
 
-function handleChatMessage(packet: MSBroadcast) { /* ... */ }
+function handleChatMessage(packet: MSToClient) { /* ... */ }
 session.on.MS(handleChatMessage);
 
 session.on.PV((packet) => {
@@ -160,7 +160,7 @@ before the handler runs, so `instanceof` works out of the box.
 `parseCharIni(text)` reads a character's `char.ini` asset into a typed
 `CharIni`. char.ini is INI-shaped, but its emote records are
 `#`-delimited (`normal#-#idle#1`), which most INI libraries truncate by
-treating `#` as an inline comment — so the base parse leaves `#` out of
+treating `#` as an inline comment, so the base parse leaves `#` out of
 the comment set, then a tuning pass folds the flat sections into
 structure.
 
@@ -175,7 +175,7 @@ char.sections;           // every section, for blocks not modelled above
 ```
 
 Two emote encodings normalize to one `CharEmote[]` (per the
-[`CharIni` spec](./aolib-meta/schemas/assets/README.md)): the preferred
+[`CharIni` spec](./aolib-meta/assets/README.md)): the preferred
 `[emote <name>]` blocks, and the legacy `#`-delimited
 `[Emotions]`/`[SoundN]`/`[SoundT]` banks used when no block is present.
 The parser prefers blocks and falls back to the banks.
@@ -198,15 +198,14 @@ aolib-ts/
 ├── aolib-meta/                ← git submodule: protocol schemas (source of truth)
 │   ├── README.md              ← schema layout, $id/$ref conventions, x-* extensions
 │   ├── format.sh
-│   └── schemas/
-│       ├── packets/<Name>.schema.json
-│       ├── enums/<Name>.schema.json
-│       └── types/<Name>.schema.json
+│   ├── packets/schemas/<Name>.schema.json
+│   ├── types/<Name>.schema.json   ← enums and shared object types
+│   └── assets/<Name>.schema.json  ← char.ini and other asset formats
 ├── scripts/
-│   └── codegen.ts             ← reads aolib-meta/schemas/, writes generated/
+│   └── codegen.ts             ← reads aolib-meta/, writes generated/
 ├── generated/                 ← committed; regenerate with `bun codegen`
 │   ├── packets.ts             ← packet classes, c2s/s2c schema & class maps
-│   ├── enums.ts               ← TS enums from enums/*.schema.json
+│   ├── enums.ts               ← TS enums from types/*.schema.json (enum schemas)
 │   └── types.ts               ← shared object types from types/*.schema.json
 ├── src/
 │   ├── index.ts               ← public exports
@@ -234,18 +233,18 @@ and custom `x-*` extensions in full.
 ## Anatomy of a packet definition (for library contributors)
 
 Packets are JSON Schema (draft-07). A schema is the *only* source of
-truth — TS classes, the Ajv validator, and the fanta walker all read
+truth, TS classes, the Ajv validator, and the fanta walker all read
 from it. Add a packet by dropping one file under
-`aolib-meta/schemas/packets/` and running `bun codegen`.
+`aolib-meta/packets/schemas/` and running `bun codegen`.
 
 A minimal packet:
 
 ```json
-// aolib-meta/schemas/packets/MC.schema.json
+// aolib-meta/packets/schemas/MCToServer.schema.json
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "/packets/MCRequest.schema.json",
-  "title": "MCRequest",
+  "$id": "/packets/schemas/MCToServer.schema.json",
+  "title": "MC",
   "type": "object",
   "properties": {
     "$header":  { "type": "string", "const": "MC" },
@@ -263,7 +262,7 @@ A minimal packet:
 `$header` is the reserved property name for the wire header; the
 framing layer reads and writes it and the validator pins it via
 `const`. `x-receiver` names which side receives this packet on the
-wire — `"server"` here means the packet flows client→server, so it
+wire, `"server"` here means the packet flows client→server, so it
 lands under `ServerSession.send.MC` (and `ClientSession.on.MC`).
 
 The wire form is positional fanta or JSON envelope, picked
@@ -284,22 +283,23 @@ Shared structures live under `enums/` and `types/` and are pulled in
 with `$ref`:
 
 ```json
-// aolib-meta/schemas/packets/MS.schema.json — excerpt
-"side":      { "$ref": "../enums/Side.schema.json" },
-"offset":    { "$ref": "../types/Offset.schema.json" }
+// aolib-meta/packets/schemas/MSToServer.schema.json, excerpt
+"side":      { "$ref": "../../types/Side.schema.json" },
+"offset":    { "$ref": "../../types/Offset.schema.json" }
 ```
 
 Spec quirks that recur become custom extensions (see
 [`aolib-meta/README.md`](./aolib-meta/README.md) for the full set):
 
-- **`x-receiver: "client" | "server"`** — direction.
-- **`x-enum-names: string[]`** — TS enum member names parallel to
-  the `enum` values.
-- **`x-fanta-codec: "<name>"`** — bypass the generic walker for that
+- **`x-receiver: "client" | "server"`**, direction.
+- **`x-wire-ints: integer[]`**, on a string enum, the parallel legacy
+  integers used on the fanta wire (JSON carries the string). Enums
+  without it (e.g. `Side`) are sent as their string on both wires.
+- **`x-fanta-codec: "<name>"`**, bypass the generic walker for that
   packet; the library looks up a codec registered under the name
   (live in `src/codecs/`) and delegates encode/decode to it. Used for
   packets whose wire form is discriminator-driven, like `ARUP`.
-- **`x-fanta-unescape-amp: true`** — on an object-typed schema, tell
+- **`x-fanta-unescape-amp: true`**, on an object-typed schema, tell
   decoders to tolerate the legacy `<and>` escape in incoming tokens.
 
 After editing schemas, run:
@@ -313,8 +313,8 @@ bun run lint
 
 ## JSON Schema as documentation
 
-The schemas under `aolib-meta/schemas/` *are* the documentation
-export — they're standards-compliant JSON Schema (draft-07) and drop
+The schemas under `aolib-meta/` *are* the documentation
+export, they're standards-compliant JSON Schema (draft-07) and drop
 straight into AsyncAPI (purpose-built for WebSocket protocols),
 Stoplight, Redoc, or any other JSON Schema renderer. No build step
 needed; point the renderer at the directory.
@@ -330,7 +330,7 @@ symmetrically.
 
 1. **Schema is data, not a class.** A schema is a JSON file. The
    generated TS classes, the Ajv validator, and the fanta walker all
-   read the same source — they can't disagree.
+   read the same source, they can't disagree.
 
 2. **The client never sees wire concerns.** No positional slots, no
    literals, no escape characters, no fanta-vs-JSON flag in the typed
@@ -352,7 +352,7 @@ symmetrically.
    wires it into whatever transport it has.
 
 6. **Evolution is additive.** New packets, new wire formats, new
-   directions — all extend rather than modify. Existing schemas and
+   directions, all extend rather than modify. Existing schemas and
    call sites are untouched.
 
 ## Guarantees
@@ -381,7 +381,7 @@ symmetrically.
   frames, unknown headers, decode errors, missing handlers, handlers
   throwing) route through the optional callbacks on `SessionConfig`.
   One inbound frame either runs a typed handler or invokes exactly one
-  observability hook — never both, never neither.
+  observability hook, never both, never neither.
 
 - **Each session's encoding mode is independent.** A server with
   several connected clients can have some on fanta and some on JSON
@@ -392,7 +392,7 @@ symmetrically.
   Inbound always auto-detects.
 
 - **Schemas don't disagree with types.** The JSON Schema files under
-  `aolib-meta/schemas/` are the source for both runtime walks and the
+  `aolib-meta/` are the source for both runtime walks and the
   generated TS classes. There's no hand-written type that can drift;
   if a field set changes, `bun codegen` propagates the change to
   every consumer (sender, handler, encode, decode, validator) in one
@@ -405,6 +405,6 @@ symmetrically.
 - Not a general-purpose JSON Schema toolchain. The schemas carry
   AO-specific extensions (`x-fanta-codec`, `x-fanta-unescape-amp`,
   `x-receiver`) and validation is one fixed Ajv configuration tuned
-  for the protocol — bring Zod or your own Ajv for non-AO work.
+  for the protocol, bring Zod or your own Ajv for non-AO work.
 - Not async. `send` and `receive` are synchronous string operations.
   Transport (WebSocket etc.) is the client's concern.

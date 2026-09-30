@@ -3,9 +3,7 @@ import { decode } from "../src/decode";
 import { encode } from "../src/encode";
 import { packetSchema } from "./util";
 
-// ---------------------------------------------------------------------
-// Worked schemas — same as encode.test.ts so round-trip tests work.
-// ---------------------------------------------------------------------
+// Worked schemas, same as encode.test.ts so round-trip tests work.
 
 const MC = packetSchema("MC", {
   name: { type: "string" },
@@ -47,9 +45,7 @@ const VS_PEERS = packetSchema("VS_PEERS", {
   },
 });
 
-// ---------------------------------------------------------------------
 // Auto-detect
-// ---------------------------------------------------------------------
 
 describe("decode: format auto-detect", () => {
   it("`{` prefix routes to JSON path", () => {
@@ -71,9 +67,7 @@ describe("decode: format auto-detect", () => {
   });
 });
 
-// ---------------------------------------------------------------------
 // JSON decode
-// ---------------------------------------------------------------------
 
 describe("decode: JSON mode", () => {
   it("decodes scalars and fills defaults from cast", () => {
@@ -161,9 +155,7 @@ describe("decode: JSON mode", () => {
   });
 });
 
-// ---------------------------------------------------------------------
 // Fanta decode
-// ---------------------------------------------------------------------
 
 describe("decode: fanta mode", () => {
   it("decodes canonical `HEADER#a#b#%`", () => {
@@ -254,9 +246,7 @@ describe("decode: fanta mode", () => {
   });
 });
 
-// ---------------------------------------------------------------------
 // Round-trip
-// ---------------------------------------------------------------------
 
 describe("encode → decode round-trip", () => {
   it("MC round-trips in JSON mode", () => {
