@@ -32,6 +32,13 @@ export interface JsonSchema {
    * never emit `<and>`.
    */
   "x-fanta-unescape-amp"?: boolean;
+  /**
+   * On a nested object: join/split its sub-tokens with this separator
+   * instead of the default `&` (`|` for MS effect). An all-empty
+   * join-object collapses to an empty slot on encode, and an empty slot
+   * decodes back to it.
+   */
+  "x-fanta-join"?: string;
   /** On a packet root: replace the whole walker with a registered codec. */
   "x-fanta-codec"?: string;
   /** Direction metadata, used by the registry; not read at runtime. */

@@ -5,7 +5,8 @@ package aolib
 //
 //   - strings escape #/&/%/$ as <num>/<and>/<percent>/<dollar>
 //   - enums with x-wire-ints map to their legacy integer
-//   - objects (Offset) join sub-tokens with &
+//   - objects (Offset) join sub-tokens with &; Effect joins with | (and an
+//     all-empty Effect collapses to an empty slot)
 //   - booleans are "1"/"0"
 
 import (
@@ -78,6 +79,34 @@ func offsetFromWire(s string) Offset {
 		o.Y = atoiOrZero(parts[1])
 	}
 	return o
+}
+
+// effectToWire packs an Effect into one `name|folder|sound` slot. An all-empty
+// Effect is the no-effect sentinel and collapses to an empty slot. See
+// spec/packets/EFFECTS.md.
+func effectToWire(e Effect) string {
+	if e.Name == "" && e.Folder == "" && e.Sound == "" {
+		return ""
+	}
+	return escapeFanta(e.Name) + "|" + escapeFanta(e.Folder) + "|" + escapeFanta(e.Sound)
+}
+
+// effectFromWire splits a `name|folder|sound` slot into an Effect, tolerating
+// the legacy 1- and 2-part forms positionally. An empty slot is the no-effect
+// sentinel.
+func effectFromWire(s string) Effect {
+	if s == "" {
+		return Effect{}
+	}
+	parts := strings.SplitN(s, "|", 3)
+	e := Effect{Name: unescapeFanta(parts[0])}
+	if len(parts) > 1 {
+		e.Folder = unescapeFanta(parts[1])
+	}
+	if len(parts) > 2 {
+		e.Sound = unescapeFanta(parts[2])
+	}
+	return e
 }
 
 // joinAmp joins an object item's already-encoded subfields with "&", the

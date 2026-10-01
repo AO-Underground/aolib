@@ -414,8 +414,8 @@ func encodeExpr(p *Prop, enumNames, typeNames map[string]*Schema) string {
 		}
 		return "string(" + f + ")"
 	}
-	if _, ok := typeFor(p, typeNames); ok {
-		return "offsetToWire(" + f + ")"
+	if t, ok := typeFor(p, typeNames); ok {
+		return fmt.Sprintf("%sToWire(%s)", lowerFirst(t.Name), f)
 	}
 	switch p.Schema.TypeStr {
 	case "number", "integer":
@@ -438,8 +438,8 @@ func decodeStmt(p *Prop, enumNames, typeNames map[string]*Schema) string {
 		}
 		return fmt.Sprintf("%s = %s(%s)", f, e.Name, tok)
 	}
-	if _, ok := typeFor(p, typeNames); ok {
-		return fmt.Sprintf("%s = offsetFromWire(%s)", f, tok)
+	if t, ok := typeFor(p, typeNames); ok {
+		return fmt.Sprintf("%s = %sFromWire(%s)", f, lowerFirst(t.Name), tok)
 	}
 	switch p.Schema.TypeStr {
 	case "number", "integer":

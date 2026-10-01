@@ -3,7 +3,7 @@
 /* eslint-disable */
 
 import { AreaUpdateType, DeskModifier, EmoteModifier, Flip, ShoutModifier, Side, TextColor } from "./enums";
-import { Offset } from "./types";
+import { Effect, Offset } from "./types";
 
 import AreaUpdateTypeEnumSchema from "../../spec/types/AreaUpdateType.schema.json";
 
@@ -18,6 +18,8 @@ import ShoutModifierEnumSchema from "../../spec/types/ShoutModifier.schema.json"
 import SideEnumSchema from "../../spec/types/Side.schema.json";
 
 import TextColorEnumSchema from "../../spec/types/TextColor.schema.json";
+
+import EffectTypeSchema from "../../spec/types/Effect.schema.json";
 
 import OffsetTypeSchema from "../../spec/types/Offset.schema.json";
 
@@ -246,7 +248,7 @@ export { default as decryptorSchema } from "../../spec/packets/schemas/decryptor
 
 export const enumSchemas = [AreaUpdateTypeEnumSchema, DeskModifierEnumSchema, EmoteModifierEnumSchema, FlipEnumSchema, ShoutModifierEnumSchema, SideEnumSchema, TextColorEnumSchema];
 
-export const typeSchemas = [OffsetTypeSchema];
+export const typeSchemas = [EffectTypeSchema, OffsetTypeSchema];
 
 
 export interface Packet {
@@ -702,7 +704,7 @@ export interface MSToClient extends Packet {
   frames_realization: string;
   frames_sfx: string;
   additive: boolean;
-  effect: string;
+  effect: Effect;
 }
 
 export interface MSToClientInit {
@@ -735,7 +737,7 @@ export interface MSToClientInit {
   frames_realization?: string;
   frames_sfx?: string;
   additive?: boolean;
-  effect?: string;
+  effect?: Effect;
 }
 
 
@@ -766,7 +768,7 @@ export interface MSToServer extends Packet {
   frames_realization: string;
   frames_sfx: string;
   additive: boolean;
-  effect: string;
+  effect: Effect;
 }
 
 export interface MSToServerInit {
@@ -795,7 +797,7 @@ export interface MSToServerInit {
   frames_realization?: string;
   frames_sfx?: string;
   additive?: boolean;
-  effect?: string;
+  effect?: Effect;
 }
 
 

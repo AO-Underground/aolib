@@ -60,10 +60,10 @@
     "id": "CTToServer-escape",
     "header": "CT",
     "receiver": "server",
-    "fanta": "CT#Phoenix#Objection! 100\u003cpercent\u003e \u003cnum\u003e1 \u003cand\u003e \u003cdollar\u003ex#%",
+    "fanta": "CT#Phoenix#Objection! 100<percent> <num>1 <and> <dollar>x#%",
     "json": {
       "$header": "CT",
-      "message": "Objection! 100% #1 \u0026 $x",
+      "message": "Objection! 100% #1 & $x",
       "name": "Phoenix"
     }
   },
@@ -71,14 +71,18 @@
     "id": "MSToServer",
     "header": "MS",
     "receiver": "server",
-    "fanta": "MS#1##Phoenix#normal#Take that! \u003cnum\u003e1#def##1#1#0#0#0#1#1#2#Nick#-1#5\u0026-3#0#0#0####0##%",
+    "fanta": "MS#1##Phoenix#normal#Take that! <num>1#def##1#1#0#0#0#1#1#2#Nick#-1#5&-3#0#0#0####0##%",
     "json": {
       "$header": "MS",
       "additive": false,
       "char_id": 1,
       "character": "Phoenix",
       "desk_modifier": "shown",
-      "effect": "",
+      "effect": {
+        "name": "",
+        "folder": "",
+        "sound": ""
+      },
       "emote": "normal",
       "emote_modifier": "preanim",
       "evidence_id": 0,
@@ -102,6 +106,55 @@
       "shout_modifier": "none",
       "showname": "Nick",
       "side": "def",
+      "text_color": "red"
+    }
+  },
+  {
+    "id": "MSToClient-effect",
+    "header": "MS",
+    "receiver": "client",
+    "fanta": "MS#1##Phoenix#normal#Gotcha!#pro##0#2#0#0#0#0#0#2#Nick#-1###0&0#0&0#0#0#0#0####0#realization|custom|realize.wav#%",
+    "json": {
+      "$header": "MS",
+      "additive": false,
+      "char_id": 2,
+      "character": "Phoenix",
+      "desk_modifier": "shown",
+      "effect": {
+        "folder": "custom",
+        "name": "realization",
+        "sound": "realize.wav"
+      },
+      "emote": "normal",
+      "emote_modifier": "no_preanim",
+      "evidence_id": 0,
+      "flip": "none",
+      "frames_realization": "",
+      "frames_sfx": "",
+      "frames_shake": "",
+      "message": "Gotcha!",
+      "noninterrupting_preanim": false,
+      "offset": {
+        "x": 0,
+        "y": 0
+      },
+      "paired_charid": -1,
+      "paired_emote": "",
+      "paired_flip": "none",
+      "paired_name": "",
+      "paired_offset": {
+        "x": 0,
+        "y": 0
+      },
+      "preanim": "",
+      "realization": false,
+      "screenshake": false,
+      "sfx_delay": 0,
+      "sfx_looping": false,
+      "sfx_name": "",
+      "shout_modifier": "none",
+      "showname": "Nick",
+      "side": "pro",
       "text_color": "red"
     }
   },
@@ -140,12 +193,12 @@
     "id": "SC",
     "header": "SC",
     "receiver": "client",
-    "fanta": "SC#A\u003cand\u003eB\u0026prosecutor\u0026e1#Maya\u0026\u0026#%",
+    "fanta": "SC#A<and>B&prosecutor&e1#Maya&&#%",
     "json": {
       "$header": "SC",
       "char_data": [
         {
-          "name": "A\u0026B",
+          "name": "A&B",
           "desc": "prosecutor",
           "evidence": "e1"
         },
@@ -161,7 +214,7 @@
     "id": "LE",
     "header": "LE",
     "receiver": "client",
-    "fanta": "LE#Knife\u0026bloody\u0026knife.png#%",
+    "fanta": "LE#Knife&bloody&knife.png#%",
     "json": {
       "$header": "LE",
       "evidence": [
@@ -177,7 +230,7 @@
     "id": "CI",
     "header": "CI",
     "receiver": "client",
-    "fanta": "CI#0#0\u0026Phoenix#1\u0026Maya#%",
+    "fanta": "CI#0#0&Phoenix#1&Maya#%",
     "json": {
       "$header": "CI",
       "batchIndex": 0,
@@ -197,7 +250,7 @@
     "id": "EM",
     "header": "EM",
     "receiver": "client",
-    "fanta": "EM#0#0\u0026Category#%",
+    "fanta": "EM#0#0&Category#%",
     "json": {
       "$header": "EM",
       "batchIndex": 0,

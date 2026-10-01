@@ -126,9 +126,13 @@
       "default": false
     },
     "effect": {
-      "type": "string",
-      "default": "",
-      "description": "Screen-effect overlay request in `fx|folder|sound` form — see EFFECTS.md."
+      "$ref": "../../types/Effect.schema.json",
+      "default": {
+        "name": "",
+        "folder": "",
+        "sound": ""
+      },
+      "description": "Screen-effect overlay request, packed on the wire as `name|folder|sound` (see EFFECTS.md)."
     }
   },
   "required": [
