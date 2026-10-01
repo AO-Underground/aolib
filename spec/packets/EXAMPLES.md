@@ -295,6 +295,23 @@ HP#2#7#%
 }
 ```
 
+## MA (client to server)
+
+Moderator action: ban player 5 for one day. `duration_minutes` is `0` for a kick and `-1` for a permanent ban.
+
+```
+MA#5#1440#griefing <and> spam#%
+```
+
+```json
+{
+  "$header": "MA",
+  "player_id": 5,
+  "duration_minutes": 1440,
+  "reason": "griefing & spam"
+}
+```
+
 ## RT (client to server)
 
 Guilty verdict. JSON names the animation; the wire splits it into `judgeruling` and variant `1` (see `CODECS.md`).

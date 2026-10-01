@@ -19,7 +19,6 @@ them spec-correct.
 
 ## Coverage
 
-Covered: simple scalar packets, both `ID` directions, arrays of scalars (`FL`),
-string escaping (`CT`), the rich `MS` (string enums, `{x,y}` offset, bools),
-the object-item array packets (`SM`, `FM`, `SC`, `LE`, `CI`, `EM`),
-`const` padding slots (`PV`), and the `x-fanta-codec` packets (`RT`, `ARUP`).
+Every packet schema, in each direction, has at least one vector. Strings carry
+`#`/`&`/`%`/`$` wherever a field allows them, so escaping is checked
+everywhere.

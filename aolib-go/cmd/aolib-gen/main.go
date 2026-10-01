@@ -472,6 +472,10 @@ func isObjectArray(s *Schema) bool {
 	return s.TypeStr == "array" && s.Items != nil && s.Items.IsObject && len(s.Items.Properties) > 0
 }
 
+func isInlineObject(s *Schema) bool {
+	return s.Ref == "" && s.IsObject && len(s.Properties) > 0
+}
+
 // itemTypeName is the generated struct name for an object-array's element,
 // e.g. (SC, char_data) -> SCCharDataItem.
 func itemTypeName(pkt, field string) string { return pkt + pascalCase(field) + "Item" }
@@ -542,6 +546,9 @@ func emitPackets(packets []*Schema, enumNames, typeNames map[string]*Schema) str
 			if isObjectArray(p.Schema) {
 				emitItemStruct(&b, itemTypeName(s.Name, p.Name), p.Schema.Items)
 			}
+			if isInlineObject(p.Schema) {
+				emitItemStruct(&b, s.Name+pascalCase(p.Name), p.Schema)
+			}
 		}
 		b.WriteString("// " + s.Name + " is " + strings.TrimSpace(s.Description) + "\n")
 		fmt.Fprintf(&b, "type %s struct {\n", s.Name)
@@ -552,6 +559,9 @@ func emitPackets(packets []*Schema, enumNames, typeNames map[string]*Schema) str
 			ft := fieldType(&p, enumNames, typeNames)
 			if isObjectArray(p.Schema) {
 				ft = "[]" + itemTypeName(s.Name, p.Name)
+			}
+			if isInlineObject(p.Schema) {
+				ft = s.Name + pascalCase(p.Name)
 			}
 			fmt.Fprintf(&b, "\t%s %s `json:%q`\n", pascalCase(p.Name), ft, p.Name)
 		}
@@ -585,13 +595,17 @@ func emitPackets(packets []*Schema, enumNames, typeNames map[string]*Schema) str
 					if len(e.XWireInts) > 0 {
 						fmt.Fprintf(&b, "\tfor _, v := range p.%s {\n\t\targs = append(args, itoa(%sToWire[v]))\n\t}\n", pascalCase(p.Name), lowerFirst(e.Name))
 					} else {
-						fmt.Fprintf(&b, "\tfor _, v := range p.%s {\n\t\targs = append(args, string(v))\n\t}\n", pascalCase(p.Name))
+						fmt.Fprintf(&b, "\tfor _, v := range p.%s {\n\t\targs = append(args, escapeFanta(string(v)))\n\t}\n", pascalCase(p.Name))
 					}
 				case p.Schema.Items != nil && (p.Schema.Items.TypeStr == "number" || p.Schema.Items.TypeStr == "integer"):
 					fmt.Fprintf(&b, "\targs = append(args, intsToStrs(p.%s)...)\n", pascalCase(p.Name))
 				default:
-					fmt.Fprintf(&b, "\targs = append(args, p.%s...)\n", pascalCase(p.Name))
+					fmt.Fprintf(&b, "\tfor _, v := range p.%s {\n\t\targs = append(args, escapeFanta(v))\n\t}\n", pascalCase(p.Name))
 				}
+				continue
+			}
+			if isInlineObject(p.Schema) {
+				fmt.Fprintf(&b, "\targs = append(args, p.%s.wireFields())\n", pascalCase(p.Name))
 				continue
 			}
 			fmt.Fprintf(&b, "\targs = append(args, %s)\n", encodeExpr(&p, enumNames, typeNames))
@@ -634,13 +648,17 @@ func emitPackets(packets []*Schema, enumNames, typeNames map[string]*Schema) str
 					b.WriteString("\tcursor = len(body)\n")
 					continue
 				}
-				fmt.Fprintf(&b, "\tp.%s = ", pascalCase(p.Name))
+				fld := pascalCase(p.Name)
 				if p.Schema.Items != nil && (p.Schema.Items.TypeStr == "number" || p.Schema.Items.TypeStr == "integer") {
-					b.WriteString("strsToInts(body[cursor:])\n")
+					fmt.Fprintf(&b, "\tp.%s = strsToInts(body[cursor:])\n", fld)
 				} else {
-					b.WriteString("body[cursor:]\n")
+					fmt.Fprintf(&b, "\tp.%s = []string{}\n\tfor _, slot := range body[cursor:] {\n\t\tp.%s = append(p.%s, unescapeFanta(slot))\n\t}\n", fld, fld, fld)
 				}
 				b.WriteString("\tcursor = len(body)\n")
+				continue
+			}
+			if isInlineObject(p.Schema) {
+				fmt.Fprintf(&b, "\tp.%s = parse%s%s(get(cursor))\n\tcursor++\n", pascalCase(p.Name), s.Name, pascalCase(p.Name))
 				continue
 			}
 			fmt.Fprintf(&b, "\t%s\n\tcursor++\n", decodeStmt(&p, enumNames, typeNames))

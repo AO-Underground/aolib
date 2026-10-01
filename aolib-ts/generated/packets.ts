@@ -643,14 +643,14 @@ export interface LEInit {
 
 export interface MA extends Packet {
   $header: "MA";
-  id: number;
-  duration: number;
+  player_id: number;
+  duration_minutes: number;
   reason: string;
 }
 
 export interface MAInit {
-  id: number;
-  duration: number;
+  player_id: number;
+  duration_minutes: number;
   reason: string;
 }
 

@@ -66,7 +66,7 @@ describe("round-trips: scalar-only packets", () => {
   });
 
   it("MA (mod action)", () => {
-    const p = { id: 42, duration: 60, reason: "spamming" };
+    const p = { player_id: 1, duration_minutes: 60, reason: "spam" };
     expect(decode(c2sSchemas.MA, encode(c2sSchemas.MA, p, "fanta"))).toEqual({ $header: "MA", ...p });
     expect(decode(c2sSchemas.MA, encode(c2sSchemas.MA, p, "json"))).toEqual({ $header: "MA", ...p });
   });
@@ -198,7 +198,7 @@ describe("session integration: new packets are reachable", () => {
     const out: string[] = [];
     const s = server({ send: (w) => out.push(w) });
     s.send.RC({});
-    s.send.MA({ id: 1, duration: 60, reason: "spam" });
+    s.send.MA({ player_id: 1, duration_minutes: 60, reason: "spam" });
     expect(out).toEqual([
       "RC#%",
       "MA#1#60#spam#%",

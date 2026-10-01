@@ -533,5 +533,317 @@
         "sync_position": false
       }
     }
+  },
+  {
+    "id": "ASS",
+    "header": "ASS",
+    "receiver": "client",
+    "fanta": "ASS#x<num>asset_url<and>y<percent>z<dollar>#%",
+    "json": {
+      "$header": "ASS",
+      "asset_url": "x#asset_url&y%z$"
+    }
+  },
+  {
+    "id": "BB",
+    "header": "BB",
+    "receiver": "client",
+    "fanta": "BB#x<num>message<and>y<percent>z<dollar>#%",
+    "json": {
+      "$header": "BB",
+      "message": "x#message&y%z$"
+    }
+  },
+  {
+    "id": "BD",
+    "header": "BD",
+    "receiver": "client",
+    "fanta": "BD#x<num>reason<and>y<percent>z<dollar>#%",
+    "json": {
+      "$header": "BD",
+      "reason": "x#reason&y%z$"
+    }
+  },
+  {
+    "id": "BN",
+    "header": "BN",
+    "receiver": "client",
+    "fanta": "BN#x<num>background<and>y<percent>z<dollar>#x<num>position<and>y<percent>z<dollar>#%",
+    "json": {
+      "$header": "BN",
+      "background": "x#background&y%z$",
+      "position": "x#position&y%z$"
+    }
+  },
+  {
+    "id": "CC",
+    "header": "CC",
+    "receiver": "server",
+    "fanta": "CC#3#3#x<num>char_password<and>y<percent>z<dollar>#%",
+    "json": {
+      "$header": "CC",
+      "player_id": 3,
+      "char_id": 3,
+      "char_password": "x#char_password&y%z$"
+    }
+  },
+  {
+    "id": "CH",
+    "header": "CH",
+    "receiver": "server",
+    "fanta": "CH#3#%",
+    "json": {
+      "$header": "CH",
+      "char_id": 3
+    }
+  },
+  {
+    "id": "CHECK",
+    "header": "CHECK",
+    "receiver": "client",
+    "fanta": "CHECK#%",
+    "json": {
+      "$header": "CHECK"
+    }
+  },
+  {
+    "id": "CTToClient",
+    "header": "CT",
+    "receiver": "client",
+    "fanta": "CT#x<num>name<and>y<percent>z<dollar>#x<num>message<and>y<percent>z<dollar>#1#%",
+    "json": {
+      "$header": "CT",
+      "name": "x#name&y%z$",
+      "message": "x#message&y%z$",
+      "is_from_server": true
+    }
+  },
+  {
+    "id": "DE",
+    "header": "DE",
+    "receiver": "server",
+    "fanta": "DE#3#%",
+    "json": {
+      "$header": "DE",
+      "id": 3
+    }
+  },
+  {
+    "id": "DONE",
+    "header": "DONE",
+    "receiver": "client",
+    "fanta": "DONE#%",
+    "json": {
+      "$header": "DONE"
+    }
+  },
+  {
+    "id": "EE",
+    "header": "EE",
+    "receiver": "server",
+    "fanta": "EE#3#x<num>name<and>y<percent>z<dollar>#x<num>description<and>y<percent>z<dollar>#x<num>image<and>y<percent>z<dollar>#%",
+    "json": {
+      "$header": "EE",
+      "id": 3,
+      "name": "x#name&y%z$",
+      "description": "x#description&y%z$",
+      "image": "x#image&y%z$"
+    }
+  },
+  {
+    "id": "EI",
+    "header": "EI",
+    "receiver": "client",
+    "fanta": "EI#3#x<num>name<and>y<percent>z<dollar>&x<num>description<and>y<percent>z<dollar>&x<num>type<and>y<percent>z<dollar>&x<num>image<and>y<percent>z<dollar>#%",
+    "json": {
+      "$header": "EI",
+      "id": 3,
+      "details": {
+        "name": "x#name&y%z$",
+        "description": "x#description&y%z$",
+        "type": "x#type&y%z$",
+        "image": "x#image&y%z$"
+      }
+    }
+  },
+  {
+    "id": "FA",
+    "header": "FA",
+    "receiver": "client",
+    "fanta": "FA#x<num>areas<and>y<percent>z<dollar>#x<num>areas<and>y<percent>z<dollar>#%",
+    "json": {
+      "$header": "FA",
+      "areas": [
+        "x#areas&y%z$",
+        "x#areas&y%z$"
+      ]
+    }
+  },
+  {
+    "id": "HPToServer",
+    "header": "HP",
+    "receiver": "server",
+    "fanta": "HP#2#3#%",
+    "json": {
+      "$header": "HP",
+      "bar": "prosecution",
+      "value": 3
+    }
+  },
+  {
+    "id": "KB",
+    "header": "KB",
+    "receiver": "client",
+    "fanta": "KB#x<num>reason<and>y<percent>z<dollar>#%",
+    "json": {
+      "$header": "KB",
+      "reason": "x#reason&y%z$"
+    }
+  },
+  {
+    "id": "KK",
+    "header": "KK",
+    "receiver": "client",
+    "fanta": "KK#x<num>reason<and>y<percent>z<dollar>#%",
+    "json": {
+      "$header": "KK",
+      "reason": "x#reason&y%z$"
+    }
+  },
+  {
+    "id": "PE",
+    "header": "PE",
+    "receiver": "server",
+    "fanta": "PE#x<num>name<and>y<percent>z<dollar>#x<num>description<and>y<percent>z<dollar>#x<num>image<and>y<percent>z<dollar>#%",
+    "json": {
+      "$header": "PE",
+      "name": "x#name&y%z$",
+      "description": "x#description&y%z$",
+      "image": "x#image&y%z$"
+    }
+  },
+  {
+    "id": "PN",
+    "header": "PN",
+    "receiver": "client",
+    "fanta": "PN#3#3#x<num>server_description<and>y<percent>z<dollar>#%",
+    "json": {
+      "$header": "PN",
+      "player_count": 3,
+      "max_players": 3,
+      "server_description": "x#server_description&y%z$"
+    }
+  },
+  {
+    "id": "RC",
+    "header": "RC",
+    "receiver": "server",
+    "fanta": "RC#%",
+    "json": {
+      "$header": "RC"
+    }
+  },
+  {
+    "id": "RD",
+    "header": "RD",
+    "receiver": "server",
+    "fanta": "RD#%",
+    "json": {
+      "$header": "RD"
+    }
+  },
+  {
+    "id": "RM",
+    "header": "RM",
+    "receiver": "server",
+    "fanta": "RM#%",
+    "json": {
+      "$header": "RM"
+    }
+  },
+  {
+    "id": "RMC",
+    "header": "RMC",
+    "receiver": "client",
+    "fanta": "RMC#x<num>toTime<and>y<percent>z<dollar>#%",
+    "json": {
+      "$header": "RMC",
+      "toTime": "x#toTime&y%z$"
+    }
+  },
+  {
+    "id": "SI",
+    "header": "SI",
+    "receiver": "client",
+    "fanta": "SI#3#3#3#%",
+    "json": {
+      "$header": "SI",
+      "char_count": 3,
+      "evi_count": 3,
+      "mus_count": 3
+    }
+  },
+  {
+    "id": "SP",
+    "header": "SP",
+    "receiver": "client",
+    "fanta": "SP#pro#%",
+    "json": {
+      "$header": "SP",
+      "side": "pro"
+    }
+  },
+  {
+    "id": "ZZToClient",
+    "header": "ZZ",
+    "receiver": "client",
+    "fanta": "ZZ#x<num>reason<and>y<percent>z<dollar>#3#%",
+    "json": {
+      "$header": "ZZ",
+      "reason": "x#reason&y%z$",
+      "target": 3
+    }
+  },
+  {
+    "id": "ZZToServer",
+    "header": "ZZ",
+    "receiver": "server",
+    "fanta": "ZZ#x<num>reason<and>y<percent>z<dollar>#3#%",
+    "json": {
+      "$header": "ZZ",
+      "reason": "x#reason&y%z$",
+      "target": 3
+    }
+  },
+  {
+    "id": "askchaa",
+    "header": "askchaa",
+    "receiver": "server",
+    "fanta": "askchaa#%",
+    "json": {
+      "$header": "askchaa"
+    }
+  },
+  {
+    "id": "decryptor",
+    "header": "decryptor",
+    "receiver": "client",
+    "fanta": "decryptor#x<num>value<and>y<percent>z<dollar>#%",
+    "json": {
+      "$header": "decryptor",
+      "value": "x#value&y%z$"
+    }
+  },
+  {
+    "id": "MA",
+    "header": "MA",
+    "receiver": "server",
+    "fanta": "MA#5#1440#griefing <and> spam#%",
+    "json": {
+      "$header": "MA",
+      "player_id": 5,
+      "duration_minutes": 1440,
+      "reason": "griefing & spam"
+    }
   }
 ]

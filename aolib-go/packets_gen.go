@@ -499,10 +499,39 @@ func ParseEE(body []string) (*EE, error) {
 	return p, nil
 }
 
+type EIDetails struct {
+	Name        string `json:"name"`
+	Description string `json:"description"`
+	Type        string `json:"type"`
+	Image       string `json:"image"`
+}
+
+func (it EIDetails) wireFields() string {
+	return joinAmp([]string{escapeFanta(it.Name), escapeFanta(it.Description), escapeFanta(it.Type), escapeFanta(it.Image)})
+}
+
+func parseEIDetails(s string) EIDetails {
+	parts := splitAmp(s, 4)
+	var it EIDetails
+	if len(parts) > 0 {
+		it.Name = unescapeFanta(parts[0])
+	}
+	if len(parts) > 1 {
+		it.Description = unescapeFanta(parts[1])
+	}
+	if len(parts) > 2 {
+		it.Type = unescapeFanta(parts[2])
+	}
+	if len(parts) > 3 {
+		it.Image = unescapeFanta(parts[3])
+	}
+	return it
+}
+
 // EI is
 type EI struct {
-	ID      int    `json:"id"`
-	Details string `json:"details"`
+	ID      int       `json:"id"`
+	Details EIDetails `json:"details"`
 }
 
 func (p *EI) Header() string { return "EI" }
@@ -510,7 +539,7 @@ func (p *EI) Header() string { return "EI" }
 func (p *EI) Args() []string {
 	var args []string
 	args = append(args, itoa(p.ID))
-	args = append(args, escapeFanta(p.Details))
+	args = append(args, p.Details.wireFields())
 	return args
 }
 
@@ -525,7 +554,7 @@ func ParseEI(body []string) (*EI, error) {
 	cursor := 0
 	p.ID = atoiOrZero(get(cursor))
 	cursor++
-	p.Details = unescapeFanta(get(cursor))
+	p.Details = parseEIDetails(get(cursor))
 	cursor++
 	return p, nil
 }
@@ -595,14 +624,19 @@ func (p *FA) Header() string { return "FA" }
 
 func (p *FA) Args() []string {
 	var args []string
-	args = append(args, p.Areas...)
+	for _, v := range p.Areas {
+		args = append(args, escapeFanta(v))
+	}
 	return args
 }
 
 func ParseFA(body []string) (*FA, error) {
 	p := &FA{}
 	cursor := 0
-	p.Areas = body[cursor:]
+	p.Areas = []string{}
+	for _, slot := range body[cursor:] {
+		p.Areas = append(p.Areas, unescapeFanta(slot))
+	}
 	cursor = len(body)
 	return p, nil
 }
@@ -616,14 +650,19 @@ func (p *FL) Header() string { return "FL" }
 
 func (p *FL) Args() []string {
 	var args []string
-	args = append(args, p.Features...)
+	for _, v := range p.Features {
+		args = append(args, escapeFanta(v))
+	}
 	return args
 }
 
 func ParseFL(body []string) (*FL, error) {
 	p := &FL{}
 	cursor := 0
-	p.Features = body[cursor:]
+	p.Features = []string{}
+	for _, slot := range body[cursor:] {
+		p.Features = append(p.Features, unescapeFanta(slot))
+	}
 	cursor = len(body)
 	return p, nil
 }
@@ -958,17 +997,17 @@ func ParseLE(body []string) (*LE, error) {
 
 // MA is
 type MA struct {
-	ID       int    `json:"id"`
-	Duration int    `json:"duration"`
-	Reason   string `json:"reason"`
+	PlayerID        int    `json:"player_id"`
+	DurationMinutes int    `json:"duration_minutes"`
+	Reason          string `json:"reason"`
 }
 
 func (p *MA) Header() string { return "MA" }
 
 func (p *MA) Args() []string {
 	var args []string
-	args = append(args, itoa(p.ID))
-	args = append(args, itoa(p.Duration))
+	args = append(args, itoa(p.PlayerID))
+	args = append(args, itoa(p.DurationMinutes))
 	args = append(args, escapeFanta(p.Reason))
 	return args
 }
@@ -982,9 +1021,9 @@ func ParseMA(body []string) (*MA, error) {
 		return ""
 	}
 	cursor := 0
-	p.ID = atoiOrZero(get(cursor))
+	p.PlayerID = atoiOrZero(get(cursor))
 	cursor++
-	p.Duration = atoiOrZero(get(cursor))
+	p.DurationMinutes = atoiOrZero(get(cursor))
 	cursor++
 	p.Reason = unescapeFanta(get(cursor))
 	cursor++

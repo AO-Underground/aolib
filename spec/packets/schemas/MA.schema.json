@@ -8,11 +8,12 @@
       "type": "string",
       "const": "MA"
     },
-    "id": {
+    "player_id": {
       "type": "number"
     },
-    "duration": {
-      "type": "number"
+    "duration_minutes": {
+      "type": "integer",
+      "description": "Ban length in minutes. 0 kicks instead of banning; -1 bans permanently."
     },
     "reason": {
       "type": "string"
@@ -20,8 +21,8 @@
   },
   "required": [
     "$header",
-    "id",
-    "duration",
+    "player_id",
+    "duration_minutes",
     "reason"
   ],
   "additionalProperties": false,

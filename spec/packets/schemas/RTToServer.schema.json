@@ -23,6 +23,9 @@
   ],
   "additionalProperties": false,
   "if": {
+    "required": [
+      "animation"
+    ],
     "properties": {
       "animation": {
         "const": "custom"
