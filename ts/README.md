@@ -144,7 +144,7 @@ Each session type exposes exactly the packets that direction sees:
     `ServerSession.send`).
 
 The mapping is derived from each schema's `x-receiver` annotation in
-[`spec`](./spec/README.md), so adding a new packet
+[`spec`](../spec/README.md), so adding a new packet
 automatically lands it in the right namespace on the right session
 type, no boilerplate to keep in sync. Symmetric bidirectional packets
 (e.g. `MC`, `HP`) live as two schemas sharing one header, named after the
@@ -214,17 +214,11 @@ asset URLs.
 ## Folder structure
 
 ```
-aolib-ts/
+ts/
 ├── README.md                  ← you are here
 ├── package.json
-├── spec/                ← git submodule: protocol schemas (source of truth)
-│   ├── README.md              ← schema layout, $id/$ref conventions, x-* extensions
-│   ├── format.sh
-│   ├── packets/schemas/<Name>.schema.json
-│   ├── types/<Name>.schema.json   ← enums and shared object types
-│   └── assets/<Name>.schema.json  ← char.ini and other asset formats
 ├── scripts/
-│   └── codegen.ts             ← reads spec/, writes generated/
+│   └── codegen.ts             ← reads ../spec/, writes generated/
 ├── generated/                 ← committed; regenerate with `bun codegen`
 │   ├── packets.ts             ← packet types + Init, c2s/s2c schema maps
 │   ├── enums.ts               ← enum union+const from types/*.schema.json
@@ -245,11 +239,11 @@ aolib-ts/
 └── tests/
 ```
 
-`spec/` is the protocol source of truth, shared across every
-language binding via a git submodule. Each `aolib-*` library has its
+`spec/` (at the repo root, `../spec/`) is the protocol source of truth,
+shared across every language binding. Each library has its
 own codegen step that consumes those schemas and emits native types,
 validators, and wire encoders/decoders. See
-[`spec/README.md`](./spec/README.md) for the schema layout
+[`spec/README.md`](../spec/README.md) for the schema layout
 and custom `x-*` extensions in full.
 
 ## Anatomy of a packet definition (for library contributors)
@@ -311,7 +305,7 @@ with `$ref`:
 ```
 
 Spec quirks that recur become custom extensions (see
-[`spec/README.md`](./spec/README.md) for the full set):
+[`spec/README.md`](../spec/README.md) for the full set):
 
 - **`x-receiver: "client" | "server"`**, direction.
 - **`x-wire-ints: integer[]`**, on a string enum, the parallel legacy

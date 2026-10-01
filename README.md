@@ -11,12 +11,12 @@ them from `spec/`, so the schema is the one place the protocol changes.
 
 ## Layout
 
-- `spec/` — the protocol itself: packet, type, and asset schemas plus the
+- `spec/`: the protocol itself: packet, type, and asset schemas plus the
   behavior docs. Start at `spec/README.md`.
-- `aolib-go/` — Go implementation (`github.com/AO-Underground/aolib/aolib-go`),
-  generated from `spec/`.
-- `aolib-ts/` — TypeScript implementation, generated from `spec/`.
-- `conformance/` — language-neutral interop vectors every binding must satisfy.
+- `go/`: Go implementation (`github.com/AO-Underground/aolib/go`), generated
+  from `spec/`.
+- `ts/`: TypeScript implementation (npm `aolib-ts`), generated from `spec/`.
+- `conformance/`: language-neutral interop vectors every binding must satisfy.
 
 ## Staying in sync
 

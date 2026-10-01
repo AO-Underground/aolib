@@ -38,7 +38,7 @@ both on the filesystem (for IDEs) and by URI resolution against the parent `$id`
 
 ## Codegen strategy
 
-A codegen consumer (see `aolib-ts/scripts/codegen.ts` for the TS reference
+A codegen consumer (see `ts/scripts/codegen.ts` for the TS reference
 implementation) walks the packet and shared (`types/`) schemas and emits, per
 file:
 

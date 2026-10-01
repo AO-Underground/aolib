@@ -1,4 +1,4 @@
-module github.com/AO-Underground/aolib/aolib-go
+module github.com/AO-Underground/aolib/go
 
 go 1.21
 

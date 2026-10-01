@@ -7,7 +7,7 @@ package main
 import (
 	"fmt"
 
-	aolib "github.com/AO-Underground/aolib/aolib-go"
+	aolib "github.com/AO-Underground/aolib/go"
 )
 
 func main() {
