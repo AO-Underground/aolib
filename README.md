@@ -13,7 +13,7 @@ them from `spec/`, so the schema is the one place the protocol changes.
 
 - `spec/`: the protocol itself: packet, type, and asset schemas plus the
   behavior docs. Start at `spec/README.md`.
-- `go/`: Go implementation (`github.com/AO-Underground/aolib/go`), generated
+- `go/`: Go implementation (`github.com/AO-Underground/aolib/go/v2`), generated
   from `spec/`.
 - `ts/`: TypeScript implementation (npm `aolib-ts`), generated from `spec/`.
 - `conformance/`: language-neutral interop vectors every binding must satisfy.
@@ -38,3 +38,16 @@ Generate types and codecs from `spec/`, wire up the same two guards, and make it
 pass the `conformance/` vectors. Nonstandard, server-specific packets are not
 part of the protocol here; a binding facilitates them through its own custom
 codec facility rather than adding them to `spec/`.
+
+## Releasing
+
+`spec/`, `ts/` (npm `aolib-ts`) and `go/` (Go module) share one version. From a
+clean `main` that matches `origin/main`:
+
+```sh
+./release.sh X.Y.Z
+```
+
+This sets the version (moving the Go module to `/vN` on a major bump), runs
+every CI check, commits, and tags `vX.Y.Z` and `go/vX.Y.Z` locally, then prints
+the push and publish commands.

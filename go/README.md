@@ -19,7 +19,7 @@ extensions, extra packets) is not baked in; servers layer it on themselves via
 ## Overview
 
 ```go
-import "github.com/AO-Underground/aolib/go"
+import aolib "github.com/AO-Underground/aolib/go/v2"
 ```
 
 - `aolib.Encode(pkt, aolib.WireFanta|aolib.WireJSON)` / `aolib.Decode(raw, mode)`:

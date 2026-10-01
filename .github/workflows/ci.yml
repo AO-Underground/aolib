@@ -23,6 +23,8 @@ jobs:
         run: |
           ./format.sh >/dev/null
           git diff --exit-code || { echo "::error::spec JSON is not formatted; run spec/format.sh"; exit 1; }
+      - name: Go module major matches ts/package.json
+        run: ./release.sh --check
 
   go:
     name: aolib-go
