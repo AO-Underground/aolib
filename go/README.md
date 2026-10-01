@@ -22,8 +22,11 @@ extensions, extra packets) is not baked in; servers layer it on themselves via
 import aolib "github.com/AO-Underground/aolib/go/v2"
 ```
 
-- `aolib.Encode(pkt, aolib.WireFanta|aolib.WireJSON)` / `aolib.Decode(raw, mode)`:
-  wire encode/decode of any typed packet.
+- `aolib.Encode(pkt, aolib.WireFanta|aolib.WireJSON)`, and
+  `aolib.DecodeToServer(raw, mode)` / `aolib.DecodeToClient(raw, mode)` by
+  direction: wire encode/decode of any typed packet. `aolib.ReadHeader(raw)`
+  reads just the header; `aolib.Validate(pkt)` checks a packet against its schema.
+- `aolib.ParseCharIni(text)`: char.ini parser, matching aolib-ts's `parseCharIni`.
 - `aolib.NewPacket(raw)` / `Packet.String()`: raw FantaCode framing.
 - `aolib.MSToServer` / `aolib.MSToClient`: the in-character (`MS`) packet, split
   by direction, with `ParseMSToServer` / `ParseMSToClient` / `Args`.
@@ -56,11 +59,11 @@ JSON; `SetJSONMode` flips the outbound format.
 // Server side: one session per connected client.
 client := aolib.NewClient(aolib.SessionConfig{Send: func(wire []byte) { conn.Write(wire) }})
 
-client.SendDecryptor(&aolib.Decryptor{}) // advertise JSON support
+client.SendDecryptor(&aolib.Decryptor{Value: "JSON"}) // advertise JSON support
 
 client.OnHI(func(_ *aolib.HI) {
     client.SendID(&aolib.IDToClient{PlayerID: 1, Software: "my-server", Version: "1.0"})
-    client.SendSM(&aolib.SM{MusicList: []string{"track1.mp3"}})
+    client.SendSM(&aolib.SM{MusicList: []aolib.SMMusicListItem{{Name: "track1.mp3"}}})
     client.SendDONE(&aolib.DONE{})
 })
 
@@ -70,7 +73,14 @@ server.OnID(func(p *aolib.IDToClient) { playerID = p.PlayerID })
 server.SendHI(&aolib.HI{HDID: "abc123"})
 ```
 
-The typed surface (`session_server.go` / `session_client.go`) and the direction
+[`examples/courtroom`](examples/courtroom) runs the full AO2 join handshake
+between a server and a JSON and a FantaCode client over an in-memory network:
+
+```sh
+go run ./examples/courtroom
+```
+
+The typed surface (`session_server_gen.go` / `session_client_gen.go`) and the direction
 registries (`registry_gen.go`) are regenerated from the `spec` schemas by
 `cmd/aolib-gen`, so the schema stays the single source of truth:
 

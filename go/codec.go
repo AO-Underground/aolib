@@ -43,23 +43,56 @@ func Encode(p Outgoing, mode WireMode) ([]byte, error) {
 	}
 }
 
-// Decode parses a raw packet into its typed struct, dispatching on the header.
-// The concrete return type depends on the header (e.g. *FL, *MSToClient);
-// unrecognised headers fall back to the generic *Packet. Client→server
-// decoders are used; session code decodes by role.
+// Decode is DecodeToServer, kept for compatibility.
+func Decode(raw []byte, mode WireMode) (any, error) { return DecodeToServer(raw, mode) }
+
+// DecodeToServer parses a client→server packet into its typed struct (e.g.
+// *MSToServer); unrecognised headers fall back to the generic *Packet.
 //
-//	v, _ := aolib.Decode([]byte("FL#multi_pair#%"), aolib.WireFanta)
-func Decode(raw []byte, mode WireMode) (any, error) {
+//	v, _ := aolib.DecodeToServer([]byte("FL#multi_pair#%"), aolib.WireFanta)
+func DecodeToServer(raw []byte, mode WireMode) (any, error) {
+	return decodeDirection(raw, mode, c2sDecoders, c2sJSON)
+}
+
+// DecodeToClient parses a server→client packet into its typed struct (e.g.
+// *MSToClient); unrecognised headers fall back to the generic *Packet.
+func DecodeToClient(raw []byte, mode WireMode) (any, error) {
+	return decodeDirection(raw, mode, s2cDecoders, s2cJSON)
+}
+
+func decodeDirection(raw []byte, mode WireMode, fanta map[string]decoder, js map[string]jsonDecoder) (any, error) {
 	switch mode {
 	case WireJSON:
-		_, p, err := decodeJSON(raw, c2sJSON)
+		_, p, err := decodeJSON(raw, js)
 		return p, err
 	case WireFanta:
-		_, p, err := decodeFanta(raw, c2sDecoders)
+		_, p, err := decodeFanta(raw, fanta)
 		return p, err
 	default:
 		return nil, fmt.Errorf("aolib: unknown wire mode %d", mode)
 	}
+}
+
+// ReadHeader returns a frame's header without decoding its body, in either
+// wire format.
+func ReadHeader(raw []byte) (string, error) {
+	if len(raw) > 0 && raw[0] == '{' {
+		return jsonHeader(raw)
+	}
+	pkt, err := NewPacket(strings.TrimSuffix(string(raw), "%"))
+	if err != nil {
+		return "", err
+	}
+	return pkt.Header, nil
+}
+
+// Validate reports whether Encode would accept p: it fills p's defaults and
+// checks the result against its spec schema, failing with a *ValidationError.
+func Validate(p Outgoing) error {
+	if d, ok := p.(interface{ withDefaults() Outgoing }); ok {
+		p = d.withDefaults()
+	}
+	return validatePacket(p)
 }
 
 // decodeFanta reads a FantaCode frame and decodes it via the supplied direction
@@ -168,10 +201,33 @@ func jsonDecoderFor[T any](raw []byte) (any, error) {
 	if err := json.Unmarshal(raw, p); err != nil {
 		return nil, err
 	}
+	raw, err := withJSONConsts(p, raw)
+	if err != nil {
+		return nil, err
+	}
 	if err := validateJSON(p, raw); err != nil {
 		return nil, err
 	}
 	return p, nil
+}
+
+// withJSONConsts adds any const slot (e.g. PV's "_cid") the frame omits, so
+// validation fills it like any other default instead of rejecting the frame.
+func withJSONConsts(p any, raw []byte) ([]byte, error) {
+	c, ok := p.(interface{ jsonConsts() map[string]string })
+	if !ok {
+		return raw, nil
+	}
+	var obj map[string]json.RawMessage
+	if err := json.Unmarshal(raw, &obj); err != nil {
+		return nil, err
+	}
+	for k, v := range c.jsonConsts() {
+		if _, ok := obj[k]; !ok {
+			obj[k], _ = json.Marshal(v)
+		}
+	}
+	return json.Marshal(obj)
 }
 
 // frameFanta frames header + positional args into HEADER#a#b#...#%.
