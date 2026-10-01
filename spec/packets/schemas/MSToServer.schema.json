@@ -107,8 +107,13 @@
       "default": false
     },
     "effect": {
-      "type": "string",
-      "default": ""
+      "$ref": "../../types/Effect.schema.json",
+      "default": {
+        "name": "",
+        "folder": "",
+        "sound": ""
+      },
+      "description": "Screen-effect overlay request, packed on the wire as `name|folder|sound` (see EFFECTS.md)."
     }
   },
   "required": [

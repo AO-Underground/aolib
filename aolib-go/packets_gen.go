@@ -1131,7 +1131,7 @@ type MSToClient struct {
 	FramesRealization      string        `json:"frames_realization"`
 	FramesSfx              string        `json:"frames_sfx"`
 	Additive               bool          `json:"additive"`
-	Effect                 string        `json:"effect"`
+	Effect                 Effect        `json:"effect"`
 }
 
 func (p *MSToClient) Header() string { return "MS" }
@@ -1167,7 +1167,7 @@ func (p *MSToClient) Args() []string {
 	args = append(args, escapeFanta(p.FramesRealization))
 	args = append(args, escapeFanta(p.FramesSfx))
 	args = append(args, boolToWire(p.Additive))
-	args = append(args, escapeFanta(p.Effect))
+	args = append(args, effectToWire(p.Effect))
 	return args
 }
 
@@ -1238,7 +1238,7 @@ func ParseMSToClient(body []string) (*MSToClient, error) {
 	cursor++
 	p.Additive = wireToBool(get(cursor))
 	cursor++
-	p.Effect = unescapeFanta(get(cursor))
+	p.Effect = effectFromWire(get(cursor))
 	cursor++
 	return p, nil
 }
@@ -1270,7 +1270,7 @@ type MSToServer struct {
 	FramesRealization      string        `json:"frames_realization"`
 	FramesSfx              string        `json:"frames_sfx"`
 	Additive               bool          `json:"additive"`
-	Effect                 string        `json:"effect"`
+	Effect                 Effect        `json:"effect"`
 }
 
 func (p *MSToServer) Header() string { return "MS" }
@@ -1302,7 +1302,7 @@ func (p *MSToServer) Args() []string {
 	args = append(args, escapeFanta(p.FramesRealization))
 	args = append(args, escapeFanta(p.FramesSfx))
 	args = append(args, boolToWire(p.Additive))
-	args = append(args, escapeFanta(p.Effect))
+	args = append(args, effectToWire(p.Effect))
 	return args
 }
 
@@ -1365,7 +1365,7 @@ func ParseMSToServer(body []string) (*MSToServer, error) {
 	cursor++
 	p.Additive = wireToBool(get(cursor))
 	cursor++
-	p.Effect = unescapeFanta(get(cursor))
+	p.Effect = effectFromWire(get(cursor))
 	cursor++
 	return p, nil
 }

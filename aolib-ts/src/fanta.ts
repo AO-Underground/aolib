@@ -8,10 +8,12 @@
  *   "string"          escape-fanta on encode, unescape+unicode on decode
  *   "number"/"integer" String(n) on encode, Number(token) on decode
  *   "boolean"         "1"/"0" on encode, token === "1" on decode
- *   "object"          recurse, join sub-tokens with `&`; optional
- *                     `x-fanta-unescape-amp: true` to tolerate the
- *                     legacy `<and>` form on decode (offset slot in
- *                     MS). Encoders never emit `<and>`.
+ *   "object"          recurse, join sub-tokens with `&`, or with the
+ *                     `x-fanta-separator` value when set (`|` for MS
+ *                     effect; an all-empty object collapses to an empty
+ *                     slot). Optional `x-fanta-unescape-amp: true`
+ *                     tolerates the legacy `<and>` form on decode (offset
+ *                     slot in MS). Encoders never emit `<and>`.
  *   "array"           greedy, consumes all remaining slots
  *   const             emitted as the const value; on decode the slot
  *                     is consumed but the schema-fixed value is used
@@ -174,20 +176,24 @@ function encodeToken(rawSchema: JsonSchema, value: unknown, baseId: string): str
 
   const t = jsonType(schema);
   if (t === "object") {
+    const sep = typeof schema["x-fanta-separator"] === "string" ? schema["x-fanta-separator"] : "&";
     const parts: string[] = [];
     const props = schema.properties ?? {};
-    const obj = value as Record<string, unknown>;
+    const obj = (value ?? {}) as Record<string, unknown>;
     for (const [k, sub] of Object.entries(props)) {
       parts.push(encodeToken(sub, obj[k], baseId));
     }
-    return parts.join("&");
+    // An object with a custom separator uses an all-empty value as the
+    // "absent" sentinel: it collapses to an empty slot (MS effect = no effect).
+    if (schema["x-fanta-separator"] && parts.every((p) => p === "")) return "";
+    return parts.join(sep);
   }
   return encodeScalar(t, value);
 }
 
 function encodeScalar(t: string | undefined, value: unknown): string {
   switch (t) {
-    case "string":  return escapeFanta(value as string);
+    case "string":  return escapeFanta((value ?? "") as string);
     case "boolean": return value ? "1" : "0";
     case "integer":
     case "number":  return String(value);
@@ -209,8 +215,9 @@ function decodeToken(rawSchema: JsonSchema, token: string, name: string, baseId:
 
   const t = jsonType(schema);
   if (t === "object") {
+    const sep = typeof schema["x-fanta-separator"] === "string" ? schema["x-fanta-separator"] : "&";
     const raw = schema["x-fanta-unescape-amp"] ? token.replaceAll("<and>", "&") : token;
-    const parts = raw.split("&");
+    const parts = raw.split(sep);
     const result: Record<string, unknown> = {};
     let i = 0;
     for (const [k, sub] of Object.entries(schema.properties ?? {})) {

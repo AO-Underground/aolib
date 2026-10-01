@@ -78,7 +78,11 @@
       "char_id": 1,
       "character": "Phoenix",
       "desk_modifier": "shown",
-      "effect": "",
+      "effect": {
+        "name": "",
+        "folder": "",
+        "sound": ""
+      },
       "emote": "normal",
       "emote_modifier": "preanim",
       "evidence_id": 0,
@@ -102,6 +106,55 @@
       "shout_modifier": "none",
       "showname": "Nick",
       "side": "def",
+      "text_color": "red"
+    }
+  },
+  {
+    "id": "MSToClient-effect",
+    "header": "MS",
+    "receiver": "client",
+    "fanta": "MS#1##Phoenix#normal#Gotcha!#pro##0#2#0#0#0#0#0#2#Nick#-1###0&0#0&0#0#0#0#0####0#realization|custom|realize.wav#%",
+    "json": {
+      "$header": "MS",
+      "additive": false,
+      "char_id": 2,
+      "character": "Phoenix",
+      "desk_modifier": "shown",
+      "effect": {
+        "folder": "custom",
+        "name": "realization",
+        "sound": "realize.wav"
+      },
+      "emote": "normal",
+      "emote_modifier": "no_preanim",
+      "evidence_id": 0,
+      "flip": "none",
+      "frames_realization": "",
+      "frames_sfx": "",
+      "frames_shake": "",
+      "message": "Gotcha!",
+      "noninterrupting_preanim": false,
+      "offset": {
+        "x": 0,
+        "y": 0
+      },
+      "paired_charid": -1,
+      "paired_emote": "",
+      "paired_flip": "none",
+      "paired_name": "",
+      "paired_offset": {
+        "x": 0,
+        "y": 0
+      },
+      "preanim": "",
+      "realization": false,
+      "screenshake": false,
+      "sfx_delay": 0,
+      "sfx_looping": false,
+      "sfx_name": "",
+      "shout_modifier": "none",
+      "showname": "Nick",
+      "side": "pro",
       "text_color": "red"
     }
   },

@@ -1,0 +1,28 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "/types/Effect.schema.json",
+  "title": "Effect",
+  "description": "MS screen-effect overlay request: effect name, misc folder, and sound, packed into one `name|folder|sound` wire slot. An all-empty value is the no-effect sentinel and encodes to an empty slot.",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "default": ""
+    },
+    "folder": {
+      "type": "string",
+      "default": ""
+    },
+    "sound": {
+      "type": "string",
+      "default": ""
+    }
+  },
+  "required": [
+    "name",
+    "folder",
+    "sound"
+  ],
+  "additionalProperties": false,
+  "x-fanta-separator": "|"
+}

@@ -3,7 +3,7 @@
 /* eslint-disable */
 
 import { AreaUpdateType, AuthState, CharAvailability, DeskModifier, EmoteModifier, Flip, JudgeState, PenaltyBar, PlayerDataType, PlayerListUpdate, ShoutModifier, Side, TextColor, TimerCommand } from "./enums";
-import { Offset } from "./types";
+import { Effect, Offset } from "./types";
 
 import AreaUpdateTypeEnumSchema from "../../spec/types/AreaUpdateType.schema.json";
 
@@ -32,6 +32,8 @@ import SideEnumSchema from "../../spec/types/Side.schema.json";
 import TextColorEnumSchema from "../../spec/types/TextColor.schema.json";
 
 import TimerCommandEnumSchema from "../../spec/types/TimerCommand.schema.json";
+
+import EffectTypeSchema from "../../spec/types/Effect.schema.json";
 
 import OffsetTypeSchema from "../../spec/types/Offset.schema.json";
 
@@ -260,7 +262,7 @@ export { default as decryptorSchema } from "../../spec/packets/schemas/decryptor
 
 export const enumSchemas = [AreaUpdateTypeEnumSchema, AuthStateEnumSchema, CharAvailabilityEnumSchema, DeskModifierEnumSchema, EmoteModifierEnumSchema, FlipEnumSchema, JudgeStateEnumSchema, PenaltyBarEnumSchema, PlayerDataTypeEnumSchema, PlayerListUpdateEnumSchema, ShoutModifierEnumSchema, SideEnumSchema, TextColorEnumSchema, TimerCommandEnumSchema];
 
-export const typeSchemas = [OffsetTypeSchema];
+export const typeSchemas = [EffectTypeSchema, OffsetTypeSchema];
 
 
 export interface Packet {
@@ -716,7 +718,7 @@ export interface MSToClient extends Packet {
   frames_realization: string;
   frames_sfx: string;
   additive: boolean;
-  effect: string;
+  effect: Effect;
 }
 
 export interface MSToClientInit {
@@ -749,7 +751,7 @@ export interface MSToClientInit {
   frames_realization?: string;
   frames_sfx?: string;
   additive?: boolean;
-  effect?: string;
+  effect?: Effect;
 }
 
 
@@ -780,7 +782,7 @@ export interface MSToServer extends Packet {
   frames_realization: string;
   frames_sfx: string;
   additive: boolean;
-  effect: string;
+  effect: Effect;
 }
 
 export interface MSToServerInit {
@@ -809,7 +811,7 @@ export interface MSToServerInit {
   frames_realization?: string;
   frames_sfx?: string;
   additive?: boolean;
-  effect?: string;
+  effect?: Effect;
 }
 
 

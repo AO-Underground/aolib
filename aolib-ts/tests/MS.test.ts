@@ -190,7 +190,7 @@ describe("MS: minimal-input encoding fills every default", () => {
       frames_realization: "",
       frames_sfx: "",
       additive: false,
-      effect: "",
+      effect: { name: "", folder: "", sound: "" },
     });
   });
 });
@@ -272,6 +272,73 @@ describe("MS: offset codec", () => {
     expect(decoded.offset).toEqual({ x: 50, y: -20 });
   });
 
+});
+
+// Effect: `name|folder|sound` on fanta, `{name, folder, sound}` native on JSON.
+
+describe("MS: effect codec", () => {
+  const base = {
+    character: "Phoenix",
+    emote: "normal",
+    message: "hi",
+    side: Side.wit,
+    char_id: 0,
+  } as const;
+
+  function effectSlot(wire: string): string {
+    // effect is the last positional slot, just before the "%" terminator.
+    const parts = wire.split("#");
+    return parts[parts.length - 2] ?? "";
+  }
+
+  it("packs as `name|folder|sound` on the fanta wire", () => {
+    const wire = encode(
+      MSToClient,
+      { ...base, effect: { name: "realization", folder: "custom", sound: "realize.wav" } },
+      "fanta",
+    );
+    expect(effectSlot(wire)).toBe("realization|custom|realize.wav");
+  });
+
+  it("an all-empty effect collapses to an empty slot", () => {
+    const wire = encode(MSToClient, { ...base, effect: { name: "", folder: "", sound: "" } }, "fanta");
+    expect(effectSlot(wire)).toBe("");
+  });
+
+  it("round-trips a full effect through the fanta wire", () => {
+    const eff = { name: "realization", folder: "custom", sound: "realize.wav" };
+    const wire = encode(MSToClient, { ...base, effect: eff }, "fanta");
+    const decoded = decode(MSToClient, wire) as unknown as MSToClientType;
+    expect(decoded.effect).toEqual(eff);
+  });
+
+  it("an empty slot decodes back to the all-empty effect", () => {
+    const wire = encode(MSToClient, { ...base }, "fanta");
+    const decoded = decode(MSToClient, wire) as unknown as MSToClientType;
+    expect(decoded.effect).toEqual({ name: "", folder: "", sound: "" });
+  });
+
+  it("legacy name-only form decodes positionally", () => {
+    const wire = encode(MSToClient, { ...base }, "fanta").split("#");
+    wire[wire.length - 2] = "realization"; // 1-part legacy
+    const decoded = decode(MSToClient, wire.join("#")) as unknown as MSToClientType;
+    expect(decoded.effect).toEqual({ name: "realization", folder: "", sound: "" });
+  });
+
+  it("is a native object on JSON (no `|` packing)", () => {
+    const eff = { name: "realization", folder: "custom", sound: "realize.wav" };
+    const json = encode(MSToClient, { ...base, effect: eff }, "json");
+    expect(JSON.parse(json).effect).toEqual(eff);
+    const decoded = decode(MSToClient, json) as unknown as MSToClientType;
+    expect(decoded.effect).toEqual(eff);
+  });
+
+  it("chat-meta in effect parts survives the fanta round-trip", () => {
+    const eff = { name: "tag #1", folder: "a & b", sound: "100%.wav" };
+    const wire = encode(MSToClient, { ...base, effect: eff }, "fanta");
+    const decoded = decode(MSToClient, wire) as unknown as MSToClientType;
+    expect(decoded.effect).toEqual(eff);
+  });
 });
 
 // Asymmetric shapes: MSToServer (26 fields) vs MSToClient (30 fields).
@@ -407,7 +474,7 @@ describe("MS: JSON envelope round-trip", () => {
       frames_realization: "",
       frames_sfx: "",
       additive: false,
-      effect: "",
+      effect: { name: "", folder: "", sound: "" },
     };
     const json = encode(MSToClient, p, "json");
     const decoded = decode(MSToClient, json) as unknown as MSToClientType;
