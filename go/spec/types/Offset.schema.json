@@ -6,10 +6,13 @@
   "type": "object",
   "properties": {
     "x": {
-      "type": "number"
+      "type": "number",
+      "description": "Horizontal offset, in percent of the viewport."
     },
     "y": {
-      "type": "number"
+      "type": "number",
+      "default": 0,
+      "description": "Vertical offset, in percent of the viewport. Legacy senders without `y_offset` send only `x`; a missing `y` is 0."
     }
   },
   "required": [

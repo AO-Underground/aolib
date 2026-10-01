@@ -243,7 +243,11 @@ function decodeToken(rawSchema: JsonSchema, token: string, name: string, baseId:
     const result: Record<string, unknown> = {};
     let i = 0;
     for (const [k, sub] of Object.entries(schema.properties ?? {})) {
-      result[k] = decodeToken(sub, parts[i++] ?? "", `${name}.${k}`, baseId);
+      const part = parts[i++];
+      const def = resolveRef(sub, baseId).default;
+      result[k] = part === undefined && def !== undefined
+        ? structuredClone(def)
+        : decodeToken(sub, part ?? "", `${name}.${k}`, baseId);
     }
     return result;
   }

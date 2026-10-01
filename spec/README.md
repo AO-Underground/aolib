@@ -162,7 +162,9 @@ decodes back to the all-empty object. Scoped to objects carrying it; plain
 
 Separately, an empty slot for any `object` field that declares a `default`
 decodes to that default (AO2 servers send an empty MS `paired_offset` when
-there is no pair). Encoders still emit the full form.
+there is no pair), and a sub-token missing from the end of an object slot
+decodes to that sub-property's `default` (legacy senders send an `Offset` as
+`x` alone). Encoders still emit the full form.
 
 ### `x-fanta-unescape-amp: true`
 
