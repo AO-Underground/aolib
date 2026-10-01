@@ -176,7 +176,7 @@ function encodeToken(rawSchema: JsonSchema, value: unknown, baseId: string): str
 
   const t = jsonType(schema);
   if (t === "object") {
-    const sep = typeof schema["x-fanta-separator"] === "string" ? (schema["x-fanta-separator"] as string) : "&";
+    const sep = typeof schema["x-fanta-separator"] === "string" ? schema["x-fanta-separator"] : "&";
     const parts: string[] = [];
     const props = schema.properties ?? {};
     const obj = (value ?? {}) as Record<string, unknown>;
@@ -215,7 +215,7 @@ function decodeToken(rawSchema: JsonSchema, token: string, name: string, baseId:
 
   const t = jsonType(schema);
   if (t === "object") {
-    const sep = typeof schema["x-fanta-separator"] === "string" ? (schema["x-fanta-separator"] as string) : "&";
+    const sep = typeof schema["x-fanta-separator"] === "string" ? schema["x-fanta-separator"] : "&";
     const raw = schema["x-fanta-unescape-amp"] ? token.replaceAll("<and>", "&") : token;
     const parts = raw.split(sep);
     const result: Record<string, unknown> = {};
