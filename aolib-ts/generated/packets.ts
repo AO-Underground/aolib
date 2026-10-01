@@ -1019,24 +1019,22 @@ export interface TIInit {
 export interface ZZToClient extends Packet {
   $header: "ZZ";
   reason: string;
-  target: number;
 }
 
 export interface ZZToClientInit {
   reason: string;
-  target?: number;
 }
 
 
 export interface ZZToServer extends Packet {
   $header: "ZZ";
   reason: string;
-  target: number;
+  reported_player_id: number;
 }
 
 export interface ZZToServerInit {
-  reason: string;
-  target?: number;
+  reason?: string;
+  reported_player_id?: number;
 }
 
 

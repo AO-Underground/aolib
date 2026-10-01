@@ -1196,7 +1196,11 @@ func ParseMSToClient(body []string) (*MSToClient, error) {
 		return ""
 	}
 	cursor := 0
-	p.DeskModifier = deskModifierFromWire[atoiOrZero(get(cursor))]
+	if cursor < len(body) {
+		p.DeskModifier = deskModifierFromWire[atoiOrZero(get(cursor))]
+	} else {
+		p.DeskModifier = DeskModifier("shown")
+	}
 	cursor++
 	p.Preanim = unescapeFanta(get(cursor))
 	cursor++
@@ -1228,7 +1232,11 @@ func ParseMSToClient(body []string) (*MSToClient, error) {
 	cursor++
 	p.Showname = unescapeFanta(get(cursor))
 	cursor++
-	p.PairedCharID = atoiOrZero(get(cursor))
+	if cursor < len(body) {
+		p.PairedCharID = atoiOrZero(get(cursor))
+	} else {
+		p.PairedCharID = -1
+	}
 	cursor++
 	p.PairedName = unescapeFanta(get(cursor))
 	cursor++
@@ -1331,7 +1339,11 @@ func ParseMSToServer(body []string) (*MSToServer, error) {
 		return ""
 	}
 	cursor := 0
-	p.DeskModifier = deskModifierFromWire[atoiOrZero(get(cursor))]
+	if cursor < len(body) {
+		p.DeskModifier = deskModifierFromWire[atoiOrZero(get(cursor))]
+	} else {
+		p.DeskModifier = DeskModifier("shown")
+	}
 	cursor++
 	p.Preanim = unescapeFanta(get(cursor))
 	cursor++
@@ -1363,7 +1375,11 @@ func ParseMSToServer(body []string) (*MSToServer, error) {
 	cursor++
 	p.Showname = unescapeFanta(get(cursor))
 	cursor++
-	p.PairedCharID = atoiOrZero(get(cursor))
+	if cursor < len(body) {
+		p.PairedCharID = atoiOrZero(get(cursor))
+	} else {
+		p.PairedCharID = -1
+	}
 	cursor++
 	p.Offset = offsetFromWire(get(cursor))
 	cursor++
@@ -1842,7 +1858,6 @@ func ParseTI(body []string) (*TI, error) {
 // ZZToClient is
 type ZZToClient struct {
 	Reason string `json:"reason"`
-	Target int    `json:"target"`
 }
 
 func (p *ZZToClient) Header() string { return "ZZ" }
@@ -1850,7 +1865,6 @@ func (p *ZZToClient) Header() string { return "ZZ" }
 func (p *ZZToClient) Args() []string {
 	var args []string
 	args = append(args, escapeFanta(p.Reason))
-	args = append(args, itoa(p.Target))
 	return args
 }
 
@@ -1865,15 +1879,13 @@ func ParseZZToClient(body []string) (*ZZToClient, error) {
 	cursor := 0
 	p.Reason = unescapeFanta(get(cursor))
 	cursor++
-	p.Target = atoiOrZero(get(cursor))
-	cursor++
 	return p, nil
 }
 
 // ZZToServer is
 type ZZToServer struct {
-	Reason string `json:"reason"`
-	Target int    `json:"target"`
+	Reason           string `json:"reason"`
+	ReportedPlayerID int    `json:"reported_player_id"`
 }
 
 func (p *ZZToServer) Header() string { return "ZZ" }
@@ -1881,7 +1893,7 @@ func (p *ZZToServer) Header() string { return "ZZ" }
 func (p *ZZToServer) Args() []string {
 	var args []string
 	args = append(args, escapeFanta(p.Reason))
-	args = append(args, itoa(p.Target))
+	args = append(args, itoa(p.ReportedPlayerID))
 	return args
 }
 
@@ -1896,7 +1908,11 @@ func ParseZZToServer(body []string) (*ZZToServer, error) {
 	cursor := 0
 	p.Reason = unescapeFanta(get(cursor))
 	cursor++
-	p.Target = atoiOrZero(get(cursor))
+	if cursor < len(body) {
+		p.ReportedPlayerID = atoiOrZero(get(cursor))
+	} else {
+		p.ReportedPlayerID = -1
+	}
 	cursor++
 	return p, nil
 }

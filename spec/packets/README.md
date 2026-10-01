@@ -21,6 +21,3 @@ Deliberately left as numbers for now:
 
 - `MC.channel` is a `0-3` channel index with only loose conventions, not a
   fixed named set.
-- `ZZ.target` exists in the schema but not in the reference docs (which show
-  `ZZ` as `reason` only); the divergence should be reconciled before deciding
-  its shape.

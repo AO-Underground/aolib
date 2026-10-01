@@ -121,3 +121,24 @@ func TestMusicEffectsIgnoresUnknownBits(t *testing.T) {
 		t.Fatalf("musicEffectsToWire = %q, want \"1\"", w)
 	}
 }
+
+func TestDecodeZZReasonlessForm(t *testing.T) {
+	v, err := Decode([]byte("ZZ#%"), WireFanta)
+	if err != nil {
+		t.Fatalf("Decode: %v", err)
+	}
+	if got, ok := v.(*ZZToServer); !ok || *got != (ZZToServer{Reason: "", ReportedPlayerID: -1}) {
+		t.Fatalf("Decode(ZZ#%%) = %#v", v)
+	}
+}
+
+func TestDecodeShortMSAppliesDefaults(t *testing.T) {
+	v, err := Decode([]byte("MS#1#-#Phoenix#normal#hi#def#1#0#3#0#0#0#0#0#0#%"), WireFanta)
+	if err != nil {
+		t.Fatalf("Decode: %v", err)
+	}
+	ms, ok := v.(*MSToServer)
+	if !ok || ms.PairedCharID != -1 || ms.Showname != "" {
+		t.Fatalf("Decode(short MS) = %#v", v)
+	}
+}

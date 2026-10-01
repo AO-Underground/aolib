@@ -794,28 +794,6 @@
     }
   },
   {
-    "id": "ZZToClient",
-    "header": "ZZ",
-    "receiver": "client",
-    "fanta": "ZZ#x<num>reason<and>y<percent>z<dollar>#3#%",
-    "json": {
-      "$header": "ZZ",
-      "reason": "x#reason&y%z$",
-      "target": 3
-    }
-  },
-  {
-    "id": "ZZToServer",
-    "header": "ZZ",
-    "receiver": "server",
-    "fanta": "ZZ#x<num>reason<and>y<percent>z<dollar>#3#%",
-    "json": {
-      "$header": "ZZ",
-      "reason": "x#reason&y%z$",
-      "target": 3
-    }
-  },
-  {
     "id": "askchaa",
     "header": "askchaa",
     "receiver": "server",
@@ -844,6 +822,38 @@
       "player_id": 5,
       "duration_minutes": 1440,
       "reason": "griefing & spam"
+    }
+  },
+  {
+    "id": "ZZToServer-general",
+    "header": "ZZ",
+    "receiver": "server",
+    "fanta": "ZZ#need a mod in <num>3#-1#%",
+    "json": {
+      "$header": "ZZ",
+      "reason": "need a mod in #3",
+      "reported_player_id": -1
+    }
+  },
+  {
+    "id": "ZZToServer-report",
+    "header": "ZZ",
+    "receiver": "server",
+    "fanta": "ZZ#spamming <and> slurs#7#%",
+    "json": {
+      "$header": "ZZ",
+      "reason": "spamming & slurs",
+      "reported_player_id": 7
+    }
+  },
+  {
+    "id": "ZZToClient",
+    "header": "ZZ",
+    "receiver": "client",
+    "fanta": "ZZ#!!!MODCALL!!!\nArea: Basement\nCaller: [3]Phoenix\nRegarding: Edgeworth\nReason: spamming <and> slurs#%",
+    "json": {
+      "$header": "ZZ",
+      "reason": "!!!MODCALL!!!\nArea: Basement\nCaller: [3]Phoenix\nRegarding: Edgeworth\nReason: spamming & slurs"
     }
   }
 ]

@@ -117,9 +117,13 @@ describe("round-trips: optional-with-default packets", () => {
     expect(() => decode(c2sSchemas.MC, "MC#x#1##abc#%")).toThrow();
   });
 
-  it("ZZ fills target=-1 when absent", () => {
+  it("ZZ fills reported_player_id=-1 when absent", () => {
     const out = decode(c2sSchemas.ZZ, encode(c2sSchemas.ZZ, { reason: "racism" }, "fanta"));
-    expect(out).toEqual({ $header: "ZZ", reason: "racism", target: -1 });
+    expect(out).toEqual({ $header: "ZZ", reason: "racism", reported_player_id: -1 });
+  });
+
+  it("ZZ decodes the reasonless form sent to servers without modcall_reason", () => {
+    expect(decode(c2sSchemas.ZZ, "ZZ#%")).toEqual({ $header: "ZZ", reason: "", reported_player_id: -1 });
   });
 
   it("PN preserves all fields when provided", () => {

@@ -9,11 +9,8 @@
       "const": "ZZ"
     },
     "reason": {
-      "type": "string"
-    },
-    "target": {
-      "type": "number",
-      "default": -1
+      "type": "string",
+      "description": "Server-formatted mod call notice, shown to moderators."
     }
   },
   "required": [

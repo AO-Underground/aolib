@@ -12,6 +12,7 @@ import (
 	"os"
 	"path/filepath"
 	"sort"
+	"strconv"
 	"strings"
 )
 
@@ -135,6 +136,7 @@ type Schema struct {
 	Ref               string
 	TypeStr           string
 	Const             string
+	Default           any
 }
 
 type Prop struct {
@@ -149,6 +151,9 @@ func schemaFromJSON(name string, o *ojson) *Schema {
 	s.XFantaCodec = o.str("x-fanta-codec")
 	s.Ref = o.str("$ref")
 	s.Const = o.str("const")
+	if d, ok := o.vals["default"]; ok && d.kind == 's' {
+		s.Default = d.scalar
+	}
 	s.Enum = o.strSlice("enum")
 	s.XWireInts = o.intSlice("x-wire-ints")
 	s.XWireBits = o.intSlice("x-wire-bits")
@@ -472,6 +477,36 @@ func isObjectArray(s *Schema) bool {
 	return s.TypeStr == "array" && s.Items != nil && s.Items.IsObject && len(s.Items.Properties) > 0
 }
 
+// defaultLiteral is the Go literal for a slot's schema default when a missing
+// slot would otherwise decode to something else; "" when the zero value fits.
+func defaultLiteral(p *Prop, enumNames map[string]*Schema) string {
+	switch d := p.Schema.Default.(type) {
+	case float64:
+		if d != 0 {
+			return strconv.Itoa(int(d))
+		}
+	case bool:
+		if d {
+			return "true"
+		}
+	case string:
+		if e, ok := enumFor(p, enumNames); ok {
+			if len(e.XWireInts) > 0 {
+				for i, v := range e.Enum {
+					if v == d && e.XWireInts[i] == 0 {
+						return ""
+					}
+				}
+			}
+			return fmt.Sprintf("%s(%q)", e.Name, d)
+		}
+		if d != "" {
+			return strconv.Quote(d)
+		}
+	}
+	return ""
+}
+
 func isInlineObject(s *Schema) bool {
 	return s.Ref == "" && s.IsObject && len(s.Properties) > 0
 }
@@ -659,6 +694,10 @@ func emitPackets(packets []*Schema, enumNames, typeNames map[string]*Schema) str
 			}
 			if isInlineObject(p.Schema) {
 				fmt.Fprintf(&b, "\tp.%s = parse%s%s(get(cursor))\n\tcursor++\n", pascalCase(p.Name), s.Name, pascalCase(p.Name))
+				continue
+			}
+			if lit := defaultLiteral(&p, enumNames); lit != "" {
+				fmt.Fprintf(&b, "\tif cursor < len(body) {\n\t\t%s\n\t} else {\n\t\tp.%s = %s\n\t}\n\tcursor++\n", decodeStmt(&p, enumNames, typeNames), pascalCase(p.Name), lit)
 				continue
 			}
 			fmt.Fprintf(&b, "\t%s\n\tcursor++\n", decodeStmt(&p, enumNames, typeNames))
