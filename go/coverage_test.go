@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"os"
 	"path/filepath"
+	"reflect"
+	"regexp"
 	"sort"
 	"strings"
 	"testing"
@@ -62,6 +64,43 @@ func TestDispatchCoversSpec(t *testing.T) {
 	checkCoverage(t, "s2c FantaCode", wantS2C, regKeys(s2cDecoders))
 	checkCoverage(t, "c2s JSON", wantC2S, regKeys(c2sJSON))
 	checkCoverage(t, "s2c JSON", wantS2C, regKeys(s2cJSON))
+
+	server, client := reflect.TypeOf(&ServerSession{}), reflect.TypeOf(&ClientSession{})
+	checkCoverage(t, "ServerSession.Send*", wantC2S, sessionMethods(server, "Send", wantC2S))
+	checkCoverage(t, "ClientSession.On*", wantC2S, sessionMethods(client, "On", wantC2S))
+	checkCoverage(t, "ClientSession.Send*", wantS2C, sessionMethods(client, "Send", wantS2C))
+	checkCoverage(t, "ServerSession.On*", wantS2C, sessionMethods(server, "On", wantS2C))
+}
+
+// sessionMethods returns the headers in want that typ has a <prefix><Header> method for.
+func sessionMethods(typ reflect.Type, prefix string, want map[string]struct{}) map[string]struct{} {
+	out := map[string]struct{}{}
+	for h := range want {
+		if _, ok := typ.MethodByName(prefix + strings.ToUpper(h[:1]) + h[1:]); ok {
+			out[h] = struct{}{}
+		}
+	}
+	return out
+}
+
+// TestGeneratedFilesAreNamedGen keeps every "Code generated" file under the
+// *_gen.go name that CI deletes and regenerates, so a file the generator stops
+// writing fails CI instead of going stale.
+func TestGeneratedFilesAreNamedGen(t *testing.T) {
+	generated := regexp.MustCompile(`(?m)^// Code generated .* DO NOT EDIT\.$`)
+	files, err := filepath.Glob("*.go")
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, f := range files {
+		raw, err := os.ReadFile(f)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if generated.Match(raw) && !strings.HasSuffix(f, "_gen.go") {
+			t.Errorf("%s is marked generated but not named *_gen.go", f)
+		}
+	}
 }
 
 func regKeys[V any](m map[string]V) map[string]struct{} {
