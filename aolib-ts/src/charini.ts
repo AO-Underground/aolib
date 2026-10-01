@@ -33,27 +33,32 @@
 import { parse as parseIni } from "js-ini";
 import EmoteModifierSchema from "../../spec/types/EmoteModifier.schema.json";
 import DeskModifierSchema from "../../spec/types/DeskModifier.schema.json";
+import type { DeskModifier, EmoteModifier } from "../generated/enums";
 
-// One AO tick in milliseconds: the message text update interval that
-// drives sound/preanim timing (LemmyAO's `UPDATE_INTERVAL`). Legacy
-// `[soundt]` is expressed in ticks; `sounddelayms` is normalized to ms.
-const TICK_MS = 60;
+// [soundt] and MS sfx_delay are in ticks of this many ms.
+const TICK_MS = 40;
 
-/**
- * Case-insensitive enum-name -> legacy integer map, so a char.ini field
- * can write `modifier = zoom` (or `deskmod = shown`) and resolve to the
- * numeric emote/desk modifier. The enums are string-first with their
- * integers in `x-wire-ints` (see spec); char.ini keeps the number.
- */
-function nameMap(schema: { enum: string[]; "x-wire-ints": number[] }): Record<string, number> {
-  const m: Record<string, number> = {};
-  schema.enum.forEach((name, i) => {
-    m[name] = schema["x-wire-ints"][i] ?? 0;
-  });
-  return m;
+/** Milliseconds to ticks (e.g. for MS `sfx_delay`), rounding half up. */
+export function msToTicks(ms: number): number {
+  return Math.floor(ms / TICK_MS + 0.5);
 }
-const MODIFIER_NAMES = nameMap(EmoteModifierSchema);
-const DESKMOD_NAMES = nameMap(DeskModifierSchema);
+
+export function ticksToMs(ticks: number): number {
+  return ticks * TICK_MS;
+}
+
+function soundDelayFromMs(ms: number) {
+  return { sounddelayms: ms, sounddelayticks: msToTicks(ms) };
+}
+
+function soundDelayFromTicks(ticks: number) {
+  return { sounddelayms: ticksToMs(ticks), sounddelayticks: ticks };
+}
+
+interface WireEnum {
+  enum: string[];
+  "x-wire-ints": number[];
+}
 
 /**
  * One normalized emote, from a block or a legacy bank row. Emotes are a sorted
@@ -76,15 +81,17 @@ export interface CharEmote {
   /** Camera-motion file (a VMD carrying a camera track) that frames this
    * emote, or null when it uses the default camera (block format only). */
   camera: string | null;
-  /** AO emote modifier (0 = none, 1 = play preanim, 5/6 = zoom). Default 0. */
-  modifier: number;
-  /** Desk modifier. Default 1 (shown) when the file omits it. */
-  deskmod: number;
+  /** Emote modifier. Default `no_preanim`. */
+  modifier: EmoteModifier;
+  /** Desk modifier. Default `shown`. */
+  deskmod: DeskModifier;
   /** Sound effect: a legacy stem, or (in `[emote]` blocks) the full
    * filename with extension; null when none. */
   sound: string | null;
   /** Sound delay in milliseconds. Default 0 when the file omits it. */
   sounddelayms: number;
+  /** Sound delay in 40 ms ticks, as MS `sfx_delay` carries it. */
+  sounddelayticks: number;
 }
 
 /** `[options]` block. Common keys are typed; the rest stay on the index. */
@@ -124,13 +131,13 @@ function normPreanim(value: string | undefined): string | null {
   return value === undefined || value === "" || value === "-" ? null : value;
 }
 
-/** Legacy positional enum field: a bare number or a named identifier. */
-function parseEnum(
-  value: string | undefined,
-  names: Record<string, number>,
-): number {
-  if (value === undefined || value === "") return 0;
-  return names[value] ?? toInt(value, 0);
+/** Legacy positional enum field: a wire integer (or a name); unknown values map to wire 0. */
+function parseEnum(value: string | undefined, schema: WireEnum): string {
+  const lower = value?.toLowerCase();
+  if (lower !== undefined && schema.enum.includes(lower)) return lower;
+  const ints = schema["x-wire-ints"];
+  const i = ints.indexOf(toInt(value, 0));
+  return schema.enum[i === -1 ? ints.indexOf(0) : i] ?? "";
 }
 
 /**
@@ -140,23 +147,27 @@ function parseEnum(
  */
 function requireEnumName(
   value: string | undefined,
-  names: Record<string, number>,
+  schema: WireEnum,
   field: string,
   key: string,
-): number | undefined {
+): string | undefined {
   if (value === undefined || value === "") return undefined;
-  const named = names[value];
-  if (named === undefined) {
+  const lower = value.toLowerCase();
+  if (!schema.enum.includes(lower)) {
     throw new Error(
-      `char.ini emote "${key}": ${field} "${value}" must be one of: ${Object.keys(names).join(", ")}`,
+      `char.ini emote "${key}": ${field} "${value}" must be one of: ${schema.enum.join(", ")}`,
     );
   }
-  return named;
+  return lower;
 }
 
-/** Empty or absent sound means "no sound"; `0` is kept verbatim. */
 function normSound(value: string | undefined): string | null {
   return value === undefined || value === "" ? null : value;
+}
+
+/** Legacy [soundn] also uses `0`, `1` and `-` as "no sound". */
+function normLegacySound(value: string | undefined): string | null {
+  return value === "0" || value === "1" || value === "-" ? null : normSound(value);
 }
 
 /**
@@ -287,11 +298,10 @@ function readBlockEmotes(
       postanim,
       camera,
       // Blocks require named enum identifiers, no bare magic numbers.
-      modifier: requireEnumName(block.modifier, MODIFIER_NAMES, "modifier", key) ?? 0,
-      deskmod: requireEnumName(block.deskmod, DESKMOD_NAMES, "deskmod", key) ?? 1,
+      modifier: (requireEnumName(block.modifier, EmoteModifierSchema, "modifier", key) ?? "no_preanim") as EmoteModifier,
+      deskmod: (requireEnumName(block.deskmod, DeskModifierSchema, "deskmod", key) ?? "shown") as DeskModifier,
       sound,
-      sounddelayms:
-        block.sounddelayms !== undefined ? toInt(block.sounddelayms, 0) : 0,
+      ...soundDelayFromMs(block.sounddelayms !== undefined ? toInt(block.sounddelayms, 0) : 0),
     });
   }
   return emotes;
@@ -320,11 +330,10 @@ function readLegacyEmotes(
       preanim: normPreanim(parts[1]),
       postanim: null,
       camera: null,
-      modifier: parseEnum(parts[3], MODIFIER_NAMES),
-      deskmod: parts.length > 4 ? parseEnum(parts[4], DESKMOD_NAMES) : 1,
-      sound: normSound(soundN[String(id)]),
-      // [soundt] is in ticks; normalize to milliseconds.
-      sounddelayms: delay !== undefined ? toInt(delay, 0) * TICK_MS : 0,
+      modifier: parseEnum(parts[3], EmoteModifierSchema) as EmoteModifier,
+      deskmod: parts.length > 4 ? parseEnum(parts[4], DeskModifierSchema) as DeskModifier : "shown",
+      sound: normLegacySound(soundN[String(id)]),
+      ...soundDelayFromTicks(delay !== undefined ? toInt(delay, 0) : 0),
     });
   }
   return emotes;

@@ -19,8 +19,12 @@
       "default": ""
     },
     "effects": {
-      "type": "number",
-      "default": 0
+      "$ref": "../../types/MusicEffects.schema.json",
+      "default": {
+        "fade_in": false,
+        "fade_out": false,
+        "sync_position": false
+      }
     }
   },
   "required": [

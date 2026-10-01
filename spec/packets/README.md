@@ -19,8 +19,6 @@ FantaCode wire keeps the integer: `JD.state` (JudgeState), `AUTH.auth_state`
 
 Deliberately left as numbers for now:
 
-- `MC.effects` is a bitfield (fade in / fade out / sync), not a single enum;
-  an enum can't express combinations. Candidate for a boolean-object shape.
 - `MC.channel` is a `0-3` channel index with only loose conventions, not a
   fixed named set.
 - `ZZ.target` exists in the schema but not in the reference docs (which show

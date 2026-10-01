@@ -84,7 +84,7 @@ describe("round-trips: optional-with-default packets", () => {
     expect(out).toEqual({ $header: "BN", background: "court", position: "" });
   });
 
-  it("RT decodes the lenient wire forms AO2-Client accepts", () => {
+  it("RT decodes lenient wire forms", () => {
     const cases: [string, string, string][] = [
       ["RT#testimony1#%", "witness_testimony", ""],
       ["RT#testimony1#5#%", "witness_testimony", ""],
@@ -108,6 +108,13 @@ describe("round-trips: optional-with-default packets", () => {
   it("RT rejects custom without a name and a name on a fixed animation", () => {
     expect(() => encode(c2sSchemas.RT, { animation: "custom" }, "fanta")).toThrow();
     expect(() => encode(c2sSchemas.RT, { animation: "guilty", name: "x" }, "fanta")).toThrow();
+  });
+
+  it("MC effects bitfield ignores unknown bits and rejects non-integers", () => {
+    expect(decode(c2sSchemas.MC, "MC#x#1##9#%")).toMatchObject({
+      effects: { fade_in: true, fade_out: false, sync_position: false },
+    });
+    expect(() => decode(c2sSchemas.MC, "MC#x#1##abc#%")).toThrow();
   });
 
   it("ZZ fills target=-1 when absent", () => {

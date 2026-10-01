@@ -126,6 +126,7 @@ type Schema struct {
 	Description       string
 	Enum              []string
 	XWireInts         []int
+	XWireBits         []int
 	Properties        []Prop
 	Required          map[string]bool
 	Items             *Schema
@@ -150,6 +151,7 @@ func schemaFromJSON(name string, o *ojson) *Schema {
 	s.Const = o.str("const")
 	s.Enum = o.strSlice("enum")
 	s.XWireInts = o.intSlice("x-wire-ints")
+	s.XWireBits = o.intSlice("x-wire-bits")
 	s.XFantaUnescapeAmp = o.has("x-fanta-unescape-amp")
 	s.TypeStr = o.str("type")
 	if s.TypeStr == "object" {
@@ -732,6 +734,23 @@ func emitTypes(types []*Schema) string {
 			fmt.Fprintf(&b, "\t%s %s `json:%q`\n", pascalCase(p.Name), ft, p.Name)
 		}
 		b.WriteString("}\n\n")
+		if len(t.XWireBits) > 0 {
+			emitWireBits(&b, t)
+		}
 	}
 	return b.String()
+}
+
+func emitWireBits(b *strings.Builder, t *Schema) {
+	fn := lowerFirst(t.Name)
+	fmt.Fprintf(b, "func %sToWire(v %s) string {\n\tn := 0\n", fn, t.Name)
+	for i, p := range t.Properties {
+		fmt.Fprintf(b, "\tif v.%s {\n\t\tn |= %d\n\t}\n", pascalCase(p.Name), t.XWireBits[i])
+	}
+	b.WriteString("\treturn itoa(n)\n}\n\n")
+	fmt.Fprintf(b, "func %sFromWire(s string) %s {\n\tn := atoiOrZero(s)\n\treturn %s{\n", fn, t.Name, t.Name)
+	for i, p := range t.Properties {
+		fmt.Fprintf(b, "\t\t%s: n&%d != 0,\n", pascalCase(p.Name), t.XWireBits[i])
+	}
+	b.WriteString("\t}\n}\n\n")
 }

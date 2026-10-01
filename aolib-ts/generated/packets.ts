@@ -3,7 +3,7 @@
 /* eslint-disable */
 
 import { AreaUpdateType, AuthState, CharAvailability, DeskModifier, EmoteModifier, Flip, JudgeState, PenaltyBar, PlayerDataType, PlayerListUpdate, RTAnimation, ShoutModifier, Side, TextColor, TimerCommand } from "./enums";
-import { Effect, Offset } from "./types";
+import { Effect, MusicEffects, Offset } from "./types";
 
 import AreaUpdateTypeEnumSchema from "../../spec/types/AreaUpdateType.schema.json";
 
@@ -36,6 +36,8 @@ import TextColorEnumSchema from "../../spec/types/TextColor.schema.json";
 import TimerCommandEnumSchema from "../../spec/types/TimerCommand.schema.json";
 
 import EffectTypeSchema from "../../spec/types/Effect.schema.json";
+
+import MusicEffectsTypeSchema from "../../spec/types/MusicEffects.schema.json";
 
 import OffsetTypeSchema from "../../spec/types/Offset.schema.json";
 
@@ -264,7 +266,7 @@ export { default as decryptorSchema } from "../../spec/packets/schemas/decryptor
 
 export const enumSchemas = [AreaUpdateTypeEnumSchema, AuthStateEnumSchema, CharAvailabilityEnumSchema, DeskModifierEnumSchema, EmoteModifierEnumSchema, FlipEnumSchema, JudgeStateEnumSchema, PenaltyBarEnumSchema, PlayerDataTypeEnumSchema, PlayerListUpdateEnumSchema, RTAnimationEnumSchema, ShoutModifierEnumSchema, SideEnumSchema, TextColorEnumSchema, TimerCommandEnumSchema];
 
-export const typeSchemas = [EffectTypeSchema, OffsetTypeSchema];
+export const typeSchemas = [EffectTypeSchema, MusicEffectsTypeSchema, OffsetTypeSchema];
 
 
 export interface Packet {
@@ -660,7 +662,7 @@ export interface MCToClient extends Packet {
   showname: string;
   looping: boolean;
   channel: number;
-  effects: number;
+  effects: MusicEffects;
 }
 
 export interface MCToClientInit {
@@ -669,7 +671,7 @@ export interface MCToClientInit {
   showname?: string;
   looping?: boolean;
   channel?: number;
-  effects?: number;
+  effects?: MusicEffects;
 }
 
 
@@ -678,14 +680,14 @@ export interface MCToServer extends Packet {
   name: string;
   char_id: number;
   showname: string;
-  effects: number;
+  effects: MusicEffects;
 }
 
 export interface MCToServerInit {
   name: string;
   char_id: number;
   showname?: string;
-  effects?: number;
+  effects?: MusicEffects;
 }
 
 

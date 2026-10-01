@@ -84,3 +84,40 @@ func TestDecodeRTRejectsInvalid(t *testing.T) {
 		}
 	}
 }
+
+func TestParseARUPEdgeCases(t *testing.T) {
+	p, err := ParseARUP(nil)
+	if err != nil || p.UpdateType != AreaUpdateTypePlayerCount || p.UpdateData == nil || len(p.UpdateData) != 0 {
+		t.Fatalf("ParseARUP(empty) = %#v, %v", p, err)
+	}
+	p, err = ParseARUP([]string{"0", "abc", "5"})
+	if err != nil || p.UpdateData[0] != "0" || p.UpdateData[1] != "5" {
+		t.Fatalf("ParseARUP(non-numeric count) = %#v, %v", p, err)
+	}
+	if _, err := ParseARUP([]string{"9", "x"}); err == nil {
+		t.Fatal("ParseARUP(unknown update_type) succeeded, want error")
+	}
+}
+
+func TestARUPJSONRejectsBadData(t *testing.T) {
+	var p ARUP
+	if err := p.UnmarshalJSON([]byte(`{"update_type":"bogus","update_data":[]}`)); err == nil {
+		t.Fatal("unknown update_type accepted")
+	}
+	if err := p.UnmarshalJSON([]byte(`{"update_type":"status","update_data":[true]}`)); err == nil {
+		t.Fatal("boolean update_data accepted")
+	}
+	if _, err := Encode(&ARUP{UpdateType: AreaUpdateTypePlayerCount, UpdateData: []string{"x"}}, WireJSON); err == nil {
+		t.Fatal("non-integer player count encoded")
+	}
+}
+
+func TestMusicEffectsIgnoresUnknownBits(t *testing.T) {
+	got := musicEffectsFromWire("9")
+	if got != (MusicEffects{FadeIn: true}) {
+		t.Fatalf("musicEffectsFromWire(9) = %#v", got)
+	}
+	if w := musicEffectsToWire(got); w != "1" {
+		t.Fatalf("musicEffectsToWire = %q, want \"1\"", w)
+	}
+}

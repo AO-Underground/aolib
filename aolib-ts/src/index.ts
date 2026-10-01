@@ -47,6 +47,8 @@ export {
 // Asset formats.
 
 export {
+  msToTicks,
+  ticksToMs,
   parseCharIni,
   type CharIni,
   type CharIniOptions,

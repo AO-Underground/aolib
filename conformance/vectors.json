@@ -418,5 +418,120 @@
       "animation": "custom",
       "name": "knock&enter"
     }
+  },
+  {
+    "id": "ARUP-player_count",
+    "header": "ARUP",
+    "receiver": "client",
+    "fanta": "ARUP#0#4#3#0#%",
+    "json": {
+      "$header": "ARUP",
+      "update_type": "player_count",
+      "update_data": [
+        4,
+        3,
+        0
+      ]
+    }
+  },
+  {
+    "id": "ARUP-status",
+    "header": "ARUP",
+    "receiver": "client",
+    "fanta": "ARUP#1#IDLE#CASING#LOOKING-FOR-PLAYERS#%",
+    "json": {
+      "$header": "ARUP",
+      "update_type": "status",
+      "update_data": [
+        "IDLE",
+        "CASING",
+        "LOOKING-FOR-PLAYERS"
+      ]
+    }
+  },
+  {
+    "id": "ARUP-case_manager-escape",
+    "header": "ARUP",
+    "receiver": "client",
+    "fanta": "ARUP#2#Phoenix <and> Maya#FREE#100<percent> <num>1#%",
+    "json": {
+      "$header": "ARUP",
+      "update_type": "case_manager",
+      "update_data": [
+        "Phoenix & Maya",
+        "FREE",
+        "100% #1"
+      ]
+    }
+  },
+  {
+    "id": "ARUP-locked",
+    "header": "ARUP",
+    "receiver": "client",
+    "fanta": "ARUP#3#FREE#SPECTATABLE#LOCKED#%",
+    "json": {
+      "$header": "ARUP",
+      "update_type": "locked",
+      "update_data": [
+        "FREE",
+        "SPECTATABLE",
+        "LOCKED"
+      ]
+    }
+  },
+  {
+    "id": "MCToServer-effects",
+    "header": "MC",
+    "receiver": "server",
+    "fanta": "MC#Cornered.opus#12#Wright#5#%",
+    "json": {
+      "$header": "MC",
+      "name": "Cornered.opus",
+      "char_id": 12,
+      "showname": "Wright",
+      "effects": {
+        "fade_in": true,
+        "fade_out": false,
+        "sync_position": true
+      }
+    }
+  },
+  {
+    "id": "MCToClient-effects",
+    "header": "MC",
+    "receiver": "client",
+    "fanta": "MC#Cornered.opus#12#Wright#1#0#3#%",
+    "json": {
+      "$header": "MC",
+      "name": "Cornered.opus",
+      "char_id": 12,
+      "showname": "Wright",
+      "looping": true,
+      "channel": 0,
+      "effects": {
+        "fade_in": true,
+        "fade_out": true,
+        "sync_position": false
+      }
+    }
+  },
+  {
+    "id": "MCToClient-no-effects",
+    "header": "MC",
+    "receiver": "client",
+    "fanta": "MC#~stop.mp3#3##0#0#0#%",
+    "json": {
+      "$header": "MC",
+      "name": "~stop.mp3",
+      "char_id": 3,
+      "showname": "",
+      "looping": false,
+      "channel": 0,
+      "effects": {
+        "fade_in": false,
+        "fade_out": false,
+        "sync_position": false
+      }
+    }
   }
 ]

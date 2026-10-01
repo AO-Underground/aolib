@@ -21,8 +21,5 @@ them spec-correct.
 
 Covered: simple scalar packets, both `ID` directions, arrays of scalars (`FL`),
 string escaping (`CT`), the rich `MS` (string enums, `{x,y}` offset, bools),
-the object-item array packets (`SM`, `FM`, `SC`, `LE`, `CI`, `EM`), and
-`const` padding slots (`PV`), and the `RT` codec.
-
-Not yet covered: the `ARUP` codec, whose `update_data` element type depends on
-`update_type`.
+the object-item array packets (`SM`, `FM`, `SC`, `LE`, `CI`, `EM`),
+`const` padding slots (`PV`), and the `x-fanta-codec` packets (`RT`, `ARUP`).

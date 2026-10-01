@@ -1,6 +1,6 @@
 # spec
 
-Schemas for the Attorney Online wire protocol — the single source of truth
+Schemas for the Attorney Online wire protocol: the single source of truth
 consumed by every `aolib-*` binding in this monorepo, so all bindings stay in
 sync.
 
@@ -18,6 +18,7 @@ packets/
   EXAMPLES.md                  complete key packets in both wire forms
 types/<Name>.schema.json       shared enums and object types, $ref'd from packets
 assets/<Name>.schema.json      character asset-file formats (char.ini)
+assets/EXAMPLES.md             char.ini files and their parsed objects
 ```
 
 Each kind is a top-level directory with an intro `README.md`; packet schemas
@@ -71,7 +72,8 @@ fanta-format walker to the same schemas:
   - `number` / `integer`: `String(n)` / `Number(token)`
   - `boolean`: `"1"` / `"0"`
   - `object`: recurse, joining sub-tokens with `&` (or the
-    `x-fanta-separator` value); see `x-fanta-separator` below
+    `x-fanta-separator` value); see `x-fanta-separator` below. An object with
+    `x-wire-bits` is instead one integer slot; see `x-wire-bits` below
   - `array`: greedy, trailing array consumes all remaining slots
   - `const`: emitted as the const value; on decode the slot is consumed
     and the schema-fixed value is used regardless of the token
@@ -139,6 +141,13 @@ wire encoding: this array is parallel to `enum` and gives each value's integer.
 The fanta walker encodes the integer and decodes an incoming integer back to the
 string, so real AO servers still see the numbers they expect. Enums without this
 keyword (e.g. `Side`) are sent as their string value on both sides.
+
+### `x-wire-bits: integer[]`
+
+On an `object` schema whose properties are all booleans. Parallel to
+`properties` (in order), giving each flag's bit. JSON carries the object; the
+fanta slot carries the integer OR of the set bits. On decode, bits with no
+property are ignored. Currently set on `MusicEffects` (MC `effects`).
 
 ### `x-fanta-separator: string`
 

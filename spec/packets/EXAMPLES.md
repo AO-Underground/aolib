@@ -185,10 +185,10 @@ CT#Server#Area 1 is now locked.#1#%
 
 ## MC (client to server)
 
-Music change request.
+Music change request that fades in and keeps the previous track's position. `effects` is a bitfield on the wire (`5` = fade in + sync position).
 
 ```
-MC#Cornered.opus#12#Wright#0#%
+MC#Cornered.opus#12#Wright#5#%
 ```
 
 ```json
@@ -197,16 +197,20 @@ MC#Cornered.opus#12#Wright#0#%
   "name": "Cornered.opus",
   "char_id": 12,
   "showname": "Wright",
-  "effects": 0
+  "effects": {
+    "fade_in": true,
+    "fade_out": false,
+    "sync_position": true
+  }
 }
 ```
 
 ## MC (server to client)
 
-Music change broadcast, looping on channel 0.
+Music change broadcast, looping on channel 0, fading the old track out and the new one in (`3`).
 
 ```
-MC#Cornered.opus#12#Wright#1#0#0#%
+MC#Cornered.opus#12#Wright#1#0#3#%
 ```
 
 ```json
@@ -217,7 +221,11 @@ MC#Cornered.opus#12#Wright#1#0#0#%
   "showname": "Wright",
   "looping": true,
   "channel": 0,
-  "effects": 0
+  "effects": {
+    "fade_in": true,
+    "fade_out": true,
+    "sync_position": false
+  }
 }
 ```
 

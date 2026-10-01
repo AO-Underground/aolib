@@ -196,7 +196,7 @@ describe("bidirectional MC", () => {
       showname: "Phoenix",
       looping: true,
       channel: 2,
-      effects: 3,
+      effects: { fade_in: true, fade_out: true, sync_position: false },
     });
   });
 
@@ -210,7 +210,7 @@ describe("bidirectional MC", () => {
       showname: "Edgeworth",
       looping: false,
       channel: 1,
-      effects: 0,
+      effects: { fade_in: false, fade_out: false, sync_position: false },
     });
     expect(out).toEqual(["MC#track2#6#Edgeworth#0#1#0#%"]);
 
@@ -224,7 +224,7 @@ describe("bidirectional MC", () => {
       name: "track3",
       char_id: 7,
       showname: "",
-      effects: 0,
+      effects: { fade_in: false, fade_out: false, sync_position: false },
     });
   });
 });

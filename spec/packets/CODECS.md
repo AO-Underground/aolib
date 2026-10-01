@@ -49,8 +49,11 @@ produce it.
 
 ## `RT`
 
-Judge-control overlay, both directions. JSON carries one `animation`
-(`RTAnimation`); the wire splits it into a name slot and an integer variant slot.
+Judge-control overlay, both directions. JSON carries `animation` (`RTAnimation`)
+and `name`. `name` is the custom animation's name: required and non-empty when
+`animation` is `custom`, empty (`""`, the default) otherwise. On the wire the
+first slot is the wire animation (or the custom `name`), followed by an integer
+variant slot for the built-in animations.
 
 | `animation` | wire |
 |---|---|
@@ -61,7 +64,7 @@ Judge-control overlay, both directions. JSON carries one `animation`
 | `guilty` | `RT#judgeruling#1#%` |
 | `custom` | `RT#{name}#%` |
 
-Decoding follows AO2-Client: a missing or non-integer variant is `0`,
+Decoding is lenient: a missing or non-integer variant is `0`,
 `testimony1` with any variant other than `1` is `witness_testimony`, the variant
 of `testimony2` and custom names is ignored, and `judgeruling` with a variant
 other than `0` or `1` is an error. Any other first slot is `custom` with that

@@ -132,26 +132,31 @@
           "default": null
         },
         "modifier": {
-          "type": "integer",
-          "description": "AO emote modifier (0 = none, 1 = play preanim, 5 = zoom, 6 = objection+zoom). For 3D the zoom variants are advisory; camera treatment comes from the emote's `camera` VMD.",
-          "default": 0
+          "$ref": "../types/EmoteModifier.schema.json",
+          "default": "no_preanim",
+          "description": "Emote modifier. Legacy banks give the wire integer, mapped to the name (unknown integers map to wire 0). For 3D the zoom variants are advisory; camera treatment comes from the emote's `camera` VMD."
         },
         "deskmod": {
-          "type": "integer",
-          "description": "Desk modifier. Default 1 (shown) when the file omits it.",
-          "default": 1
+          "$ref": "../types/DeskModifier.schema.json",
+          "default": "shown",
+          "description": "Desk modifier. Legacy banks give the wire integer, mapped to the name (unknown integers map to wire 0)."
         },
         "sound": {
           "type": [
             "string",
             "null"
           ],
-          "description": "Sound effect for this emote, or null. Legacy [soundn] is a stem the client expands; in [emote <name>] blocks it is the full filename with extension (.opus/.wav/.ogg).",
+          "description": "Sound effect for this emote, or null. Legacy [soundn] is a stem the client expands, where `0`, `1` and `-` also mean no sound; in [emote <name>] blocks it is the full filename with extension (.opus/.wav/.ogg).",
           "default": null
         },
         "sounddelayms": {
           "type": "integer",
-          "description": "Sound delay in milliseconds. Default 0 when the file omits it. Legacy [soundt] is in ticks (1 tick = 60 ms) and is normalized here.",
+          "description": "Sound delay in milliseconds. Default 0. Authoritative for [emote] blocks; derived (ticks × 40) for legacy [soundt].",
+          "default": 0
+        },
+        "sounddelayticks": {
+          "type": "integer",
+          "description": "Sound delay in 40 ms ticks, as MS sfx_delay carries it. Default 0. Authoritative for legacy [soundt]; derived (ms / 40, rounded half up) for [emote] blocks.",
           "default": 0
         }
       },
@@ -165,7 +170,8 @@
         "modifier",
         "deskmod",
         "sound",
-        "sounddelayms"
+        "sounddelayms",
+        "sounddelayticks"
       ],
       "additionalProperties": false
     }

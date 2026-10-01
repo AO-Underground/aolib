@@ -1,0 +1,35 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "/types/MusicEffects.schema.json",
+  "title": "MusicEffects",
+  "description": "Transition effects for an MC track change.",
+  "type": "object",
+  "properties": {
+    "fade_in": {
+      "type": "boolean",
+      "default": false,
+      "description": "The new track fades in."
+    },
+    "fade_out": {
+      "type": "boolean",
+      "default": false,
+      "description": "The track already playing on the channel fades out instead of stopping."
+    },
+    "sync_position": {
+      "type": "boolean",
+      "default": false,
+      "description": "The new track starts at the previous track's playback position."
+    }
+  },
+  "required": [
+    "fade_in",
+    "fade_out",
+    "sync_position"
+  ],
+  "additionalProperties": false,
+  "x-wire-bits": [
+    1,
+    2,
+    4
+  ]
+}

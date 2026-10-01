@@ -993,12 +993,12 @@ func ParseMA(body []string) (*MA, error) {
 
 // MCToClient is
 type MCToClient struct {
-	Name     string `json:"name"`
-	CharID   int    `json:"char_id"`
-	Showname string `json:"showname"`
-	Looping  bool   `json:"looping"`
-	Channel  int    `json:"channel"`
-	Effects  int    `json:"effects"`
+	Name     string       `json:"name"`
+	CharID   int          `json:"char_id"`
+	Showname string       `json:"showname"`
+	Looping  bool         `json:"looping"`
+	Channel  int          `json:"channel"`
+	Effects  MusicEffects `json:"effects"`
 }
 
 func (p *MCToClient) Header() string { return "MC" }
@@ -1010,7 +1010,7 @@ func (p *MCToClient) Args() []string {
 	args = append(args, escapeFanta(p.Showname))
 	args = append(args, boolToWire(p.Looping))
 	args = append(args, itoa(p.Channel))
-	args = append(args, itoa(p.Effects))
+	args = append(args, musicEffectsToWire(p.Effects))
 	return args
 }
 
@@ -1033,17 +1033,17 @@ func ParseMCToClient(body []string) (*MCToClient, error) {
 	cursor++
 	p.Channel = atoiOrZero(get(cursor))
 	cursor++
-	p.Effects = atoiOrZero(get(cursor))
+	p.Effects = musicEffectsFromWire(get(cursor))
 	cursor++
 	return p, nil
 }
 
 // MCToServer is
 type MCToServer struct {
-	Name     string `json:"name"`
-	CharID   int    `json:"char_id"`
-	Showname string `json:"showname"`
-	Effects  int    `json:"effects"`
+	Name     string       `json:"name"`
+	CharID   int          `json:"char_id"`
+	Showname string       `json:"showname"`
+	Effects  MusicEffects `json:"effects"`
 }
 
 func (p *MCToServer) Header() string { return "MC" }
@@ -1053,7 +1053,7 @@ func (p *MCToServer) Args() []string {
 	args = append(args, escapeFanta(p.Name))
 	args = append(args, itoa(p.CharID))
 	args = append(args, escapeFanta(p.Showname))
-	args = append(args, itoa(p.Effects))
+	args = append(args, musicEffectsToWire(p.Effects))
 	return args
 }
 
@@ -1072,7 +1072,7 @@ func ParseMCToServer(body []string) (*MCToServer, error) {
 	cursor++
 	p.Showname = unescapeFanta(get(cursor))
 	cursor++
-	p.Effects = atoiOrZero(get(cursor))
+	p.Effects = musicEffectsFromWire(get(cursor))
 	cursor++
 	return p, nil
 }

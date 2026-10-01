@@ -39,6 +39,8 @@ export interface JsonSchema {
    * to it.
    */
   "x-fanta-separator"?: string;
+  /** On a boolean-flag object: each property's bit, in property order; the slot is their OR. */
+  "x-wire-bits"?: number[];
   /** On a packet root: replace the whole walker with a registered codec. */
   "x-fanta-codec"?: string;
 

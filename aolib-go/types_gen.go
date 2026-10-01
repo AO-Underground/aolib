@@ -9,6 +9,36 @@ type Effect struct {
 	Sound  string `json:"sound"`
 }
 
+// MusicEffects is Transition effects for an MC track change.
+type MusicEffects struct {
+	FadeIn       bool `json:"fade_in"`
+	FadeOut      bool `json:"fade_out"`
+	SyncPosition bool `json:"sync_position"`
+}
+
+func musicEffectsToWire(v MusicEffects) string {
+	n := 0
+	if v.FadeIn {
+		n |= 1
+	}
+	if v.FadeOut {
+		n |= 2
+	}
+	if v.SyncPosition {
+		n |= 4
+	}
+	return itoa(n)
+}
+
+func musicEffectsFromWire(s string) MusicEffects {
+	n := atoiOrZero(s)
+	return MusicEffects{
+		FadeIn:       n&1 != 0,
+		FadeOut:      n&2 != 0,
+		SyncPosition: n&4 != 0,
+	}
+}
+
 // Offset is Integer (x, y) screen-coordinate pair carried in MS offset / paired_offset slots.
 type Offset struct {
 	X int `json:"x"`

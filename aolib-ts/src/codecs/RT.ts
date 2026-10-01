@@ -1,6 +1,6 @@
 /**
  * RT fanta codec: one `animation` in JSON, `name#variant` on the wire.
- * Decoding mirrors AO2-Client's `handle_wtce`. See spec/packets/CODECS.md.
+ * Decoding rules: spec/packets/CODECS.md.
  */
 
 import { registerCodec, escapeFanta, unescapeFanta } from "../fanta";

@@ -41,7 +41,8 @@
     },
     "sfx_delay": {
       "type": "number",
-      "default": 0
+      "default": 0,
+      "description": "Delay before `sfx_name` plays, in ticks of 40 ms."
     },
     "shout_modifier": {
       "$ref": "../../types/ShoutModifier.schema.json",

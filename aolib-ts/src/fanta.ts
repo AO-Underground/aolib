@@ -13,7 +13,8 @@
  *                     effect; an all-empty object collapses to an empty
  *                     slot). Optional `x-fanta-unescape-amp: true`
  *                     tolerates the legacy `<and>` form on decode (offset
- *                     slot in MS). Encoders never emit `<and>`.
+ *                     slot in MS). Encoders never emit `<and>`. With
+ *                     `x-wire-bits`, one integer slot of OR'd flags.
  *   "array"           greedy, consumes all remaining slots
  *   const             emitted as the const value; on decode the slot
  *                     is consumed but the schema-fixed value is used
@@ -130,6 +131,11 @@ function wireInts(s: JsonSchema): number[] | undefined {
   return Array.isArray(w) ? (w as number[]) : undefined;
 }
 
+function wireBits(s: JsonSchema): number[] | undefined {
+  const w = s["x-wire-bits"];
+  return Array.isArray(w) ? w : undefined;
+}
+
 /**
  * Encode an `x-wire-ints` enum value to its legacy integer token, or
  * undefined when the schema is not such an enum.
@@ -175,6 +181,15 @@ function encodeToken(rawSchema: JsonSchema, value: unknown, baseId: string): str
   if (wire !== undefined) return wire;
 
   const t = jsonType(schema);
+  const bits = wireBits(schema);
+  if (bits) {
+    const obj = (value ?? {}) as Record<string, unknown>;
+    let n = 0;
+    Object.keys(schema.properties ?? {}).forEach((k, i) => {
+      if (obj[k] === true) n |= bits[i] ?? 0;
+    });
+    return String(n);
+  }
   if (t === "object") {
     const sep = typeof schema["x-fanta-separator"] === "string" ? schema["x-fanta-separator"] : "&";
     const parts: string[] = [];
@@ -214,9 +229,21 @@ function decodeToken(rawSchema: JsonSchema, token: string, name: string, baseId:
   if (enumValue !== undefined) return enumValue;
 
   const t = jsonType(schema);
+  const bits = wireBits(schema);
+  if (bits) {
+    if (!/^\d+$/.test(token)) {
+      throw new Error(`Invalid bitfield for field '${name}': ${JSON.stringify(token)}`);
+    }
+    const n = Number(token);
+    const result: Record<string, boolean> = {};
+    Object.keys(schema.properties ?? {}).forEach((k, i) => {
+      result[k] = (n & (bits[i] ?? 0)) !== 0;
+    });
+    return result;
+  }
   if (t === "object") {
     const sep = typeof schema["x-fanta-separator"] === "string" ? schema["x-fanta-separator"] : "&";
-    const raw = schema["x-fanta-unescape-amp"] ? token.replaceAll("<and>", "&") : token;
+    const raw =schema["x-fanta-unescape-amp"] ? token.replaceAll("<and>", "&") : token;
     const parts = raw.split(sep);
     const result: Record<string, unknown> = {};
     let i = 0;
