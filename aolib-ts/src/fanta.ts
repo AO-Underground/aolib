@@ -5,7 +5,7 @@
  * the framing layer carries it). Per-property semantics come from
  * the JSON Schema:
  *
- *   "string"          escape-fanta on encode, unescape+unicode on decode
+ *   "string"          escape-fanta on encode, unescape-fanta on decode
  *   "number"/"integer" String(n) on encode, Number(token) on decode
  *   "boolean"         "1"/"0" on encode, token === "1" on decode
  *   "object"          recurse, join sub-tokens with `&`, or with the
@@ -46,12 +46,6 @@ export function unescapeFanta(s: string): string {
     .replaceAll("<and>", "&")
     .replaceAll("<percent>", "%")
     .replaceAll("<dollar>", "$");
-}
-
-export function unescapeUnicode(s: string): string {
-  return s.replace(/\\u([\d\w]{1,})/gi, (_m: string, g: string) =>
-    String.fromCharCode(parseInt(g, 16)),
-  );
 }
 
 // Custom codec registry.
@@ -258,7 +252,7 @@ function decodeToken(rawSchema: JsonSchema, token: string, name: string, baseId:
 function decodeScalar(t: string | undefined, token: string, name: string): unknown {
   switch (t) {
     case "string":
-      return unescapeUnicode(unescapeFanta(token));
+      return unescapeFanta(token);
     case "boolean":
       if (token !== "0" && token !== "1") {
         throw new Error(`Invalid boolean for field '${name}': expected "0" or "1", got ${JSON.stringify(token)}`);

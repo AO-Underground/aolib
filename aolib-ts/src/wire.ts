@@ -15,7 +15,6 @@ export {
   toFantaArgs,
   escapeFanta,
   unescapeFanta,
-  unescapeUnicode,
   registerCodec,
 } from "./fanta";
 export type { JsonSchema, Codec } from "./types";

@@ -121,6 +121,11 @@ describe("round-trips: optional-with-default packets", () => {
     expect(() => encode(c2sSchemas.HP, { bar: "defense", value: 11 }, "fanta")).toThrow();
   });
 
+  it("FantaCode strings keep a literal \\u", () => {
+    const out = decode(c2sSchemas.CT, "CT#Phoenix#C:\\users \\u0041BC#%");
+    expect(out).toMatchObject({ message: "C:\\users \\u0041BC" });
+  });
+
   it("TI decodes the two-slot show/hide form", () => {
     expect(decode(s2cSchemas.TI, "TI#0#2#%")).toEqual({ $header: "TI", timer_id: 0, command: "show", time: 0 });
   });

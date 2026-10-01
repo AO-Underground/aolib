@@ -18,7 +18,6 @@ describe("aolib-ts/wire subpath", () => {
       "fromFantaArgs",
       "escapeFanta",
       "unescapeFanta",
-      "unescapeUnicode",
       "registerCodec",
     ]) {
       expect(typeof w[fn]).toBe("function");

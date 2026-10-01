@@ -874,5 +874,16 @@
         "sync_position": true
       }
     }
+  },
+  {
+    "id": "CTToServer-literal-backslash-u",
+    "header": "CT",
+    "receiver": "server",
+    "fanta": "CT#Phoenix#C:\\users \\u0041BC#%",
+    "json": {
+      "$header": "CT",
+      "name": "Phoenix",
+      "message": "C:\\users \\u0041BC"
+    }
   }
 ]
