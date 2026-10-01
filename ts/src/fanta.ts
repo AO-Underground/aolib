@@ -236,8 +236,9 @@ function decodeToken(rawSchema: JsonSchema, token: string, name: string, baseId:
     return result;
   }
   if (t === "object") {
+    if (token === "" && schema.default !== undefined) return structuredClone(schema.default);
     const sep = typeof schema["x-fanta-separator"] === "string" ? schema["x-fanta-separator"] : "&";
-    const raw =schema["x-fanta-unescape-amp"] ? token.replaceAll("<and>", "&") : token;
+    const raw = schema["x-fanta-unescape-amp"] ? token.replaceAll("<and>", "&") : token;
     const parts = raw.split(sep);
     const result: Record<string, unknown> = {};
     let i = 0;

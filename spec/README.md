@@ -160,6 +160,10 @@ decodes back to the all-empty object. Scoped to objects carrying it; plain
 `&`-objects (e.g. `Offset`) are unaffected. Currently set on `Effect`
 (separator `|`), the MS `effect` field (see `packets/EFFECTS.md`).
 
+Separately, an empty slot for any `object` field that declares a `default`
+decodes to that default (AO2 servers send an empty MS `paired_offset` when
+there is no pair). Encoders still emit the full form.
+
 ### `x-fanta-unescape-amp: true`
 
 On an `object`-typed schema. Encoders never emit the legacy `<and>`

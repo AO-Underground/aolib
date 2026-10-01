@@ -272,6 +272,15 @@ describe("MS: offset codec", () => {
     expect(decoded.offset).toEqual({ x: 50, y: -20 });
   });
 
+  it("an empty offset slot decodes to the default", () => {
+    // AO2 servers send an empty paired_offset when there is no pair.
+    const wire = "MS#1#-#angel starr#normal#a#wit#0#0#33#0#0#0#0#0#0##-1###0<and>0##0#0#0#0#-#-#-#0##%";
+    const decoded = decode(MSToClient, wire) as unknown as MSToClientType;
+    expect(decoded.offset).toEqual({ x: 0, y: 0 });
+    expect(decoded.paired_offset).toEqual({ x: 0, y: 0 });
+    expect(decoded.message).toBe("a");
+  });
+
 });
 
 // Effect: `name|folder|sound` on fanta, `{name, folder, sound}` native on JSON.
