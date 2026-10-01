@@ -1,7 +1,8 @@
 # spec
 
-Schemas for the Attorney Online wire protocol. Used as a git submodule by
-each language-specific `aolib-*` library so all bindings stay in sync.
+Schemas for the Attorney Online wire protocol — the single source of truth
+consumed by every `aolib-*` binding in this monorepo, so all bindings stay in
+sync.
 
 JSON Schema (draft-07) is the single source of truth. Each library has its
 own codegen step that consumes these files and emits native types,
