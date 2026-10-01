@@ -118,7 +118,7 @@ export interface CHECKInit {
 
 export interface CI extends Packet {
   $header: "CI";
-  batchIndex: number;
+  batch_index: number;
   entries: {
     index: number;
     data: string;
@@ -126,7 +126,7 @@ export interface CI extends Packet {
 }
 
 export interface CIInit {
-  batchIndex: number;
+  batch_index: number;
   entries: {
     index: number;
     data: string;
@@ -229,7 +229,7 @@ export interface EIInit {
 
 export interface EM extends Packet {
   $header: "EM";
-  batchIndex: number;
+  batch_index: number;
   entries: {
     index: number;
     name: string;
@@ -237,7 +237,7 @@ export interface EM extends Packet {
 }
 
 export interface EMInit {
-  batchIndex: number;
+  batch_index: number;
   entries: {
     index: number;
     name: string;
@@ -660,11 +660,11 @@ export interface RMInit {
 
 export interface RMC extends Packet {
   $header: "RMC";
-  toTime: string;
+  to_time: string;
 }
 
 export interface RMCInit {
-  toTime: string;
+  to_time: string;
 }
 
 

@@ -692,7 +692,7 @@ export const CISchema = {
       "type": "string",
       "const": "CI"
     },
-    "batchIndex": {
+    "batch_index": {
       "type": "number",
       "description": "ID of the first character in this batch."
     },
@@ -721,7 +721,7 @@ export const CISchema = {
   },
   "required": [
     "$header",
-    "batchIndex",
+    "batch_index",
     "entries"
   ],
   "additionalProperties": false,
@@ -965,7 +965,7 @@ export const EMSchema = {
       "type": "string",
       "const": "EM"
     },
-    "batchIndex": {
+    "batch_index": {
       "type": "number",
       "description": "Index of the first entry in this batch."
     },
@@ -994,7 +994,7 @@ export const EMSchema = {
   },
   "required": [
     "$header",
-    "batchIndex",
+    "batch_index",
     "entries"
   ],
   "additionalProperties": false,
@@ -2059,14 +2059,14 @@ export const RMCSchema = {
       "type": "string",
       "const": "RMC"
     },
-    "toTime": {
+    "to_time": {
       "type": "string",
       "description": "Offset into the track, in seconds, as a decimal string."
     }
   },
   "required": [
     "$header",
-    "toTime"
+    "to_time"
   ],
   "additionalProperties": false,
   "x-receiver": "client"

@@ -186,7 +186,7 @@ describe("round-trips: nested packets", () => {
 
   it("CI (incremental char info with (idx, data) pairs)", () => {
     const p = {
-      batchIndex: 0,
+      batch_index: 0,
       entries: [
         { index: 0, data: "Phoenix" },
         { index: 1, data: "Edgeworth" },

@@ -9,7 +9,7 @@
       "type": "string",
       "const": "CI"
     },
-    "batchIndex": {
+    "batch_index": {
       "type": "number",
       "description": "ID of the first character in this batch."
     },
@@ -38,7 +38,7 @@
   },
   "required": [
     "$header",
-    "batchIndex",
+    "batch_index",
     "entries"
   ],
   "additionalProperties": false,

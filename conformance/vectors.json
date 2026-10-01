@@ -233,7 +233,7 @@
     "fanta": "CI#0#0&Phoenix#1&Maya#%",
     "json": {
       "$header": "CI",
-      "batchIndex": 0,
+      "batch_index": 0,
       "entries": [
         {
           "index": 0,
@@ -253,7 +253,7 @@
     "fanta": "EM#0#0&Category#%",
     "json": {
       "$header": "EM",
-      "batchIndex": 0,
+      "batch_index": 0,
       "entries": [
         {
           "index": 0,
@@ -768,7 +768,7 @@
     "fanta": "RMC#x<num>toTime<and>y<percent>z<dollar>#%",
     "json": {
       "$header": "RMC",
-      "toTime": "x#toTime&y%z$"
+      "to_time": "x#toTime&y%z$"
     }
   },
   {

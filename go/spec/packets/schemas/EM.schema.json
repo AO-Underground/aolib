@@ -9,7 +9,7 @@
       "type": "string",
       "const": "EM"
     },
-    "batchIndex": {
+    "batch_index": {
       "type": "number",
       "description": "Index of the first entry in this batch."
     },
@@ -38,7 +38,7 @@
   },
   "required": [
     "$header",
-    "batchIndex",
+    "batch_index",
     "entries"
   ],
   "additionalProperties": false,

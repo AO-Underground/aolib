@@ -9,14 +9,14 @@
       "type": "string",
       "const": "RMC"
     },
-    "toTime": {
+    "to_time": {
       "type": "string",
       "description": "Offset into the track, in seconds, as a decimal string."
     }
   },
   "required": [
     "$header",
-    "toTime"
+    "to_time"
   ],
   "additionalProperties": false,
   "x-receiver": "client"

@@ -286,7 +286,7 @@ func parseCIEntriesItem(s string) CIEntriesItem {
 
 // CI: Legacy batched character list from before SC; webAO's old loader only.
 type CI struct {
-	BatchIndex int             `json:"batchIndex"`
+	BatchIndex int             `json:"batch_index"`
 	Entries    []CIEntriesItem `json:"entries"`
 }
 
@@ -620,7 +620,7 @@ func parseEMEntriesItem(s string) EMEntriesItem {
 
 // EM: Legacy batched area and music list from before SM; webAO's old loader only.
 type EM struct {
-	BatchIndex int             `json:"batchIndex"`
+	BatchIndex int             `json:"batch_index"`
 	Entries    []EMEntriesItem `json:"entries"`
 }
 
@@ -1789,7 +1789,7 @@ func ParseRM(body []string) (*RM, error) {
 
 // RMC: Seeks the currently playing track to an offset. Only webAO handles it; AO2-Client ignores it.
 type RMC struct {
-	ToTime string `json:"toTime"`
+	ToTime string `json:"to_time"`
 }
 
 func (p *RMC) Header() string { return "RMC" }
