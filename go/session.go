@@ -12,6 +12,11 @@ type SessionConfig struct {
 	// Send delivers one encoded wire packet to the transport (required).
 	Send func(wire []byte)
 
+	// DisableAutoJSON turns off automatic JSON negotiation. By default a
+	// ServerSession switches outbound to JSON on decryptor#JSON, and a
+	// ClientSession on the first frame that starts with '{'.
+	DisableAutoJSON bool
+
 	// OnMalformedFrame fires when inbound bytes can't be read as a packet.
 	OnMalformedFrame func(err error, wire []byte)
 	// OnUnknownHeader fires when the header isn't in this session's inbound
@@ -110,6 +115,9 @@ func (s *session) send(p Outgoing) {
 // routes to exactly one SessionConfig hook.
 func (s *session) receive(raw []byte) {
 	if len(raw) > 0 && raw[0] == '{' {
+		if s.role == roleClient && !s.cfg.DisableAutoJSON {
+			s.jsonMode = true
+		}
 		s.receiveJSON(raw)
 		return
 	}
@@ -195,6 +203,9 @@ func (s *session) receiveJSON(raw []byte) {
 // dispatch runs a typed handler (or the unhandled hook), recovering panics so
 // a handler bug can't take the whole connection down.
 func (s *session) dispatch(header string, p any) {
+	if d, ok := p.(*Decryptor); ok && d.Value == "JSON" && s.role == roleServer && !s.cfg.DisableAutoJSON {
+		s.jsonMode = true
+	}
 	h, ok := s.handlers[header]
 	if !ok {
 		if s.cfg.OnUnhandled != nil {
@@ -275,8 +286,7 @@ func (s *session) onCustom(header string, h func(any)) error {
 }
 
 // setJSONMode toggles the outbound wire format: true = JSON, false = FantaCode.
-// Outbound starts as FantaCode and changes only here; inbound always
-// auto-detects.
+// Outbound starts as FantaCode; inbound always auto-detects.
 func (s *session) setJSONMode(enabled bool) { s.jsonMode = enabled }
 
 // ServerSession represents a remote *server*. Client-side code uses it: Send

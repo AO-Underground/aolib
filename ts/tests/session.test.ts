@@ -399,16 +399,43 @@ describe("setJsonMode: explicit outbound-format switching", () => {
     expect(out[0]).toBe("HI#x#%");
   });
 
-  it("the library does NOT auto-flip on decryptor, it's the app's job", () => {
-    // Receiving decryptor("JSON") used to flip outbound mode. That
-    // magic is gone: aolib no longer inspects packet bodies for
-    // protocol meaning. The application's handler is responsible for
-    // calling setJsonMode() in response.
+  it("a server() session switches to JSON on decryptor#JSON, before its handler runs", () => {
+    const { out, config } = makeBuf();
+    const s = server(config);
+    s.on.decryptor(() => {
+      s.send.HI({ hdid: "x" });
+    });
+    s.receive("decryptor#JSON#%");
+    expect(out[0]).toBe('{"$header":"HI","hdid":"x"}');
+  });
+
+  it("a server() session stays fanta on any other decryptor value", () => {
     const { out, config } = makeBuf({ onUnhandled: () => {} });
     const s = server(config);
-    s.receive("decryptor#JSON#%");
+    s.receive("decryptor#NOENCRYPT#%");
     s.send.HI({ hdid: "x" });
     expect(out[0]).toBe("HI#x#%");
+  });
+
+  it("a client() session switches to JSON on a frame starting with {", () => {
+    const { out, config } = makeBuf({ onUnhandled: () => {} });
+    const c = client(config);
+    c.receive("HI#x#%");
+    c.send.DONE({});
+    c.receive('{"$header":"HI","hdid":"x"}');
+    c.send.DONE({});
+    expect(out).toEqual(["DONE#%", '{"$header":"DONE"}']);
+  });
+
+  it("disableAutoJson leaves the mode to setJsonMode", () => {
+    const { out, config } = makeBuf({ onUnhandled: () => {}, disableAutoJson: true });
+    const s = server(config);
+    const c = client(config);
+    s.receive("decryptor#JSON#%");
+    c.receive('{"$header":"HI","hdid":"x"}');
+    s.send.HI({ hdid: "x" });
+    c.send.DONE({});
+    expect(out).toEqual(["HI#x#%", "DONE#%"]);
   });
 
   it("mode is per-session, two sessions don't share state", () => {

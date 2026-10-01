@@ -11,7 +11,6 @@ type Client struct {
 	Joined   bool
 	Heard    []*aolib.MCToClient
 
-	json  bool
 	want  string
 	chars []string
 }
@@ -19,15 +18,12 @@ type Client struct {
 // NewClient returns a client that will join as character want; send delivers
 // one frame to the server.
 func NewClient(send func([]byte), json bool, want string) *Client {
-	c := &Client{json: json, want: want, CharID: -1}
-	s := aolib.NewServer(aolib.SessionConfig{Send: send})
+	c := &Client{want: want, CharID: -1}
+	// A FantaCode-only client opts out of JSON negotiation.
+	s := aolib.NewServer(aolib.SessionConfig{Send: send, DisableAutoJSON: !json})
 	c.Session = s
 
-	s.OnDecryptor(func(p *aolib.Decryptor) {
-		// decryptor#JSON advertises JSON; this client then switches if it wants it.
-		s.SetJSONMode(c.json && p.Value == "JSON")
-		s.SendHI(&aolib.HI{HDID: "example-hdid"})
-	})
+	s.OnDecryptor(func(*aolib.Decryptor) { s.SendHI(&aolib.HI{HDID: "example-hdid"}) })
 	s.OnID(func(p *aolib.IDToClient) {
 		c.PlayerID = p.PlayerID
 		s.SendID(&aolib.IDToServer{Software: "AO2", Version: "2.11.0"})

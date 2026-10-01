@@ -56,9 +56,10 @@ Every packet is validated against its `spec/` schema on decode and encode,
 failing with a `*ValidationError`. `Receive` never panics; failures route to
 `SessionConfig` hooks (`OnMalformedFrame`, `OnUnknownHeader`, `OnDecodeError`,
 `OnEncodeError`, `OnUnhandled`, `OnHandlerError`). Inbound frames are decoded
-in either format. Outbound starts as FantaCode and switches only via
-`SetJSONMode`: a client calls it on `decryptor#JSON`, a server when a frame
-from that client starts with `{`.
+in either format. Outbound starts as FantaCode and switches to JSON on its own:
+a `ServerSession` on `decryptor#JSON`, a `ClientSession` on the first frame
+that starts with `{`. Set `SessionConfig.DisableAutoJSON` to leave it to
+`SetJSONMode`.
 
 ```go
 // Server side: one session per connected client.

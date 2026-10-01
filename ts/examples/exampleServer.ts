@@ -48,14 +48,10 @@ wss.on("connection", (ws) => {
 
   clients.set(client, 0);
   ws.on("close", () => clients.delete(client));
-  ws.on("message", (data) => {
-    const wire = data.toString();
-    // A client opts into JSON by sending JSON; switch only this session.
-    if (wire.startsWith("{")) client.setJsonMode(true);
-    client.receive(wire);
-  });
+  ws.on("message", (data) => { client.receive(data.toString()); });
 
-  // Advertise JSON support.
+  // Advertise JSON support; this session switches when the client answers
+  // in JSON. Other sessions keep their own format.
   client.send.decryptor({ value: "JSON" });
 
   // Handlers, what the server does with packets received FROM this

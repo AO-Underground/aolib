@@ -1,6 +1,9 @@
 package aolib
 
-import "testing"
+import (
+	"reflect"
+	"testing"
+)
 
 // TestExampleServerClient mirrors aolib-ts's exampleServer.ts + exampleClient.ts
 // over an in-memory transport: a ClientSession (server side, one remote client)
@@ -41,31 +44,32 @@ func TestExampleServerClient(t *testing.T) {
 	}
 }
 
-// TestJSONModeIsManual: receiving JSON decodes fine but leaves outbound on
-// FantaCode; only SetJSONMode switches it.
-func TestJSONModeIsManual(t *testing.T) {
-	var sent []byte
-	serverSide := NewClient(SessionConfig{Send: func(w []byte) { sent = w }})
-	gotHI := false
-	serverSide.OnHI(func(*HI) { gotHI = true })
+// TestAutoJSON: a ServerSession switches on decryptor#JSON before its handler
+// runs, a ClientSession on a frame starting with '{'; DisableAutoJSON leaves
+// both on FantaCode.
+func TestAutoJSON(t *testing.T) {
+	for _, disabled := range []bool{false, true} {
+		var out []string
+		cfg := SessionConfig{Send: func(w []byte) { out = append(out, string(w)) }, DisableAutoJSON: disabled}
+		srv := NewServer(cfg)
+		srv.OnDecryptor(func(*Decryptor) { srv.SendHI(&HI{HDID: "x"}) })
+		srv.Receive([]byte("decryptor#NOENCRYPT#%"))
+		srv.Receive([]byte("decryptor#JSON#%"))
 
-	jsonHI, err := Encode(&HI{HDID: "json-client"}, WireJSON)
-	if err != nil {
-		t.Fatalf("encode: %v", err)
-	}
-	serverSide.Receive(jsonHI)
-	if !gotHI || serverSide.JSONMode() {
-		t.Fatalf("after a JSON frame: handled=%v JSONMode=%v, want true, false", gotHI, serverSide.JSONMode())
-	}
-	serverSide.SendDONE(&DONE{})
-	if string(sent) != "DONE#%" {
-		t.Fatalf("outbound before SetJSONMode = %q, want FantaCode", sent)
-	}
+		cl := NewClient(cfg)
+		cl.OnHI(func(*HI) {})
+		cl.Receive([]byte("HI#x#%"))
+		cl.SendDONE(&DONE{})
+		cl.Receive([]byte(`{"$header":"HI","hdid":"x"}`))
+		cl.SendDONE(&DONE{})
 
-	serverSide.SetJSONMode(true)
-	serverSide.SendDONE(&DONE{})
-	if string(sent) != `{"$header":"DONE"}` {
-		t.Fatalf("outbound after SetJSONMode = %q, want JSON", sent)
+		want := []string{"HI#x#%", `{"$header":"HI","hdid":"x"}`, "DONE#%", `{"$header":"DONE"}`}
+		if disabled {
+			want = []string{"HI#x#%", "HI#x#%", "DONE#%", "DONE#%"}
+		}
+		if !reflect.DeepEqual(out, want) {
+			t.Errorf("DisableAutoJSON=%v: sent %q, want %q", disabled, out, want)
+		}
 	}
 }
 

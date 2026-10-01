@@ -14,10 +14,10 @@
  * lookup we do at every `.send.X` / `.on.X` access, wrong-direction
  * calls fail at compile time AND runtime.
  *
- * Wire mode is per-session and starts at fanta. Switching to JSON
- * (or back) is the application's job, call `session.setJsonMode(true)`
- * from whatever handler reads the protocol's mode-switch signal. The
- * library doesn't inspect packet contents to flip modes on its own.
+ * Wire mode is per-session and starts at fanta. By default the session
+ * negotiates JSON itself: a `server()` session switches on `decryptor#JSON`,
+ * a `client()` session on the first frame starting with `{`. Set
+ * `disableAutoJson` to leave it to `setJsonMode`.
  *
  *   transport bytes ─► receive(wire)
  *      │
@@ -48,6 +48,12 @@ import type { JsonSchema } from "./types";
 
 export interface SessionConfig {
   send(wire: string): void;
+  /**
+   * Turn off automatic JSON negotiation. By default a `server()` session
+   * switches outbound to JSON on `decryptor#JSON`, and a `client()` session
+   * on the first frame that starts with `{`.
+   */
+  disableAutoJson?: boolean;
   onMalformedFrame?(err: Error, wire: string): void;
   onUnknownHeader?(header: string, wire: string): void;
   onDecodeError?(header: string, err: Error, wire: string): void;
@@ -131,6 +137,7 @@ function makeSession(role: Role, config: SessionConfig): ServerSession & ClientS
   const oppositeInbound = role === "server" ? c2sSchemas : s2cSchemas;
 
   let mode: WireMode = "fanta";
+  const autoJson = !config.disableAutoJson;
   let closed = false;
   const handlers: Record<string, (packet: unknown) => void> = {};
   const customHandlers: Record<string, (packet: unknown) => void> = {};
@@ -210,6 +217,7 @@ function makeSession(role: Role, config: SessionConfig): ServerSession & ClientS
 
   function receive(wire: string): void {
     if (closed) return;
+    if (autoJson && role === "client" && wire.startsWith("{")) mode = "json";
 
     let header: string;
     try {
@@ -264,6 +272,10 @@ function makeSession(role: Role, config: SessionConfig): ServerSession & ClientS
         defaultDecodeError(header, err as Error, wire);
       }
       return;
+    }
+
+    if (autoJson && role === "server" && header === "decryptor" && (packet as { value?: unknown }).value === "JSON") {
+      mode = "json";
     }
 
     const handler = handlers[header];

@@ -67,14 +67,9 @@ func (s *Server) Accept(send func([]byte)) func([]byte) {
 		}
 	})
 
+	// Advertise JSON; the session switches when the client answers in JSON.
 	c.SendDecryptor(&aolib.Decryptor{Value: "JSON"})
-	return func(wire []byte) {
-		// A client opts into JSON by sending JSON.
-		if len(wire) > 0 && wire[0] == '{' {
-			c.SetJSONMode(true)
-		}
-		c.Receive(wire)
-	}
+	return c.Receive
 }
 
 func (s *Server) charsCheck() *aolib.CharsCheck {

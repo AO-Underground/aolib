@@ -403,11 +403,10 @@ symmetrically.
 
 - **Each session's encoding mode is independent.** A server with
   several connected clients can have some on fanta and some on JSON
-  simultaneously. Outbound mode is per-session and starts at fanta;
-  the application calls `session.setJsonMode(true)` when it sees the
-  protocol's mode-switch signal: a client on `decryptor#JSON`, a server
-  when a frame from that client starts with `{`. The library does not
-  inspect packet contents to flip modes on its own.
+  simultaneously. Outbound mode is per-session, starts at fanta, and
+  switches to JSON on its own: a `server()` session on `decryptor#JSON`,
+  a `client()` session on the first frame that starts with `{`. Set
+  `disableAutoJson` in the config to leave it to `setJsonMode`.
   Inbound always auto-detects.
 
 - **Unknown JSON keys are kept.** Keys a schema doesn't define land in
