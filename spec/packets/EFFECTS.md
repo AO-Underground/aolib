@@ -4,11 +4,6 @@ The `MS` packet's `effect` field (AO2 ≥ 2.8) carries a screen-effect overlay
 request as a single `|`-separated string. It is a plain `string` on both wire
 forms; `|` is not a Fanta metacharacter, so it needs no escaping.
 
-This documents the wire convention AsyncAO implements (mirroring AO2-Client's
-`start_chat_ticking`, `courtroom.cpp:4154-4172`). The schema leaves the field
-opaque (`"type": "string"`) because the `|` sub-format is not expressible in
-JSON Schema; the semantics live here.
-
 ## Wire format
 
 The field splits on `|`. Only the first three parts are meaningful; any further
@@ -29,7 +24,7 @@ effect".
 |---|---|
 | `""` | no effect — does **not** clear a running overlay |
 | `-` / `none` | explicit clear |
-| `realization` | white flash; its sound resolves via `get_custom_realization` (the speaker's `char.ini [Options] realization`, else the theme's `realization`) |
+| `realization` | white flash; plays the speaker's realization sound (`char.ini [Options] realization`, else the theme's `realization`) |
 | `flash` / `realizationflash` | white flash (legacy) |
 | `screenshake` | screenshake (decaying sinusoid) |
 | anything else | named overlay art, resolved from the theme's `effects.ini`; an unresolvable name clears the overlay |
