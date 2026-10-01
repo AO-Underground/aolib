@@ -80,18 +80,30 @@ go run ./cmd/aolib-gen -meta ../spec -out .
 
 ## Custom packets
 
-A server that speaks packets outside the canonical set (or extra fields on a
-canonical one) builds them itself and ships them through the session's custom
-channel. It is JSON only; there is no positional form for a packet aolib has
-no schema for.
+A server that speaks packets outside the canonical set registers a `Codec` for
+the header, then uses the session's custom channel. A codec must implement both
+FantaCode and JSON (`RegisterCodec` panics otherwise); see
+[`spec/packets/CODECS.md`](../spec/packets/CODECS.md).
 
 ```go
-client.SendCustom("TT", map[string]any{"type": "0", "title": "Cross-Examination"})
+type Testimony struct {
+    Title string `json:"title"`
+}
 
-server.OnCustom("TT", func(pkt map[string]any) {
-    title, _ := pkt["title"].(string)
-    _ = title
+aolib.RegisterCodec("TT", aolib.Codec{
+    EncodeFanta: func(p any) ([]string, error) { return []string{aolib.EscapeFanta(p.(Testimony).Title)}, nil },
+    DecodeFanta: func(args []string) (any, error) {
+        if len(args) == 0 {
+            return nil, fmt.Errorf("TT: missing title")
+        }
+        return Testimony{Title: aolib.UnescapeFanta(args[0])}, nil
+    },
+    EncodeJSON: func(p any) (string, error) { b, err := json.Marshal(p); return string(b), err },
+    DecodeJSON: func(raw string) (any, error) { var t Testimony; err := json.Unmarshal([]byte(raw), &t); return t, err },
 })
+
+client.SendCustom("TT", Testimony{Title: "Cross-Examination"})
+server.OnCustom("TT", func(p any) { _ = p.(Testimony).Title })
 ```
 
 ## License
