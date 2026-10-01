@@ -38,10 +38,10 @@
   "author": "OmniTroid",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/SyntaxNyah/aolib-ts.git"
+    "url": "git+https://github.com/AO-Underground/aolib.git"
   },
   "bugs": {
-    "url": "https://github.com/SyntaxNyah/aolib-ts/issues"
+    "url": "https://github.com/AO-Underground/aolib/issues"
   },
   "keywords": [
     "attorney-online",
