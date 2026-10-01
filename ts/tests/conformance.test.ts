@@ -8,6 +8,7 @@
  * and accept identical wire data — they interoperate.
  */
 
+import { registerPacket, decodeCustom, encodeCustom } from "../src/custom";
 import { describe, it, expect } from "bun:test";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
@@ -47,6 +48,24 @@ describe("conformance vectors (interop with aolib-go)", () => {
 
       expect(encode(schema, fromJson, "fanta")).toBe(v.fanta);
       expect(encode(schema, fromJson, "json")).toBe(JSON.stringify(v.json));
+    });
+  }
+});
+
+// Custom packets share the walker rules; conformance/custom.json pins one.
+describe("custom packet conformance", () => {
+  const fixture = JSON.parse(
+    readFileSync(join(import.meta.dir, "..", "..", "conformance", "custom.json"), "utf8"),
+  ) as { schema: JsonSchema; vectors: { id: string; fanta: string; json: Record<string, unknown> }[] };
+  registerPacket("XC", { schema: fixture.schema });
+
+  for (const v of fixture.vectors) {
+    it(v.id, () => {
+      const fromJson = decodeCustom("XC", JSON.stringify(v.json));
+      const fromFanta = decodeCustom("XC", v.fanta);
+      expect(fromFanta).toEqual(fromJson);
+      expect(encodeCustom(fromJson!, "fanta")).toBe(v.fanta);
+      expect(encodeCustom(fromJson!, "json")).toBe(JSON.stringify(v.json));
     });
   }
 });

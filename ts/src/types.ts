@@ -58,14 +58,4 @@ export interface Codec {
   encodeFanta(packet: Record<string, unknown>): string[];
   /** Decode FantaCode positional args back to the packet object. */
   decodeFanta(args: string[]): Record<string, unknown>;
-  /**
-   * Encode the packet to its JSON object text. Required for a caller-registered
-   * custom codec: a custom packet must define BOTH wire forms (symmetric with
-   * aolib-go), and an explicit encoder is the escape hatch custom packets often
-   * need. Meta packets with `x-fanta-codec` (e.g. ARUP) may omit it, since
-   * their JSON is the generic schema envelope. The library injects `$header`.
-   */
-  encodeJson?(packet: Record<string, unknown>): string;
-  /** Decode JSON object text back to the packet object. Required for custom codecs (see encodeJson). */
-  decodeJson?(raw: string): Record<string, unknown>;
 }

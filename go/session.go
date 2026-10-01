@@ -71,9 +71,8 @@ type session struct {
 	role     role
 	jsonMode bool
 	handlers map[string]func(any)
-	// customHandlers receive the typed value produced by a header's registered
-	// Codec (see RegisterCodec), for headers with no meta schema. Registered via
-	// OnCustom; they fire on both wire formats.
+	// customHandlers receive custom packets (RegisterPacket), registered via
+	// OnCustom.
 	customHandlers map[string]func(any)
 }
 
@@ -132,17 +131,7 @@ func (s *session) receiveFanta(raw []byte) {
 		}
 		return
 	}
-	// A registered codec owns its header in both wire formats and wins over the
-	// generated registry.
-	if c, ok := codecs[pkt.Header]; ok {
-		p, derr := c.DecodeFanta(pkt.Body)
-		if derr != nil {
-			if s.cfg.OnDecodeError != nil {
-				s.cfg.OnDecodeError(pkt.Header, derr, raw)
-			}
-			return
-		}
-		s.dispatchCustom(pkt.Header, p)
+	if s.receiveCustom(pkt.Header, raw, false) {
 		return
 	}
 	dec, ok := s.role.inboundDecoders()[pkt.Header]
@@ -170,17 +159,7 @@ func (s *session) receiveJSON(raw []byte) {
 		}
 		return
 	}
-	// A registered codec owns its header in both wire formats and wins over the
-	// generated registry.
-	if c, ok := codecs[header]; ok {
-		p, derr := c.DecodeJSON(string(raw))
-		if derr != nil {
-			if s.cfg.OnDecodeError != nil {
-				s.cfg.OnDecodeError(header, derr, raw)
-			}
-			return
-		}
-		s.dispatchCustom(header, p)
+	if s.receiveCustom(header, raw, true) {
 		return
 	}
 	dec, ok := s.role.inboundJSON()[header]
@@ -198,6 +177,27 @@ func (s *session) receiveJSON(raw []byte) {
 		return
 	}
 	s.dispatch(header, p)
+}
+
+// receiveCustom handles a registered custom packet; false means the header
+// isn't one, or has no form for this frame's format.
+func (s *session) receiveCustom(header string, raw []byte, isJSON bool) bool {
+	c, ok := customPackets[header]
+	if !ok {
+		return false
+	}
+	p, ok, err := c.decode(raw, isJSON)
+	if !ok {
+		return false
+	}
+	if err != nil {
+		if s.cfg.OnDecodeError != nil {
+			s.cfg.OnDecodeError(header, err, raw)
+		}
+		return true
+	}
+	s.dispatchCustom(header, p)
+	return true
 }
 
 // dispatch runs a typed handler (or the unhandled hook), recovering panics so
@@ -247,9 +247,8 @@ func (s *session) dispatchCustom(header string, p any) {
 	}()
 }
 
-// sendCustom ships a nonstandard packet through its registered Codec, in the
-// session's current wire mode. The header must have a codec (RegisterCodec);
-// aolib itself models only canonical aolib-meta.
+// sendCustom ships a custom packet (RegisterPacket) in the session's current
+// wire mode.
 func (s *session) sendCustom(header string, payload any) error {
 	if strings.TrimSpace(header) == "" {
 		return fmt.Errorf("aolib: SendCustom requires a non-empty header")
@@ -268,18 +267,17 @@ func (s *session) sendCustom(header string, payload any) error {
 	return nil
 }
 
-// onCustom registers a handler for a custom header. The header's Codec
-// (RegisterCodec) decodes the frame first; the handler receives that typed
-// value. Errors on a collision with a typed handler or another custom handler.
+// onCustom registers a handler for a custom packet; it receives the payload
+// type given to RegisterPacket. Errors for a spec header.
 func (s *session) onCustom(header string, h func(any)) error {
 	if strings.TrimSpace(header) == "" {
 		return fmt.Errorf("aolib: OnCustom requires a non-empty header")
 	}
-	if _, ok := s.handlers[header]; ok {
-		return fmt.Errorf("aolib: header %q already has a typed handler", header)
+	if _, ok := c2sDecoders[header]; ok {
+		return fmt.Errorf("aolib: %q is a spec packet; use its On method, with Extras for extra fields", header)
 	}
-	if _, ok := s.customHandlers[header]; ok {
-		return fmt.Errorf("aolib: header %q already has a custom handler", header)
+	if _, ok := s2cDecoders[header]; ok {
+		return fmt.Errorf("aolib: %q is a spec packet; use its On method, with Extras for extra fields", header)
 	}
 	s.customHandlers[header] = h
 	return nil
@@ -321,30 +319,28 @@ func (s *ServerSession) JSONMode() bool { return s.s.jsonMode }
 // JSONMode reports the current outbound wire format for a ClientSession.
 func (c *ClientSession) JSONMode() bool { return c.s.jsonMode }
 
-// SendCustom ships a nonstandard packet through its registered Codec
-// (RegisterCodec), in the session's current wire mode. Use it for
-// server-specific extensions; aolib only facilitates them.
+// SendCustom ships a custom packet (RegisterPacket) in the session's current
+// wire mode. It errors for an unregistered header, or a JSON-only one on a
+// FantaCode session.
 func (s *ServerSession) SendCustom(header string, payload any) error {
 	return s.s.sendCustom(header, payload)
 }
 
-// OnCustom registers a handler for a custom header; the header's Codec decodes
-// the frame and the handler receives the typed value. Errors on a collision
-// with a typed or existing custom handler.
+// OnCustom registers a handler for a custom packet; it receives the payload
+// type given to RegisterPacket. Errors for a spec header.
 func (s *ServerSession) OnCustom(header string, h func(any)) error {
 	return s.s.onCustom(header, h)
 }
 
-// SendCustom ships a nonstandard packet through its registered Codec
-// (RegisterCodec), in the session's current wire mode. Use it for
-// server-specific extensions; aolib only facilitates them.
+// SendCustom ships a custom packet (RegisterPacket) in the session's current
+// wire mode. It errors for an unregistered header, or a JSON-only one on a
+// FantaCode session.
 func (c *ClientSession) SendCustom(header string, payload any) error {
 	return c.s.sendCustom(header, payload)
 }
 
-// OnCustom registers a handler for a custom header; the header's Codec decodes
-// the frame and the handler receives the typed value. Errors on a collision
-// with a typed or existing custom handler.
+// OnCustom registers a handler for a custom packet; it receives the payload
+// type given to RegisterPacket. Errors for a spec header.
 func (c *ClientSession) OnCustom(header string, h func(any)) error {
 	return c.s.onCustom(header, h)
 }

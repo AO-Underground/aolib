@@ -21,6 +21,9 @@ export {
   type ClientSession,
 } from "./session";
 
+// Custom packets: headers the spec doesn't define (EXTENDING.md).
+export { registerPacket, type PacketOptions, type FantaForm, type JsonForm } from "./custom";
+
 // Packet types, grouped under `aolib.packets` so the root namespace stays
 // the common surface. `packets.<Header>ToServer` / `...ToClient` is the
 // decoded shape; `...Init` is the send shape (default-bearing fields

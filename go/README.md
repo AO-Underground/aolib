@@ -33,6 +33,10 @@ import aolib "github.com/AO-Underground/aolib/go/v2"
 - `aolib.MSToServer` / `aolib.MSToClient`: the in-character (`MS`) packet, split
   by direction, with `ParseMSToServer` / `ParseMSToClient` / `Args`.
 - `aolib.NewServer` / `aolib.NewClient`: the typed session surface (below).
+- `aolib.NewMSToServer()` and a `New*` for every packet: the packet with the
+  spec's defaults. Start from these rather than a struct literal: a literal
+  leaves every field at Go's zero value, so `MS` would ask to pair with
+  character 0 instead of `-1` (no pair), and `ZZ` would report player 0.
 
 ## Sessions
 
@@ -95,7 +99,7 @@ go run ./cmd/aolib-gen -meta ../spec -out .
 
 ## Extending
 
-Extra fields on spec packets (`Extras`) and custom packets (`RegisterCodec`):
+Extra fields on spec packets (`Extras`) and custom packets (`RegisterPacket`):
 see [EXTENDING.md](EXTENDING.md).
 
 ## License

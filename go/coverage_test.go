@@ -133,3 +133,51 @@ func checkCoverage(t *testing.T, name string, want, got map[string]struct{}) {
 		t.Errorf("%s: dispatched but not in spec: %v", name, extra)
 	}
 }
+
+// TestConstructorsApplySchemaDefaults checks every New* constructor against the
+// defaults in its schema, so a default the zero value misses can't slip through.
+func TestConstructorsApplySchemaDefaults(t *testing.T) {
+	dir := filepath.Join("..", "spec", "packets", "schemas")
+	files, err := filepath.Glob(filepath.Join(dir, "*.schema.json"))
+	if err != nil || len(files) == 0 {
+		t.Skipf("spec not available at %s", dir)
+	}
+	for _, f := range files {
+		raw, err := os.ReadFile(f)
+		if err != nil {
+			t.Fatal(err)
+		}
+		var s struct {
+			Properties map[string]struct {
+				Const   any `json:"const"`
+				Default any `json:"default"`
+			} `json:"properties"`
+		}
+		if err := json.Unmarshal(raw, &s); err != nil {
+			t.Fatal(err)
+		}
+		name := strings.TrimSuffix(filepath.Base(f), ".schema.json")
+		name = strings.ToUpper(name[:1]) + name[1:]
+		newPacket, ok := packetConstructors[name]
+		if !ok {
+			t.Errorf("%s: no New%s constructor", name, name)
+			continue
+		}
+		encoded, err := encodeJSON(newPacket())
+		if err != nil {
+			t.Fatalf("%s: %v", name, err)
+		}
+		var got map[string]any
+		if err := json.Unmarshal(encoded, &got); err != nil {
+			t.Fatal(err)
+		}
+		for key, p := range s.Properties {
+			if p.Default == nil || p.Const != nil {
+				continue
+			}
+			if !reflect.DeepEqual(got[key], p.Default) {
+				t.Errorf("New%s().%s = %v, want schema default %v", name, key, got[key], p.Default)
+			}
+		}
+	}
+}

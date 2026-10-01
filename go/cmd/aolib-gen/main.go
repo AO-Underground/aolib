@@ -673,6 +673,12 @@ func emitPackets(packets []*Schema, enumNames, typeNames map[string]*Schema) str
 		if len(defs) > 0 {
 			fmt.Fprintf(&b, "func (p *%s) applyDefaults() {\n%s}\n\n", s.Name, strings.Join(defs, ""))
 		}
+		fmt.Fprintf(&b, "// New%s returns a %s with the spec's defaults.\n", s.Name, s.Name)
+		if len(defs) > 0 {
+			fmt.Fprintf(&b, "func New%s() *%s {\n\tp := &%s{}\n\tp.applyDefaults()\n\treturn p\n}\n\n", s.Name, s.Name, s.Name)
+		} else {
+			fmt.Fprintf(&b, "func New%s() *%s { return &%s{} }\n\n", s.Name, s.Name, s.Name)
+		}
 		// An empty enum is never valid, so encode can fill it unambiguously.
 		var fills []string
 		for _, p := range s.Properties {
@@ -810,6 +816,12 @@ func emitRegistry(packets []*Schema) string {
 	b.WriteString("// c2sJSON / s2cJSON decode the JSON wire form straight into the typed\n")
 	b.WriteString("// struct, so enum fields keep their meta string values and Offset stays\n")
 	b.WriteString("// an {x,y} object. Keyed by direction like the FantaCode decoders.\n")
+	b.WriteString("// packetConstructors maps each schema name to its New* constructor.\n")
+	b.WriteString("var packetConstructors = map[string]func() Outgoing{\n")
+	for _, s := range packets {
+		fmt.Fprintf(&b, "\t%q: func() Outgoing { return New%s() },\n", s.Name, s.Name)
+	}
+	b.WriteString("}\n\n")
 	b.WriteString("var c2sJSON = map[string]jsonDecoder{\n")
 	for _, s := range c2s {
 		fmt.Fprintf(&b, "\t%q: jsonDecoderFor[%s],\n", s.Header, s.Name)

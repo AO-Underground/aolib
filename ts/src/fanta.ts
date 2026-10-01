@@ -175,6 +175,10 @@ function encodeToken(rawSchema: JsonSchema, value: unknown, baseId: string): str
   if (wire !== undefined) return wire;
 
   const t = jsonType(schema);
+  if (t === "array") {
+    const items = schema.items ?? {};
+    return ((value ?? []) as unknown[]).map((v) => encodeToken(items, v, baseId)).join("&");
+  }
   const bits = wireBits(schema);
   if (bits) {
     const obj = (value ?? {}) as Record<string, unknown>;
@@ -223,6 +227,10 @@ function decodeToken(rawSchema: JsonSchema, token: string, name: string, baseId:
   if (enumValue !== undefined) return enumValue;
 
   const t = jsonType(schema);
+  if (t === "array") {
+    const items = schema.items ?? {};
+    return token === "" ? [] : token.split("&").map((v, i) => decodeToken(items, v, `${name}[${i}]`, baseId));
+  }
   const bits = wireBits(schema);
   if (bits) {
     if (!/^\d+$/.test(token)) {

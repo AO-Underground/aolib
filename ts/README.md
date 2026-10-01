@@ -88,9 +88,9 @@ import * as wire from "aolib-ts/wire";    // only to bypass the session layer
 ```
 
 The root (`aolib.`) is the common surface: `server`/`client`, the enums
-(`Side`, `EmoteModifier`, ...), `parseCharIni`, and the session types.
-Packet types are grouped under `aolib.packets.*` (you rarely name them; the
-session infers them). Low-level encode/decode, codec registration, and the
+(`Side`, `EmoteModifier`, ...), `parseCharIni`, `registerPacket`, and the
+session types. Packet types are grouped under `aolib.packets.*` (you rarely
+name them; the session infers them). Low-level encode/decode and the
 header→schema registries live under `aolib-ts/wire`. Named imports
 (`import { server } from "aolib-ts"`) work too and are equivalent.
 
@@ -110,6 +110,9 @@ interface SessionConfig {
   // Required: how we ship outbound bytes for this session.
   send: (wire: string) => void;
 
+  // Optional: keep JSON mode manual (see setJsonMode).
+  disableAutoJson?: boolean;
+
   // Optional: observability hooks. Each defaults to a `console.warn`
   // / `console.error` summary of the event.
   onMalformedFrame?:  (err: Error, wire: string) => void;
@@ -126,6 +129,9 @@ session.send.<HEADER>(packet): void          // typed sender, role-aware
 session.on.<HEADER>(handler): void           // typed receiver, role-aware
 
 session.setJsonMode(enabled: boolean): void  // outbound: JSON vs fanta; inbound always auto-detects
+session.jsonMode: boolean                    // current outbound format
+session.sendCustom(packet): void             // custom packets (EXTENDING.md)
+session.onCustom(header, handler): void
 session.close(): void                        // mark closed, detach handlers
 ```
 

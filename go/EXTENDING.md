@@ -9,10 +9,10 @@ Every packet struct has `Extras map[string]any`. Put your fields there to send
 them, and read them from the same map on receive:
 
 ```go
-client.SendMS(&aolib.MSToClient{
-    Character: "Phoenix", Emote: "normal", Message: "Objection!", Side: aolib.SideDef, CharID: 1,
-    Extras: map[string]any{"blips": "male"},
-})
+ms := aolib.NewMSToClient()
+ms.Character, ms.Emote, ms.Message, ms.Side, ms.CharID = "Phoenix", "normal", "Objection!", aolib.SideDef, 1
+ms.Extras = map[string]any{"blips": "male"}
+client.SendMS(ms)
 
 server.OnMS(func(p *aolib.MSToClient) {
     blips, _ := p.Extras["blips"].(string)
@@ -35,40 +35,47 @@ How they're handled:
 
 ## Custom packets
 
-For a header the spec doesn't have, register a `Codec` that implements both
-FantaCode and JSON, then use the session's custom channel:
+Register a header the spec doesn't have with `RegisterPacket`. Give it a schema
+in the spec's packet format and it behaves like a spec packet:
 
 ```go
 type Testimony struct {
-    Title string `json:"title"`
+    Title string     `json:"title"`
+    Rows  [][]string `json:"rows"`
 }
 
-aolib.RegisterCodec("TT", aolib.Codec{
-    EncodeFanta: func(p any) ([]string, error) { return []string{aolib.EscapeFanta(p.(Testimony).Title)}, nil },
-    DecodeFanta: func(args []string) (any, error) {
-        if len(args) == 0 {
-            return nil, fmt.Errorf("TT: missing title")
-        }
-        return Testimony{Title: aolib.UnescapeFanta(args[0])}, nil
+aolib.RegisterPacket("TT", aolib.PacketOptions[Testimony]{Schema: []byte(`{
+    "type": "object",
+    "properties": {
+        "title": {"type": "string"},
+        "rows": {"type": "array", "items": {"type": "array", "items": {"type": "string"}}, "default": []}
     },
-    EncodeJSON: func(p any) (string, error) { b, err := json.Marshal(p); return string(b), err },
-    DecodeJSON: func(raw string) (any, error) { var t Testimony; err := json.Unmarshal([]byte(raw), &t); return t, err },
-})
+    "required": ["title"]
+}`)})
 
-client.SendCustom("TT", Testimony{Title: "Cross-Examination"})
+client.SendCustom("TT", Testimony{Title: "Cross-Examination", Rows: [][]string{{"a", "b"}, {"c"}}})
 server.OnCustom("TT", func(p any) { _ = p.(Testimony).Title })
 ```
 
+On the wire that is `TT#Cross-Examination#a&b#c#%`, or
+`{"$header":"TT","title":"Cross-Examination","rows":[["a","b"],["c"]]}`.
+
 How they're handled:
 
-- **Framing is the library's.** `DecodeFanta` gets the fields between the
-  header and `%`; `EncodeFanta` returns them. On JSON the library adds
-  `"$header"`. Escape string fields with `EscapeFanta`/`UnescapeFanta`.
-- **Both formats are required.** `RegisterCodec` panics without all four
-  functions, so the packet works whichever mode the session negotiated.
-- **The registry is global** and a codec takes over its header on every
-  session. Don't register a spec header: it replaces the generated packet and
-  its typed `On*` handler. Use `Extras` to add fields to those.
-- **One handler per header.** `OnCustom` errors if the header already has a
-  typed or custom handler.
-- **No validation.** The codec owns the packet's shape.
+- **With a schema** the packet is validated, gets its defaults, is written in
+  schema order with `Extras` (if `T` has an `Extras map[string]any` field),
+  and has a FantaCode form by the
+  [walker rules](../spec/README.md#validation-and-wire-format). The schema may
+  `$ref` the spec's types, e.g. `"../../types/Side.schema.json"`. Defaults
+  only fill fields missing from `T`'s JSON, so mark those `omitempty`.
+- **Without a schema** (`PacketOptions[T]{}`) the JSON is `T`'s own fields
+  after `"$header"`, and the packet is JSON-only: `SendCustom` errors on a
+  FantaCode session (check `JSONMode()`), and FantaCode frames go to
+  `OnUnknownHeader`.
+- **`Fanta` and `JSON` override** a form for wire shapes the rules don't
+  cover, e.g. a FantaCode slot with its own separator. A schema still
+  validates the packet.
+- **Spec headers panic.** Add fields to those with `Extras`.
+- **The registry is global**: register packets at startup, before sessions
+  receive, as it isn't safe to change concurrently. `OnCustom` errors for a
+  spec header.

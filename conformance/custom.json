@@ -1,0 +1,102 @@
+{
+  "schema": {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "/packets/schemas/XC.schema.json",
+    "title": "XC",
+    "description": "Test-only custom packet covering the FantaCode walker rules.",
+    "type": "object",
+    "properties": {
+      "$header": {
+        "type": "string",
+        "const": "XC"
+      },
+      "title": {
+        "type": "string"
+      },
+      "count": {
+        "type": "integer",
+        "default": 0
+      },
+      "open": {
+        "type": "boolean",
+        "default": false
+      },
+      "mod": {
+        "$ref": "../../types/EmoteModifier.schema.json",
+        "default": "no_preanim"
+      },
+      "side": {
+        "$ref": "../../types/Side.schema.json",
+        "default": "wit"
+      },
+      "offset": {
+        "$ref": "../../types/Offset.schema.json",
+        "default": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      "rows": {
+        "type": "array",
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "default": []
+      }
+    },
+    "required": [
+      "$header",
+      "title"
+    ],
+    "additionalProperties": false,
+    "x-receiver": "client"
+  },
+  "vectors": [
+    {
+      "id": "all-fields",
+      "fanta": "XC#Case <num>1 <and> co#3#1#5#def#-10&5#a&b<and>c##d#%",
+      "json": {
+        "$header": "XC",
+        "title": "Case #1 & co",
+        "count": 3,
+        "open": true,
+        "mod": "zoom",
+        "side": "def",
+        "offset": {
+          "x": -10,
+          "y": 5
+        },
+        "rows": [
+          [
+            "a",
+            "b&c"
+          ],
+          [],
+          [
+            "d"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "defaults",
+      "fanta": "XC#t#0#0#0#wit#0&0#%",
+      "json": {
+        "$header": "XC",
+        "title": "t",
+        "count": 0,
+        "open": false,
+        "mod": "no_preanim",
+        "side": "wit",
+        "offset": {
+          "x": 0,
+          "y": 0
+        },
+        "rows": []
+      }
+    }
+  ]
+}

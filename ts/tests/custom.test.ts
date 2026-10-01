@@ -1,197 +1,205 @@
 /**
- * The custom-packet escape hatch: `registerCodec` + `sendCustom` / `onCustom`.
- *
- * A custom packet is handled by a registered codec (the same mechanism ARUP
- * uses, hot-definable by callers). The codec owns both wire forms, so the same
- * typed value round-trips over FantaCode and JSON, and `onCustom` receives the
- * codec's decoded value regardless of wire mode.
+ * Custom packets: `registerPacket` + `sendCustom` / `onCustom`. Byte-exact
+ * schema behaviour is in conformance.test.ts (conformance/custom.json).
  */
 
 import { describe, it, expect } from "bun:test";
 import { server, client, type SessionConfig } from "../src/session";
-import { registerCodec, escapeFanta, unescapeFanta } from "../src/wire";
-import type { Packet, BB } from "../generated/packets";
+import { registerPacket } from "../src/custom";
+import { escapeFanta, unescapeFanta } from "../src/wire";
+import type { JsonSchema } from "../src/types";
 
-function makeBuf(overrides: Partial<SessionConfig> = {}): {
-  out: string[];
-  config: SessionConfig;
-} {
+function makeBuf(overrides: Partial<SessionConfig> = {}): { out: string[]; config: SessionConfig } {
   const out: string[] = [];
-  return {
-    out,
-    config: { send: (wire) => out.push(wire), ...overrides },
-  };
+  return { out, config: { send: (wire) => out.push(wire), onUnhandled: () => {}, ...overrides } };
 }
 
-// An inherited packet type: BB plus an extra field the schema doesn't model.
-interface BBExt extends BB {
-  urgent: boolean;
-}
+const pingSchema: JsonSchema = {
+  $id: "/packets/schemas/PING.schema.json",
+  type: "object",
+  properties: {
+    seq: { type: "integer" },
+    note: { type: "string", default: "" },
+  },
+  required: ["seq"],
+  additionalProperties: false,
+};
+registerPacket("PING", { schema: pingSchema });
 
-// A from-scratch custom packet, extending only the Packet base.
-interface Ping extends Packet {
-  $header: "PING";
-  seq: number;
-}
-
-// Codecs for the headers these tests exercise. A custom codec owns both wire
-// forms; for JSON the object round-trips through stringify/parse, and the
-// FantaCode form is defined explicitly.
-registerCodec("BB", {
-  encodeFanta: (p) => [escapeFanta((p as { message?: string }).message ?? "")],
-  decodeFanta: (args) => ({ $header: "BB", message: unescapeFanta(args[0] ?? "") }),
-  encodeJson: (p) => JSON.stringify(p),
-  decodeJson: (raw) => JSON.parse(raw) as Record<string, unknown>,
+// Wire forms the walker can't produce: FantaCode packs both fields into one slot.
+registerPacket("PAIR", {
+  schema: { type: "object", properties: { a: { type: "string" }, b: { type: "string" } }, required: ["a", "b"] },
+  fanta: {
+    encode: (p) => [`${escapeFanta(String(p.a))}|${escapeFanta(String(p.b))}`],
+    decode: (args) => {
+      const [a = "", b = ""] = (args[0] ?? "").split("|");
+      return { a: unescapeFanta(a), b: unescapeFanta(b) };
+    },
+  },
+  json: {
+    encode: (p) => JSON.stringify({ pair: [p.a, p.b] }),
+    decode: (raw) => {
+      const [a, b] = (JSON.parse(raw) as { pair: [string, string] }).pair;
+      return { a, b };
+    },
+  },
 });
-registerCodec("PING", {
-  encodeFanta: (p) => [String((p as { seq?: number }).seq ?? 0)],
-  decodeFanta: (args) => ({ $header: "PING", seq: Number(args[0] ?? 0) }),
-  encodeJson: (p) => JSON.stringify(p),
-  decodeJson: (raw) => JSON.parse(raw) as Record<string, unknown>,
+
+describe("registerPacket", () => {
+  it("rejects spec headers", () => {
+    expect(() => {
+      registerPacket("MS", { schema: pingSchema });
+    }).toThrow(/spec packet.*\$extras/);
+  });
+
+  it("rejects a schema whose $header const disagrees", () => {
+    const schema: JsonSchema = { type: "object", properties: { $header: { type: "string", const: "OTHER" } } };
+    expect(() => {
+      registerPacket("NOPE", { schema });
+    }).toThrow(/declares \$header "OTHER"/);
+  });
 });
 
-describe("sendCustom", () => {
-  it("encodes through the codec's JSON form in JSON mode", () => {
+describe("schema-driven custom packets", () => {
+  it("encode in schema order with defaults, in both formats", () => {
     const { out, config } = makeBuf();
-    const s = server(config);
-    s.setJsonMode(true);
-
-    const msg: BBExt = { $header: "BB", message: "evacuate", urgent: true };
-    s.sendCustom(msg);
-
-    expect(out).toHaveLength(1);
-    expect(JSON.parse(out[0]!)).toEqual({
-      $header: "BB",
-      message: "evacuate",
-      urgent: true,
-    });
+    const c = client(config);
+    c.sendCustom({ $header: "PING", seq: 7 });
+    c.setJsonMode(true);
+    c.sendCustom({ $header: "PING", seq: 7, $extras: { trace: "x" } });
+    expect(out).toEqual(["PING#7##%", '{"$header":"PING","seq":7,"note":"","trace":"x"}']);
   });
 
-  it("encodes through the codec's FantaCode form in fanta mode", () => {
-    const { out, config } = makeBuf();
-    const s = server(config); // default mode is fanta
-    s.sendCustom({ $header: "PING", seq: 7 });
-    expect(out[0]).toBe("PING#7#%");
-  });
-
-  it("throws when no codec is registered for the header", () => {
-    const { config } = makeBuf();
-    const s = server(config);
-    expect(() => { s.sendCustom({ $header: "NOPE", x: 1 }); }).toThrow(
-      /needs a codec/,
-    );
-  });
-
-  it("throws on a closed session", () => {
+  it("decode in both formats, keeping JSON extras", () => {
+    const got: unknown[] = [];
     const s = server(makeBuf().config);
-    s.close();
-    expect(() => { s.sendCustom({ $header: "PING", seq: 1 }); }).toThrow(
-      /closed session/,
-    );
+    s.onCustom("PING", (p) => { got.push(p); });
+    s.receive("PING#7#hi#%");
+    s.receive('{"$header":"PING","seq":8,"trace":"x"}');
+    expect(got).toEqual([
+      { $header: "PING", seq: 7, note: "hi" },
+      { $header: "PING", seq: 8, note: "", $extras: { trace: "x" } },
+    ]);
   });
 
-  it("throws when $header is missing or empty at runtime", () => {
-    const s = server(makeBuf().config);
-    const raw = s.sendCustom as unknown as (p: unknown) => void;
-    expect(() => { raw({ seq: 1 }); }).toThrow(/non-empty string \$header/);
-    expect(() => { raw({ $header: "" }); }).toThrow(/non-empty string \$header/);
+  it("route invalid frames to onDecodeError", () => {
+    const errors: string[] = [];
+    const s = server(makeBuf({ onDecodeError: (h, e) => errors.push(`${h}: ${e.message}`) }).config);
+    s.onCustom("PING", () => {});
+    s.receive('{"$header":"PING","seq":"seven"}');
+    expect(errors).toHaveLength(1);
+    expect(errors[0]).toMatch(/^PING: .*seq/);
+  });
+
+  it("reject invalid packets on send", () => {
+    const c = client(makeBuf().config);
+    expect(() => {
+      c.sendCustom({ $header: "PING" });
+    }).toThrow(/seq/);
   });
 });
 
-describe("onCustom", () => {
-  it("decodes an inbound JSON frame through the codec, extras preserved", () => {
-    const { config } = makeBuf();
-    const s = server(config);
+describe("schema-less custom packets", () => {
+  registerPacket("ROWS");
 
-    let got: BBExt | undefined;
-    s.onCustom<BBExt>("BB", (p) => { got = p; });
-    s.receive(JSON.stringify({ $header: "BB", message: "evacuate", urgent: true }));
-
-    expect(got).toEqual({ $header: "BB", message: "evacuate", urgent: true });
+  it("are JSON-only: the payload's own fields after $header", () => {
+    const { out, config } = makeBuf();
+    const c = client(config);
+    expect(() => {
+      c.sendCustom({ $header: "ROWS", rows: [["a"]] });
+    }).toThrow(/JSON-only/);
+    c.setJsonMode(true);
+    c.sendCustom({ $header: "ROWS", rows: [["a", "b"], []], $extras: { t: 1 } });
+    expect(out).toEqual(['{"$header":"ROWS","rows":[["a","b"],[]],"t":1}']);
   });
 
-  it("decodes an inbound fanta frame through the codec", () => {
-    const { config } = makeBuf();
-    const s = server(config);
-
-    let seq = 0;
-    s.onCustom<Ping>("PING", (p) => { seq = p.seq; });
-    s.receive("PING#42#%");
-    expect(seq).toBe(42);
-  });
-
-  it("does not fire for a header with no registered codec", () => {
+  it("decode JSON as-is and send FantaCode frames to onUnknownHeader", () => {
+    const got: unknown[] = [];
     const unknown: string[] = [];
-    const { config } = makeBuf({ onUnknownHeader: (h) => unknown.push(h) });
-    const s = server(config);
+    const s = server(makeBuf({ onUnknownHeader: (h) => unknown.push(h) }).config);
+    s.onCustom("ROWS", (p) => { got.push(p); });
+    s.receive('{"$header":"ROWS","rows":[["a"]]}');
+    s.receive("ROWS#a#%");
+    expect(got).toEqual([{ $header: "ROWS", rows: [["a"]] }]);
+    expect(unknown).toEqual(["ROWS"]);
+  });
+});
 
-    let fired = false;
-    s.onCustom("NOPE", () => { fired = true; });
-    s.receive("NOPE#hello#%");
+describe("overrides", () => {
+  it("replace the wire form in each format, $header first", () => {
+    const { out, config } = makeBuf();
+    const c = client(config);
+    c.sendCustom({ $header: "PAIR", a: "x#y", b: "z" });
+    c.setJsonMode(true);
+    c.sendCustom({ $header: "PAIR", a: "x#y", b: "z" });
+    expect(out).toEqual(["PAIR#x<num>y|z#%", '{"$header":"PAIR","pair":["x#y","z"]}']);
 
-    expect(fired).toBe(false);
+    const got: unknown[] = [];
+    const s = server(makeBuf().config);
+    s.onCustom("PAIR", (p) => { got.push(p); });
+    for (const w of out) s.receive(w);
+    expect(got).toEqual([
+      { $header: "PAIR", a: "x#y", b: "z" },
+      { $header: "PAIR", a: "x#y", b: "z" },
+    ]);
+  });
+
+  it("still validate against the schema", () => {
+    const c = client(makeBuf().config);
+    expect(() => {
+      c.sendCustom({ $header: "PAIR", a: "only" });
+    }).toThrow(/b/);
+  });
+});
+
+describe("sendCustom / onCustom", () => {
+  it("throws for an unregistered header, or on a closed session", () => {
+    const c = client(makeBuf().config);
+    expect(() => {
+      c.sendCustom({ $header: "NOPE" });
+    }).toThrow(/registerPacket/);
+    c.close();
+    expect(() => {
+      c.sendCustom({ $header: "PING", seq: 1 });
+    }).toThrow(/closed/);
+  });
+
+  it("sends unregistered headers to onUnknownHeader", () => {
+    const unknown: string[] = [];
+    const s = server(makeBuf({ onUnknownHeader: (h) => unknown.push(h) }).config);
+    s.onCustom("NOPE", () => {});
+    s.receive("NOPE#1#%");
     expect(unknown).toEqual(["NOPE"]);
   });
 
-  it("wins over the typed path for a header it overrides", () => {
+  it("routes a registered packet with no handler to onUnhandled", () => {
     const unhandled: string[] = [];
-    const { config } = makeBuf({ onUnhandled: (h) => unhandled.push(h) });
-    const s = server(config);
-
-    let hit = false;
-    s.onCustom("BB", () => { hit = true; });
-    s.receive(JSON.stringify({ $header: "BB", message: "x" }));
-
-    expect(hit).toBe(true);
-    expect(unhandled).toEqual([]);
-  });
-
-  it("routes malformed JSON to onMalformedFrame (caught before dispatch)", () => {
-    const errs: string[] = [];
-    const { config } = makeBuf({ onMalformedFrame: (e) => errs.push(e.message) });
-    const s = server(config);
-    s.onCustom("BB", () => {});
-    s.receive('{"$header":"BB", bad');
-    expect(errs).toHaveLength(1);
+    const s = server(makeBuf({ onUnhandled: (h) => { unhandled.push(h); } }).config);
+    s.receive("PING#1#%");
+    expect(unhandled).toEqual(["PING"]);
   });
 
   it("routes a throwing handler to onHandlerError", () => {
-    const errs: Error[] = [];
-    const { config } = makeBuf({ onHandlerError: (_h, e) => errs.push(e) });
-    const s = server(config);
-    s.onCustom("BB", () => { throw new Error("boom"); });
-    s.receive(JSON.stringify({ $header: "BB", message: "x" }));
-    expect(errs).toHaveLength(1);
-    expect(errs[0]!.message).toBe("boom");
+    const errors: string[] = [];
+    const s = server(makeBuf({ onHandlerError: (h) => errors.push(h) }).config);
+    s.onCustom("PING", () => {
+      throw new Error("boom");
+    });
+    s.receive("PING#1#%");
+    expect(errors).toEqual(["PING"]);
   });
-});
 
-describe("on / onCustom collision", () => {
-  it("throws when on.<X> is registered after onCustom('X')", () => {
+  it("onCustom rejects spec headers", () => {
     const s = server(makeBuf().config);
-    s.onCustom("BB", () => {});
-    expect(() => { s.on.BB(() => {}); }).toThrow(/onCustom\('BB'\)/);
+    expect(() => {
+      s.onCustom("BB", () => {});
+    }).toThrow(/spec packet.*on\.BB/);
   });
 
-  it("throws when onCustom('X') is registered after on.<X>", () => {
-    const s = server(makeBuf().config);
-    s.on.BB(() => {});
-    expect(() => { s.onCustom("BB", () => {}); }).toThrow(/onCustom\('BB'\)/);
-  });
-});
-
-describe("custom channel loopback", () => {
-  it("client.sendCustom reaches server.onCustom over both wires", () => {
-    for (const jsonMode of [false, true]) {
-      const srv = server({ send: () => {} });
-      const cli = client({ send: (wire) => { srv.receive(wire); } });
-      cli.setJsonMode(jsonMode);
-
-      let got: Ping | undefined;
-      srv.onCustom<Ping>("PING", (p) => { got = p; });
-      cli.sendCustom({ $header: "PING", seq: 9 });
-
-      expect(got?.seq).toBe(9);
-    }
+  it("exposes the outbound mode", () => {
+    const c = client(makeBuf().config);
+    expect(c.jsonMode).toBe(false);
+    c.setJsonMode(true);
+    expect(c.jsonMode).toBe(true);
   });
 });

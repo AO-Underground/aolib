@@ -83,7 +83,9 @@ fanta-format walker to the same schemas:
   - `object`: recurse, joining sub-tokens with `&` (or the
     `x-fanta-separator` value); see `x-fanta-separator` below. An object with
     `x-wire-bits` is instead one integer slot; see `x-wire-bits` below
-  - `array`: greedy, trailing array consumes all remaining slots
+  - `array`: greedy, trailing array consumes all remaining slots, one item
+    per slot. An item that is itself an array takes one slot, its items
+    joined by `&`
   - `const`: emitted as the const value; on decode the slot is consumed
     and the schema-fixed value is used regardless of the token
   - `$ref` to an enum with `x-wire-ints`: encode the parallel legacy integer
@@ -130,13 +132,8 @@ delegates encode/decode to it. Used for packets whose wire form has
 discriminator-driven payload shapes (e.g. `ARUP`). Per-codec wire forms
 are specified in `packets/CODECS.md`.
 
-A codec fully owns its packet's wire representation and, per the codec rule,
-must implement **both** wire forms: the FantaCode positional frame and the
-JSON envelope. The same mechanism is exposed to library callers at runtime
-(`registerCodec` / `RegisterCodec`) so a server can teach the library a
-nonstandard header it needs. aolib itself models only canonical packets here;
-a custom codec is how a caller extends that, and because it must implement
-FantaCode too there is no JSON-only custom packet.
+A codec owns only the FantaCode form; the packet's JSON stays the schema's
+envelope.
 
 ### `x-receiver: "client" | "server"`
 
@@ -189,6 +186,17 @@ makes decoders tolerate `<and>` in incoming tokens, useful for shared
 object types whose wire slot historically used the chat-escape form on
 the way in but no longer does on the way out. Currently set on
 `Offset`.
+
+## Custom packets
+
+A library caller can register a header this spec doesn't define. Given a
+schema in the same format as `packets/schemas/` (it may `$ref` the shared
+types), the packet gets everything a spec packet does: validation, defaults,
+JSON in schema order with `$extras`, and FantaCode by the walker rules above.
+Without a schema its JSON is the payload's own fields after `$header`, and it
+has no FantaCode form, so it can only be sent to a JSON session. Either form
+can be overridden by caller code for wire shapes these rules don't cover. A
+spec header can't be registered; add fields to it with `$extras`.
 
 ## Reserved property names
 

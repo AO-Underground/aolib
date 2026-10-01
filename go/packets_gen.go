@@ -17,6 +17,9 @@ func (p *ARUP) extras() *map[string]any { return &p.Extras }
 
 func (p *ARUP) schemaPath() string { return "packets/schemas/ARUP.schema.json" }
 
+// NewARUP returns a ARUP with the spec's defaults.
+func NewARUP() *ARUP { return &ARUP{} }
+
 // ASS: Base URL the client downloads missing assets from.
 type ASS struct {
 	AssetUrl string         `json:"asset_url"`
@@ -30,6 +33,9 @@ func (p *ASS) jsonOrder() []string { return []string{"asset_url"} }
 func (p *ASS) extras() *map[string]any { return &p.Extras }
 
 func (p *ASS) schemaPath() string { return "packets/schemas/ASS.schema.json" }
+
+// NewASS returns a ASS with the spec's defaults.
+func NewASS() *ASS { return &ASS{} }
 
 func (p *ASS) Args() []string {
 	var args []string
@@ -65,6 +71,9 @@ func (p *AUTH) extras() *map[string]any { return &p.Extras }
 
 func (p *AUTH) schemaPath() string { return "packets/schemas/AUTH.schema.json" }
 
+// NewAUTH returns a AUTH with the spec's defaults.
+func NewAUTH() *AUTH { return &AUTH{} }
+
 func (p *AUTH) Args() []string {
 	var args []string
 	args = append(args, itoa(authStateToWire[p.AuthState]))
@@ -98,6 +107,9 @@ func (p *Askchaa) extras() *map[string]any { return &p.Extras }
 
 func (p *Askchaa) schemaPath() string { return "packets/schemas/askchaa.schema.json" }
 
+// NewAskchaa returns a Askchaa with the spec's defaults.
+func NewAskchaa() *Askchaa { return &Askchaa{} }
+
 func (p *Askchaa) Args() []string {
 	var args []string
 	return args
@@ -121,6 +133,9 @@ func (p *BB) jsonOrder() []string { return []string{"message"} }
 func (p *BB) extras() *map[string]any { return &p.Extras }
 
 func (p *BB) schemaPath() string { return "packets/schemas/BB.schema.json" }
+
+// NewBB returns a BB with the spec's defaults.
+func NewBB() *BB { return &BB{} }
 
 func (p *BB) Args() []string {
 	var args []string
@@ -156,6 +171,9 @@ func (p *BD) extras() *map[string]any { return &p.Extras }
 
 func (p *BD) schemaPath() string { return "packets/schemas/BD.schema.json" }
 
+// NewBD returns a BD with the spec's defaults.
+func NewBD() *BD { return &BD{} }
+
 func (p *BD) Args() []string {
 	var args []string
 	args = append(args, escapeFanta(p.Reason))
@@ -190,6 +208,9 @@ func (p *BN) jsonOrder() []string { return []string{"background", "position"} }
 func (p *BN) extras() *map[string]any { return &p.Extras }
 
 func (p *BN) schemaPath() string { return "packets/schemas/BN.schema.json" }
+
+// NewBN returns a BN with the spec's defaults.
+func NewBN() *BN { return &BN{} }
 
 func (p *BN) Args() []string {
 	var args []string
@@ -238,6 +259,9 @@ func (p *CASEAToClient) jsonConsts() map[string]string {
 }
 
 func (p *CASEAToClient) schemaPath() string { return "packets/schemas/CASEAToClient.schema.json" }
+
+// NewCASEAToClient returns a CASEAToClient with the spec's defaults.
+func NewCASEAToClient() *CASEAToClient { return &CASEAToClient{} }
 
 func (p *CASEAToClient) Args() []string {
 	var args []string
@@ -297,6 +321,9 @@ func (p *CASEAToServer) extras() *map[string]any { return &p.Extras }
 
 func (p *CASEAToServer) schemaPath() string { return "packets/schemas/CASEAToServer.schema.json" }
 
+// NewCASEAToServer returns a CASEAToServer with the spec's defaults.
+func NewCASEAToServer() *CASEAToServer { return &CASEAToServer{} }
+
 func (p *CASEAToServer) Args() []string {
 	var args []string
 	args = append(args, escapeFanta(p.Title))
@@ -348,6 +375,9 @@ func (p *CC) extras() *map[string]any { return &p.Extras }
 
 func (p *CC) schemaPath() string { return "packets/schemas/CC.schema.json" }
 
+// NewCC returns a CC with the spec's defaults.
+func NewCC() *CC { return &CC{} }
+
 func (p *CC) Args() []string {
 	var args []string
 	args = append(args, itoa(p.PlayerID))
@@ -388,6 +418,9 @@ func (p *CH) extras() *map[string]any { return &p.Extras }
 
 func (p *CH) schemaPath() string { return "packets/schemas/CH.schema.json" }
 
+// NewCH returns a CH with the spec's defaults.
+func NewCH() *CH { return &CH{} }
+
 func (p *CH) Args() []string {
 	var args []string
 	args = append(args, itoa(p.CharID))
@@ -420,6 +453,9 @@ func (p *CHECK) jsonOrder() []string { return []string{} }
 func (p *CHECK) extras() *map[string]any { return &p.Extras }
 
 func (p *CHECK) schemaPath() string { return "packets/schemas/CHECK.schema.json" }
+
+// NewCHECK returns a CHECK with the spec's defaults.
+func NewCHECK() *CHECK { return &CHECK{} }
 
 func (p *CHECK) Args() []string {
 	var args []string
@@ -467,6 +503,9 @@ func (p *CI) extras() *map[string]any { return &p.Extras }
 
 func (p *CI) schemaPath() string { return "packets/schemas/CI.schema.json" }
 
+// NewCI returns a CI with the spec's defaults.
+func NewCI() *CI { return &CI{} }
+
 func (p *CI) Args() []string {
 	var args []string
 	args = append(args, itoa(p.BatchIndex))
@@ -510,6 +549,9 @@ func (p *CTToClient) extras() *map[string]any { return &p.Extras }
 
 func (p *CTToClient) schemaPath() string { return "packets/schemas/CTToClient.schema.json" }
 
+// NewCTToClient returns a CTToClient with the spec's defaults.
+func NewCTToClient() *CTToClient { return &CTToClient{} }
+
 func (p *CTToClient) Args() []string {
 	var args []string
 	args = append(args, escapeFanta(p.Name))
@@ -551,6 +593,9 @@ func (p *CTToServer) extras() *map[string]any { return &p.Extras }
 
 func (p *CTToServer) schemaPath() string { return "packets/schemas/CTToServer.schema.json" }
 
+// NewCTToServer returns a CTToServer with the spec's defaults.
+func NewCTToServer() *CTToServer { return &CTToServer{} }
+
 func (p *CTToServer) Args() []string {
 	var args []string
 	args = append(args, escapeFanta(p.Name))
@@ -588,6 +633,9 @@ func (p *CharsCheck) extras() *map[string]any { return &p.Extras }
 
 func (p *CharsCheck) schemaPath() string { return "packets/schemas/CharsCheck.schema.json" }
 
+// NewCharsCheck returns a CharsCheck with the spec's defaults.
+func NewCharsCheck() *CharsCheck { return &CharsCheck{} }
+
 func (p *CharsCheck) Args() []string {
 	var args []string
 	for _, v := range p.Taken {
@@ -619,6 +667,9 @@ func (p *DE) jsonOrder() []string { return []string{"id"} }
 func (p *DE) extras() *map[string]any { return &p.Extras }
 
 func (p *DE) schemaPath() string { return "packets/schemas/DE.schema.json" }
+
+// NewDE returns a DE with the spec's defaults.
+func NewDE() *DE { return &DE{} }
 
 func (p *DE) Args() []string {
 	var args []string
@@ -653,6 +704,9 @@ func (p *DONE) extras() *map[string]any { return &p.Extras }
 
 func (p *DONE) schemaPath() string { return "packets/schemas/DONE.schema.json" }
 
+// NewDONE returns a DONE with the spec's defaults.
+func NewDONE() *DONE { return &DONE{} }
+
 func (p *DONE) Args() []string {
 	var args []string
 	return args
@@ -676,6 +730,9 @@ func (p *Decryptor) jsonOrder() []string { return []string{"value"} }
 func (p *Decryptor) extras() *map[string]any { return &p.Extras }
 
 func (p *Decryptor) schemaPath() string { return "packets/schemas/decryptor.schema.json" }
+
+// NewDecryptor returns a Decryptor with the spec's defaults.
+func NewDecryptor() *Decryptor { return &Decryptor{} }
 
 func (p *Decryptor) Args() []string {
 	var args []string
@@ -713,6 +770,9 @@ func (p *EE) jsonOrder() []string { return []string{"id", "name", "description",
 func (p *EE) extras() *map[string]any { return &p.Extras }
 
 func (p *EE) schemaPath() string { return "packets/schemas/EE.schema.json" }
+
+// NewEE returns a EE with the spec's defaults.
+func NewEE() *EE { return &EE{} }
 
 func (p *EE) Args() []string {
 	var args []string
@@ -787,6 +847,9 @@ func (p *EI) extras() *map[string]any { return &p.Extras }
 
 func (p *EI) schemaPath() string { return "packets/schemas/EI.schema.json" }
 
+// NewEI returns a EI with the spec's defaults.
+func NewEI() *EI { return &EI{} }
+
 func (p *EI) Args() []string {
 	var args []string
 	args = append(args, itoa(p.ID))
@@ -846,6 +909,9 @@ func (p *EM) extras() *map[string]any { return &p.Extras }
 
 func (p *EM) schemaPath() string { return "packets/schemas/EM.schema.json" }
 
+// NewEM returns a EM with the spec's defaults.
+func NewEM() *EM { return &EM{} }
+
 func (p *EM) Args() []string {
 	var args []string
 	args = append(args, itoa(p.BatchIndex))
@@ -887,6 +953,9 @@ func (p *FA) extras() *map[string]any { return &p.Extras }
 
 func (p *FA) schemaPath() string { return "packets/schemas/FA.schema.json" }
 
+// NewFA returns a FA with the spec's defaults.
+func NewFA() *FA { return &FA{} }
+
 func (p *FA) Args() []string {
 	var args []string
 	for _, v := range p.Areas {
@@ -919,6 +988,9 @@ func (p *FL) jsonOrder() []string { return []string{"features"} }
 func (p *FL) extras() *map[string]any { return &p.Extras }
 
 func (p *FL) schemaPath() string { return "packets/schemas/FL.schema.json" }
+
+// NewFL returns a FL with the spec's defaults.
+func NewFL() *FL { return &FL{} }
 
 func (p *FL) Args() []string {
 	var args []string
@@ -970,6 +1042,9 @@ func (p *FM) extras() *map[string]any { return &p.Extras }
 
 func (p *FM) schemaPath() string { return "packets/schemas/FM.schema.json" }
 
+// NewFM returns a FM with the spec's defaults.
+func NewFM() *FM { return &FM{} }
+
 func (p *FM) Args() []string {
 	var args []string
 	for _, it := range p.MusicList {
@@ -1001,6 +1076,9 @@ func (p *HI) jsonOrder() []string { return []string{"hdid"} }
 func (p *HI) extras() *map[string]any { return &p.Extras }
 
 func (p *HI) schemaPath() string { return "packets/schemas/HI.schema.json" }
+
+// NewHI returns a HI with the spec's defaults.
+func NewHI() *HI { return &HI{} }
 
 func (p *HI) Args() []string {
 	var args []string
@@ -1036,6 +1114,9 @@ func (p *HPToClient) jsonOrder() []string { return []string{"bar", "value"} }
 func (p *HPToClient) extras() *map[string]any { return &p.Extras }
 
 func (p *HPToClient) schemaPath() string { return "packets/schemas/HPToClient.schema.json" }
+
+// NewHPToClient returns a HPToClient with the spec's defaults.
+func NewHPToClient() *HPToClient { return &HPToClient{} }
 
 func (p *HPToClient) Args() []string {
 	var args []string
@@ -1075,6 +1156,9 @@ func (p *HPToServer) extras() *map[string]any { return &p.Extras }
 
 func (p *HPToServer) schemaPath() string { return "packets/schemas/HPToServer.schema.json" }
 
+// NewHPToServer returns a HPToServer with the spec's defaults.
+func NewHPToServer() *HPToServer { return &HPToServer{} }
+
 func (p *HPToServer) Args() []string {
 	var args []string
 	args = append(args, itoa(penaltyBarToWire[p.Bar]))
@@ -1113,6 +1197,9 @@ func (p *IDToClient) jsonOrder() []string { return []string{"player_id", "softwa
 func (p *IDToClient) extras() *map[string]any { return &p.Extras }
 
 func (p *IDToClient) schemaPath() string { return "packets/schemas/IDToClient.schema.json" }
+
+// NewIDToClient returns a IDToClient with the spec's defaults.
+func NewIDToClient() *IDToClient { return &IDToClient{} }
 
 func (p *IDToClient) Args() []string {
 	var args []string
@@ -1155,6 +1242,9 @@ func (p *IDToServer) extras() *map[string]any { return &p.Extras }
 
 func (p *IDToServer) schemaPath() string { return "packets/schemas/IDToServer.schema.json" }
 
+// NewIDToServer returns a IDToServer with the spec's defaults.
+func NewIDToServer() *IDToServer { return &IDToServer{} }
+
 func (p *IDToServer) Args() []string {
 	var args []string
 	args = append(args, escapeFanta(p.Software))
@@ -1192,6 +1282,9 @@ func (p *JD) extras() *map[string]any { return &p.Extras }
 
 func (p *JD) schemaPath() string { return "packets/schemas/JD.schema.json" }
 
+// NewJD returns a JD with the spec's defaults.
+func NewJD() *JD { return &JD{} }
+
 func (p *JD) Args() []string {
 	var args []string
 	args = append(args, itoa(judgeStateToWire[p.State]))
@@ -1226,6 +1319,9 @@ func (p *KB) extras() *map[string]any { return &p.Extras }
 
 func (p *KB) schemaPath() string { return "packets/schemas/KB.schema.json" }
 
+// NewKB returns a KB with the spec's defaults.
+func NewKB() *KB { return &KB{} }
+
 func (p *KB) Args() []string {
 	var args []string
 	args = append(args, escapeFanta(p.Reason))
@@ -1259,6 +1355,9 @@ func (p *KK) jsonOrder() []string { return []string{"reason"} }
 func (p *KK) extras() *map[string]any { return &p.Extras }
 
 func (p *KK) schemaPath() string { return "packets/schemas/KK.schema.json" }
+
+// NewKK returns a KK with the spec's defaults.
+func NewKK() *KK { return &KK{} }
 
 func (p *KK) Args() []string {
 	var args []string
@@ -1319,6 +1418,9 @@ func (p *LE) extras() *map[string]any { return &p.Extras }
 
 func (p *LE) schemaPath() string { return "packets/schemas/LE.schema.json" }
 
+// NewLE returns a LE with the spec's defaults.
+func NewLE() *LE { return &LE{} }
+
 func (p *LE) Args() []string {
 	var args []string
 	for _, it := range p.Evidence {
@@ -1352,6 +1454,9 @@ func (p *MA) jsonOrder() []string { return []string{"player_id", "duration_minut
 func (p *MA) extras() *map[string]any { return &p.Extras }
 
 func (p *MA) schemaPath() string { return "packets/schemas/MA.schema.json" }
+
+// NewMA returns a MA with the spec's defaults.
+func NewMA() *MA { return &MA{} }
 
 func (p *MA) Args() []string {
 	var args []string
@@ -1402,6 +1507,13 @@ func (p *MCToClient) schemaPath() string { return "packets/schemas/MCToClient.sc
 
 func (p *MCToClient) applyDefaults() {
 	p.Channel = MusicChannel("music")
+}
+
+// NewMCToClient returns a MCToClient with the spec's defaults.
+func NewMCToClient() *MCToClient {
+	p := &MCToClient{}
+	p.applyDefaults()
+	return p
 }
 
 func (p *MCToClient) withDefaults() Outgoing {
@@ -1463,6 +1575,9 @@ func (p *MCToServer) jsonOrder() []string { return []string{"name", "char_id", "
 func (p *MCToServer) extras() *map[string]any { return &p.Extras }
 
 func (p *MCToServer) schemaPath() string { return "packets/schemas/MCToServer.schema.json" }
+
+// NewMCToServer returns a MCToServer with the spec's defaults.
+func NewMCToServer() *MCToServer { return &MCToServer{} }
 
 func (p *MCToServer) Args() []string {
 	var args []string
@@ -1546,6 +1661,13 @@ func (p *MSToClient) applyDefaults() {
 	p.TextColor = TextColor("white")
 	p.PairedCharID = -1
 	p.PairedFlip = Flip("none")
+}
+
+// NewMSToClient returns a MSToClient with the spec's defaults.
+func NewMSToClient() *MSToClient {
+	p := &MSToClient{}
+	p.applyDefaults()
+	return p
 }
 
 func (p *MSToClient) withDefaults() Outgoing {
@@ -1736,6 +1858,13 @@ func (p *MSToServer) applyDefaults() {
 	p.PairedCharID = -1
 }
 
+// NewMSToServer returns a MSToServer with the spec's defaults.
+func NewMSToServer() *MSToServer {
+	p := &MSToServer{}
+	p.applyDefaults()
+	return p
+}
+
 func (p *MSToServer) withDefaults() Outgoing {
 	c := *p
 	if c.DeskModifier == "" {
@@ -1875,6 +2004,9 @@ func (p *PE) extras() *map[string]any { return &p.Extras }
 
 func (p *PE) schemaPath() string { return "packets/schemas/PE.schema.json" }
 
+// NewPE returns a PE with the spec's defaults.
+func NewPE() *PE { return &PE{} }
+
 func (p *PE) Args() []string {
 	var args []string
 	args = append(args, escapeFanta(p.Name))
@@ -1919,6 +2051,9 @@ func (p *PN) extras() *map[string]any { return &p.Extras }
 
 func (p *PN) schemaPath() string { return "packets/schemas/PN.schema.json" }
 
+// NewPN returns a PN with the spec's defaults.
+func NewPN() *PN { return &PN{} }
+
 func (p *PN) Args() []string {
 	var args []string
 	args = append(args, itoa(p.PlayerCount))
@@ -1960,6 +2095,9 @@ func (p *PR) extras() *map[string]any { return &p.Extras }
 
 func (p *PR) schemaPath() string { return "packets/schemas/PR.schema.json" }
 
+// NewPR returns a PR with the spec's defaults.
+func NewPR() *PR { return &PR{} }
+
 func (p *PR) Args() []string {
 	var args []string
 	args = append(args, itoa(p.ID))
@@ -1998,6 +2136,9 @@ func (p *PU) jsonOrder() []string { return []string{"id", "type", "data"} }
 func (p *PU) extras() *map[string]any { return &p.Extras }
 
 func (p *PU) schemaPath() string { return "packets/schemas/PU.schema.json" }
+
+// NewPU returns a PU with the spec's defaults.
+func NewPU() *PU { return &PU{} }
 
 func (p *PU) Args() []string {
 	var args []string
@@ -2044,6 +2185,9 @@ func (p *PV) jsonConsts() map[string]string {
 
 func (p *PV) schemaPath() string { return "packets/schemas/PV.schema.json" }
 
+// NewPV returns a PV with the spec's defaults.
+func NewPV() *PV { return &PV{} }
+
 func (p *PV) Args() []string {
 	var args []string
 	args = append(args, itoa(p.PlayerID))
@@ -2082,6 +2226,9 @@ func (p *RC) extras() *map[string]any { return &p.Extras }
 
 func (p *RC) schemaPath() string { return "packets/schemas/RC.schema.json" }
 
+// NewRC returns a RC with the spec's defaults.
+func NewRC() *RC { return &RC{} }
+
 func (p *RC) Args() []string {
 	var args []string
 	return args
@@ -2104,6 +2251,9 @@ func (p *RD) jsonOrder() []string { return []string{} }
 func (p *RD) extras() *map[string]any { return &p.Extras }
 
 func (p *RD) schemaPath() string { return "packets/schemas/RD.schema.json" }
+
+// NewRD returns a RD with the spec's defaults.
+func NewRD() *RD { return &RD{} }
 
 func (p *RD) Args() []string {
 	var args []string
@@ -2128,6 +2278,9 @@ func (p *RM) extras() *map[string]any { return &p.Extras }
 
 func (p *RM) schemaPath() string { return "packets/schemas/RM.schema.json" }
 
+// NewRM returns a RM with the spec's defaults.
+func NewRM() *RM { return &RM{} }
+
 func (p *RM) Args() []string {
 	var args []string
 	return args
@@ -2151,6 +2304,9 @@ func (p *RMC) jsonOrder() []string { return []string{"to_time"} }
 func (p *RMC) extras() *map[string]any { return &p.Extras }
 
 func (p *RMC) schemaPath() string { return "packets/schemas/RMC.schema.json" }
+
+// NewRMC returns a RMC with the spec's defaults.
+func NewRMC() *RMC { return &RMC{} }
 
 func (p *RMC) Args() []string {
 	var args []string
@@ -2187,6 +2343,9 @@ func (p *RTToClient) extras() *map[string]any { return &p.Extras }
 
 func (p *RTToClient) schemaPath() string { return "packets/schemas/RTToClient.schema.json" }
 
+// NewRTToClient returns a RTToClient with the spec's defaults.
+func NewRTToClient() *RTToClient { return &RTToClient{} }
+
 // RTToServer: Requests a testimony or verdict animation.
 type RTToServer struct {
 	Animation RTAnimation    `json:"animation"`
@@ -2201,6 +2360,9 @@ func (p *RTToServer) jsonOrder() []string { return []string{"animation", "name"}
 func (p *RTToServer) extras() *map[string]any { return &p.Extras }
 
 func (p *RTToServer) schemaPath() string { return "packets/schemas/RTToServer.schema.json" }
+
+// NewRTToServer returns a RTToServer with the spec's defaults.
+func NewRTToServer() *RTToServer { return &RTToServer{} }
 
 type SCCharDataItem struct {
 	Name     string `json:"name"`
@@ -2241,6 +2403,9 @@ func (p *SC) extras() *map[string]any { return &p.Extras }
 
 func (p *SC) schemaPath() string { return "packets/schemas/SC.schema.json" }
 
+// NewSC returns a SC with the spec's defaults.
+func NewSC() *SC { return &SC{} }
+
 func (p *SC) Args() []string {
 	var args []string
 	for _, it := range p.CharData {
@@ -2280,6 +2445,9 @@ func (p *SETCASE) jsonOrder() []string {
 func (p *SETCASE) extras() *map[string]any { return &p.Extras }
 
 func (p *SETCASE) schemaPath() string { return "packets/schemas/SETCASE.schema.json" }
+
+// NewSETCASE returns a SETCASE with the spec's defaults.
+func NewSETCASE() *SETCASE { return &SETCASE{} }
 
 func (p *SETCASE) Args() []string {
 	var args []string
@@ -2334,6 +2502,9 @@ func (p *SI) jsonOrder() []string { return []string{"char_count", "evi_count", "
 func (p *SI) extras() *map[string]any { return &p.Extras }
 
 func (p *SI) schemaPath() string { return "packets/schemas/SI.schema.json" }
+
+// NewSI returns a SI with the spec's defaults.
+func NewSI() *SI { return &SI{} }
 
 func (p *SI) Args() []string {
 	var args []string
@@ -2392,6 +2563,9 @@ func (p *SM) extras() *map[string]any { return &p.Extras }
 
 func (p *SM) schemaPath() string { return "packets/schemas/SM.schema.json" }
 
+// NewSM returns a SM with the spec's defaults.
+func NewSM() *SM { return &SM{} }
+
 func (p *SM) Args() []string {
 	var args []string
 	for _, it := range p.MusicList {
@@ -2423,6 +2597,9 @@ func (p *SP) jsonOrder() []string { return []string{"side"} }
 func (p *SP) extras() *map[string]any { return &p.Extras }
 
 func (p *SP) schemaPath() string { return "packets/schemas/SP.schema.json" }
+
+// NewSP returns a SP with the spec's defaults.
+func NewSP() *SP { return &SP{} }
 
 func (p *SP) Args() []string {
 	var args []string
@@ -2458,6 +2635,9 @@ func (p *ST) jsonOrder() []string { return []string{"subtheme", "reload"} }
 func (p *ST) extras() *map[string]any { return &p.Extras }
 
 func (p *ST) schemaPath() string { return "packets/schemas/ST.schema.json" }
+
+// NewST returns a ST with the spec's defaults.
+func NewST() *ST { return &ST{} }
 
 func (p *ST) Args() []string {
 	var args []string
@@ -2497,6 +2677,9 @@ func (p *TI) jsonOrder() []string { return []string{"timer_id", "command", "time
 func (p *TI) extras() *map[string]any { return &p.Extras }
 
 func (p *TI) schemaPath() string { return "packets/schemas/TI.schema.json" }
+
+// NewTI returns a TI with the spec's defaults.
+func NewTI() *TI { return &TI{} }
 
 func (p *TI) Args() []string {
 	var args []string
@@ -2538,6 +2721,9 @@ func (p *ZZToClient) extras() *map[string]any { return &p.Extras }
 
 func (p *ZZToClient) schemaPath() string { return "packets/schemas/ZZToClient.schema.json" }
 
+// NewZZToClient returns a ZZToClient with the spec's defaults.
+func NewZZToClient() *ZZToClient { return &ZZToClient{} }
+
 func (p *ZZToClient) Args() []string {
 	var args []string
 	args = append(args, escapeFanta(p.Reason))
@@ -2575,6 +2761,13 @@ func (p *ZZToServer) schemaPath() string { return "packets/schemas/ZZToServer.sc
 
 func (p *ZZToServer) applyDefaults() {
 	p.ReportedPlayerID = -1
+}
+
+// NewZZToServer returns a ZZToServer with the spec's defaults.
+func NewZZToServer() *ZZToServer {
+	p := &ZZToServer{}
+	p.applyDefaults()
+	return p
 }
 
 func (p *ZZToServer) Args() []string {

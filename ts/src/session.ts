@@ -32,7 +32,7 @@
 
 import { encode, type WireMode } from "./encode";
 import { decode, readHeader } from "./decode";
-import { lookupCodec } from "./fanta";
+import { decodeCustom, encodeCustom } from "./custom";
 import {
   c2sSchemas,
   s2cSchemas,
@@ -69,10 +69,9 @@ type OnMap<Outputs> = {
 };
 
 /**
- * Custom packets: headers the meta schemas don't model. Each needs a codec
- * registered with `registerCodec`, which encodes and decodes it in both wire
- * formats; `sendCustom` throws without one. A header takes `on.<X>` or
- * `onCustom("X")`, not both; the second registration throws.
+ * Custom packets: headers registered with `registerPacket` (see
+ * EXTENDING.md). `sendCustom` throws for an unregistered header, or a
+ * JSON-only one on a FantaCode session. `onCustom` throws for a spec header.
  */
 interface CustomChannel {
   // The generic P (vs a plain `Packet` param) is what lets an inline literal
@@ -96,6 +95,8 @@ export interface ServerSession extends CustomChannel {
    * `false` = positional fanta. Inbound always auto-detects.
    */
   setJsonMode(enabled: boolean): void;
+  /** Whether outbound packets are JSON. */
+  readonly jsonMode: boolean;
 }
 
 /** Returned from `client(config)`. Owns the S2C send side, C2S on side. */
@@ -109,6 +110,8 @@ export interface ClientSession extends CustomChannel {
    * `false` = positional fanta. Inbound always auto-detects.
    */
   setJsonMode(enabled: boolean): void;
+  /** Whether outbound packets are JSON. */
+  readonly jsonMode: boolean;
 }
 
 // Implementation
@@ -116,12 +119,6 @@ export interface ClientSession extends CustomChannel {
 type Role = "client" | "server";
 
 type SchemaMap = Record<string, JsonSchema>;
-
-// Guarantee a custom codec's JSON object carries a matching "$header".
-function withJsonHeader(raw: string, header: string): string {
-  const { $header: _, ...fields } = JSON.parse(raw) as Record<string, unknown>;
-  return JSON.stringify({ $header: header, ...fields });
-}
 
 function makeSession(role: Role, config: SessionConfig): ServerSession & ClientSession {
   // role "server" → this represents the remote server → from us-as-client.
@@ -173,7 +170,6 @@ function makeSession(role: Role, config: SessionConfig): ServerSession & ClientS
         throw new Error(`aolib: no schema registered for header '${header}'`);
       }
       return (handler: (packet: unknown) => void) => {
-        if (header in customHandlers) throw customCollisionError(header);
         handlers[header] = handler;
       };
     },
@@ -184,33 +180,19 @@ function makeSession(role: Role, config: SessionConfig): ServerSession & ClientS
     if (closed) {
       throw new Error(`aolib: sendCustom on a closed session`);
     }
-    const header = packet.$header;
-    if (typeof header !== "string" || header === "") {
+    if (typeof packet.$header !== "string" || packet.$header === "") {
       throw new Error(`aolib: sendCustom requires a non-empty string $header`);
     }
-    const codec = lookupCodec(header);
-    if (!codec) {
-      throw new Error(
-        `aolib: sendCustom('${header}') needs a codec; call registerCodec('${header}', ...) first`,
-      );
-    }
-    if (mode === "json") {
-      if (!codec.encodeJson) {
-        throw new Error(`aolib: codec for '${header}' must implement encodeJson`);
-      }
-      config.send(withJsonHeader(codec.encodeJson(packet as Record<string, unknown>), header));
-      return;
-    }
-    const args = codec.encodeFanta(packet as Record<string, unknown>);
-    const body = args.join("#");
-    config.send(body === "" ? `${header}#%` : `${header}#${body}#%`);
+    config.send(encodeCustom(packet as Record<string, unknown>, mode));
   }
 
   function onCustom<T extends Packet = Packet & Record<string, unknown>>(
     header: T["$header"],
     handler: (packet: T) => void,
   ): void {
-    if (header in handlers) throw customCollisionError(header);
+    if (header in c2sSchemas || header in s2cSchemas) {
+      throw new Error(`aolib: '${header}' is a spec packet; use on.${header}, with $extras for extra fields`);
+    }
     customHandlers[header] = handler as (packet: unknown) => void;
   }
 
@@ -228,29 +210,29 @@ function makeSession(role: Role, config: SessionConfig): ServerSession & ClientS
       return;
     }
 
-    // Custom handlers win over the typed path; the header's codec decodes the
-    // frame in either format.
-    const custom = customHandlers[header];
-    if (custom) {
-      const codec = lookupCodec(header);
-      let raw: Record<string, unknown> | undefined;
-      if (wire.startsWith("{")) {
-        if (codec?.decodeJson) raw = codec.decodeJson(wire);
-      } else if (codec) {
-        const rest = wire.replace(/#?%$/, "").slice(header.length + 1);
-        const args = rest === "" ? [] : rest.split("#");
-        raw = codec.decodeFanta(args);
+    let customPacket: Record<string, unknown> | undefined;
+    try {
+      customPacket = decodeCustom(header, wire);
+    } catch (err) {
+      if (!callHook(config.onDecodeError, header, err as Error, wire)) {
+        defaultDecodeError(header, err as Error, wire);
       }
-      if (raw !== undefined) {
-        try {
-          custom(raw);
-        } catch (err) {
-          if (!callHook(config.onHandlerError, header, err as Error, raw)) {
-            defaultHandlerError(header, err as Error, raw);
-          }
-        }
+      return;
+    }
+    if (customPacket !== undefined) {
+      const custom = customHandlers[header];
+      if (!custom) {
+        if (!callHook(config.onUnhandled, header, customPacket)) defaultUnhandled(header, customPacket);
         return;
       }
+      try {
+        custom(customPacket);
+      } catch (err) {
+        if (!callHook(config.onHandlerError, header, err as Error, customPacket)) {
+          defaultHandlerError(header, err as Error, customPacket);
+        }
+      }
+      return;
     }
 
     const schema = inboundSchemas[header];
@@ -318,6 +300,9 @@ function makeSession(role: Role, config: SessionConfig): ServerSession & ClientS
     receive,
     close,
     setJsonMode,
+    get jsonMode() {
+      return mode === "json";
+    },
   };
 }
 
@@ -354,13 +339,6 @@ function wrongDirectionOnError(role: Role, header: string): Error {
       `On a client session (representing a remote client), you can only register ` +
       `handlers for client -> server packets. Use server(config).on.${header} ` +
       `instead, or send the packet with client.send.${header}(...).`,
-  );
-}
-
-function customCollisionError(header: string): Error {
-  return new Error(
-    `aolib: header '${header}' already has both a typed on.${header} handler ` +
-      `and onCustom('${header}'). Register one or the other, not both.`,
   );
 }
 

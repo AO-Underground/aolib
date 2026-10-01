@@ -1,6 +1,6 @@
 /**
  * Low-level wire access, for callers that bypass the session layer:
- * encode/decode frames directly, register a custom codec, or read the
+ * encode/decode frames directly, or read the
  * header-keyed schema registries. Most consumers never need this.
  *
  *   import * as wire from "aolib-ts/wire";
@@ -15,9 +15,8 @@ export {
   toFantaArgs,
   escapeFanta,
   unescapeFanta,
-  registerCodec,
 } from "./fanta";
-export type { JsonSchema, Codec } from "./types";
+export type { JsonSchema } from "./types";
 
 // Header-keyed schema maps for the dispatcher, and the direction shape
 // maps, for routing outside a session.

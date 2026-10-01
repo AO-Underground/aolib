@@ -42,6 +42,12 @@ for (const s of [...enumSchemas, ...typeSchemas] as JsonSchema[]) {
 
 const cache = new WeakMap<JsonSchema, ValidateFunction>();
 
+/** Compile a caller's schema now, replacing any earlier schema with its `$id`. */
+export function compileSchema(schema: JsonSchema): void {
+  if (typeof schema.$id === "string") ajv.removeSchema(schema.$id);
+  cache.set(schema, ajv.compile(schema));
+}
+
 function getValidator(schema: JsonSchema): ValidateFunction {
   let v = cache.get(schema);
   if (!v) {

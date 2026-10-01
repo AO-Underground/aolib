@@ -33,37 +33,42 @@ How they're handled:
 
 ## Custom packets
 
-For a header the spec doesn't have, register a codec that implements both
-FantaCode and JSON, then use the session's custom channel:
+Register a header the spec doesn't have with `registerPacket`. Give it a schema
+in the spec's packet format and it behaves like a spec packet:
 
 ```ts
-import { registerCodec, escapeFanta, unescapeFanta } from "aolib-ts/wire";
+import { registerPacket } from "aolib-ts";
 
-registerCodec("TT", {
-  encodeFanta: (p) => [escapeFanta(String(p.title))],
-  decodeFanta: (args) => {
-    if (args.length === 0) throw new Error("TT: missing title");
-    return { title: unescapeFanta(args[0] ?? "") };
+registerPacket("TT", {
+  schema: {
+    type: "object",
+    properties: {
+      title: { type: "string" },
+      rows: { type: "array", items: { type: "array", items: { type: "string" } }, default: [] },
+    },
+    required: ["title"],
   },
-  encodeJson: (p) => JSON.stringify({ title: p.title }),
-  decodeJson: (raw) => ({ title: (JSON.parse(raw) as { title: string }).title }),
 });
 
-client.sendCustom({ $header: "TT", title: "Cross-Examination" });
-server.onCustom<{ $header: "TT"; title: string }>("TT", (p) => p.title);
+client.sendCustom({ $header: "TT", title: "Cross-Examination", rows: [["a", "b"], ["c"]] });
+server.onCustom<{ $header: "TT"; title: string; rows: string[][] }>("TT", (p) => p.title);
 ```
+
+On the wire that is `TT#Cross-Examination#a&b#c#%`, or
+`{"$header":"TT","title":"Cross-Examination","rows":[["a","b"],["c"]]}`.
 
 How they're handled:
 
-- **Framing is the library's.** `decodeFanta` gets the fields between the
-  header and `%`; `encodeFanta` returns them. On JSON the library adds
-  `"$header"`. Escape string fields with `escapeFanta`/`unescapeFanta`.
-- **Both formats are needed.** `sendCustom` throws for a header without a
-  codec, and a frame in a format the codec can't decode never reaches
-  `onCustom`.
-- **The registry is global** and shared by every session. Don't register a
-  spec header: its custom handler would replace the typed one. Use `$extras`
-  to add fields to those.
-- **One handler per header.** `onCustom` throws if the header already has an
-  `on.<X>` handler, and the reverse.
-- **No validation.** The codec owns the packet's shape.
+- **With a schema** the packet is validated, gets its defaults, is written in
+  schema order with `$extras`, and has a FantaCode form by the
+  [walker rules](../spec/README.md#validation-and-wire-format). The schema may
+  `$ref` the spec's types, e.g. `"../../types/Side.schema.json"`.
+- **Without a schema** (`registerPacket("TT")`) the JSON is the packet's own
+  fields after `"$header"`, and the packet is JSON-only: `sendCustom` throws
+  on a FantaCode session (check `jsonMode`), and FantaCode frames go to
+  `onUnknownHeader`.
+- **`fanta` and `json` override** a form for wire shapes the rules don't
+  cover, e.g. a FantaCode slot with its own separator. A schema still
+  validates the packet.
+- **Spec headers throw.** Add fields to those with `$extras`.
+- **The registry is global.** `onCustom` throws for a spec header.
