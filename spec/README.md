@@ -68,8 +68,8 @@ fanta-format walker to the same schemas:
   - `string`: escape `#`/`&`/`%`/`$` as `<num>`/`<and>`/`<percent>`/`<dollar>`
   - `number` / `integer`: `String(n)` / `Number(token)`
   - `boolean`: `"1"` / `"0"`
-  - `object`: recurse, joining sub-tokens with `&` (or the `x-fanta-join`
-    separator); see `x-fanta-join` below
+  - `object`: recurse, joining sub-tokens with `&` (or the
+    `x-fanta-separator` value); see `x-fanta-separator` below
   - `array`: greedy, trailing array consumes all remaining slots
   - `const`: emitted as the const value; on decode the slot is consumed
     and the schema-fixed value is used regardless of the token
@@ -138,16 +138,16 @@ The fanta walker encodes the integer and decodes an incoming integer back to the
 string, so real AO servers still see the numbers they expect. Enums without this
 keyword (e.g. `Side`) are sent as their string value on both sides.
 
-### `x-fanta-join: string`
+### `x-fanta-separator: string`
 
 On an `object`-typed schema. The object occupies a single fanta slot whose
 sub-tokens are joined (encode) and split (decode) by this separator instead of
 the default `&`. The separator must not be a chat metacharacter (`#`/`&`/`%`/`$`),
 since those are escaped inside string sub-tokens. As a no-value sentinel, an
 object whose sub-tokens are all empty encodes to an empty slot, and an empty slot
-decodes back to the all-empty object. Scoped to join-objects; plain `&`-objects
-(e.g. `Offset`) are unaffected. Currently set on `Effect` (separator `|`), the MS
-`effect` field (see `packets/EFFECTS.md`).
+decodes back to the all-empty object. Scoped to objects carrying it; plain
+`&`-objects (e.g. `Offset`) are unaffected. Currently set on `Effect`
+(separator `|`), the MS `effect` field (see `packets/EFFECTS.md`).
 
 ### `x-fanta-unescape-amp: true`
 

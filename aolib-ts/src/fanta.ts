@@ -9,9 +9,9 @@
  *   "number"/"integer" String(n) on encode, Number(token) on decode
  *   "boolean"         "1"/"0" on encode, token === "1" on decode
  *   "object"          recurse, join sub-tokens with `&`, or with the
- *                     `x-fanta-join` separator when set (`|` for MS
- *                     effect; an all-empty join-object collapses to an
- *                     empty slot). Optional `x-fanta-unescape-amp: true`
+ *                     `x-fanta-separator` value when set (`|` for MS
+ *                     effect; an all-empty object collapses to an empty
+ *                     slot). Optional `x-fanta-unescape-amp: true`
  *                     tolerates the legacy `<and>` form on decode (offset
  *                     slot in MS). Encoders never emit `<and>`.
  *   "array"           greedy, consumes all remaining slots
@@ -176,17 +176,17 @@ function encodeToken(rawSchema: JsonSchema, value: unknown, baseId: string): str
 
   const t = jsonType(schema);
   if (t === "object") {
-    const join = typeof schema["x-fanta-join"] === "string" ? (schema["x-fanta-join"] as string) : "&";
+    const sep = typeof schema["x-fanta-separator"] === "string" ? (schema["x-fanta-separator"] as string) : "&";
     const parts: string[] = [];
     const props = schema.properties ?? {};
     const obj = (value ?? {}) as Record<string, unknown>;
     for (const [k, sub] of Object.entries(props)) {
       parts.push(encodeToken(sub, obj[k], baseId));
     }
-    // Join-objects use an all-empty value as the "absent" sentinel: it
-    // collapses to an empty slot (e.g. MS effect = no effect).
-    if (schema["x-fanta-join"] && parts.every((p) => p === "")) return "";
-    return parts.join(join);
+    // An object with a custom separator uses an all-empty value as the
+    // "absent" sentinel: it collapses to an empty slot (MS effect = no effect).
+    if (schema["x-fanta-separator"] && parts.every((p) => p === "")) return "";
+    return parts.join(sep);
   }
   return encodeScalar(t, value);
 }
@@ -215,9 +215,9 @@ function decodeToken(rawSchema: JsonSchema, token: string, name: string, baseId:
 
   const t = jsonType(schema);
   if (t === "object") {
-    const join = typeof schema["x-fanta-join"] === "string" ? (schema["x-fanta-join"] as string) : "&";
+    const sep = typeof schema["x-fanta-separator"] === "string" ? (schema["x-fanta-separator"] as string) : "&";
     const raw = schema["x-fanta-unescape-amp"] ? token.replaceAll("<and>", "&") : token;
-    const parts = raw.split(join);
+    const parts = raw.split(sep);
     const result: Record<string, unknown> = {};
     let i = 0;
     for (const [k, sub] of Object.entries(schema.properties ?? {})) {
