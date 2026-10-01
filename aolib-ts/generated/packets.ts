@@ -2,7 +2,7 @@
 
 /* eslint-disable */
 
-import { AreaUpdateType, AuthState, CharAvailability, DeskModifier, EmoteModifier, Flip, JudgeState, PenaltyBar, PlayerDataType, PlayerListUpdate, ShoutModifier, Side, TextColor, TimerCommand } from "./enums";
+import { AreaUpdateType, AuthState, CharAvailability, DeskModifier, EmoteModifier, Flip, JudgeState, PenaltyBar, PlayerDataType, PlayerListUpdate, RTAnimation, ShoutModifier, Side, TextColor, TimerCommand } from "./enums";
 import { Effect, Offset } from "./types";
 
 import AreaUpdateTypeEnumSchema from "../../spec/types/AreaUpdateType.schema.json";
@@ -24,6 +24,8 @@ import PenaltyBarEnumSchema from "../../spec/types/PenaltyBar.schema.json";
 import PlayerDataTypeEnumSchema from "../../spec/types/PlayerDataType.schema.json";
 
 import PlayerListUpdateEnumSchema from "../../spec/types/PlayerListUpdate.schema.json";
+
+import RTAnimationEnumSchema from "../../spec/types/RTAnimation.schema.json";
 
 import ShoutModifierEnumSchema from "../../spec/types/ShoutModifier.schema.json";
 
@@ -260,7 +262,7 @@ export { default as askchaaSchema } from "../../spec/packets/schemas/askchaa.sch
 export { default as decryptorSchema } from "../../spec/packets/schemas/decryptor.schema.json";
 
 
-export const enumSchemas = [AreaUpdateTypeEnumSchema, AuthStateEnumSchema, CharAvailabilityEnumSchema, DeskModifierEnumSchema, EmoteModifierEnumSchema, FlipEnumSchema, JudgeStateEnumSchema, PenaltyBarEnumSchema, PlayerDataTypeEnumSchema, PlayerListUpdateEnumSchema, ShoutModifierEnumSchema, SideEnumSchema, TextColorEnumSchema, TimerCommandEnumSchema];
+export const enumSchemas = [AreaUpdateTypeEnumSchema, AuthStateEnumSchema, CharAvailabilityEnumSchema, DeskModifierEnumSchema, EmoteModifierEnumSchema, FlipEnumSchema, JudgeStateEnumSchema, PenaltyBarEnumSchema, PlayerDataTypeEnumSchema, PlayerListUpdateEnumSchema, RTAnimationEnumSchema, ShoutModifierEnumSchema, SideEnumSchema, TextColorEnumSchema, TimerCommandEnumSchema];
 
 export const typeSchemas = [EffectTypeSchema, OffsetTypeSchema];
 
@@ -920,25 +922,25 @@ export interface RMCInit {
 
 export interface RTToClient extends Packet {
   $header: "RT";
-  animation: string;
-  judgeId: number;
+  animation: RTAnimation;
+  name: string;
 }
 
 export interface RTToClientInit {
-  animation: string;
-  judgeId?: number;
+  animation: RTAnimation;
+  name?: string;
 }
 
 
 export interface RTToServer extends Packet {
   $header: "RT";
-  animation: string;
-  judgeId: number;
+  animation: RTAnimation;
+  name: string;
 }
 
 export interface RTToServerInit {
-  animation: string;
-  judgeId?: number;
+  animation: RTAnimation;
+  name?: string;
 }
 
 

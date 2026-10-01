@@ -23,6 +23,6 @@ Deliberately left as numbers for now:
   an enum can't express combinations. Candidate for a boolean-object shape.
 - `MC.channel` is a `0-3` channel index with only loose conventions, not a
   fixed named set.
-- `RT.judgeId` and `ZZ.target` exist in the schemas but not in the reference
-  docs (which show `RT` as `animation` only and `ZZ` as `reason` only); the
-  spec/doc divergence should be reconciled before deciding their shape.
+- `ZZ.target` exists in the schema but not in the reference docs (which show
+  `ZZ` as `reason` only); the divergence should be reconciled before deciding
+  its shape.

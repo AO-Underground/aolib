@@ -20,9 +20,9 @@ them spec-correct.
 ## Coverage
 
 Covered: simple scalar packets, both `ID` directions, arrays of scalars (`FL`),
-string escaping (`CT`), the rich `MS` (string enums, `{x,y}` offset, bools), and
-the object-item array packets (`SM`, `FM`, `SC`, `LE`, `CI`, `EM`).
+string escaping (`CT`), the rich `MS` (string enums, `{x,y}` offset, bools),
+the object-item array packets (`SM`, `FM`, `SC`, `LE`, `CI`, `EM`), and
+`const` padding slots (`PV`), and the `RT` codec.
 
-Not yet covered: **`x-fanta-codec` packets** with discriminator-typed payloads
-(e.g. `ARUP`, whose `update_data` element type depends on `update_type`) need
-dedicated vectors.
+Not yet covered: the `ARUP` codec, whose `update_data` element type depends on
+`update_type`.

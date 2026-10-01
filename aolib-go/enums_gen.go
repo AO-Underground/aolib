@@ -233,6 +233,18 @@ var playerListUpdateFromWire = map[int]PlayerListUpdate{
 	1: PlayerListUpdateRemove,
 }
 
+// RTAnimation is Judge-control overlay animation played by RT.
+type RTAnimation string
+
+const (
+	RTAnimationWitnessTestimony RTAnimation = "witness_testimony"
+	RTAnimationCrossExamination RTAnimation = "cross_examination"
+	RTAnimationNotGuilty        RTAnimation = "not_guilty"
+	RTAnimationGuilty           RTAnimation = "guilty"
+	RTAnimationEndAnimation     RTAnimation = "end_animation"
+	RTAnimationCustom           RTAnimation = "custom"
+)
+
 // ShoutModifier is Shout / objection selector.
 type ShoutModifier string
 

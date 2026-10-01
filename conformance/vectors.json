@@ -340,5 +340,83 @@
         "free"
       ]
     }
+  },
+  {
+    "id": "PV",
+    "header": "PV",
+    "receiver": "client",
+    "fanta": "PV#5#CID#12#%",
+    "json": {
+      "$header": "PV",
+      "player_id": 5,
+      "_cid": "CID",
+      "char_id": 12
+    }
+  },
+  {
+    "id": "RTToServer-witness_testimony",
+    "header": "RT",
+    "receiver": "server",
+    "fanta": "RT#testimony1#0#%",
+    "json": {
+      "$header": "RT",
+      "animation": "witness_testimony",
+      "name": ""
+    }
+  },
+  {
+    "id": "RTToClient-end_animation",
+    "header": "RT",
+    "receiver": "client",
+    "fanta": "RT#testimony1#1#%",
+    "json": {
+      "$header": "RT",
+      "animation": "end_animation",
+      "name": ""
+    }
+  },
+  {
+    "id": "RTToServer-cross_examination",
+    "header": "RT",
+    "receiver": "server",
+    "fanta": "RT#testimony2#0#%",
+    "json": {
+      "$header": "RT",
+      "animation": "cross_examination",
+      "name": ""
+    }
+  },
+  {
+    "id": "RTToClient-not_guilty",
+    "header": "RT",
+    "receiver": "client",
+    "fanta": "RT#judgeruling#0#%",
+    "json": {
+      "$header": "RT",
+      "animation": "not_guilty",
+      "name": ""
+    }
+  },
+  {
+    "id": "RTToServer-guilty",
+    "header": "RT",
+    "receiver": "server",
+    "fanta": "RT#judgeruling#1#%",
+    "json": {
+      "$header": "RT",
+      "animation": "guilty",
+      "name": ""
+    }
+  },
+  {
+    "id": "RTToClient-custom",
+    "header": "RT",
+    "receiver": "client",
+    "fanta": "RT#knock<and>enter#%",
+    "json": {
+      "$header": "RT",
+      "animation": "custom",
+      "name": "knock&enter"
+    }
   }
 ]

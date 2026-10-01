@@ -52,3 +52,35 @@ func TestDecodeUnknownHeaderFallsBackToPacket(t *testing.T) {
 		t.Fatalf("Decode unknown = %#v", v)
 	}
 }
+
+func TestDecodeRTLenientForms(t *testing.T) {
+	cases := []struct {
+		wire string
+		want RTToServer
+	}{
+		{"RT#testimony1#%", RTToServer{Animation: RTAnimationWitnessTestimony}},
+		{"RT#testimony1#5#%", RTToServer{Animation: RTAnimationWitnessTestimony}},
+		{"RT#testimony1#x#%", RTToServer{Animation: RTAnimationWitnessTestimony}},
+		{"RT#testimony2#%", RTToServer{Animation: RTAnimationCrossExamination}},
+		{"RT#judgeruling#%", RTToServer{Animation: RTAnimationNotGuilty}},
+		{"RT#knock#3#%", RTToServer{Animation: RTAnimationCustom, Name: "knock"}},
+		{"RT#a<and>b#%", RTToServer{Animation: RTAnimationCustom, Name: "a&b"}},
+	}
+	for _, c := range cases {
+		v, err := Decode([]byte(c.wire), WireFanta)
+		if err != nil {
+			t.Fatalf("Decode(%q): %v", c.wire, err)
+		}
+		if got, ok := v.(*RTToServer); !ok || *got != c.want {
+			t.Fatalf("Decode(%q) = %#v, want %#v", c.wire, v, c.want)
+		}
+	}
+}
+
+func TestDecodeRTRejectsInvalid(t *testing.T) {
+	for _, wire := range []string{"RT#judgeruling#2#%", "RT##%", "RT#%"} {
+		if _, err := Decode([]byte(wire), WireFanta); err == nil {
+			t.Fatalf("Decode(%q) succeeded, want error", wire)
+		}
+	}
+}

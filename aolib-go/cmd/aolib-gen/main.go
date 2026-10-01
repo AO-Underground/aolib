@@ -555,6 +555,19 @@ func emitPackets(packets []*Schema, enumNames, typeNames map[string]*Schema) str
 		}
 		b.WriteString("}\n\n")
 		fmt.Fprintf(&b, "func (p *%s) Header() string { return %q }\n\n", s.Name, s.Header)
+		var consts []string
+		for _, p := range s.Properties {
+			if p.Schema.Const != "" {
+				consts = append(consts, fmt.Sprintf("%q: %q", p.Name, p.Schema.Const))
+			}
+		}
+		if len(consts) > 0 {
+			fmt.Fprintf(&b, "func (p *%s) jsonConsts() map[string]string {\n\treturn map[string]string{%s}\n}\n\n", s.Name, strings.Join(consts, ", "))
+		}
+		// x-fanta-codec packets hand-write Args and Parse in codecs.go.
+		if s.XFantaCodec != "" {
+			continue
+		}
 		fmt.Fprintf(&b, "func (p *%s) Args() []string {\n\tvar args []string\n", s.Name)
 		for _, p := range s.Properties {
 			if p.Schema.Const != "" {

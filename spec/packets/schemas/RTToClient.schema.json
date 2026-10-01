@@ -9,11 +9,12 @@
       "const": "RT"
     },
     "animation": {
-      "type": "string"
+      "$ref": "../../types/RTAnimation.schema.json"
     },
-    "judgeId": {
-      "type": "number",
-      "default": -1
+    "name": {
+      "type": "string",
+      "default": "",
+      "description": "Custom WTCE name; set only when `animation` is `custom`."
     }
   },
   "required": [
@@ -21,5 +22,30 @@
     "animation"
   ],
   "additionalProperties": false,
+  "if": {
+    "properties": {
+      "animation": {
+        "const": "custom"
+      }
+    }
+  },
+  "then": {
+    "required": [
+      "name"
+    ],
+    "properties": {
+      "name": {
+        "minLength": 1
+      }
+    }
+  },
+  "else": {
+    "properties": {
+      "name": {
+        "const": ""
+      }
+    }
+  },
+  "x-fanta-codec": "RT",
   "x-receiver": "client"
 }

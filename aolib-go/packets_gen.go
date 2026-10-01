@@ -10,29 +10,6 @@ type ARUP struct {
 
 func (p *ARUP) Header() string { return "ARUP" }
 
-func (p *ARUP) Args() []string {
-	var args []string
-	args = append(args, itoa(areaUpdateTypeToWire[p.UpdateType]))
-	args = append(args, p.UpdateData...)
-	return args
-}
-
-func ParseARUP(body []string) (*ARUP, error) {
-	p := &ARUP{}
-	get := func(i int) string {
-		if i < len(body) {
-			return body[i]
-		}
-		return ""
-	}
-	cursor := 0
-	p.UpdateType = areaUpdateTypeFromWire[atoiOrZero(get(cursor))]
-	cursor++
-	p.UpdateData = body[cursor:]
-	cursor = len(body)
-	return p, nil
-}
-
 // ASS is
 type ASS struct {
 	AssetUrl string `json:"asset_url"`
@@ -1514,6 +1491,10 @@ type PV struct {
 
 func (p *PV) Header() string { return "PV" }
 
+func (p *PV) jsonConsts() map[string]string {
+	return map[string]string{"_cid": "CID"}
+}
+
 func (p *PV) Args() []string {
 	var args []string
 	args = append(args, itoa(p.PlayerID))
@@ -1616,65 +1597,19 @@ func ParseRMC(body []string) (*RMC, error) {
 
 // RTToClient is
 type RTToClient struct {
-	Animation string `json:"animation"`
-	JudgeID   int    `json:"judgeId"`
+	Animation RTAnimation `json:"animation"`
+	Name      string      `json:"name"`
 }
 
 func (p *RTToClient) Header() string { return "RT" }
 
-func (p *RTToClient) Args() []string {
-	var args []string
-	args = append(args, escapeFanta(p.Animation))
-	args = append(args, itoa(p.JudgeID))
-	return args
-}
-
-func ParseRTToClient(body []string) (*RTToClient, error) {
-	p := &RTToClient{}
-	get := func(i int) string {
-		if i < len(body) {
-			return body[i]
-		}
-		return ""
-	}
-	cursor := 0
-	p.Animation = unescapeFanta(get(cursor))
-	cursor++
-	p.JudgeID = atoiOrZero(get(cursor))
-	cursor++
-	return p, nil
-}
-
 // RTToServer is
 type RTToServer struct {
-	Animation string `json:"animation"`
-	JudgeID   int    `json:"judgeId"`
+	Animation RTAnimation `json:"animation"`
+	Name      string      `json:"name"`
 }
 
 func (p *RTToServer) Header() string { return "RT" }
-
-func (p *RTToServer) Args() []string {
-	var args []string
-	args = append(args, escapeFanta(p.Animation))
-	args = append(args, itoa(p.JudgeID))
-	return args
-}
-
-func ParseRTToServer(body []string) (*RTToServer, error) {
-	p := &RTToServer{}
-	get := func(i int) string {
-		if i < len(body) {
-			return body[i]
-		}
-		return ""
-	}
-	cursor := 0
-	p.Animation = unescapeFanta(get(cursor))
-	cursor++
-	p.JudgeID = atoiOrZero(get(cursor))
-	cursor++
-	return p, nil
-}
 
 type SCCharDataItem struct {
 	Name     string `json:"name"`

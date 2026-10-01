@@ -83,9 +83,9 @@ func decodeJSON(raw []byte, decoders map[string]jsonDecoder) (string, any, error
 }
 
 // encodeJSON marshals a typed packet to the meta JSON envelope: the struct's
-// named fields plus a "$header" const. Enum fields are Go string types, so they
-// serialise to their meta string values (e.g. "shown", "def") and Offset stays
-// an {x,y} object.
+// named fields plus a "$header" const and any const slots the schema requires.
+// Enum fields are Go string types, so they serialise to their meta string
+// values (e.g. "shown", "def") and Offset stays an {x,y} object.
 func encodeJSON(p Outgoing) ([]byte, error) {
 	obj, err := toObject(p)
 	if err != nil {
@@ -93,6 +93,11 @@ func encodeJSON(p Outgoing) ([]byte, error) {
 	}
 	h, _ := json.Marshal(p.Header())
 	obj["$header"] = h
+	if c, ok := p.(interface{ jsonConsts() map[string]string }); ok {
+		for k, v := range c.jsonConsts() {
+			obj[k], _ = json.Marshal(v)
+		}
+	}
 	return json.Marshal(obj)
 }
 

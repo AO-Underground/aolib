@@ -46,3 +46,23 @@ is the type, followed immediately by per-area values. Some published examples
 show a leading empty slot for types 1-3 (`ARUP#1##IDLE#...`); the reference
 server does not emit it, so decoders may tolerate it but encoders must not
 produce it.
+
+## `RT`
+
+Judge-control overlay, both directions. JSON carries one `animation`
+(`RTAnimation`); the wire splits it into a name slot and an integer variant slot.
+
+| `animation` | wire |
+|---|---|
+| `witness_testimony` | `RT#testimony1#0#%` |
+| `end_animation` | `RT#testimony1#1#%` |
+| `cross_examination` | `RT#testimony2#0#%` |
+| `not_guilty` | `RT#judgeruling#0#%` |
+| `guilty` | `RT#judgeruling#1#%` |
+| `custom` | `RT#{name}#%` |
+
+Decoding follows AO2-Client: a missing or non-integer variant is `0`,
+`testimony1` with any variant other than `1` is `witness_testimony`, the variant
+of `testimony2` and custom names is ignored, and `judgeruling` with a variant
+other than `0` or `1` is an error. Any other first slot is `custom` with that
+name (escaped as a `string` slot); an empty first slot is an error.

@@ -87,6 +87,17 @@ export const PlayerListUpdate = {
   remove: "remove",
 } as const;
 
+/** Judge-control overlay animation played by RT. */
+export type RTAnimation = "witness_testimony" | "cross_examination" | "not_guilty" | "guilty" | "end_animation" | "custom";
+export const RTAnimation = {
+  witness_testimony: "witness_testimony",
+  cross_examination: "cross_examination",
+  not_guilty: "not_guilty",
+  guilty: "guilty",
+  end_animation: "end_animation",
+  custom: "custom",
+} as const;
+
 /** Shout / objection selector. */
 export type ShoutModifier = "none" | "hold_it" | "objection" | "take_that" | "custom";
 export const ShoutModifier = {

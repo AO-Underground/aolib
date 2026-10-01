@@ -15,6 +15,7 @@ packets/
   schemas/<Name>.schema.json   one per AO packet
   CODECS.md                    wire forms for x-fanta-codec packets
   EFFECTS.md                   the MS `effect` (`name|folder|sound`) field
+  EXAMPLES.md                  complete key packets in both wire forms
 types/<Name>.schema.json       shared enums and object types, $ref'd from packets
 assets/<Name>.schema.json      character asset-file formats (char.ini)
 ```
@@ -62,7 +63,7 @@ Each library wires its JSON Schema validator (e.g. Ajv in TS) and a
 fanta-format walker to the same schemas:
 
 - **JSON envelope**: packet body is the schema as-is, with `$header`
-  prepended.
+  prepended. `const` slots (e.g. `PV._cid`) are included.
 - **Fanta wire**: `HEADER#field1#field2#...#%`, one positional slot per
   top-level property (skipping `$header`). The walker derives per-slot
   encoding from the property's JSON type:

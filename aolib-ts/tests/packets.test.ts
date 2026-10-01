@@ -84,9 +84,30 @@ describe("round-trips: optional-with-default packets", () => {
     expect(out).toEqual({ $header: "BN", background: "court", position: "" });
   });
 
-  it("RT fills judgeId=-1 when absent (fanta)", () => {
-    const out = decode(s2cSchemas.RT, encode(s2cSchemas.RT, { animation: "testimony1" }, "fanta"));
-    expect(out).toEqual({ $header: "RT", animation: "testimony1", judgeId: -1 });
+  it("RT decodes the lenient wire forms AO2-Client accepts", () => {
+    const cases: [string, string, string][] = [
+      ["RT#testimony1#%", "witness_testimony", ""],
+      ["RT#testimony1#5#%", "witness_testimony", ""],
+      ["RT#testimony1#x#%", "witness_testimony", ""],
+      ["RT#testimony2#%", "cross_examination", ""],
+      ["RT#judgeruling#%", "not_guilty", ""],
+      ["RT#knock#3#%", "custom", "knock"],
+      ["RT#a<and>b#%", "custom", "a&b"],
+    ];
+    for (const [wire, animation, name] of cases) {
+      expect(decode(c2sSchemas.RT, wire)).toEqual({ $header: "RT", animation, name });
+    }
+  });
+
+  it("RT rejects invalid wire forms", () => {
+    for (const wire of ["RT#judgeruling#2#%", "RT##%", "RT#%"]) {
+      expect(() => decode(c2sSchemas.RT, wire)).toThrow();
+    }
+  });
+
+  it("RT rejects custom without a name and a name on a fixed animation", () => {
+    expect(() => encode(c2sSchemas.RT, { animation: "custom" }, "fanta")).toThrow();
+    expect(() => encode(c2sSchemas.RT, { animation: "guilty", name: "x" }, "fanta")).toThrow();
   });
 
   it("ZZ fills target=-1 when absent", () => {
