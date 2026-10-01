@@ -23,8 +23,8 @@
       "default": false
     },
     "channel": {
-      "type": "number",
-      "default": 0
+      "$ref": "../../types/MusicChannel.schema.json",
+      "default": "music"
     },
     "effects": {
       "$ref": "../../types/MusicEffects.schema.json",

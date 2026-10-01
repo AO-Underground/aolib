@@ -14,10 +14,5 @@ Fields whose legacy integer is a code, not a quantity, are modeled as string
 enums (in `../types/`) with `x-wire-ints`, so JSON carries the name and the
 FantaCode wire keeps the integer: `JD.state` (JudgeState), `AUTH.auth_state`
 (AuthState), `HP.bar` (PenaltyBar), `PR.type` (PlayerListUpdate), `PU.type`
-(PlayerDataType), `TI.command` (TimerCommand), and `CharsCheck.taken[]`
-(CharAvailability).
-
-Deliberately left as numbers for now:
-
-- `MC.channel` is a `0-3` channel index with only loose conventions, not a
-  fixed named set.
+(PlayerDataType), `TI.command` (TimerCommand), `MC.channel` (MusicChannel),
+and `CharsCheck.taken[]` (CharAvailability).

@@ -117,6 +117,10 @@ describe("round-trips: optional-with-default packets", () => {
     expect(() => decode(c2sSchemas.MC, "MC#x#1##abc#%")).toThrow();
   });
 
+  it("HP rejects a value outside 0-10", () => {
+    expect(() => encode(c2sSchemas.HP, { bar: "defense", value: 11 }, "fanta")).toThrow();
+  });
+
   it("TI decodes the two-slot show/hide form", () => {
     expect(decode(s2cSchemas.TI, "TI#0#2#%")).toEqual({ $header: "TI", timer_id: 0, command: "show", time: 0 });
   });

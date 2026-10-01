@@ -9,17 +9,9 @@
 
 import { Side } from "../generated/enums";
 
-export {
-  AreaUpdateType,
-  DeskModifier,
-  EmoteModifier,
-  Flip,
-  ShoutModifier,
-  Side,
-  TextColor,
-} from "../generated/enums";
+export * from "../generated/enums";
 
-export type { Offset } from "../generated/types";
+export type * from "../generated/types";
 
 /** ARUP payload: numbers for PLAYER_COUNT, strings for everything else. */
 export type AreaUpdateData = number[] | string[];

@@ -1036,7 +1036,7 @@ type MCToClient struct {
 	CharID   int          `json:"char_id"`
 	Showname string       `json:"showname"`
 	Looping  bool         `json:"looping"`
-	Channel  int          `json:"channel"`
+	Channel  MusicChannel `json:"channel"`
 	Effects  MusicEffects `json:"effects"`
 }
 
@@ -1048,7 +1048,7 @@ func (p *MCToClient) Args() []string {
 	args = append(args, itoa(p.CharID))
 	args = append(args, escapeFanta(p.Showname))
 	args = append(args, boolToWire(p.Looping))
-	args = append(args, itoa(p.Channel))
+	args = append(args, itoa(musicChannelToWire[p.Channel]))
 	args = append(args, musicEffectsToWire(p.Effects))
 	return args
 }
@@ -1070,7 +1070,7 @@ func ParseMCToClient(body []string) (*MCToClient, error) {
 	cursor++
 	p.Looping = wireToBool(get(cursor))
 	cursor++
-	p.Channel = atoiOrZero(get(cursor))
+	p.Channel = musicChannelFromWire[atoiOrZero(get(cursor))]
 	cursor++
 	p.Effects = musicEffectsFromWire(get(cursor))
 	cursor++

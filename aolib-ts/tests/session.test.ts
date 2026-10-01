@@ -189,13 +189,13 @@ describe("bidirectional MC", () => {
     s.on.MC((p) => {
       received = p;
     });
-    s.receive("MC#track1#5#Phoenix#1#2#3#%");
+    s.receive("MC#track1#5#Phoenix#1#1#3#%");
     expect(received).toMatchObject({
       name: "track1",
       char_id: 5,
       showname: "Phoenix",
       looping: true,
-      channel: 2,
+      channel: "ambience",
       effects: { fade_in: true, fade_out: true, sync_position: false },
     });
   });
@@ -209,7 +209,7 @@ describe("bidirectional MC", () => {
       char_id: 6,
       showname: "Edgeworth",
       looping: false,
-      channel: 1,
+      channel: "ambience",
       effects: { fade_in: false, fade_out: false, sync_position: false },
     });
     expect(out).toEqual(["MC#track2#6#Edgeworth#0#1#0#%"]);

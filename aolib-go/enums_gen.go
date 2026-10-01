@@ -173,6 +173,24 @@ var judgeStateFromWire = map[int]JudgeState{
 	1:  JudgeStateShown,
 }
 
+// MusicChannel is MC audio channel.
+type MusicChannel string
+
+const (
+	MusicChannelMusic    MusicChannel = "music"
+	MusicChannelAmbience MusicChannel = "ambience"
+)
+
+var musicChannelToWire = map[MusicChannel]int{
+	MusicChannelMusic:    0,
+	MusicChannelAmbience: 1,
+}
+
+var musicChannelFromWire = map[int]MusicChannel{
+	0: MusicChannelMusic,
+	1: MusicChannelAmbience,
+}
+
 // PenaltyBar is Which penalty (health) bar an HP packet updates.
 type PenaltyBar string
 

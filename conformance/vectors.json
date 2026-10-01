@@ -507,7 +507,7 @@
       "char_id": 12,
       "showname": "Wright",
       "looping": true,
-      "channel": 0,
+      "channel": "music",
       "effects": {
         "fade_in": true,
         "fade_out": true,
@@ -526,7 +526,7 @@
       "char_id": 3,
       "showname": "",
       "looping": false,
-      "channel": 0,
+      "channel": "music",
       "effects": {
         "fade_in": false,
         "fade_out": false,
@@ -854,6 +854,25 @@
     "json": {
       "$header": "ZZ",
       "reason": "!!!MODCALL!!!\nArea: Basement\nCaller: [3]Phoenix\nRegarding: Edgeworth\nReason: spamming & slurs"
+    }
+  },
+  {
+    "id": "MCToClient-ambience",
+    "header": "MC",
+    "receiver": "client",
+    "fanta": "MC#rain.opus#-1##1#1#7#%",
+    "json": {
+      "$header": "MC",
+      "name": "rain.opus",
+      "char_id": -1,
+      "showname": "",
+      "looping": true,
+      "channel": "ambience",
+      "effects": {
+        "fade_in": true,
+        "fade_out": true,
+        "sync_position": true
+      }
     }
   }
 ]

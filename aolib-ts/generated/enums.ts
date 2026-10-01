@@ -64,6 +64,13 @@ export const JudgeState = {
   shown: "shown",
 } as const;
 
+/** MC audio channel. */
+export type MusicChannel = "music" | "ambience";
+export const MusicChannel = {
+  music: "music",
+  ambience: "ambience",
+} as const;
+
 /** Which penalty (health) bar an HP packet updates. */
 export type PenaltyBar = "defense" | "prosecution";
 export const PenaltyBar = {

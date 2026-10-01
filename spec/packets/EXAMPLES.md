@@ -207,7 +207,7 @@ MC#Cornered.opus#12#Wright#5#%
 
 ## MC (server to client)
 
-Music change broadcast, looping on channel 0, fading the old track out and the new one in (`3`).
+Music change broadcast, looping on the music channel, fading the old track out and the new one in (`3`).
 
 ```
 MC#Cornered.opus#12#Wright#1#0#3#%
@@ -220,7 +220,7 @@ MC#Cornered.opus#12#Wright#1#0#3#%
   "char_id": 12,
   "showname": "Wright",
   "looping": true,
-  "channel": 0,
+  "channel": "music",
   "effects": {
     "fade_in": true,
     "fade_out": true,

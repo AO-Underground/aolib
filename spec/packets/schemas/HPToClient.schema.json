@@ -12,7 +12,10 @@
       "$ref": "../../types/PenaltyBar.schema.json"
     },
     "value": {
-      "type": "number"
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 10,
+      "description": "Penalty bar fill, 0 (empty) to 10 (full)."
     }
   },
   "required": [

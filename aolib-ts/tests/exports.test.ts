@@ -46,3 +46,14 @@ describe("public API: enum + type exports", () => {
     expect(p.side).toBe("def");
   });
 });
+
+describe("public API: every generated enum is exported", () => {
+  it("re-exports the enums added after the original list", () => {
+    expect([aolib.TimerCommand.show, aolib.RTAnimation.guilty, aolib.MusicChannel.ambience, aolib.PenaltyBar.prosecution]).toEqual([
+      "show",
+      "guilty",
+      "ambience",
+      "prosecution",
+    ]);
+  });
+});

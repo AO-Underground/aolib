@@ -1,0 +1,19 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "/types/MusicChannel.schema.json",
+  "title": "MusicChannel",
+  "description": "MC audio channel.",
+  "type": "string",
+  "enum": [
+    "music",
+    "ambience"
+  ],
+  "x-wire-ints": [
+    0,
+    1
+  ],
+  "x-enum-description": [
+    "main track, shown as now playing",
+    "ambience layer under the music"
+  ]
+}

@@ -17,7 +17,7 @@ import * as aolib from "../src/index";
 const state = { charID: -1, playerID: 0 };
 
 function getHardwareID(): string { return "stub-hwid"; }
-function playMusic(_track: string, _channel: number): void {}
+function playMusic(_track: string, _channel: aolib.MusicChannel): void {}
 function loadCharacter(_charId: number): void {}
 function loadMusicList(_tracks: string[]): void {}
 function alert(_msg: string): void {}

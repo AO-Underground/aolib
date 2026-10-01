@@ -31,18 +31,7 @@ export * as packets from "../generated/packets";
 // Enums and shared types. Each enum is a string-literal union plus a value
 // object of the same name, so `x: Side`, `Side.def`, and a bare `"def"`
 // all work. Packet fields are typed as these.
-export {
-  AreaUpdateType,
-  DeskModifier,
-  EmoteModifier,
-  Flip,
-  ShoutModifier,
-  Side,
-  TextColor,
-  isFullView,
-  type AreaUpdateData,
-  type Offset,
-} from "./enums";
+export * from "./enums";
 
 // Asset formats.
 

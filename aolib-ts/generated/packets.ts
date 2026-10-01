@@ -2,7 +2,7 @@
 
 /* eslint-disable */
 
-import { AreaUpdateType, AuthState, CharAvailability, DeskModifier, EmoteModifier, Flip, JudgeState, PenaltyBar, PlayerDataType, PlayerListUpdate, RTAnimation, ShoutModifier, Side, TextColor, TimerCommand } from "./enums";
+import { AreaUpdateType, AuthState, CharAvailability, DeskModifier, EmoteModifier, Flip, JudgeState, MusicChannel, PenaltyBar, PlayerDataType, PlayerListUpdate, RTAnimation, ShoutModifier, Side, TextColor, TimerCommand } from "./enums";
 import { Effect, MusicEffects, Offset } from "./types";
 
 import AreaUpdateTypeEnumSchema from "../../spec/types/AreaUpdateType.schema.json";
@@ -18,6 +18,8 @@ import EmoteModifierEnumSchema from "../../spec/types/EmoteModifier.schema.json"
 import FlipEnumSchema from "../../spec/types/Flip.schema.json";
 
 import JudgeStateEnumSchema from "../../spec/types/JudgeState.schema.json";
+
+import MusicChannelEnumSchema from "../../spec/types/MusicChannel.schema.json";
 
 import PenaltyBarEnumSchema from "../../spec/types/PenaltyBar.schema.json";
 
@@ -264,7 +266,7 @@ export { default as askchaaSchema } from "../../spec/packets/schemas/askchaa.sch
 export { default as decryptorSchema } from "../../spec/packets/schemas/decryptor.schema.json";
 
 
-export const enumSchemas = [AreaUpdateTypeEnumSchema, AuthStateEnumSchema, CharAvailabilityEnumSchema, DeskModifierEnumSchema, EmoteModifierEnumSchema, FlipEnumSchema, JudgeStateEnumSchema, PenaltyBarEnumSchema, PlayerDataTypeEnumSchema, PlayerListUpdateEnumSchema, RTAnimationEnumSchema, ShoutModifierEnumSchema, SideEnumSchema, TextColorEnumSchema, TimerCommandEnumSchema];
+export const enumSchemas = [AreaUpdateTypeEnumSchema, AuthStateEnumSchema, CharAvailabilityEnumSchema, DeskModifierEnumSchema, EmoteModifierEnumSchema, FlipEnumSchema, JudgeStateEnumSchema, MusicChannelEnumSchema, PenaltyBarEnumSchema, PlayerDataTypeEnumSchema, PlayerListUpdateEnumSchema, RTAnimationEnumSchema, ShoutModifierEnumSchema, SideEnumSchema, TextColorEnumSchema, TimerCommandEnumSchema];
 
 export const typeSchemas = [EffectTypeSchema, MusicEffectsTypeSchema, OffsetTypeSchema];
 
@@ -661,7 +663,7 @@ export interface MCToClient extends Packet {
   char_id: number;
   showname: string;
   looping: boolean;
-  channel: number;
+  channel: MusicChannel;
   effects: MusicEffects;
 }
 
@@ -670,7 +672,7 @@ export interface MCToClientInit {
   char_id: number;
   showname?: string;
   looping?: boolean;
-  channel?: number;
+  channel?: MusicChannel;
   effects?: MusicEffects;
 }
 
