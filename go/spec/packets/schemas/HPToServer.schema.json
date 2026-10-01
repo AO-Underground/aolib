@@ -2,6 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/HPToServer.schema.json",
   "title": "HP",
+  "description": "Requests a penalty bar change.",
   "type": "object",
   "properties": {
     "$header": {
@@ -9,7 +10,8 @@
       "const": "HP"
     },
     "bar": {
-      "$ref": "../../types/PenaltyBar.schema.json"
+      "$ref": "../../types/PenaltyBar.schema.json",
+      "description": "Which bar."
     },
     "value": {
       "type": "integer",

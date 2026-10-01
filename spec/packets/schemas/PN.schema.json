@@ -2,6 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/PN.schema.json",
   "title": "PN",
+  "description": "Player count and server description, shown in the lobby.",
   "type": "object",
   "properties": {
     "$header": {
@@ -9,14 +10,17 @@
       "const": "PN"
     },
     "player_count": {
-      "type": "number"
+      "type": "number",
+      "description": "Players online."
     },
     "max_players": {
-      "type": "number"
+      "type": "number",
+      "description": "Player cap."
     },
     "server_description": {
       "type": "string",
-      "default": ""
+      "default": "",
+      "description": "Server description."
     }
   },
   "required": [

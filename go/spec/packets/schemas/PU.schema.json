@@ -2,6 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/PU.schema.json",
   "title": "PU",
+  "description": "Updates one field of a player-list entry.",
   "type": "object",
   "properties": {
     "$header": {
@@ -9,13 +10,16 @@
       "const": "PU"
     },
     "id": {
-      "type": "number"
+      "type": "number",
+      "description": "Player ID."
     },
     "type": {
-      "$ref": "../../types/PlayerDataType.schema.json"
+      "$ref": "../../types/PlayerDataType.schema.json",
+      "description": "Which field `data` holds."
     },
     "data": {
-      "type": "string"
+      "type": "string",
+      "description": "New value; a decimal area index for `area_id`."
     }
   },
   "required": [

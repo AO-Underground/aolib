@@ -20,6 +20,14 @@ for f in packets/schemas/*.schema.json; do
     t=$(jq -r '.title // empty' "$f")
     [ "$t" = "$h" ] || err "$f: title '$t' != header '$h'"
 
+    [ -n "$(jq -r '.description // empty' "$f")" ] || err "$f: missing description"
+    while IFS= read -r p; do
+        err "$f: field '$p' has no description"
+    done < <(jq -r 'paths(objects) as $p
+        | select($p[0] == "properties" and $p[-2] == "properties" and $p[-1] != "$header")
+        | select(getpath($p) | has("const") or has("description") | not)
+        | $p | map(select(. != "properties" and . != "items")) | join(".")' "$f")
+
     while IFS= read -r ref; do
         [ -f "packets/schemas/$ref" ] || err "$f: \$ref '$ref' does not resolve"
     done < <(jq -r '[.. | objects | .["$ref"]? // empty] | .[] | select(startswith("#") | not)' "$f")

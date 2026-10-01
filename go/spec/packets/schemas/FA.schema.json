@@ -2,6 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/FA.schema.json",
   "title": "FA",
+  "description": "Full area list; replaces the client's areas.",
   "type": "object",
   "properties": {
     "$header": {
@@ -12,7 +13,8 @@
       "type": "array",
       "items": {
         "type": "string"
-      }
+      },
+      "description": "Area names, in the order ARUP values refer to."
     }
   },
   "required": [

@@ -447,6 +447,7 @@ export const ARUPSchema = {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/ARUP.schema.json",
   "title": "ARUP",
+  "description": "Refreshes one column of the area list (player counts, status, case managers or lock state). Wire form in CODECS.md.",
   "type": "object",
   "properties": {
     "$header": {
@@ -454,7 +455,8 @@ export const ARUPSchema = {
       "const": "ARUP"
     },
     "update_type": {
-      "$ref": "../../types/AreaUpdateType.schema.json"
+      "$ref": "../../types/AreaUpdateType.schema.json",
+      "description": "Which column `update_data` carries."
     },
     "update_data": {
       "type": "array",
@@ -463,7 +465,8 @@ export const ARUPSchema = {
           "integer",
           "string"
         ]
-      }
+      },
+      "description": "One value per area, in FA order: an integer for `player_count`, otherwise a string (status, case manager names, or a lock state such as `FREE`, `SPECTATABLE`, `LOCKED`)."
     }
   },
   "required": [
@@ -480,6 +483,7 @@ export const ASSSchema = {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/ASS.schema.json",
   "title": "ASS",
+  "description": "Base URL the client downloads missing assets from.",
   "type": "object",
   "properties": {
     "$header": {
@@ -487,7 +491,8 @@ export const ASSSchema = {
       "const": "ASS"
     },
     "asset_url": {
-      "type": "string"
+      "type": "string",
+      "description": "Base URL that asset paths (e.g. `sounds/music/<name>`) are appended to. webAO ignores the value `None`."
     }
   },
   "required": [
@@ -502,6 +507,7 @@ export const AUTHSchema = {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/AUTH.schema.json",
   "title": "AUTH",
+  "description": "Result of a moderator login or logout.",
   "type": "object",
   "properties": {
     "$header": {
@@ -509,7 +515,8 @@ export const AUTHSchema = {
       "const": "AUTH"
     },
     "auth_state": {
-      "$ref": "../../types/AuthState.schema.json"
+      "$ref": "../../types/AuthState.schema.json",
+      "description": "Login result."
     }
   },
   "required": [
@@ -524,6 +531,7 @@ export const BBSchema = {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/BB.schema.json",
   "title": "BB",
+  "description": "Server notice shown to the client in a popup.",
   "type": "object",
   "properties": {
     "$header": {
@@ -531,7 +539,8 @@ export const BBSchema = {
       "const": "BB"
     },
     "message": {
-      "type": "string"
+      "type": "string",
+      "description": "Notice text."
     }
   },
   "required": [
@@ -546,6 +555,7 @@ export const BDSchema = {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/BD.schema.json",
   "title": "BD",
+  "description": "Tells a connecting client it is banned.",
   "type": "object",
   "properties": {
     "$header": {
@@ -553,7 +563,8 @@ export const BDSchema = {
       "const": "BD"
     },
     "reason": {
-      "type": "string"
+      "type": "string",
+      "description": "Ban reason shown to the player."
     }
   },
   "required": [
@@ -568,6 +579,7 @@ export const BNSchema = {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/BN.schema.json",
   "title": "BN",
+  "description": "Changes the area background, optionally moving the client to a position.",
   "type": "object",
   "properties": {
     "$header": {
@@ -575,11 +587,13 @@ export const BNSchema = {
       "const": "BN"
     },
     "background": {
-      "type": "string"
+      "type": "string",
+      "description": "Background folder name."
     },
     "position": {
       "type": "string",
-      "default": ""
+      "default": "",
+      "description": "Position to move the client to; empty leaves it unchanged."
     }
   },
   "required": [
@@ -594,6 +608,7 @@ export const CCSchema = {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/CC.schema.json",
   "title": "CC",
+  "description": "Character selection request; the server confirms with PV.",
   "type": "object",
   "properties": {
     "$header": {
@@ -601,14 +616,17 @@ export const CCSchema = {
       "const": "CC"
     },
     "player_id": {
-      "type": "number"
+      "type": "number",
+      "description": "Sender's player ID from IDToClient; servers identify the client by its connection instead."
     },
     "char_id": {
-      "type": "number"
+      "type": "number",
+      "description": "Index into the SC list, or -1 to spectate."
     },
     "char_password": {
       "type": "string",
-      "default": ""
+      "default": "",
+      "description": "Unused; empty."
     }
   },
   "required": [
@@ -624,6 +642,7 @@ export const CHSchema = {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/CH.schema.json",
   "title": "CH",
+  "description": "Keepalive sent periodically from the courtroom; the server answers with CHECK.",
   "type": "object",
   "properties": {
     "$header": {
@@ -631,7 +650,8 @@ export const CHSchema = {
       "const": "CH"
     },
     "char_id": {
-      "type": "number"
+      "type": "number",
+      "description": "Sender's current character ID."
     }
   },
   "required": [
@@ -646,6 +666,7 @@ export const CHECKSchema = {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/CHECK.schema.json",
   "title": "CHECK",
+  "description": "Keepalive reply to CH; the client uses the round trip as its latency.",
   "type": "object",
   "properties": {
     "$header": {
@@ -664,6 +685,7 @@ export const CISchema = {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/CI.schema.json",
   "title": "CI",
+  "description": "Legacy batched character list from before SC; webAO's old loader only.",
   "type": "object",
   "properties": {
     "$header": {
@@ -671,7 +693,8 @@ export const CISchema = {
       "const": "CI"
     },
     "batchIndex": {
-      "type": "number"
+      "type": "number",
+      "description": "ID of the first character in this batch."
     },
     "entries": {
       "type": "array",
@@ -679,10 +702,12 @@ export const CISchema = {
         "type": "object",
         "properties": {
           "index": {
-            "type": "number"
+            "type": "number",
+            "description": "Character ID."
           },
           "data": {
-            "type": "string"
+            "type": "string",
+            "description": "`&`-joined character info, name first."
           }
         },
         "required": [
@@ -690,7 +715,8 @@ export const CISchema = {
           "data"
         ],
         "additionalProperties": false
-      }
+      },
+      "description": "Characters in this batch."
     }
   },
   "required": [
@@ -706,6 +732,7 @@ export const CTToClientSchema = {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/CTToClient.schema.json",
   "title": "CT",
+  "description": "Out-of-character chat message.",
   "type": "object",
   "properties": {
     "$header": {
@@ -713,14 +740,17 @@ export const CTToClientSchema = {
       "const": "CT"
     },
     "name": {
-      "type": "string"
+      "type": "string",
+      "description": "Sender's OOC name, or the server's name for server messages."
     },
     "message": {
-      "type": "string"
+      "type": "string",
+      "description": "Message text."
     },
     "is_from_server": {
       "type": "boolean",
-      "default": false
+      "default": false,
+      "description": "True for server messages, which clients style differently."
     }
   },
   "required": [
@@ -736,6 +766,7 @@ export const CTToServerSchema = {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/CTToServer.schema.json",
   "title": "CT",
+  "description": "Out-of-character chat message; servers treat a leading `/` as a command.",
   "type": "object",
   "properties": {
     "$header": {
@@ -743,10 +774,12 @@ export const CTToServerSchema = {
       "const": "CT"
     },
     "name": {
-      "type": "string"
+      "type": "string",
+      "description": "Sender's OOC name."
     },
     "message": {
-      "type": "string"
+      "type": "string",
+      "description": "Message text."
     }
   },
   "required": [
@@ -762,6 +795,7 @@ export const CharsCheckSchema = {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/CharsCheck.schema.json",
   "title": "CharsCheck",
+  "description": "Which characters are taken.",
   "type": "object",
   "properties": {
     "$header": {
@@ -772,7 +806,8 @@ export const CharsCheckSchema = {
       "type": "array",
       "items": {
         "$ref": "../../types/CharAvailability.schema.json"
-      }
+      },
+      "description": "Availability per character, in SC order."
     }
   },
   "required": [
@@ -787,6 +822,7 @@ export const DESchema = {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/DE.schema.json",
   "title": "DE",
+  "description": "Deletes an evidence item from the current area.",
   "type": "object",
   "properties": {
     "$header": {
@@ -794,7 +830,8 @@ export const DESchema = {
       "const": "DE"
     },
     "id": {
-      "type": "number"
+      "type": "number",
+      "description": "Index into the LE list."
     }
   },
   "required": [
@@ -809,6 +846,7 @@ export const DONESchema = {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/DONE.schema.json",
   "title": "DONE",
+  "description": "Ends the loading handshake; the client leaves the lobby and enters the courtroom.",
   "type": "object",
   "properties": {
     "$header": {
@@ -827,6 +865,7 @@ export const EESchema = {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/EE.schema.json",
   "title": "EE",
+  "description": "Replaces an evidence item in the current area.",
   "type": "object",
   "properties": {
     "$header": {
@@ -834,16 +873,20 @@ export const EESchema = {
       "const": "EE"
     },
     "id": {
-      "type": "number"
+      "type": "number",
+      "description": "Index into the LE list."
     },
     "name": {
-      "type": "string"
+      "type": "string",
+      "description": "Evidence name."
     },
     "description": {
-      "type": "string"
+      "type": "string",
+      "description": "Evidence description."
     },
     "image": {
-      "type": "string"
+      "type": "string",
+      "description": "Image filename under `evidence/`."
     }
   },
   "required": [
@@ -861,6 +904,7 @@ export const EISchema = {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/EI.schema.json",
   "title": "EI",
+  "description": "Legacy single evidence item sent during loading, from before LE; webAO's old loader only.",
   "type": "object",
   "properties": {
     "$header": {
@@ -868,22 +912,27 @@ export const EISchema = {
       "const": "EI"
     },
     "id": {
-      "type": "number"
+      "type": "number",
+      "description": "Evidence index."
     },
     "details": {
       "type": "object",
       "properties": {
         "name": {
-          "type": "string"
+          "type": "string",
+          "description": "Evidence name."
         },
         "description": {
-          "type": "string"
+          "type": "string",
+          "description": "Evidence description."
         },
         "type": {
-          "type": "string"
+          "type": "string",
+          "description": "Legacy evidence type; unused."
         },
         "image": {
-          "type": "string"
+          "type": "string",
+          "description": "Image filename under `evidence/`."
         }
       },
       "required": [
@@ -892,7 +941,8 @@ export const EISchema = {
         "type",
         "image"
       ],
-      "additionalProperties": false
+      "additionalProperties": false,
+      "description": "The evidence item."
     }
   },
   "required": [
@@ -908,6 +958,7 @@ export const EMSchema = {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/EM.schema.json",
   "title": "EM",
+  "description": "Legacy batched area and music list from before SM; webAO's old loader only.",
   "type": "object",
   "properties": {
     "$header": {
@@ -915,7 +966,8 @@ export const EMSchema = {
       "const": "EM"
     },
     "batchIndex": {
-      "type": "number"
+      "type": "number",
+      "description": "Index of the first entry in this batch."
     },
     "entries": {
       "type": "array",
@@ -923,10 +975,12 @@ export const EMSchema = {
         "type": "object",
         "properties": {
           "index": {
-            "type": "number"
+            "type": "number",
+            "description": "Entry index."
           },
           "name": {
-            "type": "string"
+            "type": "string",
+            "description": "Area, category or track name."
           }
         },
         "required": [
@@ -934,7 +988,8 @@ export const EMSchema = {
           "name"
         ],
         "additionalProperties": false
-      }
+      },
+      "description": "Area names, then music entries, in this batch."
     }
   },
   "required": [
@@ -950,6 +1005,7 @@ export const FASchema = {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/FA.schema.json",
   "title": "FA",
+  "description": "Full area list; replaces the client's areas.",
   "type": "object",
   "properties": {
     "$header": {
@@ -960,7 +1016,8 @@ export const FASchema = {
       "type": "array",
       "items": {
         "type": "string"
-      }
+      },
+      "description": "Area names, in the order ARUP values refer to."
     }
   },
   "required": [
@@ -975,6 +1032,7 @@ export const FLSchema = {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/FL.schema.json",
   "title": "FL",
+  "description": "Optional protocol features the server supports.",
   "type": "object",
   "properties": {
     "$header": {
@@ -985,7 +1043,8 @@ export const FLSchema = {
       "type": "array",
       "items": {
         "type": "string"
-      }
+      },
+      "description": "Feature names, e.g. `yellowtext`, `y_offset`, `effects`."
     }
   },
   "required": [
@@ -1000,6 +1059,7 @@ export const FMSchema = {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/FM.schema.json",
   "title": "FM",
+  "description": "Full music list; replaces the client's music list.",
   "type": "object",
   "properties": {
     "$header": {
@@ -1012,14 +1072,16 @@ export const FMSchema = {
         "type": "object",
         "properties": {
           "name": {
-            "type": "string"
+            "type": "string",
+            "description": "Track filename, or a category name (no audio extension)."
           }
         },
         "required": [
           "name"
         ],
         "additionalProperties": false
-      }
+      },
+      "description": "Categories and tracks in display order."
     }
   },
   "required": [
@@ -1034,6 +1096,7 @@ export const HISchema = {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/HI.schema.json",
   "title": "HI",
+  "description": "Client hardware ID, sent in reply to decryptor; servers use it for bans.",
   "type": "object",
   "properties": {
     "$header": {
@@ -1041,7 +1104,8 @@ export const HISchema = {
       "const": "HI"
     },
     "hdid": {
-      "type": "string"
+      "type": "string",
+      "description": "Hardware ID string."
     }
   },
   "required": [
@@ -1056,6 +1120,7 @@ export const HPToClientSchema = {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/HPToClient.schema.json",
   "title": "HP",
+  "description": "Sets a penalty bar.",
   "type": "object",
   "properties": {
     "$header": {
@@ -1063,7 +1128,8 @@ export const HPToClientSchema = {
       "const": "HP"
     },
     "bar": {
-      "$ref": "../../types/PenaltyBar.schema.json"
+      "$ref": "../../types/PenaltyBar.schema.json",
+      "description": "Which bar."
     },
     "value": {
       "type": "integer",
@@ -1085,6 +1151,7 @@ export const HPToServerSchema = {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/HPToServer.schema.json",
   "title": "HP",
+  "description": "Requests a penalty bar change.",
   "type": "object",
   "properties": {
     "$header": {
@@ -1092,7 +1159,8 @@ export const HPToServerSchema = {
       "const": "HP"
     },
     "bar": {
-      "$ref": "../../types/PenaltyBar.schema.json"
+      "$ref": "../../types/PenaltyBar.schema.json",
+      "description": "Which bar."
     },
     "value": {
       "type": "integer",
@@ -1114,6 +1182,7 @@ export const IDToClientSchema = {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/IDToClient.schema.json",
   "title": "ID",
+  "description": "Server identification, sent after HI; the client replies with its own ID.",
   "type": "object",
   "properties": {
     "$header": {
@@ -1121,13 +1190,16 @@ export const IDToClientSchema = {
       "const": "ID"
     },
     "player_id": {
-      "type": "number"
+      "type": "number",
+      "description": "The client's player ID."
     },
     "software": {
-      "type": "string"
+      "type": "string",
+      "description": "Server software name."
     },
     "version": {
-      "type": "string"
+      "type": "string",
+      "description": "Server software version."
     }
   },
   "required": [
@@ -1144,6 +1216,7 @@ export const IDToServerSchema = {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/IDToServer.schema.json",
   "title": "ID",
+  "description": "Client identification, sent in reply to IDToClient.",
   "type": "object",
   "properties": {
     "$header": {
@@ -1151,10 +1224,12 @@ export const IDToServerSchema = {
       "const": "ID"
     },
     "software": {
-      "type": "string"
+      "type": "string",
+      "description": "Client software name, e.g. `AO2`."
     },
     "version": {
-      "type": "string"
+      "type": "string",
+      "description": "Client version."
     }
   },
   "required": [
@@ -1170,6 +1245,7 @@ export const JDSchema = {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/JD.schema.json",
   "title": "JD",
+  "description": "Shows or hides the judge controls for this client.",
   "type": "object",
   "properties": {
     "$header": {
@@ -1177,7 +1253,8 @@ export const JDSchema = {
       "const": "JD"
     },
     "state": {
-      "$ref": "../../types/JudgeState.schema.json"
+      "$ref": "../../types/JudgeState.schema.json",
+      "description": "Judge-control visibility."
     }
   },
   "required": [
@@ -1192,6 +1269,7 @@ export const KBSchema = {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/KB.schema.json",
   "title": "KB",
+  "description": "Tells the client it was banned; the client returns to the lobby.",
   "type": "object",
   "properties": {
     "$header": {
@@ -1199,7 +1277,8 @@ export const KBSchema = {
       "const": "KB"
     },
     "reason": {
-      "type": "string"
+      "type": "string",
+      "description": "Ban reason shown to the player."
     }
   },
   "required": [
@@ -1214,6 +1293,7 @@ export const KKSchema = {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/KK.schema.json",
   "title": "KK",
+  "description": "Tells the client it was kicked; the client returns to the lobby.",
   "type": "object",
   "properties": {
     "$header": {
@@ -1221,7 +1301,8 @@ export const KKSchema = {
       "const": "KK"
     },
     "reason": {
-      "type": "string"
+      "type": "string",
+      "description": "Kick reason shown to the player."
     }
   },
   "required": [
@@ -1236,6 +1317,7 @@ export const LESchema = {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/LE.schema.json",
   "title": "LE",
+  "description": "Full evidence list for the current area.",
   "type": "object",
   "properties": {
     "$header": {
@@ -1248,13 +1330,16 @@ export const LESchema = {
         "type": "object",
         "properties": {
           "name": {
-            "type": "string"
+            "type": "string",
+            "description": "Evidence name."
           },
           "description": {
-            "type": "string"
+            "type": "string",
+            "description": "Evidence description."
           },
           "image": {
-            "type": "string"
+            "type": "string",
+            "description": "Image filename under `evidence/`."
           }
         },
         "required": [
@@ -1263,7 +1348,8 @@ export const LESchema = {
           "image"
         ],
         "additionalProperties": false
-      }
+      },
+      "description": "Evidence items in index order."
     }
   },
   "required": [
@@ -1278,6 +1364,7 @@ export const MASchema = {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/MA.schema.json",
   "title": "MA",
+  "description": "Moderator action: kicks or bans a player.",
   "type": "object",
   "properties": {
     "$header": {
@@ -1285,14 +1372,16 @@ export const MASchema = {
       "const": "MA"
     },
     "player_id": {
-      "type": "number"
+      "type": "number",
+      "description": "Target player's ID."
     },
     "duration_minutes": {
       "type": "integer",
       "description": "Ban length in minutes. 0 kicks instead of banning; -1 bans permanently."
     },
     "reason": {
-      "type": "string"
+      "type": "string",
+      "description": "Reason shown to the target."
     }
   },
   "required": [
@@ -1309,6 +1398,7 @@ export const MCToClientSchema = {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/MCToClient.schema.json",
   "title": "MC",
+  "description": "Plays a track on a music channel.",
   "type": "object",
   "properties": {
     "$header": {
@@ -1316,22 +1406,27 @@ export const MCToClientSchema = {
       "const": "MC"
     },
     "name": {
-      "type": "string"
+      "type": "string",
+      "description": "Track filename or URL; `~stop.mp3` stops the channel."
     },
     "char_id": {
-      "type": "number"
+      "type": "number",
+      "description": "Character who played it, announced in the IC log; -1 (or any non-character) for none."
     },
     "showname": {
       "type": "string",
-      "default": ""
+      "default": "",
+      "description": "Name used in the IC log; empty uses the character's showname."
     },
     "looping": {
       "type": "boolean",
-      "default": false
+      "default": false,
+      "description": "Loop the track."
     },
     "channel": {
       "$ref": "../../types/MusicChannel.schema.json",
-      "default": "music"
+      "default": "music",
+      "description": "Audio channel."
     },
     "effects": {
       "$ref": "../../types/MusicEffects.schema.json",
@@ -1339,7 +1434,8 @@ export const MCToClientSchema = {
         "fade_in": false,
         "fade_out": false,
         "sync_position": false
-      }
+      },
+      "description": "Transition effects."
     }
   },
   "required": [
@@ -1355,6 +1451,7 @@ export const MCToServerSchema = {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/MCToServer.schema.json",
   "title": "MC",
+  "description": "Requests a track, or an area change when `name` is an area name.",
   "type": "object",
   "properties": {
     "$header": {
@@ -1362,14 +1459,17 @@ export const MCToServerSchema = {
       "const": "MC"
     },
     "name": {
-      "type": "string"
+      "type": "string",
+      "description": "Track name from the music list, or an area name."
     },
     "char_id": {
-      "type": "number"
+      "type": "number",
+      "description": "Sender's character ID."
     },
     "showname": {
       "type": "string",
-      "default": ""
+      "default": "",
+      "description": "Sender's showname, used in the IC log."
     },
     "effects": {
       "$ref": "../../types/MusicEffects.schema.json",
@@ -1377,7 +1477,8 @@ export const MCToServerSchema = {
         "fade_in": false,
         "fade_out": false,
         "sync_position": false
-      }
+      },
+      "description": "Transition effects."
     }
   },
   "required": [
@@ -1393,6 +1494,7 @@ export const MSToClientSchema = {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/MSToClient.schema.json",
   "title": "MS",
+  "description": "In-character message as broadcast by the server, with the pair's data filled in.",
   "type": "object",
   "properties": {
     "$header": {
@@ -1401,34 +1503,43 @@ export const MSToClientSchema = {
     },
     "desk_modifier": {
       "$ref": "../../types/DeskModifier.schema.json",
-      "default": "shown"
+      "default": "shown",
+      "description": "Desk visibility for the speaker."
     },
     "preanim": {
       "type": "string",
-      "default": ""
+      "default": "",
+      "description": "Preanimation played before the emote; empty or `-` for none."
     },
     "character": {
-      "type": "string"
+      "type": "string",
+      "description": "Speaker's character folder name."
     },
     "emote": {
-      "type": "string"
+      "type": "string",
+      "description": "Emote name; the client plays its `(b)` talking and `(a)` idle variants."
     },
     "message": {
-      "type": "string"
+      "type": "string",
+      "description": "IC message text."
     },
     "side": {
-      "$ref": "../../types/Side.schema.json"
+      "$ref": "../../types/Side.schema.json",
+      "description": "Speaker's position."
     },
     "sfx_name": {
       "type": "string",
-      "default": ""
+      "default": "",
+      "description": "Sound effect to play; `1`, `0` or empty for none."
     },
     "emote_modifier": {
       "$ref": "../../types/EmoteModifier.schema.json",
-      "default": "no_preanim"
+      "default": "no_preanim",
+      "description": "Whether the preanim plays and whether the zoom background is used."
     },
     "char_id": {
-      "type": "number"
+      "type": "number",
+      "description": "Speaker's character ID."
     },
     "sfx_delay": {
       "type": "number",
@@ -1437,85 +1548,104 @@ export const MSToClientSchema = {
     },
     "shout_modifier": {
       "$ref": "../../types/ShoutModifier.schema.json",
-      "default": "none"
+      "default": "none",
+      "description": "Shout bubble (objection etc.) shown before the message."
     },
     "evidence_id": {
       "type": "number",
-      "default": 0
+      "default": 0,
+      "description": "1-based index of the evidence item to present; 0 for none."
     },
     "flip": {
       "$ref": "../../types/Flip.schema.json",
-      "default": "none"
+      "default": "none",
+      "description": "Mirror the speaker horizontally."
     },
     "realization": {
       "type": "boolean",
-      "default": false
+      "default": false,
+      "description": "Flash the screen and play the realization sound."
     },
     "text_color": {
       "$ref": "../../types/TextColor.schema.json",
-      "default": "white"
+      "default": "white",
+      "description": "Message text colour."
     },
     "showname": {
       "type": "string",
-      "default": ""
+      "default": "",
+      "description": "Name shown in the chatbox; empty uses the character's default showname."
     },
     "paired_charid": {
       "type": "number",
-      "default": -1
+      "default": -1,
+      "description": "Paired character's ID, or -1 for no pair."
     },
     "paired_name": {
       "type": "string",
-      "default": ""
+      "default": "",
+      "description": "Paired character's folder name."
     },
     "paired_emote": {
       "type": "string",
-      "default": ""
+      "default": "",
+      "description": "Paired character's current emote."
     },
     "offset": {
       "$ref": "../../types/Offset.schema.json",
       "default": {
         "x": 0,
         "y": 0
-      }
+      },
+      "description": "Speaker's horizontal and vertical offset, in percent of the viewport."
     },
     "paired_offset": {
       "$ref": "../../types/Offset.schema.json",
       "default": {
         "x": 0,
         "y": 0
-      }
+      },
+      "description": "Paired character's offset; empty on the wire when there is no pair."
     },
     "paired_flip": {
       "$ref": "../../types/Flip.schema.json",
-      "default": "none"
+      "default": "none",
+      "description": "Mirror the paired character."
     },
     "noninterrupting_preanim": {
       "type": "boolean",
-      "default": false
+      "default": false,
+      "description": "Show the message while the preanim plays instead of after it."
     },
     "sfx_looping": {
       "type": "boolean",
-      "default": false
+      "default": false,
+      "description": "Loop the sound effect."
     },
     "screenshake": {
       "type": "boolean",
-      "default": false
+      "default": false,
+      "description": "Shake the screen."
     },
     "frames_shake": {
       "type": "string",
-      "default": ""
+      "default": "",
+      "description": "Frame-triggered screenshakes from char.ini: one `^`-terminated segment per emote (preanim, `(b)`, `(a)`), each `emote|frame=value|...`."
     },
     "frames_realization": {
       "type": "string",
-      "default": ""
+      "default": "",
+      "description": "Frame-triggered realization flashes, in the `frames_shake` format."
     },
     "frames_sfx": {
       "type": "string",
-      "default": ""
+      "default": "",
+      "description": "Frame-triggered sound effects, in the `frames_shake` format."
     },
     "additive": {
       "type": "boolean",
-      "default": false
+      "default": false,
+      "description": "Append the message to the previous one instead of replacing it."
     },
     "effect": {
       "$ref": "../../types/Effect.schema.json",
@@ -1543,6 +1673,7 @@ export const MSToServerSchema = {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/MSToServer.schema.json",
   "title": "MS",
+  "description": "In-character message sent by the speaker.",
   "type": "object",
   "properties": {
     "$header": {
@@ -1551,34 +1682,43 @@ export const MSToServerSchema = {
     },
     "desk_modifier": {
       "$ref": "../../types/DeskModifier.schema.json",
-      "default": "shown"
+      "default": "shown",
+      "description": "Desk visibility for the speaker."
     },
     "preanim": {
       "type": "string",
-      "default": ""
+      "default": "",
+      "description": "Preanimation played before the emote; empty or `-` for none."
     },
     "character": {
-      "type": "string"
+      "type": "string",
+      "description": "Speaker's character folder name."
     },
     "emote": {
-      "type": "string"
+      "type": "string",
+      "description": "Emote name; the client plays its `(b)` talking and `(a)` idle variants."
     },
     "message": {
-      "type": "string"
+      "type": "string",
+      "description": "IC message text."
     },
     "side": {
-      "$ref": "../../types/Side.schema.json"
+      "$ref": "../../types/Side.schema.json",
+      "description": "Speaker's position."
     },
     "sfx_name": {
       "type": "string",
-      "default": ""
+      "default": "",
+      "description": "Sound effect to play; `1`, `0` or empty for none."
     },
     "emote_modifier": {
       "$ref": "../../types/EmoteModifier.schema.json",
-      "default": "no_preanim"
+      "default": "no_preanim",
+      "description": "Whether the preanim plays and whether the zoom background is used."
     },
     "char_id": {
-      "type": "number"
+      "type": "number",
+      "description": "Speaker's character ID."
     },
     "sfx_delay": {
       "type": "number",
@@ -1587,66 +1727,81 @@ export const MSToServerSchema = {
     },
     "shout_modifier": {
       "$ref": "../../types/ShoutModifier.schema.json",
-      "default": "none"
+      "default": "none",
+      "description": "Shout bubble (objection etc.) shown before the message."
     },
     "evidence_id": {
       "type": "number",
-      "default": 0
+      "default": 0,
+      "description": "1-based index of the evidence item to present; 0 for none."
     },
     "flip": {
       "$ref": "../../types/Flip.schema.json",
-      "default": "none"
+      "default": "none",
+      "description": "Mirror the speaker horizontally."
     },
     "realization": {
       "type": "boolean",
-      "default": false
+      "default": false,
+      "description": "Flash the screen and play the realization sound."
     },
     "text_color": {
       "$ref": "../../types/TextColor.schema.json",
-      "default": "white"
+      "default": "white",
+      "description": "Message text colour."
     },
     "showname": {
       "type": "string",
-      "default": ""
+      "default": "",
+      "description": "Name shown in the chatbox; empty uses the character's default showname."
     },
     "paired_charid": {
       "type": "number",
-      "default": -1
+      "default": -1,
+      "description": "Character to pair with, or -1 for no pair."
     },
     "offset": {
       "$ref": "../../types/Offset.schema.json",
       "default": {
         "x": 0,
         "y": 0
-      }
+      },
+      "description": "Speaker's horizontal and vertical offset, in percent of the viewport."
     },
     "noninterrupting_preanim": {
       "type": "boolean",
-      "default": false
+      "default": false,
+      "description": "Show the message while the preanim plays instead of after it."
     },
     "sfx_looping": {
       "type": "boolean",
-      "default": false
+      "default": false,
+      "description": "Loop the sound effect."
     },
     "screenshake": {
       "type": "boolean",
-      "default": false
+      "default": false,
+      "description": "Shake the screen."
     },
     "frames_shake": {
       "type": "string",
-      "default": ""
+      "default": "",
+      "description": "Frame-triggered screenshakes from char.ini: one `^`-terminated segment per emote (preanim, `(b)`, `(a)`), each `emote|frame=value|...`."
     },
     "frames_realization": {
       "type": "string",
-      "default": ""
+      "default": "",
+      "description": "Frame-triggered realization flashes, in the `frames_shake` format."
     },
     "frames_sfx": {
       "type": "string",
-      "default": ""
+      "default": "",
+      "description": "Frame-triggered sound effects, in the `frames_shake` format."
     },
     "additive": {
       "type": "boolean",
-      "default": false
+      "default": false,
+      "description": "Append the message to the previous one instead of replacing it."
     },
     "effect": {
       "$ref": "../../types/Effect.schema.json",
@@ -1674,6 +1829,7 @@ export const PESchema = {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/PE.schema.json",
   "title": "PE",
+  "description": "Adds an evidence item to the current area.",
   "type": "object",
   "properties": {
     "$header": {
@@ -1681,13 +1837,16 @@ export const PESchema = {
       "const": "PE"
     },
     "name": {
-      "type": "string"
+      "type": "string",
+      "description": "Evidence name."
     },
     "description": {
-      "type": "string"
+      "type": "string",
+      "description": "Evidence description."
     },
     "image": {
-      "type": "string"
+      "type": "string",
+      "description": "Image filename under `evidence/`."
     }
   },
   "required": [
@@ -1704,6 +1863,7 @@ export const PNSchema = {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/PN.schema.json",
   "title": "PN",
+  "description": "Player count and server description, shown in the lobby.",
   "type": "object",
   "properties": {
     "$header": {
@@ -1711,14 +1871,17 @@ export const PNSchema = {
       "const": "PN"
     },
     "player_count": {
-      "type": "number"
+      "type": "number",
+      "description": "Players online."
     },
     "max_players": {
-      "type": "number"
+      "type": "number",
+      "description": "Player cap."
     },
     "server_description": {
       "type": "string",
-      "default": ""
+      "default": "",
+      "description": "Server description."
     }
   },
   "required": [
@@ -1734,6 +1897,7 @@ export const PRSchema = {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/PR.schema.json",
   "title": "PR",
+  "description": "Adds or removes a player-list entry.",
   "type": "object",
   "properties": {
     "$header": {
@@ -1741,10 +1905,12 @@ export const PRSchema = {
       "const": "PR"
     },
     "id": {
-      "type": "number"
+      "type": "number",
+      "description": "Player ID."
     },
     "type": {
-      "$ref": "../../types/PlayerListUpdate.schema.json"
+      "$ref": "../../types/PlayerListUpdate.schema.json",
+      "description": "Add or remove."
     }
   },
   "required": [
@@ -1760,6 +1926,7 @@ export const PUSchema = {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/PU.schema.json",
   "title": "PU",
+  "description": "Updates one field of a player-list entry.",
   "type": "object",
   "properties": {
     "$header": {
@@ -1767,13 +1934,16 @@ export const PUSchema = {
       "const": "PU"
     },
     "id": {
-      "type": "number"
+      "type": "number",
+      "description": "Player ID."
     },
     "type": {
-      "$ref": "../../types/PlayerDataType.schema.json"
+      "$ref": "../../types/PlayerDataType.schema.json",
+      "description": "Which field `data` holds."
     },
     "data": {
-      "type": "string"
+      "type": "string",
+      "description": "New value; a decimal area index for `area_id`."
     }
   },
   "required": [
@@ -1790,6 +1960,7 @@ export const PVSchema = {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/PV.schema.json",
   "title": "PV",
+  "description": "Confirms a character selection (reply to CC).",
   "type": "object",
   "properties": {
     "$header": {
@@ -1797,7 +1968,8 @@ export const PVSchema = {
       "const": "PV"
     },
     "player_id": {
-      "type": "number"
+      "type": "number",
+      "description": "Client's player ID; AO2-Client ignores it."
     },
     "_cid": {
       "type": "string",
@@ -1805,7 +1977,8 @@ export const PVSchema = {
       "default": "CID"
     },
     "char_id": {
-      "type": "number"
+      "type": "number",
+      "description": "Character the client now plays, or -1 for spectator."
     }
   },
   "required": [
@@ -1822,6 +1995,7 @@ export const RCSchema = {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/RC.schema.json",
   "title": "RC",
+  "description": "Requests the character list; the server replies with SC.",
   "type": "object",
   "properties": {
     "$header": {
@@ -1840,6 +2014,7 @@ export const RDSchema = {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/RD.schema.json",
   "title": "RD",
+  "description": "Tells the server the client has loaded its lists; the server sends area state and DONE.",
   "type": "object",
   "properties": {
     "$header": {
@@ -1858,6 +2033,7 @@ export const RMSchema = {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/RM.schema.json",
   "title": "RM",
+  "description": "Requests the music list; the server replies with SM.",
   "type": "object",
   "properties": {
     "$header": {
@@ -1876,6 +2052,7 @@ export const RMCSchema = {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/RMC.schema.json",
   "title": "RMC",
+  "description": "Seeks the currently playing track to an offset. Only webAO handles it; AO2-Client ignores it.",
   "type": "object",
   "properties": {
     "$header": {
@@ -1883,7 +2060,8 @@ export const RMCSchema = {
       "const": "RMC"
     },
     "toTime": {
-      "type": "string"
+      "type": "string",
+      "description": "Offset into the track, in seconds, as a decimal string."
     }
   },
   "required": [
@@ -1898,6 +2076,7 @@ export const RTToClientSchema = {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/RTToClient.schema.json",
   "title": "RT",
+  "description": "Plays a testimony or verdict animation.",
   "type": "object",
   "properties": {
     "$header": {
@@ -1905,7 +2084,8 @@ export const RTToClientSchema = {
       "const": "RT"
     },
     "animation": {
-      "$ref": "../../types/RTAnimation.schema.json"
+      "$ref": "../../types/RTAnimation.schema.json",
+      "description": "Animation to play."
     },
     "name": {
       "type": "string",
@@ -1953,6 +2133,7 @@ export const RTToServerSchema = {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/RTToServer.schema.json",
   "title": "RT",
+  "description": "Requests a testimony or verdict animation.",
   "type": "object",
   "properties": {
     "$header": {
@@ -1960,7 +2141,8 @@ export const RTToServerSchema = {
       "const": "RT"
     },
     "animation": {
-      "$ref": "../../types/RTAnimation.schema.json"
+      "$ref": "../../types/RTAnimation.schema.json",
+      "description": "Animation to play."
     },
     "name": {
       "type": "string",
@@ -2008,6 +2190,7 @@ export const SCSchema = {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/SC.schema.json",
   "title": "SC",
+  "description": "Character list, sent in reply to RC.",
   "type": "object",
   "properties": {
     "$header": {
@@ -2020,22 +2203,26 @@ export const SCSchema = {
         "type": "object",
         "properties": {
           "name": {
-            "type": "string"
+            "type": "string",
+            "description": "Character folder name."
           },
           "desc": {
             "type": "string",
-            "default": ""
+            "default": "",
+            "description": "Character description."
           },
           "evidence": {
             "type": "string",
-            "default": ""
+            "default": "",
+            "description": "Legacy field; unused."
           }
         },
         "required": [
           "name"
         ],
         "additionalProperties": false
-      }
+      },
+      "description": "Characters in ID order."
     }
   },
   "required": [
@@ -2050,6 +2237,7 @@ export const SISchema = {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/SI.schema.json",
   "title": "SI",
+  "description": "List sizes, sent in reply to askchaa; the client then requests SC with RC.",
   "type": "object",
   "properties": {
     "$header": {
@@ -2057,13 +2245,16 @@ export const SISchema = {
       "const": "SI"
     },
     "char_count": {
-      "type": "number"
+      "type": "number",
+      "description": "Number of characters."
     },
     "evi_count": {
-      "type": "number"
+      "type": "number",
+      "description": "Number of evidence items."
     },
     "mus_count": {
-      "type": "number"
+      "type": "number",
+      "description": "Number of music list entries."
     }
   },
   "required": [
@@ -2080,6 +2271,7 @@ export const SMSchema = {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/SM.schema.json",
   "title": "SM",
+  "description": "Legacy combined area and music list, sent in reply to RM; the client replies with RD.",
   "type": "object",
   "properties": {
     "$header": {
@@ -2092,14 +2284,16 @@ export const SMSchema = {
         "type": "object",
         "properties": {
           "name": {
-            "type": "string"
+            "type": "string",
+            "description": "Area, category or track name."
           }
         },
         "required": [
           "name"
         ],
         "additionalProperties": false
-      }
+      },
+      "description": "Area names, then music entries starting at the first name with an audio extension."
     }
   },
   "required": [
@@ -2114,6 +2308,7 @@ export const SPSchema = {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/SP.schema.json",
   "title": "SP",
+  "description": "Moves the client to a position.",
   "type": "object",
   "properties": {
     "$header": {
@@ -2121,7 +2316,8 @@ export const SPSchema = {
       "const": "SP"
     },
     "side": {
-      "$ref": "../../types/Side.schema.json"
+      "$ref": "../../types/Side.schema.json",
+      "description": "Position to move to."
     }
   },
   "required": [
@@ -2136,6 +2332,7 @@ export const TISchema = {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/TI.schema.json",
   "title": "TI",
+  "description": "Controls a countdown clock.",
   "type": "object",
   "properties": {
     "$header": {
@@ -2147,7 +2344,8 @@ export const TISchema = {
       "description": "Clock index, 0-4. akashi uses 0 for the global timer and 1-4 for area timers."
     },
     "command": {
-      "$ref": "../../types/TimerCommand.schema.json"
+      "$ref": "../../types/TimerCommand.schema.json",
+      "description": "Clock action."
     },
     "time": {
       "type": "number",
@@ -2168,6 +2366,7 @@ export const ZZToClientSchema = {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/ZZToClient.schema.json",
   "title": "ZZ",
+  "description": "Mod call notice delivered to moderators.",
   "type": "object",
   "properties": {
     "$header": {
@@ -2191,6 +2390,7 @@ export const ZZToServerSchema = {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/ZZToServer.schema.json",
   "title": "ZZ",
+  "description": "Calls a moderator.",
   "type": "object",
   "properties": {
     "$header": {
@@ -2220,6 +2420,7 @@ export const askchaaSchema = {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/askchaa.schema.json",
   "title": "askchaa",
+  "description": "Asks for the list sizes to start loading; the server replies with SI.",
   "type": "object",
   "properties": {
     "$header": {
@@ -2238,6 +2439,7 @@ export const decryptorSchema = {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/decryptor.schema.json",
   "title": "decryptor",
+  "description": "First packet from the server; the client replies with HI.",
   "type": "object",
   "properties": {
     "$header": {
@@ -2245,7 +2447,8 @@ export const decryptorSchema = {
       "const": "decryptor"
     },
     "value": {
-      "type": "string"
+      "type": "string",
+      "description": "Legacy encryption key; unused, but AO2-Client ignores the packet when it is empty."
     }
   },
   "required": [

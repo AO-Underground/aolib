@@ -184,5 +184,6 @@ the way in but no longer does on the way out. Currently set on
 
 Keep all JSON files formatted with `./format.sh`. Run `./validate.sh` to check
 the invariants above: JSON parses, `$ref`s resolve, each packet's `title`
-matches its `$header`, `x-receiver` is set, `enum`/`x-enum-description` lengths agree,
+matches its `$header`, `x-receiver` is set, every packet and non-const field
+has a `description`, `enum`/`x-enum-description` lengths agree,
 and every `x-fanta-codec` is documented in `packets/CODECS.md`.

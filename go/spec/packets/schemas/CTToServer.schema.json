@@ -2,6 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/CTToServer.schema.json",
   "title": "CT",
+  "description": "Out-of-character chat message; servers treat a leading `/` as a command.",
   "type": "object",
   "properties": {
     "$header": {
@@ -9,10 +10,12 @@
       "const": "CT"
     },
     "name": {
-      "type": "string"
+      "type": "string",
+      "description": "Sender's OOC name."
     },
     "message": {
-      "type": "string"
+      "type": "string",
+      "description": "Message text."
     }
   },
   "required": [

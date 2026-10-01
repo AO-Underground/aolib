@@ -2,6 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/FL.schema.json",
   "title": "FL",
+  "description": "Optional protocol features the server supports.",
   "type": "object",
   "properties": {
     "$header": {
@@ -12,7 +13,8 @@
       "type": "array",
       "items": {
         "type": "string"
-      }
+      },
+      "description": "Feature names, e.g. `yellowtext`, `y_offset`, `effects`."
     }
   },
   "required": [

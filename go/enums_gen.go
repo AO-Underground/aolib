@@ -2,7 +2,7 @@
 
 package aolib
 
-// AreaUpdateType is Discriminator for ARUP payloads: 0 = player counts (numbers), 1/2/3 = area metadata strings.
+// AreaUpdateType: Discriminator for ARUP payloads: 0 = player counts (numbers), 1/2/3 = area metadata strings.
 type AreaUpdateType string
 
 const (
@@ -26,7 +26,7 @@ var areaUpdateTypeFromWire = map[int]AreaUpdateType{
 	3: AreaUpdateTypeLocked,
 }
 
-// AuthState is Moderator authentication state (AUTH packet).
+// AuthState: Moderator authentication state (AUTH packet).
 type AuthState string
 
 const (
@@ -47,7 +47,7 @@ var authStateFromWire = map[int]AuthState{
 	1:  AuthStateSuccess,
 }
 
-// CharAvailability is Per-character availability in a CharsCheck list.
+// CharAvailability: Per-character availability in a CharsCheck list.
 type CharAvailability string
 
 const (
@@ -65,7 +65,7 @@ var charAvailabilityFromWire = map[int]CharAvailability{
 	-1: CharAvailabilityTaken,
 }
 
-// DeskModifier is Desk visibility behavior.
+// DeskModifier: Desk visibility behavior.
 type DeskModifier string
 
 const (
@@ -95,7 +95,7 @@ var deskModifierFromWire = map[int]DeskModifier{
 	5: DeskModifierShowDuringPreanimThenCenter,
 }
 
-// EmoteModifier is Emote behavior selector. Spec values 3 and 4 are documented as unused.
+// EmoteModifier: Emote behavior selector. Spec values 3 and 4 are documented as unused.
 type EmoteModifier string
 
 const (
@@ -128,7 +128,7 @@ var emoteModifierFromWire = map[int]EmoteModifier{
 	6: EmoteModifierObjectionZoom,
 }
 
-// Flip is Sprite mirroring.
+// Flip: Sprite mirroring.
 type Flip string
 
 const (
@@ -152,7 +152,7 @@ var flipFromWire = map[int]Flip{
 	3: FlipHorizontalAndVertical,
 }
 
-// JudgeState is Judge-control visibility carried by the JD packet.
+// JudgeState: Judge-control visibility carried by the JD packet.
 type JudgeState string
 
 const (
@@ -173,7 +173,7 @@ var judgeStateFromWire = map[int]JudgeState{
 	1:  JudgeStateShown,
 }
 
-// MusicChannel is MC audio channel.
+// MusicChannel: MC audio channel.
 type MusicChannel string
 
 const (
@@ -191,7 +191,7 @@ var musicChannelFromWire = map[int]MusicChannel{
 	1: MusicChannelAmbience,
 }
 
-// PenaltyBar is Which penalty (health) bar an HP packet updates.
+// PenaltyBar: Which penalty (health) bar an HP packet updates.
 type PenaltyBar string
 
 const (
@@ -209,7 +209,7 @@ var penaltyBarFromWire = map[int]PenaltyBar{
 	2: PenaltyBarProsecution,
 }
 
-// PlayerDataType is PU packet field selector: which playerlist datum the packet updates.
+// PlayerDataType: PU packet field selector: which playerlist datum the packet updates.
 type PlayerDataType string
 
 const (
@@ -233,7 +233,7 @@ var playerDataTypeFromWire = map[int]PlayerDataType{
 	3: PlayerDataTypeAreaID,
 }
 
-// PlayerListUpdate is PR packet update type: add or remove a player from the playerlist.
+// PlayerListUpdate: PR packet update type: add or remove a player from the playerlist.
 type PlayerListUpdate string
 
 const (
@@ -251,7 +251,7 @@ var playerListUpdateFromWire = map[int]PlayerListUpdate{
 	1: PlayerListUpdateRemove,
 }
 
-// RTAnimation is Judge-control overlay animation played by RT.
+// RTAnimation: Judge-control overlay animation played by RT.
 type RTAnimation string
 
 const (
@@ -263,7 +263,7 @@ const (
 	RTAnimationCustom           RTAnimation = "custom"
 )
 
-// ShoutModifier is Shout / objection selector.
+// ShoutModifier: Shout / objection selector.
 type ShoutModifier string
 
 const (
@@ -290,7 +290,7 @@ var shoutModifierFromWire = map[int]ShoutModifier{
 	4: ShoutModifierCustom,
 }
 
-// Side is Character position. Wire values are the lowercase 3-letter codes.
+// Side: Character position. Wire values are the lowercase 3-letter codes.
 type Side string
 
 const (
@@ -304,7 +304,7 @@ const (
 	SideSea Side = "sea"
 )
 
-// TextColor is Chat message text color. `blue` also disables the talking animation.
+// TextColor: Chat message text color. `blue` also disables the talking animation.
 type TextColor string
 
 const (
@@ -346,7 +346,7 @@ var textColorFromWire = map[int]TextColor{
 	9: TextColorRainbow,
 }
 
-// TimerCommand is TI packet command: how to manipulate a timer.
+// TimerCommand: TI packet command: how to manipulate a timer.
 type TimerCommand string
 
 const (

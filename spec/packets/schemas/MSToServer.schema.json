@@ -2,6 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/MSToServer.schema.json",
   "title": "MS",
+  "description": "In-character message sent by the speaker.",
   "type": "object",
   "properties": {
     "$header": {
@@ -10,34 +11,43 @@
     },
     "desk_modifier": {
       "$ref": "../../types/DeskModifier.schema.json",
-      "default": "shown"
+      "default": "shown",
+      "description": "Desk visibility for the speaker."
     },
     "preanim": {
       "type": "string",
-      "default": ""
+      "default": "",
+      "description": "Preanimation played before the emote; empty or `-` for none."
     },
     "character": {
-      "type": "string"
+      "type": "string",
+      "description": "Speaker's character folder name."
     },
     "emote": {
-      "type": "string"
+      "type": "string",
+      "description": "Emote name; the client plays its `(b)` talking and `(a)` idle variants."
     },
     "message": {
-      "type": "string"
+      "type": "string",
+      "description": "IC message text."
     },
     "side": {
-      "$ref": "../../types/Side.schema.json"
+      "$ref": "../../types/Side.schema.json",
+      "description": "Speaker's position."
     },
     "sfx_name": {
       "type": "string",
-      "default": ""
+      "default": "",
+      "description": "Sound effect to play; `1`, `0` or empty for none."
     },
     "emote_modifier": {
       "$ref": "../../types/EmoteModifier.schema.json",
-      "default": "no_preanim"
+      "default": "no_preanim",
+      "description": "Whether the preanim plays and whether the zoom background is used."
     },
     "char_id": {
-      "type": "number"
+      "type": "number",
+      "description": "Speaker's character ID."
     },
     "sfx_delay": {
       "type": "number",
@@ -46,66 +56,81 @@
     },
     "shout_modifier": {
       "$ref": "../../types/ShoutModifier.schema.json",
-      "default": "none"
+      "default": "none",
+      "description": "Shout bubble (objection etc.) shown before the message."
     },
     "evidence_id": {
       "type": "number",
-      "default": 0
+      "default": 0,
+      "description": "1-based index of the evidence item to present; 0 for none."
     },
     "flip": {
       "$ref": "../../types/Flip.schema.json",
-      "default": "none"
+      "default": "none",
+      "description": "Mirror the speaker horizontally."
     },
     "realization": {
       "type": "boolean",
-      "default": false
+      "default": false,
+      "description": "Flash the screen and play the realization sound."
     },
     "text_color": {
       "$ref": "../../types/TextColor.schema.json",
-      "default": "white"
+      "default": "white",
+      "description": "Message text colour."
     },
     "showname": {
       "type": "string",
-      "default": ""
+      "default": "",
+      "description": "Name shown in the chatbox; empty uses the character's default showname."
     },
     "paired_charid": {
       "type": "number",
-      "default": -1
+      "default": -1,
+      "description": "Character to pair with, or -1 for no pair."
     },
     "offset": {
       "$ref": "../../types/Offset.schema.json",
       "default": {
         "x": 0,
         "y": 0
-      }
+      },
+      "description": "Speaker's horizontal and vertical offset, in percent of the viewport."
     },
     "noninterrupting_preanim": {
       "type": "boolean",
-      "default": false
+      "default": false,
+      "description": "Show the message while the preanim plays instead of after it."
     },
     "sfx_looping": {
       "type": "boolean",
-      "default": false
+      "default": false,
+      "description": "Loop the sound effect."
     },
     "screenshake": {
       "type": "boolean",
-      "default": false
+      "default": false,
+      "description": "Shake the screen."
     },
     "frames_shake": {
       "type": "string",
-      "default": ""
+      "default": "",
+      "description": "Frame-triggered screenshakes from char.ini: one `^`-terminated segment per emote (preanim, `(b)`, `(a)`), each `emote|frame=value|...`."
     },
     "frames_realization": {
       "type": "string",
-      "default": ""
+      "default": "",
+      "description": "Frame-triggered realization flashes, in the `frames_shake` format."
     },
     "frames_sfx": {
       "type": "string",
-      "default": ""
+      "default": "",
+      "description": "Frame-triggered sound effects, in the `frames_shake` format."
     },
     "additive": {
       "type": "boolean",
-      "default": false
+      "default": false,
+      "description": "Append the message to the previous one instead of replacing it."
     },
     "effect": {
       "$ref": "../../types/Effect.schema.json",

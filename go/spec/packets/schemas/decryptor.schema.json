@@ -2,6 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/decryptor.schema.json",
   "title": "decryptor",
+  "description": "First packet from the server; the client replies with HI.",
   "type": "object",
   "properties": {
     "$header": {
@@ -9,7 +10,8 @@
       "const": "decryptor"
     },
     "value": {
-      "type": "string"
+      "type": "string",
+      "description": "Legacy encryption key; unused, but AO2-Client ignores the packet when it is empty."
     }
   },
   "required": [

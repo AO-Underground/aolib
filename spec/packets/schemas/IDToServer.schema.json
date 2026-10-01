@@ -2,6 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/IDToServer.schema.json",
   "title": "ID",
+  "description": "Client identification, sent in reply to IDToClient.",
   "type": "object",
   "properties": {
     "$header": {
@@ -9,10 +10,12 @@
       "const": "ID"
     },
     "software": {
-      "type": "string"
+      "type": "string",
+      "description": "Client software name, e.g. `AO2`."
     },
     "version": {
-      "type": "string"
+      "type": "string",
+      "description": "Client version."
     }
   },
   "required": [

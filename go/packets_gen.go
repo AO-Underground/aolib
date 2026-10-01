@@ -2,7 +2,7 @@
 
 package aolib
 
-// ARUP is
+// ARUP: Refreshes one column of the area list (player counts, status, case managers or lock state). Wire form in CODECS.md.
 type ARUP struct {
 	UpdateType AreaUpdateType `json:"update_type"`
 	UpdateData []string       `json:"update_data"`
@@ -12,7 +12,7 @@ func (p *ARUP) Header() string { return "ARUP" }
 
 func (p *ARUP) schemaPath() string { return "packets/schemas/ARUP.schema.json" }
 
-// ASS is
+// ASS: Base URL the client downloads missing assets from.
 type ASS struct {
 	AssetUrl string `json:"asset_url"`
 }
@@ -41,7 +41,7 @@ func ParseASS(body []string) (*ASS, error) {
 	return p, nil
 }
 
-// AUTH is
+// AUTH: Result of a moderator login or logout.
 type AUTH struct {
 	AuthState AuthState `json:"auth_state"`
 }
@@ -70,7 +70,7 @@ func ParseAUTH(body []string) (*AUTH, error) {
 	return p, nil
 }
 
-// Askchaa is
+// Askchaa: Asks for the list sizes to start loading; the server replies with SI.
 type Askchaa struct {
 }
 
@@ -88,7 +88,7 @@ func ParseAskchaa(body []string) (*Askchaa, error) {
 	return p, nil
 }
 
-// BB is
+// BB: Server notice shown to the client in a popup.
 type BB struct {
 	Message string `json:"message"`
 }
@@ -117,7 +117,7 @@ func ParseBB(body []string) (*BB, error) {
 	return p, nil
 }
 
-// BD is
+// BD: Tells a connecting client it is banned.
 type BD struct {
 	Reason string `json:"reason"`
 }
@@ -146,7 +146,7 @@ func ParseBD(body []string) (*BD, error) {
 	return p, nil
 }
 
-// BN is
+// BN: Changes the area background, optionally moving the client to a position.
 type BN struct {
 	Background string `json:"background"`
 	Position   string `json:"position"`
@@ -179,7 +179,7 @@ func ParseBN(body []string) (*BN, error) {
 	return p, nil
 }
 
-// CC is
+// CC: Character selection request; the server confirms with PV.
 type CC struct {
 	PlayerID     int    `json:"player_id"`
 	CharID       int    `json:"char_id"`
@@ -216,7 +216,7 @@ func ParseCC(body []string) (*CC, error) {
 	return p, nil
 }
 
-// CH is
+// CH: Keepalive sent periodically from the courtroom; the server answers with CHECK.
 type CH struct {
 	CharID int `json:"char_id"`
 }
@@ -245,7 +245,7 @@ func ParseCH(body []string) (*CH, error) {
 	return p, nil
 }
 
-// CHECK is
+// CHECK: Keepalive reply to CH; the client uses the round trip as its latency.
 type CHECK struct {
 }
 
@@ -284,7 +284,7 @@ func parseCIEntriesItem(s string) CIEntriesItem {
 	return it
 }
 
-// CI is
+// CI: Legacy batched character list from before SC; webAO's old loader only.
 type CI struct {
 	BatchIndex int             `json:"batchIndex"`
 	Entries    []CIEntriesItem `json:"entries"`
@@ -321,7 +321,7 @@ func ParseCI(body []string) (*CI, error) {
 	return p, nil
 }
 
-// CTToClient is
+// CTToClient: Out-of-character chat message.
 type CTToClient struct {
 	Name         string `json:"name"`
 	Message      string `json:"message"`
@@ -358,7 +358,7 @@ func ParseCTToClient(body []string) (*CTToClient, error) {
 	return p, nil
 }
 
-// CTToServer is
+// CTToServer: Out-of-character chat message; servers treat a leading `/` as a command.
 type CTToServer struct {
 	Name    string `json:"name"`
 	Message string `json:"message"`
@@ -391,7 +391,7 @@ func ParseCTToServer(body []string) (*CTToServer, error) {
 	return p, nil
 }
 
-// CharsCheck is
+// CharsCheck: Which characters are taken.
 type CharsCheck struct {
 	Taken []CharAvailability `json:"taken"`
 }
@@ -418,7 +418,7 @@ func ParseCharsCheck(body []string) (*CharsCheck, error) {
 	return p, nil
 }
 
-// DE is
+// DE: Deletes an evidence item from the current area.
 type DE struct {
 	ID int `json:"id"`
 }
@@ -447,7 +447,7 @@ func ParseDE(body []string) (*DE, error) {
 	return p, nil
 }
 
-// DONE is
+// DONE: Ends the loading handshake; the client leaves the lobby and enters the courtroom.
 type DONE struct {
 }
 
@@ -465,7 +465,7 @@ func ParseDONE(body []string) (*DONE, error) {
 	return p, nil
 }
 
-// Decryptor is
+// Decryptor: First packet from the server; the client replies with HI.
 type Decryptor struct {
 	Value string `json:"value"`
 }
@@ -494,7 +494,7 @@ func ParseDecryptor(body []string) (*Decryptor, error) {
 	return p, nil
 }
 
-// EE is
+// EE: Replaces an evidence item in the current area.
 type EE struct {
 	ID          int    `json:"id"`
 	Name        string `json:"name"`
@@ -564,7 +564,7 @@ func parseEIDetails(s string) EIDetails {
 	return it
 }
 
-// EI is
+// EI: Legacy single evidence item sent during loading, from before LE; webAO's old loader only.
 type EI struct {
 	ID      int       `json:"id"`
 	Details EIDetails `json:"details"`
@@ -618,7 +618,7 @@ func parseEMEntriesItem(s string) EMEntriesItem {
 	return it
 }
 
-// EM is
+// EM: Legacy batched area and music list from before SM; webAO's old loader only.
 type EM struct {
 	BatchIndex int             `json:"batchIndex"`
 	Entries    []EMEntriesItem `json:"entries"`
@@ -655,7 +655,7 @@ func ParseEM(body []string) (*EM, error) {
 	return p, nil
 }
 
-// FA is
+// FA: Full area list; replaces the client's areas.
 type FA struct {
 	Areas []string `json:"areas"`
 }
@@ -683,7 +683,7 @@ func ParseFA(body []string) (*FA, error) {
 	return p, nil
 }
 
-// FL is
+// FL: Optional protocol features the server supports.
 type FL struct {
 	Features []string `json:"features"`
 }
@@ -728,7 +728,7 @@ func parseFMMusicListItem(s string) FMMusicListItem {
 	return it
 }
 
-// FM is
+// FM: Full music list; replaces the client's music list.
 type FM struct {
 	MusicList []FMMusicListItem `json:"music_list"`
 }
@@ -755,7 +755,7 @@ func ParseFM(body []string) (*FM, error) {
 	return p, nil
 }
 
-// HI is
+// HI: Client hardware ID, sent in reply to decryptor; servers use it for bans.
 type HI struct {
 	HDID string `json:"hdid"`
 }
@@ -784,7 +784,7 @@ func ParseHI(body []string) (*HI, error) {
 	return p, nil
 }
 
-// HPToClient is
+// HPToClient: Sets a penalty bar.
 type HPToClient struct {
 	Bar   PenaltyBar `json:"bar"`
 	Value int        `json:"value"`
@@ -817,7 +817,7 @@ func ParseHPToClient(body []string) (*HPToClient, error) {
 	return p, nil
 }
 
-// HPToServer is
+// HPToServer: Requests a penalty bar change.
 type HPToServer struct {
 	Bar   PenaltyBar `json:"bar"`
 	Value int        `json:"value"`
@@ -850,7 +850,7 @@ func ParseHPToServer(body []string) (*HPToServer, error) {
 	return p, nil
 }
 
-// IDToClient is
+// IDToClient: Server identification, sent after HI; the client replies with its own ID.
 type IDToClient struct {
 	PlayerID int    `json:"player_id"`
 	Software string `json:"software"`
@@ -887,7 +887,7 @@ func ParseIDToClient(body []string) (*IDToClient, error) {
 	return p, nil
 }
 
-// IDToServer is
+// IDToServer: Client identification, sent in reply to IDToClient.
 type IDToServer struct {
 	Software string `json:"software"`
 	Version  string `json:"version"`
@@ -920,7 +920,7 @@ func ParseIDToServer(body []string) (*IDToServer, error) {
 	return p, nil
 }
 
-// JD is
+// JD: Shows or hides the judge controls for this client.
 type JD struct {
 	State JudgeState `json:"state"`
 }
@@ -949,7 +949,7 @@ func ParseJD(body []string) (*JD, error) {
 	return p, nil
 }
 
-// KB is
+// KB: Tells the client it was banned; the client returns to the lobby.
 type KB struct {
 	Reason string `json:"reason"`
 }
@@ -978,7 +978,7 @@ func ParseKB(body []string) (*KB, error) {
 	return p, nil
 }
 
-// KK is
+// KK: Tells the client it was kicked; the client returns to the lobby.
 type KK struct {
 	Reason string `json:"reason"`
 }
@@ -1032,7 +1032,7 @@ func parseLEEvidenceItem(s string) LEEvidenceItem {
 	return it
 }
 
-// LE is
+// LE: Full evidence list for the current area.
 type LE struct {
 	Evidence []LEEvidenceItem `json:"evidence"`
 }
@@ -1059,7 +1059,7 @@ func ParseLE(body []string) (*LE, error) {
 	return p, nil
 }
 
-// MA is
+// MA: Moderator action: kicks or bans a player.
 type MA struct {
 	PlayerID        int    `json:"player_id"`
 	DurationMinutes int    `json:"duration_minutes"`
@@ -1096,7 +1096,7 @@ func ParseMA(body []string) (*MA, error) {
 	return p, nil
 }
 
-// MCToClient is
+// MCToClient: Plays a track on a music channel.
 type MCToClient struct {
 	Name     string       `json:"name"`
 	CharID   int          `json:"char_id"`
@@ -1157,7 +1157,7 @@ func ParseMCToClient(body []string) (*MCToClient, error) {
 	return p, nil
 }
 
-// MCToServer is
+// MCToServer: Requests a track, or an area change when `name` is an area name.
 type MCToServer struct {
 	Name     string       `json:"name"`
 	CharID   int          `json:"char_id"`
@@ -1198,7 +1198,7 @@ func ParseMCToServer(body []string) (*MCToServer, error) {
 	return p, nil
 }
 
-// MSToClient is
+// MSToClient: In-character message as broadcast by the server, with the pair's data filled in.
 type MSToClient struct {
 	DeskModifier           DeskModifier  `json:"desk_modifier"`
 	Preanim                string        `json:"preanim"`
@@ -1384,7 +1384,7 @@ func ParseMSToClient(body []string) (*MSToClient, error) {
 	return p, nil
 }
 
-// MSToServer is
+// MSToServer: In-character message sent by the speaker.
 type MSToServer struct {
 	DeskModifier           DeskModifier  `json:"desk_modifier"`
 	Preanim                string        `json:"preanim"`
@@ -1550,7 +1550,7 @@ func ParseMSToServer(body []string) (*MSToServer, error) {
 	return p, nil
 }
 
-// PE is
+// PE: Adds an evidence item to the current area.
 type PE struct {
 	Name        string `json:"name"`
 	Description string `json:"description"`
@@ -1587,7 +1587,7 @@ func ParsePE(body []string) (*PE, error) {
 	return p, nil
 }
 
-// PN is
+// PN: Player count and server description, shown in the lobby.
 type PN struct {
 	PlayerCount       int    `json:"player_count"`
 	MaxPlayers        int    `json:"max_players"`
@@ -1624,7 +1624,7 @@ func ParsePN(body []string) (*PN, error) {
 	return p, nil
 }
 
-// PR is
+// PR: Adds or removes a player-list entry.
 type PR struct {
 	ID   int              `json:"id"`
 	Type PlayerListUpdate `json:"type"`
@@ -1657,7 +1657,7 @@ func ParsePR(body []string) (*PR, error) {
 	return p, nil
 }
 
-// PU is
+// PU: Updates one field of a player-list entry.
 type PU struct {
 	ID   int            `json:"id"`
 	Type PlayerDataType `json:"type"`
@@ -1694,7 +1694,7 @@ func ParsePU(body []string) (*PU, error) {
 	return p, nil
 }
 
-// PV is
+// PV: Confirms a character selection (reply to CC).
 type PV struct {
 	PlayerID int `json:"player_id"`
 	CharID   int `json:"char_id"`
@@ -1733,7 +1733,7 @@ func ParsePV(body []string) (*PV, error) {
 	return p, nil
 }
 
-// RC is
+// RC: Requests the character list; the server replies with SC.
 type RC struct {
 }
 
@@ -1751,7 +1751,7 @@ func ParseRC(body []string) (*RC, error) {
 	return p, nil
 }
 
-// RD is
+// RD: Tells the server the client has loaded its lists; the server sends area state and DONE.
 type RD struct {
 }
 
@@ -1769,7 +1769,7 @@ func ParseRD(body []string) (*RD, error) {
 	return p, nil
 }
 
-// RM is
+// RM: Requests the music list; the server replies with SM.
 type RM struct {
 }
 
@@ -1787,7 +1787,7 @@ func ParseRM(body []string) (*RM, error) {
 	return p, nil
 }
 
-// RMC is
+// RMC: Seeks the currently playing track to an offset. Only webAO handles it; AO2-Client ignores it.
 type RMC struct {
 	ToTime string `json:"toTime"`
 }
@@ -1816,7 +1816,7 @@ func ParseRMC(body []string) (*RMC, error) {
 	return p, nil
 }
 
-// RTToClient is
+// RTToClient: Plays a testimony or verdict animation.
 type RTToClient struct {
 	Animation RTAnimation `json:"animation"`
 	Name      string      `json:"name"`
@@ -1826,7 +1826,7 @@ func (p *RTToClient) Header() string { return "RT" }
 
 func (p *RTToClient) schemaPath() string { return "packets/schemas/RTToClient.schema.json" }
 
-// RTToServer is
+// RTToServer: Requests a testimony or verdict animation.
 type RTToServer struct {
 	Animation RTAnimation `json:"animation"`
 	Name      string      `json:"name"`
@@ -1861,7 +1861,7 @@ func parseSCCharDataItem(s string) SCCharDataItem {
 	return it
 }
 
-// SC is
+// SC: Character list, sent in reply to RC.
 type SC struct {
 	CharData []SCCharDataItem `json:"char_data"`
 }
@@ -1888,7 +1888,7 @@ func ParseSC(body []string) (*SC, error) {
 	return p, nil
 }
 
-// SI is
+// SI: List sizes, sent in reply to askchaa; the client then requests SC with RC.
 type SI struct {
 	CharCount int `json:"char_count"`
 	EviCount  int `json:"evi_count"`
@@ -1942,7 +1942,7 @@ func parseSMMusicListItem(s string) SMMusicListItem {
 	return it
 }
 
-// SM is
+// SM: Legacy combined area and music list, sent in reply to RM; the client replies with RD.
 type SM struct {
 	MusicList []SMMusicListItem `json:"music_list"`
 }
@@ -1969,7 +1969,7 @@ func ParseSM(body []string) (*SM, error) {
 	return p, nil
 }
 
-// SP is
+// SP: Moves the client to a position.
 type SP struct {
 	Side Side `json:"side"`
 }
@@ -1998,7 +1998,7 @@ func ParseSP(body []string) (*SP, error) {
 	return p, nil
 }
 
-// TI is
+// TI: Controls a countdown clock.
 type TI struct {
 	TimerID int          `json:"timer_id"`
 	Command TimerCommand `json:"command"`
@@ -2035,7 +2035,7 @@ func ParseTI(body []string) (*TI, error) {
 	return p, nil
 }
 
-// ZZToClient is
+// ZZToClient: Mod call notice delivered to moderators.
 type ZZToClient struct {
 	Reason string `json:"reason"`
 }
@@ -2064,7 +2064,7 @@ func ParseZZToClient(body []string) (*ZZToClient, error) {
 	return p, nil
 }
 
-// ZZToServer is
+// ZZToServer: Calls a moderator.
 type ZZToServer struct {
 	Reason           string `json:"reason"`
 	ReportedPlayerID int    `json:"reported_player_id"`

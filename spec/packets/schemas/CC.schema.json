@@ -2,6 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/CC.schema.json",
   "title": "CC",
+  "description": "Character selection request; the server confirms with PV.",
   "type": "object",
   "properties": {
     "$header": {
@@ -9,14 +10,17 @@
       "const": "CC"
     },
     "player_id": {
-      "type": "number"
+      "type": "number",
+      "description": "Sender's player ID from IDToClient; servers identify the client by its connection instead."
     },
     "char_id": {
-      "type": "number"
+      "type": "number",
+      "description": "Index into the SC list, or -1 to spectate."
     },
     "char_password": {
       "type": "string",
-      "default": ""
+      "default": "",
+      "description": "Unused; empty."
     }
   },
   "required": [

@@ -2,6 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/askchaa.schema.json",
   "title": "askchaa",
+  "description": "Asks for the list sizes to start loading; the server replies with SI.",
   "type": "object",
   "properties": {
     "$header": {

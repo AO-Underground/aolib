@@ -2,14 +2,14 @@
 
 package aolib
 
-// Effect is MS screen-effect overlay request: effect name, misc folder, and sound, packed into one `name|folder|sound` wire slot. An all-empty value is the no-effect sentinel and encodes to an empty slot.
+// Effect: MS screen-effect overlay request: effect name, misc folder, and sound, packed into one `name|folder|sound` wire slot. An all-empty value is the no-effect sentinel and encodes to an empty slot.
 type Effect struct {
 	Name   string `json:"name"`
 	Folder string `json:"folder"`
 	Sound  string `json:"sound"`
 }
 
-// MusicEffects is Transition effects for an MC track change.
+// MusicEffects: Transition effects for an MC track change.
 type MusicEffects struct {
 	FadeIn       bool `json:"fade_in"`
 	FadeOut      bool `json:"fade_out"`
@@ -39,7 +39,7 @@ func musicEffectsFromWire(s string) MusicEffects {
 	}
 }
 
-// Offset is Integer (x, y) screen-coordinate pair carried in MS offset / paired_offset slots.
+// Offset: Integer (x, y) screen-coordinate pair carried in MS offset / paired_offset slots.
 type Offset struct {
 	X int `json:"x"`
 	Y int `json:"y"`

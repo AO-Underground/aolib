@@ -2,6 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/SC.schema.json",
   "title": "SC",
+  "description": "Character list, sent in reply to RC.",
   "type": "object",
   "properties": {
     "$header": {
@@ -14,22 +15,26 @@
         "type": "object",
         "properties": {
           "name": {
-            "type": "string"
+            "type": "string",
+            "description": "Character folder name."
           },
           "desc": {
             "type": "string",
-            "default": ""
+            "default": "",
+            "description": "Character description."
           },
           "evidence": {
             "type": "string",
-            "default": ""
+            "default": "",
+            "description": "Legacy field; unused."
           }
         },
         "required": [
           "name"
         ],
         "additionalProperties": false
-      }
+      },
+      "description": "Characters in ID order."
     }
   },
   "required": [

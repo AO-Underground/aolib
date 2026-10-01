@@ -2,6 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/CH.schema.json",
   "title": "CH",
+  "description": "Keepalive sent periodically from the courtroom; the server answers with CHECK.",
   "type": "object",
   "properties": {
     "$header": {
@@ -9,7 +10,8 @@
       "const": "CH"
     },
     "char_id": {
-      "type": "number"
+      "type": "number",
+      "description": "Sender's current character ID."
     }
   },
   "required": [

@@ -2,6 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/EI.schema.json",
   "title": "EI",
+  "description": "Legacy single evidence item sent during loading, from before LE; webAO's old loader only.",
   "type": "object",
   "properties": {
     "$header": {
@@ -9,22 +10,27 @@
       "const": "EI"
     },
     "id": {
-      "type": "number"
+      "type": "number",
+      "description": "Evidence index."
     },
     "details": {
       "type": "object",
       "properties": {
         "name": {
-          "type": "string"
+          "type": "string",
+          "description": "Evidence name."
         },
         "description": {
-          "type": "string"
+          "type": "string",
+          "description": "Evidence description."
         },
         "type": {
-          "type": "string"
+          "type": "string",
+          "description": "Legacy evidence type; unused."
         },
         "image": {
-          "type": "string"
+          "type": "string",
+          "description": "Image filename under `evidence/`."
         }
       },
       "required": [
@@ -33,7 +39,8 @@
         "type",
         "image"
       ],
-      "additionalProperties": false
+      "additionalProperties": false,
+      "description": "The evidence item."
     }
   },
   "required": [

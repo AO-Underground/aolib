@@ -2,6 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/PV.schema.json",
   "title": "PV",
+  "description": "Confirms a character selection (reply to CC).",
   "type": "object",
   "properties": {
     "$header": {
@@ -9,7 +10,8 @@
       "const": "PV"
     },
     "player_id": {
-      "type": "number"
+      "type": "number",
+      "description": "Client's player ID; AO2-Client ignores it."
     },
     "_cid": {
       "type": "string",
@@ -17,7 +19,8 @@
       "default": "CID"
     },
     "char_id": {
-      "type": "number"
+      "type": "number",
+      "description": "Character the client now plays, or -1 for spectator."
     }
   },
   "required": [

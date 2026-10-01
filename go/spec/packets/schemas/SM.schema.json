@@ -2,6 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/SM.schema.json",
   "title": "SM",
+  "description": "Legacy combined area and music list, sent in reply to RM; the client replies with RD.",
   "type": "object",
   "properties": {
     "$header": {
@@ -14,14 +15,16 @@
         "type": "object",
         "properties": {
           "name": {
-            "type": "string"
+            "type": "string",
+            "description": "Area, category or track name."
           }
         },
         "required": [
           "name"
         ],
         "additionalProperties": false
-      }
+      },
+      "description": "Area names, then music entries starting at the first name with an audio extension."
     }
   },
   "required": [

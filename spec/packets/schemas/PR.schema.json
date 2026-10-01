@@ -2,6 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/PR.schema.json",
   "title": "PR",
+  "description": "Adds or removes a player-list entry.",
   "type": "object",
   "properties": {
     "$header": {
@@ -9,10 +10,12 @@
       "const": "PR"
     },
     "id": {
-      "type": "number"
+      "type": "number",
+      "description": "Player ID."
     },
     "type": {
-      "$ref": "../../types/PlayerListUpdate.schema.json"
+      "$ref": "../../types/PlayerListUpdate.schema.json",
+      "description": "Add or remove."
     }
   },
   "required": [

@@ -2,6 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/SP.schema.json",
   "title": "SP",
+  "description": "Moves the client to a position.",
   "type": "object",
   "properties": {
     "$header": {
@@ -9,7 +10,8 @@
       "const": "SP"
     },
     "side": {
-      "$ref": "../../types/Side.schema.json"
+      "$ref": "../../types/Side.schema.json",
+      "description": "Position to move to."
     }
   },
   "required": [

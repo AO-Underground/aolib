@@ -2,6 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/CTToClient.schema.json",
   "title": "CT",
+  "description": "Out-of-character chat message.",
   "type": "object",
   "properties": {
     "$header": {
@@ -9,14 +10,17 @@
       "const": "CT"
     },
     "name": {
-      "type": "string"
+      "type": "string",
+      "description": "Sender's OOC name, or the server's name for server messages."
     },
     "message": {
-      "type": "string"
+      "type": "string",
+      "description": "Message text."
     },
     "is_from_server": {
       "type": "boolean",
-      "default": false
+      "default": false,
+      "description": "True for server messages, which clients style differently."
     }
   },
   "required": [

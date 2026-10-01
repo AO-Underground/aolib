@@ -2,6 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/LE.schema.json",
   "title": "LE",
+  "description": "Full evidence list for the current area.",
   "type": "object",
   "properties": {
     "$header": {
@@ -14,13 +15,16 @@
         "type": "object",
         "properties": {
           "name": {
-            "type": "string"
+            "type": "string",
+            "description": "Evidence name."
           },
           "description": {
-            "type": "string"
+            "type": "string",
+            "description": "Evidence description."
           },
           "image": {
-            "type": "string"
+            "type": "string",
+            "description": "Image filename under `evidence/`."
           }
         },
         "required": [
@@ -29,7 +33,8 @@
           "image"
         ],
         "additionalProperties": false
-      }
+      },
+      "description": "Evidence items in index order."
     }
   },
   "required": [

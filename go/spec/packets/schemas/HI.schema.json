@@ -2,6 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/HI.schema.json",
   "title": "HI",
+  "description": "Client hardware ID, sent in reply to decryptor; servers use it for bans.",
   "type": "object",
   "properties": {
     "$header": {
@@ -9,7 +10,8 @@
       "const": "HI"
     },
     "hdid": {
-      "type": "string"
+      "type": "string",
+      "description": "Hardware ID string."
     }
   },
   "required": [

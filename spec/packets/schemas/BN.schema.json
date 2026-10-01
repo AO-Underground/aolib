@@ -2,6 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/BN.schema.json",
   "title": "BN",
+  "description": "Changes the area background, optionally moving the client to a position.",
   "type": "object",
   "properties": {
     "$header": {
@@ -9,11 +10,13 @@
       "const": "BN"
     },
     "background": {
-      "type": "string"
+      "type": "string",
+      "description": "Background folder name."
     },
     "position": {
       "type": "string",
-      "default": ""
+      "default": "",
+      "description": "Position to move the client to; empty leaves it unchanged."
     }
   },
   "required": [

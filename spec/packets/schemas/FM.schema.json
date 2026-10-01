@@ -2,6 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/FM.schema.json",
   "title": "FM",
+  "description": "Full music list; replaces the client's music list.",
   "type": "object",
   "properties": {
     "$header": {
@@ -14,14 +15,16 @@
         "type": "object",
         "properties": {
           "name": {
-            "type": "string"
+            "type": "string",
+            "description": "Track filename, or a category name (no audio extension)."
           }
         },
         "required": [
           "name"
         ],
         "additionalProperties": false
-      }
+      },
+      "description": "Categories and tracks in display order."
     }
   },
   "required": [

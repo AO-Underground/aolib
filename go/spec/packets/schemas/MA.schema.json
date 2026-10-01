@@ -2,6 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/MA.schema.json",
   "title": "MA",
+  "description": "Moderator action: kicks or bans a player.",
   "type": "object",
   "properties": {
     "$header": {
@@ -9,14 +10,16 @@
       "const": "MA"
     },
     "player_id": {
-      "type": "number"
+      "type": "number",
+      "description": "Target player's ID."
     },
     "duration_minutes": {
       "type": "integer",
       "description": "Ban length in minutes. 0 kicks instead of banning; -1 bans permanently."
     },
     "reason": {
-      "type": "string"
+      "type": "string",
+      "description": "Reason shown to the target."
     }
   },
   "required": [

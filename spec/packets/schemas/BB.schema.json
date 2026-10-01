@@ -2,6 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/BB.schema.json",
   "title": "BB",
+  "description": "Server notice shown to the client in a popup.",
   "type": "object",
   "properties": {
     "$header": {
@@ -9,7 +10,8 @@
       "const": "BB"
     },
     "message": {
-      "type": "string"
+      "type": "string",
+      "description": "Notice text."
     }
   },
   "required": [

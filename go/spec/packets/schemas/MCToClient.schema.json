@@ -2,6 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/MCToClient.schema.json",
   "title": "MC",
+  "description": "Plays a track on a music channel.",
   "type": "object",
   "properties": {
     "$header": {
@@ -9,22 +10,27 @@
       "const": "MC"
     },
     "name": {
-      "type": "string"
+      "type": "string",
+      "description": "Track filename or URL; `~stop.mp3` stops the channel."
     },
     "char_id": {
-      "type": "number"
+      "type": "number",
+      "description": "Character who played it, announced in the IC log; -1 (or any non-character) for none."
     },
     "showname": {
       "type": "string",
-      "default": ""
+      "default": "",
+      "description": "Name used in the IC log; empty uses the character's showname."
     },
     "looping": {
       "type": "boolean",
-      "default": false
+      "default": false,
+      "description": "Loop the track."
     },
     "channel": {
       "$ref": "../../types/MusicChannel.schema.json",
-      "default": "music"
+      "default": "music",
+      "description": "Audio channel."
     },
     "effects": {
       "$ref": "../../types/MusicEffects.schema.json",
@@ -32,7 +38,8 @@
         "fade_in": false,
         "fade_out": false,
         "sync_position": false
-      }
+      },
+      "description": "Transition effects."
     }
   },
   "required": [

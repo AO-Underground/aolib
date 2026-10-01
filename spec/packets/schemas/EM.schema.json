@@ -2,6 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/EM.schema.json",
   "title": "EM",
+  "description": "Legacy batched area and music list from before SM; webAO's old loader only.",
   "type": "object",
   "properties": {
     "$header": {
@@ -9,7 +10,8 @@
       "const": "EM"
     },
     "batchIndex": {
-      "type": "number"
+      "type": "number",
+      "description": "Index of the first entry in this batch."
     },
     "entries": {
       "type": "array",
@@ -17,10 +19,12 @@
         "type": "object",
         "properties": {
           "index": {
-            "type": "number"
+            "type": "number",
+            "description": "Entry index."
           },
           "name": {
-            "type": "string"
+            "type": "string",
+            "description": "Area, category or track name."
           }
         },
         "required": [
@@ -28,7 +32,8 @@
           "name"
         ],
         "additionalProperties": false
-      }
+      },
+      "description": "Area names, then music entries, in this batch."
     }
   },
   "required": [

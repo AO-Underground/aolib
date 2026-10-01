@@ -2,6 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/SI.schema.json",
   "title": "SI",
+  "description": "List sizes, sent in reply to askchaa; the client then requests SC with RC.",
   "type": "object",
   "properties": {
     "$header": {
@@ -9,13 +10,16 @@
       "const": "SI"
     },
     "char_count": {
-      "type": "number"
+      "type": "number",
+      "description": "Number of characters."
     },
     "evi_count": {
-      "type": "number"
+      "type": "number",
+      "description": "Number of evidence items."
     },
     "mus_count": {
-      "type": "number"
+      "type": "number",
+      "description": "Number of music list entries."
     }
   },
   "required": [

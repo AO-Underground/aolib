@@ -2,6 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/CI.schema.json",
   "title": "CI",
+  "description": "Legacy batched character list from before SC; webAO's old loader only.",
   "type": "object",
   "properties": {
     "$header": {
@@ -9,7 +10,8 @@
       "const": "CI"
     },
     "batchIndex": {
-      "type": "number"
+      "type": "number",
+      "description": "ID of the first character in this batch."
     },
     "entries": {
       "type": "array",
@@ -17,10 +19,12 @@
         "type": "object",
         "properties": {
           "index": {
-            "type": "number"
+            "type": "number",
+            "description": "Character ID."
           },
           "data": {
-            "type": "string"
+            "type": "string",
+            "description": "`&`-joined character info, name first."
           }
         },
         "required": [
@@ -28,7 +32,8 @@
           "data"
         ],
         "additionalProperties": false
-      }
+      },
+      "description": "Characters in this batch."
     }
   },
   "required": [
