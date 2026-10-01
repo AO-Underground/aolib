@@ -616,6 +616,110 @@ export const BNSchema = {
   "x-receiver": "client"
 };
 
+export const CASEAToClientSchema = {
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "/packets/schemas/CASEAToClient.schema.json",
+  "title": "CASEA",
+  "description": "Case announcement relayed by the server to clients whose SETCASE preferences match.",
+  "type": "object",
+  "properties": {
+    "$header": {
+      "type": "string",
+      "const": "CASEA"
+    },
+    "message": {
+      "type": "string",
+      "description": "Server-formatted announcement text."
+    },
+    "need_def": {
+      "type": "boolean",
+      "default": false,
+      "description": "The case needs defense."
+    },
+    "need_pro": {
+      "type": "boolean",
+      "default": false,
+      "description": "The case needs prosecution."
+    },
+    "need_judge": {
+      "type": "boolean",
+      "default": false,
+      "description": "The case needs judge."
+    },
+    "need_jury": {
+      "type": "boolean",
+      "default": false,
+      "description": "The case needs jury."
+    },
+    "need_steno": {
+      "type": "boolean",
+      "default": false,
+      "description": "The case needs stenographer."
+    },
+    "_legacy": {
+      "type": "string",
+      "const": "1",
+      "default": "1"
+    }
+  },
+  "required": [
+    "$header",
+    "message",
+    "_legacy"
+  ],
+  "additionalProperties": false,
+  "x-receiver": "client"
+};
+
+export const CASEAToServerSchema = {
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "/packets/schemas/CASEAToServer.schema.json",
+  "title": "CASEA",
+  "description": "Announces a case, naming the roles it needs; the server alerts clients whose SETCASE preferences match.",
+  "type": "object",
+  "properties": {
+    "$header": {
+      "type": "string",
+      "const": "CASEA"
+    },
+    "title": {
+      "type": "string",
+      "default": "",
+      "description": "Case title; empty for an untitled case."
+    },
+    "need_def": {
+      "type": "boolean",
+      "default": false,
+      "description": "The case needs defense."
+    },
+    "need_pro": {
+      "type": "boolean",
+      "default": false,
+      "description": "The case needs prosecution."
+    },
+    "need_judge": {
+      "type": "boolean",
+      "default": false,
+      "description": "The case needs judge."
+    },
+    "need_jury": {
+      "type": "boolean",
+      "default": false,
+      "description": "The case needs jury."
+    },
+    "need_steno": {
+      "type": "boolean",
+      "default": false,
+      "description": "The case needs stenographer."
+    }
+  },
+  "required": [
+    "$header"
+  ],
+  "additionalProperties": false,
+  "x-receiver": "server"
+};
+
 export const CCSchema = {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/CC.schema.json",
@@ -2245,6 +2349,60 @@ export const SCSchema = {
   "x-receiver": "client"
 };
 
+export const SETCASESchema = {
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "/packets/schemas/SETCASE.schema.json",
+  "title": "SETCASE",
+  "description": "Sets which roles the client wants case announcements (CASEA) for.",
+  "type": "object",
+  "properties": {
+    "$header": {
+      "type": "string",
+      "const": "SETCASE"
+    },
+    "cases": {
+      "type": "string",
+      "default": "",
+      "description": "Legacy case-list field; servers ignore it."
+    },
+    "will_cm": {
+      "type": "boolean",
+      "default": false,
+      "description": "Wants announcements for case manager. tsuserver3 reads it; akashi and Athena ignore it."
+    },
+    "will_def": {
+      "type": "boolean",
+      "default": false,
+      "description": "Wants announcements needing defense."
+    },
+    "will_pro": {
+      "type": "boolean",
+      "default": false,
+      "description": "Wants announcements needing prosecution."
+    },
+    "will_judge": {
+      "type": "boolean",
+      "default": false,
+      "description": "Wants announcements needing judge."
+    },
+    "will_jury": {
+      "type": "boolean",
+      "default": false,
+      "description": "Wants announcements needing jury."
+    },
+    "will_steno": {
+      "type": "boolean",
+      "default": false,
+      "description": "Wants announcements needing stenographer."
+    }
+  },
+  "required": [
+    "$header"
+  ],
+  "additionalProperties": false,
+  "x-receiver": "server"
+};
+
 export const SISchema = {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/SI.schema.json",
@@ -2335,6 +2493,35 @@ export const SPSchema = {
   "required": [
     "$header",
     "side"
+  ],
+  "additionalProperties": false,
+  "x-receiver": "client"
+};
+
+export const STSchema = {
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "/packets/schemas/ST.schema.json",
+  "title": "ST",
+  "description": "Sets the client's theme subtheme; akashi sends it for /subtheme.",
+  "type": "object",
+  "properties": {
+    "$header": {
+      "type": "string",
+      "const": "ST"
+    },
+    "subtheme": {
+      "type": "string",
+      "description": "Subfolder of the client's current theme to load assets from first."
+    },
+    "reload": {
+      "type": "boolean",
+      "default": false,
+      "description": "Apply the subtheme and reload the theme now. AO2-Client applies it only with this set, and only when the player's subtheme setting is `server`."
+    }
+  },
+  "required": [
+    "$header",
+    "subtheme"
   ],
   "additionalProperties": false,
   "x-receiver": "client"

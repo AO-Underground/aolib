@@ -25,6 +25,7 @@
     "src/**/*.ts",
     "generated/**/*.ts",
     "README.md",
+    "EXTENDING.md",
     "LICENSE"
   ],
   "scripts": {

@@ -1,0 +1,48 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "/packets/schemas/CASEAToServer.schema.json",
+  "title": "CASEA",
+  "description": "Announces a case, naming the roles it needs; the server alerts clients whose SETCASE preferences match.",
+  "type": "object",
+  "properties": {
+    "$header": {
+      "type": "string",
+      "const": "CASEA"
+    },
+    "title": {
+      "type": "string",
+      "default": "",
+      "description": "Case title; empty for an untitled case."
+    },
+    "need_def": {
+      "type": "boolean",
+      "default": false,
+      "description": "The case needs defense."
+    },
+    "need_pro": {
+      "type": "boolean",
+      "default": false,
+      "description": "The case needs prosecution."
+    },
+    "need_judge": {
+      "type": "boolean",
+      "default": false,
+      "description": "The case needs judge."
+    },
+    "need_jury": {
+      "type": "boolean",
+      "default": false,
+      "description": "The case needs jury."
+    },
+    "need_steno": {
+      "type": "boolean",
+      "default": false,
+      "description": "The case needs stenographer."
+    }
+  },
+  "required": [
+    "$header"
+  ],
+  "additionalProperties": false,
+  "x-receiver": "server"
+}

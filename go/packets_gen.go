@@ -214,6 +214,124 @@ func ParseBN(body []string) (*BN, error) {
 	return p, nil
 }
 
+// CASEAToClient: Case announcement relayed by the server to clients whose SETCASE preferences match.
+type CASEAToClient struct {
+	Message   string         `json:"message"`
+	NeedDef   bool           `json:"need_def"`
+	NeedPro   bool           `json:"need_pro"`
+	NeedJudge bool           `json:"need_judge"`
+	NeedJury  bool           `json:"need_jury"`
+	NeedSteno bool           `json:"need_steno"`
+	Extras    map[string]any `json:"-"`
+}
+
+func (p *CASEAToClient) Header() string { return "CASEA" }
+
+func (p *CASEAToClient) jsonOrder() []string {
+	return []string{"message", "need_def", "need_pro", "need_judge", "need_jury", "need_steno", "_legacy"}
+}
+
+func (p *CASEAToClient) extras() *map[string]any { return &p.Extras }
+
+func (p *CASEAToClient) jsonConsts() map[string]string {
+	return map[string]string{"_legacy": "1"}
+}
+
+func (p *CASEAToClient) schemaPath() string { return "packets/schemas/CASEAToClient.schema.json" }
+
+func (p *CASEAToClient) Args() []string {
+	var args []string
+	args = append(args, escapeFanta(p.Message))
+	args = append(args, boolToWire(p.NeedDef))
+	args = append(args, boolToWire(p.NeedPro))
+	args = append(args, boolToWire(p.NeedJudge))
+	args = append(args, boolToWire(p.NeedJury))
+	args = append(args, boolToWire(p.NeedSteno))
+	args = append(args, "1")
+	return args
+}
+
+func ParseCASEAToClient(body []string) (*CASEAToClient, error) {
+	p := &CASEAToClient{}
+	get := func(i int) string {
+		if i < len(body) {
+			return body[i]
+		}
+		return ""
+	}
+	cursor := 0
+	p.Message = unescapeFanta(get(cursor))
+	cursor++
+	p.NeedDef = wireToBool(get(cursor))
+	cursor++
+	p.NeedPro = wireToBool(get(cursor))
+	cursor++
+	p.NeedJudge = wireToBool(get(cursor))
+	cursor++
+	p.NeedJury = wireToBool(get(cursor))
+	cursor++
+	p.NeedSteno = wireToBool(get(cursor))
+	cursor++
+	cursor++ // const slot
+	return p, nil
+}
+
+// CASEAToServer: Announces a case, naming the roles it needs; the server alerts clients whose SETCASE preferences match.
+type CASEAToServer struct {
+	Title     string         `json:"title"`
+	NeedDef   bool           `json:"need_def"`
+	NeedPro   bool           `json:"need_pro"`
+	NeedJudge bool           `json:"need_judge"`
+	NeedJury  bool           `json:"need_jury"`
+	NeedSteno bool           `json:"need_steno"`
+	Extras    map[string]any `json:"-"`
+}
+
+func (p *CASEAToServer) Header() string { return "CASEA" }
+
+func (p *CASEAToServer) jsonOrder() []string {
+	return []string{"title", "need_def", "need_pro", "need_judge", "need_jury", "need_steno"}
+}
+
+func (p *CASEAToServer) extras() *map[string]any { return &p.Extras }
+
+func (p *CASEAToServer) schemaPath() string { return "packets/schemas/CASEAToServer.schema.json" }
+
+func (p *CASEAToServer) Args() []string {
+	var args []string
+	args = append(args, escapeFanta(p.Title))
+	args = append(args, boolToWire(p.NeedDef))
+	args = append(args, boolToWire(p.NeedPro))
+	args = append(args, boolToWire(p.NeedJudge))
+	args = append(args, boolToWire(p.NeedJury))
+	args = append(args, boolToWire(p.NeedSteno))
+	return args
+}
+
+func ParseCASEAToServer(body []string) (*CASEAToServer, error) {
+	p := &CASEAToServer{}
+	get := func(i int) string {
+		if i < len(body) {
+			return body[i]
+		}
+		return ""
+	}
+	cursor := 0
+	p.Title = unescapeFanta(get(cursor))
+	cursor++
+	p.NeedDef = wireToBool(get(cursor))
+	cursor++
+	p.NeedPro = wireToBool(get(cursor))
+	cursor++
+	p.NeedJudge = wireToBool(get(cursor))
+	cursor++
+	p.NeedJury = wireToBool(get(cursor))
+	cursor++
+	p.NeedSteno = wireToBool(get(cursor))
+	cursor++
+	return p, nil
+}
+
 // CC: Character selection request; the server confirms with PV.
 type CC struct {
 	PlayerID     int            `json:"player_id"`
@@ -2141,6 +2259,66 @@ func ParseSC(body []string) (*SC, error) {
 	return p, nil
 }
 
+// SETCASE: Sets which roles the client wants case announcements (CASEA) for.
+type SETCASE struct {
+	Cases     string         `json:"cases"`
+	WillCm    bool           `json:"will_cm"`
+	WillDef   bool           `json:"will_def"`
+	WillPro   bool           `json:"will_pro"`
+	WillJudge bool           `json:"will_judge"`
+	WillJury  bool           `json:"will_jury"`
+	WillSteno bool           `json:"will_steno"`
+	Extras    map[string]any `json:"-"`
+}
+
+func (p *SETCASE) Header() string { return "SETCASE" }
+
+func (p *SETCASE) jsonOrder() []string {
+	return []string{"cases", "will_cm", "will_def", "will_pro", "will_judge", "will_jury", "will_steno"}
+}
+
+func (p *SETCASE) extras() *map[string]any { return &p.Extras }
+
+func (p *SETCASE) schemaPath() string { return "packets/schemas/SETCASE.schema.json" }
+
+func (p *SETCASE) Args() []string {
+	var args []string
+	args = append(args, escapeFanta(p.Cases))
+	args = append(args, boolToWire(p.WillCm))
+	args = append(args, boolToWire(p.WillDef))
+	args = append(args, boolToWire(p.WillPro))
+	args = append(args, boolToWire(p.WillJudge))
+	args = append(args, boolToWire(p.WillJury))
+	args = append(args, boolToWire(p.WillSteno))
+	return args
+}
+
+func ParseSETCASE(body []string) (*SETCASE, error) {
+	p := &SETCASE{}
+	get := func(i int) string {
+		if i < len(body) {
+			return body[i]
+		}
+		return ""
+	}
+	cursor := 0
+	p.Cases = unescapeFanta(get(cursor))
+	cursor++
+	p.WillCm = wireToBool(get(cursor))
+	cursor++
+	p.WillDef = wireToBool(get(cursor))
+	cursor++
+	p.WillPro = wireToBool(get(cursor))
+	cursor++
+	p.WillJudge = wireToBool(get(cursor))
+	cursor++
+	p.WillJury = wireToBool(get(cursor))
+	cursor++
+	p.WillSteno = wireToBool(get(cursor))
+	cursor++
+	return p, nil
+}
+
 // SI: List sizes, sent in reply to askchaa; the client then requests SC with RC.
 type SI struct {
 	CharCount int            `json:"char_count"`
@@ -2262,6 +2440,44 @@ func ParseSP(body []string) (*SP, error) {
 	}
 	cursor := 0
 	p.Side = Side(get(cursor))
+	cursor++
+	return p, nil
+}
+
+// ST: Sets the client's theme subtheme; akashi sends it for /subtheme.
+type ST struct {
+	Subtheme string         `json:"subtheme"`
+	Reload   bool           `json:"reload"`
+	Extras   map[string]any `json:"-"`
+}
+
+func (p *ST) Header() string { return "ST" }
+
+func (p *ST) jsonOrder() []string { return []string{"subtheme", "reload"} }
+
+func (p *ST) extras() *map[string]any { return &p.Extras }
+
+func (p *ST) schemaPath() string { return "packets/schemas/ST.schema.json" }
+
+func (p *ST) Args() []string {
+	var args []string
+	args = append(args, escapeFanta(p.Subtheme))
+	args = append(args, boolToWire(p.Reload))
+	return args
+}
+
+func ParseST(body []string) (*ST, error) {
+	p := &ST{}
+	get := func(i int) string {
+		if i < len(body) {
+			return body[i]
+		}
+		return ""
+	}
+	cursor := 0
+	p.Subtheme = unescapeFanta(get(cursor))
+	cursor++
+	p.Reload = wireToBool(get(cursor))
 	cursor++
 	return p, nil
 }

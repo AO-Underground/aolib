@@ -7,6 +7,7 @@ type decoder func(body []string) (any, error)
 
 var c2sDecoders = map[string]decoder{
 	"askchaa": func(b []string) (any, error) { return validated(ParseAskchaa(b)) },
+	"CASEA":   func(b []string) (any, error) { return validated(ParseCASEAToServer(b)) },
 	"CC":      func(b []string) (any, error) { return validated(ParseCC(b)) },
 	"CH":      func(b []string) (any, error) { return validated(ParseCH(b)) },
 	"CT":      func(b []string) (any, error) { return validated(ParseCTToServer(b)) },
@@ -23,6 +24,7 @@ var c2sDecoders = map[string]decoder{
 	"RD":      func(b []string) (any, error) { return validated(ParseRD(b)) },
 	"RM":      func(b []string) (any, error) { return validated(ParseRM(b)) },
 	"RT":      func(b []string) (any, error) { return validated(ParseRTToServer(b)) },
+	"SETCASE": func(b []string) (any, error) { return validated(ParseSETCASE(b)) },
 	"ZZ":      func(b []string) (any, error) { return validated(ParseZZToServer(b)) },
 }
 
@@ -33,6 +35,7 @@ var s2cDecoders = map[string]decoder{
 	"BB":         func(b []string) (any, error) { return validated(ParseBB(b)) },
 	"BD":         func(b []string) (any, error) { return validated(ParseBD(b)) },
 	"BN":         func(b []string) (any, error) { return validated(ParseBN(b)) },
+	"CASEA":      func(b []string) (any, error) { return validated(ParseCASEAToClient(b)) },
 	"CHECK":      func(b []string) (any, error) { return validated(ParseCHECK(b)) },
 	"CI":         func(b []string) (any, error) { return validated(ParseCI(b)) },
 	"CT":         func(b []string) (any, error) { return validated(ParseCTToClient(b)) },
@@ -62,6 +65,7 @@ var s2cDecoders = map[string]decoder{
 	"SI":         func(b []string) (any, error) { return validated(ParseSI(b)) },
 	"SM":         func(b []string) (any, error) { return validated(ParseSM(b)) },
 	"SP":         func(b []string) (any, error) { return validated(ParseSP(b)) },
+	"ST":         func(b []string) (any, error) { return validated(ParseST(b)) },
 	"TI":         func(b []string) (any, error) { return validated(ParseTI(b)) },
 	"ZZ":         func(b []string) (any, error) { return validated(ParseZZToClient(b)) },
 }
@@ -71,6 +75,7 @@ var s2cDecoders = map[string]decoder{
 // an {x,y} object. Keyed by direction like the FantaCode decoders.
 var c2sJSON = map[string]jsonDecoder{
 	"askchaa": jsonDecoderFor[Askchaa],
+	"CASEA":   jsonDecoderFor[CASEAToServer],
 	"CC":      jsonDecoderFor[CC],
 	"CH":      jsonDecoderFor[CH],
 	"CT":      jsonDecoderFor[CTToServer],
@@ -87,6 +92,7 @@ var c2sJSON = map[string]jsonDecoder{
 	"RD":      jsonDecoderFor[RD],
 	"RM":      jsonDecoderFor[RM],
 	"RT":      jsonDecoderFor[RTToServer],
+	"SETCASE": jsonDecoderFor[SETCASE],
 	"ZZ":      jsonDecoderFor[ZZToServer],
 }
 
@@ -97,6 +103,7 @@ var s2cJSON = map[string]jsonDecoder{
 	"BB":         jsonDecoderFor[BB],
 	"BD":         jsonDecoderFor[BD],
 	"BN":         jsonDecoderFor[BN],
+	"CASEA":      jsonDecoderFor[CASEAToClient],
 	"CHECK":      jsonDecoderFor[CHECK],
 	"CI":         jsonDecoderFor[CI],
 	"CT":         jsonDecoderFor[CTToClient],
@@ -126,6 +133,7 @@ var s2cJSON = map[string]jsonDecoder{
 	"SI":         jsonDecoderFor[SI],
 	"SM":         jsonDecoderFor[SM],
 	"SP":         jsonDecoderFor[SP],
+	"ST":         jsonDecoderFor[ST],
 	"TI":         jsonDecoderFor[TI],
 	"ZZ":         jsonDecoderFor[ZZToClient],
 }

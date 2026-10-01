@@ -885,5 +885,63 @@
       "name": "Phoenix",
       "message": "C:\\users \\u0041BC"
     }
+  },
+  {
+    "id": "ST",
+    "header": "ST",
+    "receiver": "client",
+    "fanta": "ST#night<num>2#1#%",
+    "json": {
+      "$header": "ST",
+      "subtheme": "night#2",
+      "reload": true
+    }
+  },
+  {
+    "id": "SETCASE",
+    "header": "SETCASE",
+    "receiver": "server",
+    "fanta": "SETCASE##0#1#0#1#0#0#%",
+    "json": {
+      "$header": "SETCASE",
+      "cases": "",
+      "will_cm": false,
+      "will_def": true,
+      "will_pro": false,
+      "will_judge": true,
+      "will_jury": false,
+      "will_steno": false
+    }
+  },
+  {
+    "id": "CASEAToServer",
+    "header": "CASEA",
+    "receiver": "server",
+    "fanta": "CASEA#Turnabout <and> Co.#1#1#0#0#1#%",
+    "json": {
+      "$header": "CASEA",
+      "title": "Turnabout & Co.",
+      "need_def": true,
+      "need_pro": true,
+      "need_judge": false,
+      "need_jury": false,
+      "need_steno": true
+    }
+  },
+  {
+    "id": "CASEAToClient",
+    "header": "CASEA",
+    "receiver": "client",
+    "fanta": "CASEA#=== Case Announcement ===#1#1#0#0#1#1#%",
+    "json": {
+      "$header": "CASEA",
+      "message": "=== Case Announcement ===",
+      "need_def": true,
+      "need_pro": true,
+      "need_judge": false,
+      "need_jury": false,
+      "need_steno": true,
+      "_legacy": "1"
+    }
   }
 ]

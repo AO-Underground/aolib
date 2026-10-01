@@ -2,12 +2,16 @@
 
 package aolib
 
-func (c *ClientSession) SendARUP(p *ARUP)             { c.s.send(p) }
-func (c *ClientSession) SendASS(p *ASS)               { c.s.send(p) }
-func (c *ClientSession) SendAUTH(p *AUTH)             { c.s.send(p) }
-func (c *ClientSession) SendBB(p *BB)                 { c.s.send(p) }
-func (c *ClientSession) SendBD(p *BD)                 { c.s.send(p) }
-func (c *ClientSession) SendBN(p *BN)                 { c.s.send(p) }
+func (c *ClientSession) SendARUP(p *ARUP) { c.s.send(p) }
+func (c *ClientSession) SendASS(p *ASS)   { c.s.send(p) }
+func (c *ClientSession) SendAUTH(p *AUTH) { c.s.send(p) }
+func (c *ClientSession) SendBB(p *BB)     { c.s.send(p) }
+func (c *ClientSession) SendBD(p *BD)     { c.s.send(p) }
+func (c *ClientSession) SendBN(p *BN)     { c.s.send(p) }
+func (c *ClientSession) OnCASEA(h func(*CASEAToServer)) {
+	c.s.on("CASEA", func(p any) { h(p.(*CASEAToServer)) })
+}
+func (c *ClientSession) SendCASEA(p *CASEAToClient)   { c.s.send(p) }
 func (c *ClientSession) OnCC(h func(*CC))             { c.s.on("CC", func(p any) { h(p.(*CC)) }) }
 func (c *ClientSession) OnCH(h func(*CH))             { c.s.on("CH", func(p any) { h(p.(*CH)) }) }
 func (c *ClientSession) SendCHECK(p *CHECK)           { c.s.send(p) }
@@ -49,12 +53,16 @@ func (c *ClientSession) SendRMC(p *RMC)               { c.s.send(p) }
 func (c *ClientSession) OnRT(h func(*RTToServer))     { c.s.on("RT", func(p any) { h(p.(*RTToServer)) }) }
 func (c *ClientSession) SendRT(p *RTToClient)         { c.s.send(p) }
 func (c *ClientSession) SendSC(p *SC)                 { c.s.send(p) }
-func (c *ClientSession) SendSI(p *SI)                 { c.s.send(p) }
-func (c *ClientSession) SendSM(p *SM)                 { c.s.send(p) }
-func (c *ClientSession) SendSP(p *SP)                 { c.s.send(p) }
-func (c *ClientSession) SendTI(p *TI)                 { c.s.send(p) }
-func (c *ClientSession) OnZZ(h func(*ZZToServer))     { c.s.on("ZZ", func(p any) { h(p.(*ZZToServer)) }) }
-func (c *ClientSession) SendZZ(p *ZZToClient)         { c.s.send(p) }
+func (c *ClientSession) OnSETCASE(h func(*SETCASE)) {
+	c.s.on("SETCASE", func(p any) { h(p.(*SETCASE)) })
+}
+func (c *ClientSession) SendSI(p *SI)             { c.s.send(p) }
+func (c *ClientSession) SendSM(p *SM)             { c.s.send(p) }
+func (c *ClientSession) SendSP(p *SP)             { c.s.send(p) }
+func (c *ClientSession) SendST(p *ST)             { c.s.send(p) }
+func (c *ClientSession) SendTI(p *TI)             { c.s.send(p) }
+func (c *ClientSession) OnZZ(h func(*ZZToServer)) { c.s.on("ZZ", func(p any) { h(p.(*ZZToServer)) }) }
+func (c *ClientSession) SendZZ(p *ZZToClient)     { c.s.send(p) }
 func (c *ClientSession) OnAskchaa(h func(*Askchaa)) {
 	c.s.on("askchaa", func(p any) { h(p.(*Askchaa)) })
 }

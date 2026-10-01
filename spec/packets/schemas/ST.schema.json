@@ -1,0 +1,28 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "/packets/schemas/ST.schema.json",
+  "title": "ST",
+  "description": "Sets the client's theme subtheme; akashi sends it for /subtheme.",
+  "type": "object",
+  "properties": {
+    "$header": {
+      "type": "string",
+      "const": "ST"
+    },
+    "subtheme": {
+      "type": "string",
+      "description": "Subfolder of the client's current theme to load assets from first."
+    },
+    "reload": {
+      "type": "boolean",
+      "default": false,
+      "description": "Apply the subtheme and reload the theme now. AO2-Client applies it only with this set, and only when the player's subtheme setting is `server`."
+    }
+  },
+  "required": [
+    "$header",
+    "subtheme"
+  ],
+  "additionalProperties": false,
+  "x-receiver": "client"
+}

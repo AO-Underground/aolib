@@ -3,9 +3,9 @@
 import { AreaUpdateType, AuthState, CharAvailability, DeskModifier, EmoteModifier, Flip, JudgeState, MusicChannel, PenaltyBar, PlayerDataType, PlayerListUpdate, RTAnimation, ShoutModifier, Side, TextColor, TimerCommand } from "./enums";
 import { Effect, MusicEffects, Offset } from "./types";
 
-import { AreaUpdateTypeEnumSchema, AuthStateEnumSchema, CharAvailabilityEnumSchema, DeskModifierEnumSchema, EmoteModifierEnumSchema, FlipEnumSchema, JudgeStateEnumSchema, MusicChannelEnumSchema, PenaltyBarEnumSchema, PlayerDataTypeEnumSchema, PlayerListUpdateEnumSchema, RTAnimationEnumSchema, ShoutModifierEnumSchema, SideEnumSchema, TextColorEnumSchema, TimerCommandEnumSchema, EffectTypeSchema, MusicEffectsTypeSchema, OffsetTypeSchema, ARUPSchema, ASSSchema, AUTHSchema, BBSchema, BDSchema, BNSchema, CCSchema, CHSchema, CHECKSchema, CISchema, CTToClientSchema, CTToServerSchema, CharsCheckSchema, DESchema, DONESchema, EESchema, EISchema, EMSchema, FASchema, FLSchema, FMSchema, HISchema, HPToClientSchema, HPToServerSchema, IDToClientSchema, IDToServerSchema, JDSchema, KBSchema, KKSchema, LESchema, MASchema, MCToClientSchema, MCToServerSchema, MSToClientSchema, MSToServerSchema, PESchema, PNSchema, PRSchema, PUSchema, PVSchema, RCSchema, RDSchema, RMSchema, RMCSchema, RTToClientSchema, RTToServerSchema, SCSchema, SISchema, SMSchema, SPSchema, TISchema, ZZToClientSchema, ZZToServerSchema, askchaaSchema, decryptorSchema } from "./schemas";
+import { AreaUpdateTypeEnumSchema, AuthStateEnumSchema, CharAvailabilityEnumSchema, DeskModifierEnumSchema, EmoteModifierEnumSchema, FlipEnumSchema, JudgeStateEnumSchema, MusicChannelEnumSchema, PenaltyBarEnumSchema, PlayerDataTypeEnumSchema, PlayerListUpdateEnumSchema, RTAnimationEnumSchema, ShoutModifierEnumSchema, SideEnumSchema, TextColorEnumSchema, TimerCommandEnumSchema, EffectTypeSchema, MusicEffectsTypeSchema, OffsetTypeSchema, ARUPSchema, ASSSchema, AUTHSchema, BBSchema, BDSchema, BNSchema, CASEAToClientSchema, CASEAToServerSchema, CCSchema, CHSchema, CHECKSchema, CISchema, CTToClientSchema, CTToServerSchema, CharsCheckSchema, DESchema, DONESchema, EESchema, EISchema, EMSchema, FASchema, FLSchema, FMSchema, HISchema, HPToClientSchema, HPToServerSchema, IDToClientSchema, IDToServerSchema, JDSchema, KBSchema, KKSchema, LESchema, MASchema, MCToClientSchema, MCToServerSchema, MSToClientSchema, MSToServerSchema, PESchema, PNSchema, PRSchema, PUSchema, PVSchema, RCSchema, RDSchema, RMSchema, RMCSchema, RTToClientSchema, RTToServerSchema, SCSchema, SETCASESchema, SISchema, SMSchema, SPSchema, STSchema, TISchema, ZZToClientSchema, ZZToServerSchema, askchaaSchema, decryptorSchema } from "./schemas";
 
-export { ARUPSchema, ASSSchema, AUTHSchema, BBSchema, BDSchema, BNSchema, CCSchema, CHSchema, CHECKSchema, CISchema, CTToClientSchema, CTToServerSchema, CharsCheckSchema, DESchema, DONESchema, EESchema, EISchema, EMSchema, FASchema, FLSchema, FMSchema, HISchema, HPToClientSchema, HPToServerSchema, IDToClientSchema, IDToServerSchema, JDSchema, KBSchema, KKSchema, LESchema, MASchema, MCToClientSchema, MCToServerSchema, MSToClientSchema, MSToServerSchema, PESchema, PNSchema, PRSchema, PUSchema, PVSchema, RCSchema, RDSchema, RMSchema, RMCSchema, RTToClientSchema, RTToServerSchema, SCSchema, SISchema, SMSchema, SPSchema, TISchema, ZZToClientSchema, ZZToServerSchema, askchaaSchema, decryptorSchema } from "./schemas";
+export { ARUPSchema, ASSSchema, AUTHSchema, BBSchema, BDSchema, BNSchema, CASEAToClientSchema, CASEAToServerSchema, CCSchema, CHSchema, CHECKSchema, CISchema, CTToClientSchema, CTToServerSchema, CharsCheckSchema, DESchema, DONESchema, EESchema, EISchema, EMSchema, FASchema, FLSchema, FMSchema, HISchema, HPToClientSchema, HPToServerSchema, IDToClientSchema, IDToServerSchema, JDSchema, KBSchema, KKSchema, LESchema, MASchema, MCToClientSchema, MCToServerSchema, MSToClientSchema, MSToServerSchema, PESchema, PNSchema, PRSchema, PUSchema, PVSchema, RCSchema, RDSchema, RMSchema, RMCSchema, RTToClientSchema, RTToServerSchema, SCSchema, SETCASESchema, SISchema, SMSchema, SPSchema, STSchema, TISchema, ZZToClientSchema, ZZToServerSchema, askchaaSchema, decryptorSchema } from "./schemas";
 
 
 export const enumSchemas = [AreaUpdateTypeEnumSchema, AuthStateEnumSchema, CharAvailabilityEnumSchema, DeskModifierEnumSchema, EmoteModifierEnumSchema, FlipEnumSchema, JudgeStateEnumSchema, MusicChannelEnumSchema, PenaltyBarEnumSchema, PlayerDataTypeEnumSchema, PlayerListUpdateEnumSchema, RTAnimationEnumSchema, ShoutModifierEnumSchema, SideEnumSchema, TextColorEnumSchema, TimerCommandEnumSchema];
@@ -85,6 +85,48 @@ export interface BN extends Packet {
 export interface BNInit {
   background: string;
   position?: string;
+  $extras?: Record<string, unknown>;
+}
+
+
+export interface CASEAToClient extends Packet {
+  $header: "CASEA";
+  message: string;
+  need_def: boolean;
+  need_pro: boolean;
+  need_judge: boolean;
+  need_jury: boolean;
+  need_steno: boolean;
+}
+
+export interface CASEAToClientInit {
+  message: string;
+  need_def?: boolean;
+  need_pro?: boolean;
+  need_judge?: boolean;
+  need_jury?: boolean;
+  need_steno?: boolean;
+  $extras?: Record<string, unknown>;
+}
+
+
+export interface CASEAToServer extends Packet {
+  $header: "CASEA";
+  title: string;
+  need_def: boolean;
+  need_pro: boolean;
+  need_judge: boolean;
+  need_jury: boolean;
+  need_steno: boolean;
+}
+
+export interface CASEAToServerInit {
+  title?: string;
+  need_def?: boolean;
+  need_pro?: boolean;
+  need_judge?: boolean;
+  need_jury?: boolean;
+  need_steno?: boolean;
   $extras?: Record<string, unknown>;
 }
 
@@ -752,6 +794,29 @@ export interface SCInit {
 }
 
 
+export interface SETCASE extends Packet {
+  $header: "SETCASE";
+  cases: string;
+  will_cm: boolean;
+  will_def: boolean;
+  will_pro: boolean;
+  will_judge: boolean;
+  will_jury: boolean;
+  will_steno: boolean;
+}
+
+export interface SETCASEInit {
+  cases?: string;
+  will_cm?: boolean;
+  will_def?: boolean;
+  will_pro?: boolean;
+  will_judge?: boolean;
+  will_jury?: boolean;
+  will_steno?: boolean;
+  $extras?: Record<string, unknown>;
+}
+
+
 export interface SI extends Packet {
   $header: "SI";
   char_count: number;
@@ -789,6 +854,19 @@ export interface SP extends Packet {
 
 export interface SPInit {
   side: Side;
+  $extras?: Record<string, unknown>;
+}
+
+
+export interface ST extends Packet {
+  $header: "ST";
+  subtheme: string;
+  reload: boolean;
+}
+
+export interface STInit {
+  subtheme: string;
+  reload?: boolean;
   $extras?: Record<string, unknown>;
 }
 
@@ -855,6 +933,7 @@ export interface decryptorInit {
 
 export const c2sSchemas = {
   askchaa: askchaaSchema,
+  CASEA: CASEAToServerSchema,
   CC: CCSchema,
   CH: CHSchema,
   CT: CTToServerSchema,
@@ -871,6 +950,7 @@ export const c2sSchemas = {
   RD: RDSchema,
   RM: RMSchema,
   RT: RTToServerSchema,
+  SETCASE: SETCASESchema,
   ZZ: ZZToServerSchema,
 } as const;
 
@@ -881,6 +961,7 @@ export const s2cSchemas = {
   BB: BBSchema,
   BD: BDSchema,
   BN: BNSchema,
+  CASEA: CASEAToClientSchema,
   CharsCheck: CharsCheckSchema,
   CHECK: CHECKSchema,
   CI: CISchema,
@@ -910,12 +991,14 @@ export const s2cSchemas = {
   SI: SISchema,
   SM: SMSchema,
   SP: SPSchema,
+  ST: STSchema,
   TI: TISchema,
   ZZ: ZZToClientSchema,
 } as const;
 
 export type C2SInputs = {
   askchaa: askchaaInit;
+  CASEA: CASEAToServerInit;
   CC: CCInit;
   CH: CHInit;
   CT: CTToServerInit;
@@ -932,6 +1015,7 @@ export type C2SInputs = {
   RD: RDInit;
   RM: RMInit;
   RT: RTToServerInit;
+  SETCASE: SETCASEInit;
   ZZ: ZZToServerInit;
 };
 
@@ -942,6 +1026,7 @@ export type S2CInputs = {
   BB: BBInit;
   BD: BDInit;
   BN: BNInit;
+  CASEA: CASEAToClientInit;
   CharsCheck: CharsCheckInit;
   CHECK: CHECKInit;
   CI: CIInit;
@@ -971,12 +1056,14 @@ export type S2CInputs = {
   SI: SIInit;
   SM: SMInit;
   SP: SPInit;
+  ST: STInit;
   TI: TIInit;
   ZZ: ZZToClientInit;
 };
 
 export type C2SOutputs = {
   askchaa: askchaa;
+  CASEA: CASEAToServer;
   CC: CC;
   CH: CH;
   CT: CTToServer;
@@ -993,6 +1080,7 @@ export type C2SOutputs = {
   RD: RD;
   RM: RM;
   RT: RTToServer;
+  SETCASE: SETCASE;
   ZZ: ZZToServer;
 };
 
@@ -1003,6 +1091,7 @@ export type S2COutputs = {
   BB: BB;
   BD: BD;
   BN: BN;
+  CASEA: CASEAToClient;
   CharsCheck: CharsCheck;
   CHECK: CHECK;
   CI: CI;
@@ -1032,6 +1121,7 @@ export type S2COutputs = {
   SI: SI;
   SM: SM;
   SP: SP;
+  ST: ST;
   TI: TI;
   ZZ: ZZToClient;
 };

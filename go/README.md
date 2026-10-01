@@ -27,8 +27,7 @@ import aolib "github.com/AO-Underground/aolib/go/v2"
   direction: wire encode/decode of any typed packet. `aolib.ReadHeader(raw)`
   reads just the header; `aolib.Validate(pkt)` checks a packet against its schema.
 - `Extras map[string]any` on every packet struct: JSON keys the schema doesn't
-  define, kept on decode and written after the schema fields on encode.
-  JSON-only; FantaCode drops them.
+  define ([EXTENDING.md](EXTENDING.md)).
 - `aolib.ParseCharIni(text)`: char.ini parser per [`spec/assets`](../spec/assets/README.md).
 - `aolib.NewPacket(raw)` / `Packet.String()`: raw FantaCode framing.
 - `aolib.MSToServer` / `aolib.MSToClient`: the in-character (`MS`) packet, split
@@ -94,33 +93,10 @@ registries (`registry_gen.go`) are regenerated from the `spec` schemas by
 go run ./cmd/aolib-gen -meta ../spec -out .
 ```
 
-## Custom packets
+## Extending
 
-A server that speaks packets outside the canonical set registers a `Codec` for
-the header, then uses the session's custom channel. A codec must implement both
-FantaCode and JSON (`RegisterCodec` panics otherwise); see
-[`spec/packets/CODECS.md`](../spec/packets/CODECS.md).
-
-```go
-type Testimony struct {
-    Title string `json:"title"`
-}
-
-aolib.RegisterCodec("TT", aolib.Codec{
-    EncodeFanta: func(p any) ([]string, error) { return []string{aolib.EscapeFanta(p.(Testimony).Title)}, nil },
-    DecodeFanta: func(args []string) (any, error) {
-        if len(args) == 0 {
-            return nil, fmt.Errorf("TT: missing title")
-        }
-        return Testimony{Title: aolib.UnescapeFanta(args[0])}, nil
-    },
-    EncodeJSON: func(p any) (string, error) { b, err := json.Marshal(p); return string(b), err },
-    DecodeJSON: func(raw string) (any, error) { var t Testimony; err := json.Unmarshal([]byte(raw), &t); return t, err },
-})
-
-client.SendCustom("TT", Testimony{Title: "Cross-Examination"})
-server.OnCustom("TT", func(p any) { _ = p.(Testimony).Title })
-```
+Extra fields on spec packets (`Extras`) and custom packets (`RegisterCodec`):
+see [EXTENDING.md](EXTENDING.md).
 
 ## License
 

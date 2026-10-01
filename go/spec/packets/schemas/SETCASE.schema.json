@@ -1,0 +1,53 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "/packets/schemas/SETCASE.schema.json",
+  "title": "SETCASE",
+  "description": "Sets which roles the client wants case announcements (CASEA) for.",
+  "type": "object",
+  "properties": {
+    "$header": {
+      "type": "string",
+      "const": "SETCASE"
+    },
+    "cases": {
+      "type": "string",
+      "default": "",
+      "description": "Legacy case-list field; servers ignore it."
+    },
+    "will_cm": {
+      "type": "boolean",
+      "default": false,
+      "description": "Wants announcements for case manager. tsuserver3 reads it; akashi and Athena ignore it."
+    },
+    "will_def": {
+      "type": "boolean",
+      "default": false,
+      "description": "Wants announcements needing defense."
+    },
+    "will_pro": {
+      "type": "boolean",
+      "default": false,
+      "description": "Wants announcements needing prosecution."
+    },
+    "will_judge": {
+      "type": "boolean",
+      "default": false,
+      "description": "Wants announcements needing judge."
+    },
+    "will_jury": {
+      "type": "boolean",
+      "default": false,
+      "description": "Wants announcements needing jury."
+    },
+    "will_steno": {
+      "type": "boolean",
+      "default": false,
+      "description": "Wants announcements needing stenographer."
+    }
+  },
+  "required": [
+    "$header"
+  ],
+  "additionalProperties": false,
+  "x-receiver": "server"
+}

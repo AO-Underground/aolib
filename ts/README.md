@@ -409,10 +409,9 @@ symmetrically.
   `disableAutoJson` in the config to leave it to `setJsonMode`.
   Inbound always auto-detects.
 
-- **Unknown JSON keys are kept.** Keys a schema doesn't define land in
-  the packet's `$extras` map on decode, and `$extras` is written back as
-  top-level keys after the schema fields on encode. JSON-only; FantaCode
-  drops them.
+- **Unknown JSON keys are kept** in the packet's `$extras` map. For adding
+  fields to spec packets and registering custom packets, see
+  [EXTENDING.md](./EXTENDING.md).
 
 - **Schemas don't disagree with types.** The JSON Schema files under
   `spec/` are the source for both runtime walks and the

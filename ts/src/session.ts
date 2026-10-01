@@ -119,9 +119,8 @@ type SchemaMap = Record<string, JsonSchema>;
 
 // Guarantee a custom codec's JSON object carries a matching "$header".
 function withJsonHeader(raw: string, header: string): string {
-  const obj = JSON.parse(raw) as Record<string, unknown>;
-  obj.$header = header;
-  return JSON.stringify(obj);
+  const { $header: _, ...fields } = JSON.parse(raw) as Record<string, unknown>;
+  return JSON.stringify({ $header: header, ...fields });
 }
 
 function makeSession(role: Role, config: SessionConfig): ServerSession & ClientSession {

@@ -26,6 +26,7 @@ describe("registry shape", () => {
       [
         "CC", "CH", "CT", "DE", "EE", "HI", "HP",
         "ID", "MA", "MC", "MS", "PE", "RC", "RD", "RM", "RT", "ZZ", "askchaa",
+        "CASEA", "SETCASE",
       ].sort(),
     );
   });
@@ -37,7 +38,7 @@ describe("registry shape", () => {
         "CharsCheck", "DONE", "EI", "EM", "FA", "FL", "FM", "HP",
         "ID", "JD", "KB", "KK", "LE", "MC", "MS", "PN", "PR", "PU",
         "PV", "RMC", "RT", "SC", "SI", "SM", "SP", "TI",
-        "ZZ", "decryptor",
+        "ZZ", "decryptor", "CASEA", "ST",
       ].sort(),
     );
   });

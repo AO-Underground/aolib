@@ -1,0 +1,54 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "/packets/schemas/CASEAToClient.schema.json",
+  "title": "CASEA",
+  "description": "Case announcement relayed by the server to clients whose SETCASE preferences match.",
+  "type": "object",
+  "properties": {
+    "$header": {
+      "type": "string",
+      "const": "CASEA"
+    },
+    "message": {
+      "type": "string",
+      "description": "Server-formatted announcement text."
+    },
+    "need_def": {
+      "type": "boolean",
+      "default": false,
+      "description": "The case needs defense."
+    },
+    "need_pro": {
+      "type": "boolean",
+      "default": false,
+      "description": "The case needs prosecution."
+    },
+    "need_judge": {
+      "type": "boolean",
+      "default": false,
+      "description": "The case needs judge."
+    },
+    "need_jury": {
+      "type": "boolean",
+      "default": false,
+      "description": "The case needs jury."
+    },
+    "need_steno": {
+      "type": "boolean",
+      "default": false,
+      "description": "The case needs stenographer."
+    },
+    "_legacy": {
+      "type": "string",
+      "const": "1",
+      "default": "1"
+    }
+  },
+  "required": [
+    "$header",
+    "message",
+    "_legacy"
+  ],
+  "additionalProperties": false,
+  "x-receiver": "client"
+}
