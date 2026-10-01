@@ -8,20 +8,10 @@ request. In the JSON envelope it is the `Effect` object
 { "name": "realization", "folder": "custom", "sound": "realize.wav" }
 ```
 
-On the fanta wire it packs into one `|`-separated slot `name|folder|sound`. The
-object type carries `x-fanta-join: "|"` (see the root `README.md`), so the walker
-joins/splits on `|` rather than the default `&`; `|` is not a Fanta
-metacharacter, so the parts need no escaping. The all-empty object
-(`{ "name": "", "folder": "", "sound": "" }`) is the no-effect sentinel: it
-encodes to an empty slot, and an empty slot decodes back to it.
-
-This documents the wire convention AsyncAO implements.
-
 ## Wire format
 
-The slot splits on `|`. Only the first three parts are meaningful; any further
-parts are ignored. Decoders accept the legacy short forms; encoders always emit
-the 3-part form (or an empty slot for no effect).
+The field splits on `|`. Only the first three parts are meaningful; any further
+parts are ignored.
 
 | parts | form | meaning |
 |---|---|---|
@@ -29,13 +19,16 @@ the 3-part form (or an empty slot for no effect).
 | 2 | `name\|sound` | legacy; `folder` still falls back |
 | 3 | `name\|folder\|sound` | AO2 ≥ 2.8 |
 
+A sender emits the 3-part form `name|folder|sound`, or an empty string for "no
+effect".
+
 ## `name` (the effect)
 
 | value | behaviour |
 |---|---|
 | `""` | no effect; does **not** clear a running overlay |
 | `-` / `none` | explicit clear |
-| `realization` | white flash; its sound resolves via `get_custom_realization` (the speaker's `char.ini [Options] realization`, else the theme's `realization`) |
+| `realization` | white flash; plays the speaker's realization sound (`char.ini [Options] realization`, else the theme's `realization`) |
 | `flash` / `realizationflash` | white flash (legacy) |
 | `screenshake` | screenshake (decaying sinusoid) |
 | anything else | named overlay art, resolved from the theme's `effects.ini`; an unresolvable name clears the overlay |
