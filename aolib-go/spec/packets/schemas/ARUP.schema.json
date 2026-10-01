@@ -1,0 +1,32 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "/packets/schemas/ARUP.schema.json",
+  "title": "ARUP",
+  "type": "object",
+  "properties": {
+    "$header": {
+      "type": "string",
+      "const": "ARUP"
+    },
+    "update_type": {
+      "$ref": "../../types/AreaUpdateType.schema.json"
+    },
+    "update_data": {
+      "type": "array",
+      "items": {
+        "type": [
+          "integer",
+          "string"
+        ]
+      }
+    }
+  },
+  "required": [
+    "$header",
+    "update_type",
+    "update_data"
+  ],
+  "additionalProperties": false,
+  "x-fanta-codec": "ARUP",
+  "x-receiver": "client"
+}

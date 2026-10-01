@@ -121,6 +121,7 @@ func (o *ojson) intSlice(key string) []int {
 // Schema is the codegen's view of one schema.
 type Schema struct {
 	Name              string
+	File              string
 	Header            string
 	XReceiver         string
 	XFantaCodec       string
@@ -213,6 +214,30 @@ func main() {
 	write(filepath.Join(*outDir, "types_gen.go"), emitTypes(types))
 	write(filepath.Join(*outDir, "packets_gen.go"), emitPackets(packets, enumNames, typeNames))
 	write(filepath.Join(*outDir, "registry_gen.go"), emitRegistry(packets))
+	copySpec(*metaDir, filepath.Join(*outDir, "spec"))
+}
+
+// copySpec mirrors the schemas into the module so validate.go can embed them
+// (go:embed cannot reach outside the module).
+func copySpec(meta, out string) {
+	if err := os.RemoveAll(out); err != nil {
+		fatal(err)
+	}
+	for _, sub := range []string{"packets/schemas", "types", "assets"} {
+		names, err := fileNames(filepath.Join(meta, sub))
+		if err != nil {
+			fatal(err)
+		}
+		if err := os.MkdirAll(filepath.Join(out, sub), 0o755); err != nil {
+			fatal(err)
+		}
+		for _, n := range names {
+			if err := os.WriteFile(filepath.Join(out, sub, n), []byte(readFile(filepath.Join(meta, sub, n))), 0o644); err != nil {
+				fatal(err)
+			}
+		}
+	}
+	fmt.Println("wrote", out)
 }
 
 func fatal(err error) {
@@ -272,7 +297,9 @@ func loadPackets(meta string) ([]*Schema, error) {
 		if err != nil {
 			return nil, fmt.Errorf("%s: %w", n, err)
 		}
-		out = append(out, schemaFromJSON(capitalize(base), o))
+		sch := schemaFromJSON(capitalize(base), o)
+		sch.File = n
+		out = append(out, sch)
 	}
 	sort.Slice(out, func(i, j int) bool { return out[i].Name < out[j].Name })
 	return out, nil
@@ -477,6 +504,17 @@ func isObjectArray(s *Schema) bool {
 	return s.TypeStr == "array" && s.Items != nil && s.Items.IsObject && len(s.Items.Properties) > 0
 }
 
+// jsonDefaultLiteral is the Go literal for a field's schema default when it
+// differs from the Go zero value, so JSON input that omits it decodes alike.
+func jsonDefaultLiteral(p *Prop, enumNames map[string]*Schema) string {
+	if d, ok := p.Schema.Default.(string); ok {
+		if e, ok := enumFor(p, enumNames); ok {
+			return fmt.Sprintf("%s(%q)", e.Name, d)
+		}
+	}
+	return defaultLiteral(p, enumNames)
+}
+
 // defaultLiteral is the Go literal for a slot's schema default when a missing
 // slot would otherwise decode to something else; "" when the zero value fits.
 func defaultLiteral(p *Prop, enumNames map[string]*Schema) string {
@@ -611,6 +649,32 @@ func emitPackets(packets []*Schema, enumNames, typeNames map[string]*Schema) str
 		if len(consts) > 0 {
 			fmt.Fprintf(&b, "func (p *%s) jsonConsts() map[string]string {\n\treturn map[string]string{%s}\n}\n\n", s.Name, strings.Join(consts, ", "))
 		}
+		fmt.Fprintf(&b, "func (p *%s) schemaPath() string { return %q }\n\n", s.Name, "packets/schemas/"+s.File)
+		var defs []string
+		for _, p := range s.Properties {
+			if p.Schema.Const != "" {
+				continue
+			}
+			if lit := jsonDefaultLiteral(&p, enumNames); lit != "" {
+				defs = append(defs, fmt.Sprintf("\tp.%s = %s\n", pascalCase(p.Name), lit))
+			}
+		}
+		if len(defs) > 0 {
+			fmt.Fprintf(&b, "func (p *%s) applyDefaults() {\n%s}\n\n", s.Name, strings.Join(defs, ""))
+		}
+		// An empty enum is never valid, so encode can fill it unambiguously.
+		var fills []string
+		for _, p := range s.Properties {
+			if d, ok := p.Schema.Default.(string); ok {
+				if e, ok := enumFor(&p, enumNames); ok {
+					f := pascalCase(p.Name)
+					fills = append(fills, fmt.Sprintf("\tif c.%s == \"\" {\n\t\tc.%s = %s(%q)\n\t}\n", f, f, e.Name, d))
+				}
+			}
+		}
+		if len(fills) > 0 {
+			fmt.Fprintf(&b, "func (p *%s) withDefaults() Outgoing {\n\tc := *p\n%s\treturn &c\n}\n\n", s.Name, strings.Join(fills, ""))
+		}
 		// x-fanta-codec packets hand-write Args and Parse in codecs.go.
 		if s.XFantaCodec != "" {
 			continue
@@ -724,12 +788,12 @@ func emitRegistry(packets []*Schema) string {
 	b.WriteString("type decoder func(body []string) (any, error)\n\n")
 	b.WriteString("var c2sDecoders = map[string]decoder{\n")
 	for _, s := range c2s {
-		fmt.Fprintf(&b, "\t%q: func(b []string) (any, error) { return Parse%s(b) },\n", s.Header, s.Name)
+		fmt.Fprintf(&b, "\t%q: func(b []string) (any, error) { return validated(Parse%s(b)) },\n", s.Header, s.Name)
 	}
 	b.WriteString("}\n\n")
 	b.WriteString("var s2cDecoders = map[string]decoder{\n")
 	for _, s := range s2c {
-		fmt.Fprintf(&b, "\t%q: func(b []string) (any, error) { return Parse%s(b) },\n", s.Header, s.Name)
+		fmt.Fprintf(&b, "\t%q: func(b []string) (any, error) { return validated(Parse%s(b)) },\n", s.Header, s.Name)
 	}
 	b.WriteString("}\n\n")
 	b.WriteString("// c2sJSON / s2cJSON decode the JSON wire form straight into the typed\n")

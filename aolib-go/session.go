@@ -17,8 +17,12 @@ type SessionConfig struct {
 	// OnUnknownHeader fires when the header isn't in this session's inbound
 	// registry (i.e. it doesn't travel in the direction this role receives).
 	OnUnknownHeader func(header string, wire []byte)
-	// OnDecodeError fires when a registered header fails to decode.
+	// OnDecodeError fires when a registered header fails to decode or fails
+	// schema validation (err is then a *ValidationError).
 	OnDecodeError func(header string, err error, wire []byte)
+	// OnEncodeError fires when an outgoing packet cannot be encoded, e.g. it
+	// fails schema validation; the packet is not sent.
+	OnEncodeError func(header string, err error, packet any)
 	// OnUnhandled fires when a packet decoded fine but no handler was
 	// registered for its header.
 	OnUnhandled func(header string, packet any)
@@ -90,7 +94,13 @@ func (s *session) send(p Outgoing) {
 		mode = WireJSON
 	}
 	raw, err := Encode(p, mode)
-	if err != nil || s.cfg.Send == nil {
+	if err != nil {
+		if s.cfg.OnEncodeError != nil {
+			s.cfg.OnEncodeError(p.Header(), err, p)
+		}
+		return
+	}
+	if s.cfg.Send == nil {
 		return
 	}
 	s.cfg.Send(raw)

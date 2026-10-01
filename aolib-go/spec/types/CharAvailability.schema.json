@@ -1,0 +1,15 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "/types/CharAvailability.schema.json",
+  "type": "string",
+  "title": "CharAvailability",
+  "description": "Per-character availability in a CharsCheck list.",
+  "enum": [
+    "free",
+    "taken"
+  ],
+  "x-wire-ints": [
+    0,
+    -1
+  ]
+}

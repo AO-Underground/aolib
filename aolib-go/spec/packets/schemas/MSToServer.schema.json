@@ -1,0 +1,130 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "/packets/schemas/MSToServer.schema.json",
+  "title": "MS",
+  "type": "object",
+  "properties": {
+    "$header": {
+      "type": "string",
+      "const": "MS"
+    },
+    "desk_modifier": {
+      "$ref": "../../types/DeskModifier.schema.json",
+      "default": "shown"
+    },
+    "preanim": {
+      "type": "string",
+      "default": ""
+    },
+    "character": {
+      "type": "string"
+    },
+    "emote": {
+      "type": "string"
+    },
+    "message": {
+      "type": "string"
+    },
+    "side": {
+      "$ref": "../../types/Side.schema.json"
+    },
+    "sfx_name": {
+      "type": "string",
+      "default": ""
+    },
+    "emote_modifier": {
+      "$ref": "../../types/EmoteModifier.schema.json",
+      "default": "no_preanim"
+    },
+    "char_id": {
+      "type": "number"
+    },
+    "sfx_delay": {
+      "type": "number",
+      "default": 0,
+      "description": "Delay before `sfx_name` plays, in ticks of 40 ms."
+    },
+    "shout_modifier": {
+      "$ref": "../../types/ShoutModifier.schema.json",
+      "default": "none"
+    },
+    "evidence_id": {
+      "type": "number",
+      "default": 0
+    },
+    "flip": {
+      "$ref": "../../types/Flip.schema.json",
+      "default": "none"
+    },
+    "realization": {
+      "type": "boolean",
+      "default": false
+    },
+    "text_color": {
+      "$ref": "../../types/TextColor.schema.json",
+      "default": "white"
+    },
+    "showname": {
+      "type": "string",
+      "default": ""
+    },
+    "paired_charid": {
+      "type": "number",
+      "default": -1
+    },
+    "offset": {
+      "$ref": "../../types/Offset.schema.json",
+      "default": {
+        "x": 0,
+        "y": 0
+      }
+    },
+    "noninterrupting_preanim": {
+      "type": "boolean",
+      "default": false
+    },
+    "sfx_looping": {
+      "type": "boolean",
+      "default": false
+    },
+    "screenshake": {
+      "type": "boolean",
+      "default": false
+    },
+    "frames_shake": {
+      "type": "string",
+      "default": ""
+    },
+    "frames_realization": {
+      "type": "string",
+      "default": ""
+    },
+    "frames_sfx": {
+      "type": "string",
+      "default": ""
+    },
+    "additive": {
+      "type": "boolean",
+      "default": false
+    },
+    "effect": {
+      "$ref": "../../types/Effect.schema.json",
+      "default": {
+        "name": "",
+        "folder": "",
+        "sound": ""
+      },
+      "description": "Screen-effect overlay request, packed on the wire as `name|folder|sound` (see EFFECTS.md)."
+    }
+  },
+  "required": [
+    "$header",
+    "character",
+    "emote",
+    "message",
+    "side",
+    "char_id"
+  ],
+  "additionalProperties": false,
+  "x-receiver": "server"
+}

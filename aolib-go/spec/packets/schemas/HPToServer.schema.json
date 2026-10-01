@@ -1,0 +1,28 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "/packets/schemas/HPToServer.schema.json",
+  "title": "HP",
+  "type": "object",
+  "properties": {
+    "$header": {
+      "type": "string",
+      "const": "HP"
+    },
+    "bar": {
+      "$ref": "../../types/PenaltyBar.schema.json"
+    },
+    "value": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 10,
+      "description": "Penalty bar fill, 0 (empty) to 10 (full)."
+    }
+  },
+  "required": [
+    "$header",
+    "bar",
+    "value"
+  ],
+  "additionalProperties": false,
+  "x-receiver": "server"
+}

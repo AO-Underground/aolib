@@ -20,10 +20,23 @@ const (
 //
 //	raw, _ := aolib.Encode(&aolib.FL{Features: []string{"multi_pair"}}, aolib.WireFanta)
 func Encode(p Outgoing, mode WireMode) ([]byte, error) {
+	if d, ok := p.(interface{ withDefaults() Outgoing }); ok {
+		p = d.withDefaults()
+	}
 	switch mode {
 	case WireJSON:
-		return encodeJSON(p)
+		raw, err := encodeJSON(p)
+		if err != nil {
+			return nil, err
+		}
+		if err := validateJSON(p, raw); err != nil {
+			return nil, err
+		}
+		return raw, nil
 	case WireFanta:
+		if err := validatePacket(p); err != nil {
+			return nil, err
+		}
 		return frameFanta(p.Header(), p.Args()), nil
 	default:
 		return nil, fmt.Errorf("aolib: unknown wire mode %d", mode)
@@ -145,11 +158,17 @@ func jsonHeader(raw []byte) (string, error) {
 type jsonDecoder func(raw []byte) (any, error)
 
 // jsonDecoderFor is the generic body behind every registry entry: allocate a
-// fresh T and unmarshal the frame into it. The "$header" key has no struct
-// field and is ignored.
+// fresh T with its schema defaults, unmarshal the frame over it, and validate
+// the frame against the schema. The "$header" key has no struct field.
 func jsonDecoderFor[T any](raw []byte) (any, error) {
 	p := new(T)
+	if d, ok := any(p).(interface{ applyDefaults() }); ok {
+		d.applyDefaults()
+	}
 	if err := json.Unmarshal(raw, p); err != nil {
+		return nil, err
+	}
+	if err := validateJSON(p, raw); err != nil {
 		return nil, err
 	}
 	return p, nil

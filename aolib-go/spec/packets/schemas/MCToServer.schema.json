@@ -1,0 +1,37 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "/packets/schemas/MCToServer.schema.json",
+  "title": "MC",
+  "type": "object",
+  "properties": {
+    "$header": {
+      "type": "string",
+      "const": "MC"
+    },
+    "name": {
+      "type": "string"
+    },
+    "char_id": {
+      "type": "number"
+    },
+    "showname": {
+      "type": "string",
+      "default": ""
+    },
+    "effects": {
+      "$ref": "../../types/MusicEffects.schema.json",
+      "default": {
+        "fade_in": false,
+        "fade_out": false,
+        "sync_position": false
+      }
+    }
+  },
+  "required": [
+    "$header",
+    "name",
+    "char_id"
+  ],
+  "additionalProperties": false,
+  "x-receiver": "server"
+}

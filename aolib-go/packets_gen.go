@@ -10,12 +10,16 @@ type ARUP struct {
 
 func (p *ARUP) Header() string { return "ARUP" }
 
+func (p *ARUP) schemaPath() string { return "packets/schemas/ARUP.schema.json" }
+
 // ASS is
 type ASS struct {
 	AssetUrl string `json:"asset_url"`
 }
 
 func (p *ASS) Header() string { return "ASS" }
+
+func (p *ASS) schemaPath() string { return "packets/schemas/ASS.schema.json" }
 
 func (p *ASS) Args() []string {
 	var args []string
@@ -44,6 +48,8 @@ type AUTH struct {
 
 func (p *AUTH) Header() string { return "AUTH" }
 
+func (p *AUTH) schemaPath() string { return "packets/schemas/AUTH.schema.json" }
+
 func (p *AUTH) Args() []string {
 	var args []string
 	args = append(args, itoa(authStateToWire[p.AuthState]))
@@ -70,6 +76,8 @@ type Askchaa struct {
 
 func (p *Askchaa) Header() string { return "askchaa" }
 
+func (p *Askchaa) schemaPath() string { return "packets/schemas/askchaa.schema.json" }
+
 func (p *Askchaa) Args() []string {
 	var args []string
 	return args
@@ -86,6 +94,8 @@ type BB struct {
 }
 
 func (p *BB) Header() string { return "BB" }
+
+func (p *BB) schemaPath() string { return "packets/schemas/BB.schema.json" }
 
 func (p *BB) Args() []string {
 	var args []string
@@ -114,6 +124,8 @@ type BD struct {
 
 func (p *BD) Header() string { return "BD" }
 
+func (p *BD) schemaPath() string { return "packets/schemas/BD.schema.json" }
+
 func (p *BD) Args() []string {
 	var args []string
 	args = append(args, escapeFanta(p.Reason))
@@ -141,6 +153,8 @@ type BN struct {
 }
 
 func (p *BN) Header() string { return "BN" }
+
+func (p *BN) schemaPath() string { return "packets/schemas/BN.schema.json" }
 
 func (p *BN) Args() []string {
 	var args []string
@@ -173,6 +187,8 @@ type CC struct {
 }
 
 func (p *CC) Header() string { return "CC" }
+
+func (p *CC) schemaPath() string { return "packets/schemas/CC.schema.json" }
 
 func (p *CC) Args() []string {
 	var args []string
@@ -207,6 +223,8 @@ type CH struct {
 
 func (p *CH) Header() string { return "CH" }
 
+func (p *CH) schemaPath() string { return "packets/schemas/CH.schema.json" }
+
 func (p *CH) Args() []string {
 	var args []string
 	args = append(args, itoa(p.CharID))
@@ -232,6 +250,8 @@ type CHECK struct {
 }
 
 func (p *CHECK) Header() string { return "CHECK" }
+
+func (p *CHECK) schemaPath() string { return "packets/schemas/CHECK.schema.json" }
 
 func (p *CHECK) Args() []string {
 	var args []string
@@ -272,6 +292,8 @@ type CI struct {
 
 func (p *CI) Header() string { return "CI" }
 
+func (p *CI) schemaPath() string { return "packets/schemas/CI.schema.json" }
+
 func (p *CI) Args() []string {
 	var args []string
 	args = append(args, itoa(p.BatchIndex))
@@ -308,6 +330,8 @@ type CTToClient struct {
 
 func (p *CTToClient) Header() string { return "CT" }
 
+func (p *CTToClient) schemaPath() string { return "packets/schemas/CTToClient.schema.json" }
+
 func (p *CTToClient) Args() []string {
 	var args []string
 	args = append(args, escapeFanta(p.Name))
@@ -342,6 +366,8 @@ type CTToServer struct {
 
 func (p *CTToServer) Header() string { return "CT" }
 
+func (p *CTToServer) schemaPath() string { return "packets/schemas/CTToServer.schema.json" }
+
 func (p *CTToServer) Args() []string {
 	var args []string
 	args = append(args, escapeFanta(p.Name))
@@ -372,6 +398,8 @@ type CharsCheck struct {
 
 func (p *CharsCheck) Header() string { return "CharsCheck" }
 
+func (p *CharsCheck) schemaPath() string { return "packets/schemas/CharsCheck.schema.json" }
+
 func (p *CharsCheck) Args() []string {
 	var args []string
 	for _, v := range p.Taken {
@@ -396,6 +424,8 @@ type DE struct {
 }
 
 func (p *DE) Header() string { return "DE" }
+
+func (p *DE) schemaPath() string { return "packets/schemas/DE.schema.json" }
 
 func (p *DE) Args() []string {
 	var args []string
@@ -423,6 +453,8 @@ type DONE struct {
 
 func (p *DONE) Header() string { return "DONE" }
 
+func (p *DONE) schemaPath() string { return "packets/schemas/DONE.schema.json" }
+
 func (p *DONE) Args() []string {
 	var args []string
 	return args
@@ -439,6 +471,8 @@ type Decryptor struct {
 }
 
 func (p *Decryptor) Header() string { return "decryptor" }
+
+func (p *Decryptor) schemaPath() string { return "packets/schemas/decryptor.schema.json" }
 
 func (p *Decryptor) Args() []string {
 	var args []string
@@ -469,6 +503,8 @@ type EE struct {
 }
 
 func (p *EE) Header() string { return "EE" }
+
+func (p *EE) schemaPath() string { return "packets/schemas/EE.schema.json" }
 
 func (p *EE) Args() []string {
 	var args []string
@@ -536,6 +572,8 @@ type EI struct {
 
 func (p *EI) Header() string { return "EI" }
 
+func (p *EI) schemaPath() string { return "packets/schemas/EI.schema.json" }
+
 func (p *EI) Args() []string {
 	var args []string
 	args = append(args, itoa(p.ID))
@@ -588,6 +626,8 @@ type EM struct {
 
 func (p *EM) Header() string { return "EM" }
 
+func (p *EM) schemaPath() string { return "packets/schemas/EM.schema.json" }
+
 func (p *EM) Args() []string {
 	var args []string
 	args = append(args, itoa(p.BatchIndex))
@@ -622,6 +662,8 @@ type FA struct {
 
 func (p *FA) Header() string { return "FA" }
 
+func (p *FA) schemaPath() string { return "packets/schemas/FA.schema.json" }
+
 func (p *FA) Args() []string {
 	var args []string
 	for _, v := range p.Areas {
@@ -647,6 +689,8 @@ type FL struct {
 }
 
 func (p *FL) Header() string { return "FL" }
+
+func (p *FL) schemaPath() string { return "packets/schemas/FL.schema.json" }
 
 func (p *FL) Args() []string {
 	var args []string
@@ -691,6 +735,8 @@ type FM struct {
 
 func (p *FM) Header() string { return "FM" }
 
+func (p *FM) schemaPath() string { return "packets/schemas/FM.schema.json" }
+
 func (p *FM) Args() []string {
 	var args []string
 	for _, it := range p.MusicList {
@@ -715,6 +761,8 @@ type HI struct {
 }
 
 func (p *HI) Header() string { return "HI" }
+
+func (p *HI) schemaPath() string { return "packets/schemas/HI.schema.json" }
 
 func (p *HI) Args() []string {
 	var args []string
@@ -743,6 +791,8 @@ type HPToClient struct {
 }
 
 func (p *HPToClient) Header() string { return "HP" }
+
+func (p *HPToClient) schemaPath() string { return "packets/schemas/HPToClient.schema.json" }
 
 func (p *HPToClient) Args() []string {
 	var args []string
@@ -775,6 +825,8 @@ type HPToServer struct {
 
 func (p *HPToServer) Header() string { return "HP" }
 
+func (p *HPToServer) schemaPath() string { return "packets/schemas/HPToServer.schema.json" }
+
 func (p *HPToServer) Args() []string {
 	var args []string
 	args = append(args, itoa(penaltyBarToWire[p.Bar]))
@@ -806,6 +858,8 @@ type IDToClient struct {
 }
 
 func (p *IDToClient) Header() string { return "ID" }
+
+func (p *IDToClient) schemaPath() string { return "packets/schemas/IDToClient.schema.json" }
 
 func (p *IDToClient) Args() []string {
 	var args []string
@@ -841,6 +895,8 @@ type IDToServer struct {
 
 func (p *IDToServer) Header() string { return "ID" }
 
+func (p *IDToServer) schemaPath() string { return "packets/schemas/IDToServer.schema.json" }
+
 func (p *IDToServer) Args() []string {
 	var args []string
 	args = append(args, escapeFanta(p.Software))
@@ -871,6 +927,8 @@ type JD struct {
 
 func (p *JD) Header() string { return "JD" }
 
+func (p *JD) schemaPath() string { return "packets/schemas/JD.schema.json" }
+
 func (p *JD) Args() []string {
 	var args []string
 	args = append(args, itoa(judgeStateToWire[p.State]))
@@ -898,6 +956,8 @@ type KB struct {
 
 func (p *KB) Header() string { return "KB" }
 
+func (p *KB) schemaPath() string { return "packets/schemas/KB.schema.json" }
+
 func (p *KB) Args() []string {
 	var args []string
 	args = append(args, escapeFanta(p.Reason))
@@ -924,6 +984,8 @@ type KK struct {
 }
 
 func (p *KK) Header() string { return "KK" }
+
+func (p *KK) schemaPath() string { return "packets/schemas/KK.schema.json" }
 
 func (p *KK) Args() []string {
 	var args []string
@@ -977,6 +1039,8 @@ type LE struct {
 
 func (p *LE) Header() string { return "LE" }
 
+func (p *LE) schemaPath() string { return "packets/schemas/LE.schema.json" }
+
 func (p *LE) Args() []string {
 	var args []string
 	for _, it := range p.Evidence {
@@ -1003,6 +1067,8 @@ type MA struct {
 }
 
 func (p *MA) Header() string { return "MA" }
+
+func (p *MA) schemaPath() string { return "packets/schemas/MA.schema.json" }
 
 func (p *MA) Args() []string {
 	var args []string
@@ -1041,6 +1107,20 @@ type MCToClient struct {
 }
 
 func (p *MCToClient) Header() string { return "MC" }
+
+func (p *MCToClient) schemaPath() string { return "packets/schemas/MCToClient.schema.json" }
+
+func (p *MCToClient) applyDefaults() {
+	p.Channel = MusicChannel("music")
+}
+
+func (p *MCToClient) withDefaults() Outgoing {
+	c := *p
+	if c.Channel == "" {
+		c.Channel = MusicChannel("music")
+	}
+	return &c
+}
 
 func (p *MCToClient) Args() []string {
 	var args []string
@@ -1086,6 +1166,8 @@ type MCToServer struct {
 }
 
 func (p *MCToServer) Header() string { return "MC" }
+
+func (p *MCToServer) schemaPath() string { return "packets/schemas/MCToServer.schema.json" }
 
 func (p *MCToServer) Args() []string {
 	var args []string
@@ -1151,6 +1233,41 @@ type MSToClient struct {
 }
 
 func (p *MSToClient) Header() string { return "MS" }
+
+func (p *MSToClient) schemaPath() string { return "packets/schemas/MSToClient.schema.json" }
+
+func (p *MSToClient) applyDefaults() {
+	p.DeskModifier = DeskModifier("shown")
+	p.EmoteModifier = EmoteModifier("no_preanim")
+	p.ShoutModifier = ShoutModifier("none")
+	p.Flip = Flip("none")
+	p.TextColor = TextColor("white")
+	p.PairedCharID = -1
+	p.PairedFlip = Flip("none")
+}
+
+func (p *MSToClient) withDefaults() Outgoing {
+	c := *p
+	if c.DeskModifier == "" {
+		c.DeskModifier = DeskModifier("shown")
+	}
+	if c.EmoteModifier == "" {
+		c.EmoteModifier = EmoteModifier("no_preanim")
+	}
+	if c.ShoutModifier == "" {
+		c.ShoutModifier = ShoutModifier("none")
+	}
+	if c.Flip == "" {
+		c.Flip = Flip("none")
+	}
+	if c.TextColor == "" {
+		c.TextColor = TextColor("white")
+	}
+	if c.PairedFlip == "" {
+		c.PairedFlip = Flip("none")
+	}
+	return &c
+}
 
 func (p *MSToClient) Args() []string {
 	var args []string
@@ -1299,6 +1416,37 @@ type MSToServer struct {
 
 func (p *MSToServer) Header() string { return "MS" }
 
+func (p *MSToServer) schemaPath() string { return "packets/schemas/MSToServer.schema.json" }
+
+func (p *MSToServer) applyDefaults() {
+	p.DeskModifier = DeskModifier("shown")
+	p.EmoteModifier = EmoteModifier("no_preanim")
+	p.ShoutModifier = ShoutModifier("none")
+	p.Flip = Flip("none")
+	p.TextColor = TextColor("white")
+	p.PairedCharID = -1
+}
+
+func (p *MSToServer) withDefaults() Outgoing {
+	c := *p
+	if c.DeskModifier == "" {
+		c.DeskModifier = DeskModifier("shown")
+	}
+	if c.EmoteModifier == "" {
+		c.EmoteModifier = EmoteModifier("no_preanim")
+	}
+	if c.ShoutModifier == "" {
+		c.ShoutModifier = ShoutModifier("none")
+	}
+	if c.Flip == "" {
+		c.Flip = Flip("none")
+	}
+	if c.TextColor == "" {
+		c.TextColor = TextColor("white")
+	}
+	return &c
+}
+
 func (p *MSToServer) Args() []string {
 	var args []string
 	args = append(args, itoa(deskModifierToWire[p.DeskModifier]))
@@ -1411,6 +1559,8 @@ type PE struct {
 
 func (p *PE) Header() string { return "PE" }
 
+func (p *PE) schemaPath() string { return "packets/schemas/PE.schema.json" }
+
 func (p *PE) Args() []string {
 	var args []string
 	args = append(args, escapeFanta(p.Name))
@@ -1446,6 +1596,8 @@ type PN struct {
 
 func (p *PN) Header() string { return "PN" }
 
+func (p *PN) schemaPath() string { return "packets/schemas/PN.schema.json" }
+
 func (p *PN) Args() []string {
 	var args []string
 	args = append(args, itoa(p.PlayerCount))
@@ -1480,6 +1632,8 @@ type PR struct {
 
 func (p *PR) Header() string { return "PR" }
 
+func (p *PR) schemaPath() string { return "packets/schemas/PR.schema.json" }
+
 func (p *PR) Args() []string {
 	var args []string
 	args = append(args, itoa(p.ID))
@@ -1511,6 +1665,8 @@ type PU struct {
 }
 
 func (p *PU) Header() string { return "PU" }
+
+func (p *PU) schemaPath() string { return "packets/schemas/PU.schema.json" }
 
 func (p *PU) Args() []string {
 	var args []string
@@ -1550,6 +1706,8 @@ func (p *PV) jsonConsts() map[string]string {
 	return map[string]string{"_cid": "CID"}
 }
 
+func (p *PV) schemaPath() string { return "packets/schemas/PV.schema.json" }
+
 func (p *PV) Args() []string {
 	var args []string
 	args = append(args, itoa(p.PlayerID))
@@ -1581,6 +1739,8 @@ type RC struct {
 
 func (p *RC) Header() string { return "RC" }
 
+func (p *RC) schemaPath() string { return "packets/schemas/RC.schema.json" }
+
 func (p *RC) Args() []string {
 	var args []string
 	return args
@@ -1596,6 +1756,8 @@ type RD struct {
 }
 
 func (p *RD) Header() string { return "RD" }
+
+func (p *RD) schemaPath() string { return "packets/schemas/RD.schema.json" }
 
 func (p *RD) Args() []string {
 	var args []string
@@ -1613,6 +1775,8 @@ type RM struct {
 
 func (p *RM) Header() string { return "RM" }
 
+func (p *RM) schemaPath() string { return "packets/schemas/RM.schema.json" }
+
 func (p *RM) Args() []string {
 	var args []string
 	return args
@@ -1629,6 +1793,8 @@ type RMC struct {
 }
 
 func (p *RMC) Header() string { return "RMC" }
+
+func (p *RMC) schemaPath() string { return "packets/schemas/RMC.schema.json" }
 
 func (p *RMC) Args() []string {
 	var args []string
@@ -1658,6 +1824,8 @@ type RTToClient struct {
 
 func (p *RTToClient) Header() string { return "RT" }
 
+func (p *RTToClient) schemaPath() string { return "packets/schemas/RTToClient.schema.json" }
+
 // RTToServer is
 type RTToServer struct {
 	Animation RTAnimation `json:"animation"`
@@ -1665,6 +1833,8 @@ type RTToServer struct {
 }
 
 func (p *RTToServer) Header() string { return "RT" }
+
+func (p *RTToServer) schemaPath() string { return "packets/schemas/RTToServer.schema.json" }
 
 type SCCharDataItem struct {
 	Name     string `json:"name"`
@@ -1698,6 +1868,8 @@ type SC struct {
 
 func (p *SC) Header() string { return "SC" }
 
+func (p *SC) schemaPath() string { return "packets/schemas/SC.schema.json" }
+
 func (p *SC) Args() []string {
 	var args []string
 	for _, it := range p.CharData {
@@ -1724,6 +1896,8 @@ type SI struct {
 }
 
 func (p *SI) Header() string { return "SI" }
+
+func (p *SI) schemaPath() string { return "packets/schemas/SI.schema.json" }
 
 func (p *SI) Args() []string {
 	var args []string
@@ -1775,6 +1949,8 @@ type SM struct {
 
 func (p *SM) Header() string { return "SM" }
 
+func (p *SM) schemaPath() string { return "packets/schemas/SM.schema.json" }
+
 func (p *SM) Args() []string {
 	var args []string
 	for _, it := range p.MusicList {
@@ -1799,6 +1975,8 @@ type SP struct {
 }
 
 func (p *SP) Header() string { return "SP" }
+
+func (p *SP) schemaPath() string { return "packets/schemas/SP.schema.json" }
 
 func (p *SP) Args() []string {
 	var args []string
@@ -1828,6 +2006,8 @@ type TI struct {
 }
 
 func (p *TI) Header() string { return "TI" }
+
+func (p *TI) schemaPath() string { return "packets/schemas/TI.schema.json" }
 
 func (p *TI) Args() []string {
 	var args []string
@@ -1862,6 +2042,8 @@ type ZZToClient struct {
 
 func (p *ZZToClient) Header() string { return "ZZ" }
 
+func (p *ZZToClient) schemaPath() string { return "packets/schemas/ZZToClient.schema.json" }
+
 func (p *ZZToClient) Args() []string {
 	var args []string
 	args = append(args, escapeFanta(p.Reason))
@@ -1889,6 +2071,12 @@ type ZZToServer struct {
 }
 
 func (p *ZZToServer) Header() string { return "ZZ" }
+
+func (p *ZZToServer) schemaPath() string { return "packets/schemas/ZZToServer.schema.json" }
+
+func (p *ZZToServer) applyDefaults() {
+	p.ReportedPlayerID = -1
+}
 
 func (p *ZZToServer) Args() []string {
 	var args []string

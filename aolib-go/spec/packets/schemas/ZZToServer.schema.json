@@ -1,0 +1,28 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "/packets/schemas/ZZToServer.schema.json",
+  "title": "ZZ",
+  "type": "object",
+  "properties": {
+    "$header": {
+      "type": "string",
+      "const": "ZZ"
+    },
+    "reason": {
+      "type": "string",
+      "default": "",
+      "description": "Caller's reason; empty when the server does not advertise `modcall_reason`."
+    },
+    "reported_player_id": {
+      "type": "number",
+      "default": -1,
+      "description": "ID of the player being reported, or -1 for a general mod call."
+    }
+  },
+  "required": [
+    "$header",
+    "reason"
+  ],
+  "additionalProperties": false,
+  "x-receiver": "server"
+}

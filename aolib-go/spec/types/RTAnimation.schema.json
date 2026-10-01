@@ -1,0 +1,23 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "/types/RTAnimation.schema.json",
+  "title": "RTAnimation",
+  "description": "Judge-control overlay animation played by RT.",
+  "type": "string",
+  "enum": [
+    "witness_testimony",
+    "cross_examination",
+    "not_guilty",
+    "guilty",
+    "end_animation",
+    "custom"
+  ],
+  "x-enum-description": [
+    "Witness Testimony; loops on the testimony layer",
+    "Cross Examination",
+    "Not Guilty verdict",
+    "Guilty verdict",
+    "stops any looping animation on the testimony layer",
+    "custom WTCE named by `name`"
+  ]
+}

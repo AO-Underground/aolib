@@ -1,0 +1,19 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "/types/PlayerDataType.schema.json",
+  "type": "string",
+  "title": "PlayerDataType",
+  "description": "PU packet field selector: which playerlist datum the packet updates.",
+  "enum": [
+    "ooc_name",
+    "char_name",
+    "showname",
+    "area_id"
+  ],
+  "x-wire-ints": [
+    0,
+    1,
+    2,
+    3
+  ]
+}

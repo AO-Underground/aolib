@@ -1,0 +1,179 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "/assets/CharIni.schema.json",
+  "title": "CharIni",
+  "description": "Parsed shape of a character's char.ini asset file (not a wire packet). char.ini is INI text; this schema describes the normalized object a parser emits. The INI text grammar, the [emote <name>] block convention, and the legacy [emotions]/[soundn]/[soundt] fallback are specified in assets/README.md. Emotes are normalized to one shape for 2D and 3D; `anim` is a sprite stem for 2D characters and a base VMD stem for 3D characters (a character is 3D when options.model is set).",
+  "type": "object",
+  "properties": {
+    "options": {
+      "$ref": "#/definitions/Options"
+    },
+    "emotes": {
+      "type": "array",
+      "description": "Emote table in button order, normalized from either [emote <name>] blocks or the legacy [emotions] banks.",
+      "items": {
+        "$ref": "#/definitions/Emote"
+      }
+    },
+    "sections": {
+      "type": "object",
+      "description": "Every raw section, section/key names lowercased, values verbatim. Fallback for blocks this schema does not model (shouts, [Time], frame effects).",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "required": [
+    "options",
+    "emotes",
+    "sections"
+  ],
+  "additionalProperties": false,
+  "definitions": {
+    "Options": {
+      "type": "object",
+      "description": "The [options] block. Common keys are typed; the rest stay on the index. `model` (a .pmx file) marks the character as 3D.",
+      "properties": {
+        "name": {
+          "type": "string",
+          "default": ""
+        },
+        "showname": {
+          "type": "string",
+          "default": ""
+        },
+        "side": {
+          "type": "string",
+          "description": "Court position (e.g. def/pro/wit). Defaults to `wit` when the file has no `side` key.",
+          "default": "wit"
+        },
+        "blips": {
+          "type": "string",
+          "description": "Blip (typing sound) set. Defaults to `male` when the file has no `blips` key; falls back to the obsolete `gender` key when present. `gender` is the legacy predecessor of `blips` and is not modelled here (it remains readable via additional properties).",
+          "default": "male"
+        },
+        "chat": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Chat/blip category, or null when the file has no `chat` key (distinct from an explicit empty `chat =`).",
+          "default": null
+        },
+        "category": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Emote/preanim category, or null when the file has no `category` key (distinct from an explicit empty `category =`).",
+          "default": null
+        },
+        "model": {
+          "type": "string",
+          "description": "PMX model file for a 3D character; absent/empty for 2D.",
+          "default": ""
+        }
+      },
+      "required": [
+        "name",
+        "showname",
+        "side",
+        "blips",
+        "chat",
+        "category"
+      ],
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "Emote": {
+      "type": "object",
+      "description": "One normalized emote. The same shape covers 2D and 3D; which optional fields matter depends on the character mode.",
+      "properties": {
+        "key": {
+          "type": "string",
+          "description": "Stable string identity; by default the animation file name. The block name for [emote <name>] characters; the stringified id for legacy characters."
+        },
+        "name": {
+          "type": "string",
+          "description": "Display label shown on the emote button.",
+          "default": ""
+        },
+        "anim": {
+          "type": "string",
+          "description": "Animation reference. In legacy banks this is a stem the client expands (2D: (a)<anim>/(b)<anim> sprite frames; 3D: base loop VMD). In [emote <name>] blocks it is the full animation filename, extension required (.gif/.webp/.png 2D, .vmd 3D).",
+          "default": ""
+        },
+        "preanim": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Pre-animation, or null when none (`-` in the file). Legacy: a stem. In [emote <name>] blocks: the full filename with extension (as `anim`).",
+          "default": null
+        },
+        "postanim": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Exit animation ([emote <name>] blocks only; full filename with extension, as `anim`), or null. Plays during a gated preanim phase: when a message enables preanim (a preanim-playing emote modifier), the client plays the leaving emote's postanim, then the entering emote's preanim, then its loop; when preanim is off, neither plays. Exception: on a same-character emote switch (character already on its idle loop) where the leaving emote has a postanim and the entering emote has a preanim, the transition plays regardless of the toggle. Legacy banks have no postanim (always null).",
+          "default": null
+        },
+        "camera": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Camera-motion file for 3D emotes ([emote <name>] blocks only): a `.vmd` carrying a camera track that frames this emote, or null for the default camera. Legacy banks have no camera (always null).",
+          "default": null
+        },
+        "modifier": {
+          "$ref": "../types/EmoteModifier.schema.json",
+          "default": "no_preanim",
+          "description": "Emote modifier. Legacy banks give the wire integer, mapped to the name (unknown integers map to wire 0). For 3D the zoom variants are advisory; camera treatment comes from the emote's `camera` VMD."
+        },
+        "deskmod": {
+          "$ref": "../types/DeskModifier.schema.json",
+          "default": "shown",
+          "description": "Desk modifier. Legacy banks give the wire integer, mapped to the name (unknown integers map to wire 0)."
+        },
+        "sound": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Sound effect for this emote, or null. Legacy [soundn] is a stem the client expands, where `0`, `1` and `-` also mean no sound; in [emote <name>] blocks it is the full filename with extension (.opus/.wav/.ogg).",
+          "default": null
+        },
+        "sounddelayms": {
+          "type": "integer",
+          "description": "Sound delay in milliseconds. Default 0. Authoritative for [emote] blocks; derived (ticks × 40) for legacy [soundt].",
+          "default": 0
+        },
+        "sounddelayticks": {
+          "type": "integer",
+          "description": "Sound delay in 40 ms ticks, as MS sfx_delay carries it. Default 0. Authoritative for legacy [soundt]; derived (ms / 40, rounded half up) for [emote] blocks.",
+          "default": 0
+        }
+      },
+      "required": [
+        "key",
+        "name",
+        "anim",
+        "preanim",
+        "postanim",
+        "camera",
+        "modifier",
+        "deskmod",
+        "sound",
+        "sounddelayms",
+        "sounddelayticks"
+      ],
+      "additionalProperties": false
+    }
+  }
+}
