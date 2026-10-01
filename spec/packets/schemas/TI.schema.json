@@ -12,7 +12,7 @@
       "type": "number"
     },
     "command": {
-      "type": "number"
+      "$ref": "../../types/TimerCommand.schema.json"
     },
     "time": {
       "type": "number"

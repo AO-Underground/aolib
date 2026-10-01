@@ -1,7 +1,7 @@
 # aolib-go
 
 The Attorney Online 2 wire protocol in Go — the Go counterpart to
-[`aolib-ts`](https://github.com/OmniTroid/aolib-ts), generated from the
+[`aolib-ts`](https://github.com/AO-Underground/aolib/tree/main/aolib-ts), generated from the
 canonical [`spec/`](../spec) schemas so the
 two libraries stay in lockstep.
 
@@ -19,7 +19,7 @@ extensions, extra packets) is not baked in; servers layer it on themselves via
 ## Overview
 
 ```go
-import "github.com/SyntaxNyah/aolib-go"
+import "github.com/AO-Underground/aolib/aolib-go"
 ```
 
 - `aolib.Encode(pkt, aolib.WireFanta|aolib.WireJSON)` / `aolib.Decode(raw, mode)`
@@ -95,5 +95,5 @@ server.OnCustom("TT", func(pkt map[string]any) {
 
 ## License
 
-AGPL-3.0 (extracted from the Athena codebase; revisit before publishing — the
-rest of the `aolib` family is MIT).
+MIT, matching the rest of the `aolib` family. See
+[`aolib-ts/LICENSE`](../aolib-ts/LICENSE).

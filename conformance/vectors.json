@@ -39,7 +39,7 @@
     "fanta": "HP#1#5#%",
     "json": {
       "$header": "HP",
-      "bar": 1,
+      "bar": "defense",
       "value": 5
     }
   },
@@ -259,6 +259,85 @@
           "index": 0,
           "name": "Category"
         }
+      ]
+    }
+  },
+  {
+    "id": "JD-shown",
+    "header": "JD",
+    "receiver": "client",
+    "fanta": "JD#1#%",
+    "json": {
+      "$header": "JD",
+      "state": "shown"
+    }
+  },
+  {
+    "id": "JD-by_position",
+    "header": "JD",
+    "receiver": "client",
+    "fanta": "JD#-1#%",
+    "json": {
+      "$header": "JD",
+      "state": "by_position"
+    }
+  },
+  {
+    "id": "AUTH",
+    "header": "AUTH",
+    "receiver": "client",
+    "fanta": "AUTH#1#%",
+    "json": {
+      "$header": "AUTH",
+      "auth_state": "success"
+    }
+  },
+  {
+    "id": "TI",
+    "header": "TI",
+    "receiver": "client",
+    "fanta": "TI#0#2#60000#%",
+    "json": {
+      "$header": "TI",
+      "command": "show",
+      "time": 60000,
+      "timer_id": 0
+    }
+  },
+  {
+    "id": "PR",
+    "header": "PR",
+    "receiver": "client",
+    "fanta": "PR#5#0#%",
+    "json": {
+      "$header": "PR",
+      "id": 5,
+      "type": "add"
+    }
+  },
+  {
+    "id": "PU",
+    "header": "PU",
+    "receiver": "client",
+    "fanta": "PU#5#2#Nick#%",
+    "json": {
+      "$header": "PU",
+      "data": "Nick",
+      "id": 5,
+      "type": "showname"
+    }
+  },
+  {
+    "id": "CharsCheck",
+    "header": "CharsCheck",
+    "receiver": "client",
+    "fanta": "CharsCheck#0#-1#0#%",
+    "json": {
+      "$header": "CharsCheck",
+      "taken": [
+        "free",
+        "taken",
+        "free"
       ]
     }
   }

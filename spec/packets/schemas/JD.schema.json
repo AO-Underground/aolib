@@ -9,7 +9,7 @@
       "const": "JD"
     },
     "state": {
-      "type": "number"
+      "$ref": "../../types/JudgeState.schema.json"
     }
   },
   "required": [

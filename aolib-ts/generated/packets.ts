@@ -2,10 +2,14 @@
 
 /* eslint-disable */
 
-import { AreaUpdateType, DeskModifier, EmoteModifier, Flip, ShoutModifier, Side, TextColor } from "./enums";
+import { AreaUpdateType, AuthState, CharAvailability, DeskModifier, EmoteModifier, Flip, JudgeState, PenaltyBar, PlayerDataType, PlayerListUpdate, ShoutModifier, Side, TextColor, TimerCommand } from "./enums";
 import { Effect, Offset } from "./types";
 
 import AreaUpdateTypeEnumSchema from "../../spec/types/AreaUpdateType.schema.json";
+
+import AuthStateEnumSchema from "../../spec/types/AuthState.schema.json";
+
+import CharAvailabilityEnumSchema from "../../spec/types/CharAvailability.schema.json";
 
 import DeskModifierEnumSchema from "../../spec/types/DeskModifier.schema.json";
 
@@ -13,11 +17,21 @@ import EmoteModifierEnumSchema from "../../spec/types/EmoteModifier.schema.json"
 
 import FlipEnumSchema from "../../spec/types/Flip.schema.json";
 
+import JudgeStateEnumSchema from "../../spec/types/JudgeState.schema.json";
+
+import PenaltyBarEnumSchema from "../../spec/types/PenaltyBar.schema.json";
+
+import PlayerDataTypeEnumSchema from "../../spec/types/PlayerDataType.schema.json";
+
+import PlayerListUpdateEnumSchema from "../../spec/types/PlayerListUpdate.schema.json";
+
 import ShoutModifierEnumSchema from "../../spec/types/ShoutModifier.schema.json";
 
 import SideEnumSchema from "../../spec/types/Side.schema.json";
 
 import TextColorEnumSchema from "../../spec/types/TextColor.schema.json";
+
+import TimerCommandEnumSchema from "../../spec/types/TimerCommand.schema.json";
 
 import EffectTypeSchema from "../../spec/types/Effect.schema.json";
 
@@ -246,7 +260,7 @@ export { default as askchaaSchema } from "../../spec/packets/schemas/askchaa.sch
 export { default as decryptorSchema } from "../../spec/packets/schemas/decryptor.schema.json";
 
 
-export const enumSchemas = [AreaUpdateTypeEnumSchema, DeskModifierEnumSchema, EmoteModifierEnumSchema, FlipEnumSchema, ShoutModifierEnumSchema, SideEnumSchema, TextColorEnumSchema];
+export const enumSchemas = [AreaUpdateTypeEnumSchema, AuthStateEnumSchema, CharAvailabilityEnumSchema, DeskModifierEnumSchema, EmoteModifierEnumSchema, FlipEnumSchema, JudgeStateEnumSchema, PenaltyBarEnumSchema, PlayerDataTypeEnumSchema, PlayerListUpdateEnumSchema, ShoutModifierEnumSchema, SideEnumSchema, TextColorEnumSchema, TimerCommandEnumSchema];
 
 export const typeSchemas = [EffectTypeSchema, OffsetTypeSchema];
 
@@ -279,11 +293,11 @@ export interface ASSInit {
 
 export interface AUTH extends Packet {
   $header: "AUTH";
-  auth_state: number;
+  auth_state: AuthState;
 }
 
 export interface AUTHInit {
-  auth_state: number;
+  auth_state: AuthState;
 }
 
 
@@ -398,11 +412,11 @@ export interface CTToServerInit {
 
 export interface CharsCheck extends Packet {
   $header: "CharsCheck";
-  taken: number[];
+  taken: CharAvailability[];
 }
 
 export interface CharsCheckInit {
-  taken: number[];
+  taken: CharAvailability[];
 }
 
 
@@ -527,24 +541,24 @@ export interface HIInit {
 
 export interface HPToClient extends Packet {
   $header: "HP";
-  bar: number;
+  bar: PenaltyBar;
   value: number;
 }
 
 export interface HPToClientInit {
-  bar: number;
+  bar: PenaltyBar;
   value: number;
 }
 
 
 export interface HPToServer extends Packet {
   $header: "HP";
-  bar: number;
+  bar: PenaltyBar;
   value: number;
 }
 
 export interface HPToServerInit {
-  bar: number;
+  bar: PenaltyBar;
   value: number;
 }
 
@@ -577,11 +591,11 @@ export interface IDToServerInit {
 
 export interface JD extends Packet {
   $header: "JD";
-  state: number;
+  state: JudgeState;
 }
 
 export interface JDInit {
-  state: number;
+  state: JudgeState;
 }
 
 
@@ -832,25 +846,25 @@ export interface PNInit {
 export interface PR extends Packet {
   $header: "PR";
   id: number;
-  type: number;
+  type: PlayerListUpdate;
 }
 
 export interface PRInit {
   id: number;
-  type: number;
+  type: PlayerListUpdate;
 }
 
 
 export interface PU extends Packet {
   $header: "PU";
   id: number;
-  type: number;
+  type: PlayerDataType;
   data: string;
 }
 
 export interface PUInit {
   id: number;
-  type: number;
+  type: PlayerDataType;
   data: string;
 }
 
@@ -987,13 +1001,13 @@ export interface SPInit {
 export interface TI extends Packet {
   $header: "TI";
   timer_id: number;
-  command: number;
+  command: TimerCommand;
   time: number;
 }
 
 export interface TIInit {
   timer_id: number;
-  command: number;
+  command: TimerCommand;
   time: number;
 }
 

@@ -1,6 +1,6 @@
 {
   "name": "aolib-ts",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "description": "Self-contained TypeScript library for the Attorney Online protocol. Owns every packet schema, both wire formats (fantacode + JSON), encode/decode, and the typed dispatch surface.",
   "type": "module",
   "sideEffects": [
@@ -38,10 +38,10 @@
   "author": "OmniTroid",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/SyntaxNyah/aolib-ts.git"
+    "url": "git+https://github.com/AO-Underground/aolib.git"
   },
   "bugs": {
-    "url": "https://github.com/SyntaxNyah/aolib-ts/issues"
+    "url": "https://github.com/AO-Underground/aolib/issues"
   },
   "keywords": [
     "attorney-online",

@@ -7,3 +7,22 @@ described in the root `README.md`.
 
 Packets whose wire form has discriminator-driven payloads set `x-fanta-codec`
 and are specified in `CODECS.md`.
+
+## Coded numeric fields
+
+Fields whose legacy integer is a code, not a quantity, are modeled as string
+enums (in `../types/`) with `x-wire-ints`, so JSON carries the name and the
+FantaCode wire keeps the integer: `JD.state` (JudgeState), `AUTH.auth_state`
+(AuthState), `HP.bar` (PenaltyBar), `PR.type` (PlayerListUpdate), `PU.type`
+(PlayerDataType), `TI.command` (TimerCommand), and `CharsCheck.taken[]`
+(CharAvailability).
+
+Deliberately left as numbers for now:
+
+- `MC.effects` is a bitfield (fade in / fade out / sync), not a single enum;
+  an enum can't express combinations. Candidate for a boolean-object shape.
+- `MC.channel` is a `0-3` channel index with only loose conventions, not a
+  fixed named set.
+- `RT.judgeId` and `ZZ.target` exist in the schemas but not in the reference
+  docs (which show `RT` as `animation` only and `ZZ` as `reason` only); the
+  spec/doc divergence should be reconciled before deciding their shape.

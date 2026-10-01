@@ -9,7 +9,7 @@
       "const": "AUTH"
     },
     "auth_state": {
-      "type": "number"
+      "$ref": "../../types/AuthState.schema.json"
     }
   },
   "required": [

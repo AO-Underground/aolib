@@ -12,7 +12,7 @@
       "type": "number"
     },
     "type": {
-      "type": "number"
+      "$ref": "../../types/PlayerDataType.schema.json"
     },
     "data": {
       "type": "string"

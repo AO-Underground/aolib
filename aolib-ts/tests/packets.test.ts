@@ -60,7 +60,7 @@ describe("registry shape", () => {
 
 describe("round-trips: scalar-only packets", () => {
   it("HP", () => {
-    const p = { bar: 1, value: 8 };
+    const p = { bar: "defense", value: 8 };
     expect(decode(c2sSchemas.HP, encode(c2sSchemas.HP, p, "fanta"))).toEqual({ $header: "HP", ...p });
     expect(decode(c2sSchemas.HP, encode(c2sSchemas.HP, p, "json"))).toEqual({ $header: "HP", ...p });
   });
@@ -72,7 +72,7 @@ describe("round-trips: scalar-only packets", () => {
   });
 
   it("TI", () => {
-    const p = { timer_id: 1, command: 2, time: 60_000 };
+    const p = { timer_id: 1, command: "show", time: 60_000 };
     expect(decode(s2cSchemas.TI, encode(s2cSchemas.TI, p, "fanta"))).toEqual({ $header: "TI", ...p });
     expect(decode(s2cSchemas.TI, encode(s2cSchemas.TI, p, "json"))).toEqual({ $header: "TI", ...p });
   });
@@ -228,8 +228,8 @@ describe("bidirectional packets", () => {
   it("HP: symmetric, same schema works in both directions", () => {
     const fromS: string[] = [];
     const fromC: string[] = [];
-    server({ send: (w) => fromS.push(w) }).send.HP({ bar: 1, value: 8 });
-    client({ send: (w) => fromC.push(w) }).send.HP({ bar: 2, value: 5 });
+    server({ send: (w) => fromS.push(w) }).send.HP({ bar: "defense", value: 8 });
+    client({ send: (w) => fromC.push(w) }).send.HP({ bar: "prosecution", value: 5 });
     expect(fromS).toEqual(["HP#1#8#%"]);
     expect(fromC).toEqual(["HP#2#5#%"]);
   });
