@@ -1,7 +1,5 @@
 // AUTO-GENERATED from spec/. Do not edit; run `bun run codegen`.
 
-/* eslint-disable */
-
 import { AreaUpdateType, AuthState, CharAvailability, DeskModifier, EmoteModifier, Flip, JudgeState, MusicChannel, PenaltyBar, PlayerDataType, PlayerListUpdate, RTAnimation, ShoutModifier, Side, TextColor, TimerCommand } from "./enums";
 import { Effect, MusicEffects, Offset } from "./types";
 
@@ -17,6 +15,8 @@ export const typeSchemas = [EffectTypeSchema, MusicEffectsTypeSchema, OffsetType
 
 export interface Packet {
   $header: string;
+  /** JSON keys the schema does not define; FantaCode never carries them. */
+  $extras?: Record<string, unknown>;
 }
 
 export interface ARUP extends Packet {
@@ -28,6 +28,7 @@ export interface ARUP extends Packet {
 export interface ARUPInit {
   update_type: AreaUpdateType;
   update_data: (number | string)[];
+  $extras?: Record<string, unknown>;
 }
 
 
@@ -38,6 +39,7 @@ export interface ASS extends Packet {
 
 export interface ASSInit {
   asset_url: string;
+  $extras?: Record<string, unknown>;
 }
 
 
@@ -48,6 +50,7 @@ export interface AUTH extends Packet {
 
 export interface AUTHInit {
   auth_state: AuthState;
+  $extras?: Record<string, unknown>;
 }
 
 
@@ -58,6 +61,7 @@ export interface BB extends Packet {
 
 export interface BBInit {
   message: string;
+  $extras?: Record<string, unknown>;
 }
 
 
@@ -68,6 +72,7 @@ export interface BD extends Packet {
 
 export interface BDInit {
   reason: string;
+  $extras?: Record<string, unknown>;
 }
 
 
@@ -80,6 +85,7 @@ export interface BN extends Packet {
 export interface BNInit {
   background: string;
   position?: string;
+  $extras?: Record<string, unknown>;
 }
 
 
@@ -94,6 +100,7 @@ export interface CCInit {
   player_id: number;
   char_id: number;
   char_password?: string;
+  $extras?: Record<string, unknown>;
 }
 
 
@@ -104,6 +111,7 @@ export interface CH extends Packet {
 
 export interface CHInit {
   char_id: number;
+  $extras?: Record<string, unknown>;
 }
 
 
@@ -112,7 +120,7 @@ export interface CHECK extends Packet {
 }
 
 export interface CHECKInit {
-
+  $extras?: Record<string, unknown>;
 }
 
 
@@ -131,6 +139,7 @@ export interface CIInit {
     index: number;
     data: string;
   }[];
+  $extras?: Record<string, unknown>;
 }
 
 
@@ -145,6 +154,7 @@ export interface CTToClientInit {
   name: string;
   message: string;
   is_from_server?: boolean;
+  $extras?: Record<string, unknown>;
 }
 
 
@@ -157,6 +167,7 @@ export interface CTToServer extends Packet {
 export interface CTToServerInit {
   name: string;
   message: string;
+  $extras?: Record<string, unknown>;
 }
 
 
@@ -167,6 +178,7 @@ export interface CharsCheck extends Packet {
 
 export interface CharsCheckInit {
   taken: CharAvailability[];
+  $extras?: Record<string, unknown>;
 }
 
 
@@ -177,6 +189,7 @@ export interface DE extends Packet {
 
 export interface DEInit {
   id: number;
+  $extras?: Record<string, unknown>;
 }
 
 
@@ -185,7 +198,7 @@ export interface DONE extends Packet {
 }
 
 export interface DONEInit {
-
+  $extras?: Record<string, unknown>;
 }
 
 
@@ -202,6 +215,7 @@ export interface EEInit {
   name: string;
   description: string;
   image: string;
+  $extras?: Record<string, unknown>;
 }
 
 
@@ -224,6 +238,7 @@ export interface EIInit {
     type: string;
     image: string;
   };
+  $extras?: Record<string, unknown>;
 }
 
 
@@ -242,6 +257,7 @@ export interface EMInit {
     index: number;
     name: string;
   }[];
+  $extras?: Record<string, unknown>;
 }
 
 
@@ -252,6 +268,7 @@ export interface FA extends Packet {
 
 export interface FAInit {
   areas: string[];
+  $extras?: Record<string, unknown>;
 }
 
 
@@ -262,6 +279,7 @@ export interface FL extends Packet {
 
 export interface FLInit {
   features: string[];
+  $extras?: Record<string, unknown>;
 }
 
 
@@ -276,6 +294,7 @@ export interface FMInit {
   music_list: {
     name: string;
   }[];
+  $extras?: Record<string, unknown>;
 }
 
 
@@ -286,6 +305,7 @@ export interface HI extends Packet {
 
 export interface HIInit {
   hdid: string;
+  $extras?: Record<string, unknown>;
 }
 
 
@@ -298,6 +318,7 @@ export interface HPToClient extends Packet {
 export interface HPToClientInit {
   bar: PenaltyBar;
   value: number;
+  $extras?: Record<string, unknown>;
 }
 
 
@@ -310,6 +331,7 @@ export interface HPToServer extends Packet {
 export interface HPToServerInit {
   bar: PenaltyBar;
   value: number;
+  $extras?: Record<string, unknown>;
 }
 
 
@@ -324,6 +346,7 @@ export interface IDToClientInit {
   player_id: number;
   software: string;
   version: string;
+  $extras?: Record<string, unknown>;
 }
 
 
@@ -336,6 +359,7 @@ export interface IDToServer extends Packet {
 export interface IDToServerInit {
   software: string;
   version: string;
+  $extras?: Record<string, unknown>;
 }
 
 
@@ -346,6 +370,7 @@ export interface JD extends Packet {
 
 export interface JDInit {
   state: JudgeState;
+  $extras?: Record<string, unknown>;
 }
 
 
@@ -356,6 +381,7 @@ export interface KB extends Packet {
 
 export interface KBInit {
   reason: string;
+  $extras?: Record<string, unknown>;
 }
 
 
@@ -366,6 +392,7 @@ export interface KK extends Packet {
 
 export interface KKInit {
   reason: string;
+  $extras?: Record<string, unknown>;
 }
 
 
@@ -384,6 +411,7 @@ export interface LEInit {
     description: string;
     image: string;
   }[];
+  $extras?: Record<string, unknown>;
 }
 
 
@@ -398,6 +426,7 @@ export interface MAInit {
   player_id: number;
   duration_minutes: number;
   reason: string;
+  $extras?: Record<string, unknown>;
 }
 
 
@@ -418,6 +447,7 @@ export interface MCToClientInit {
   looping?: boolean;
   channel?: MusicChannel;
   effects?: MusicEffects;
+  $extras?: Record<string, unknown>;
 }
 
 
@@ -434,6 +464,7 @@ export interface MCToServerInit {
   char_id: number;
   showname?: string;
   effects?: MusicEffects;
+  $extras?: Record<string, unknown>;
 }
 
 
@@ -502,6 +533,7 @@ export interface MSToClientInit {
   frames_sfx?: string;
   additive?: boolean;
   effect?: Effect;
+  $extras?: Record<string, unknown>;
 }
 
 
@@ -562,6 +594,7 @@ export interface MSToServerInit {
   frames_sfx?: string;
   additive?: boolean;
   effect?: Effect;
+  $extras?: Record<string, unknown>;
 }
 
 
@@ -576,6 +609,7 @@ export interface PEInit {
   name: string;
   description: string;
   image: string;
+  $extras?: Record<string, unknown>;
 }
 
 
@@ -590,6 +624,7 @@ export interface PNInit {
   player_count: number;
   max_players: number;
   server_description?: string;
+  $extras?: Record<string, unknown>;
 }
 
 
@@ -602,6 +637,7 @@ export interface PR extends Packet {
 export interface PRInit {
   id: number;
   type: PlayerListUpdate;
+  $extras?: Record<string, unknown>;
 }
 
 
@@ -616,6 +652,7 @@ export interface PUInit {
   id: number;
   type: PlayerDataType;
   data: string;
+  $extras?: Record<string, unknown>;
 }
 
 
@@ -628,6 +665,7 @@ export interface PV extends Packet {
 export interface PVInit {
   player_id: number;
   char_id: number;
+  $extras?: Record<string, unknown>;
 }
 
 
@@ -636,7 +674,7 @@ export interface RC extends Packet {
 }
 
 export interface RCInit {
-
+  $extras?: Record<string, unknown>;
 }
 
 
@@ -645,7 +683,7 @@ export interface RD extends Packet {
 }
 
 export interface RDInit {
-
+  $extras?: Record<string, unknown>;
 }
 
 
@@ -654,7 +692,7 @@ export interface RM extends Packet {
 }
 
 export interface RMInit {
-
+  $extras?: Record<string, unknown>;
 }
 
 
@@ -665,6 +703,7 @@ export interface RMC extends Packet {
 
 export interface RMCInit {
   to_time: string;
+  $extras?: Record<string, unknown>;
 }
 
 
@@ -677,6 +716,7 @@ export interface RTToClient extends Packet {
 export interface RTToClientInit {
   animation: RTAnimation;
   name?: string;
+  $extras?: Record<string, unknown>;
 }
 
 
@@ -689,6 +729,7 @@ export interface RTToServer extends Packet {
 export interface RTToServerInit {
   animation: RTAnimation;
   name?: string;
+  $extras?: Record<string, unknown>;
 }
 
 
@@ -707,6 +748,7 @@ export interface SCInit {
     desc?: string;
     evidence?: string;
   }[];
+  $extras?: Record<string, unknown>;
 }
 
 
@@ -721,6 +763,7 @@ export interface SIInit {
   char_count: number;
   evi_count: number;
   mus_count: number;
+  $extras?: Record<string, unknown>;
 }
 
 
@@ -735,6 +778,7 @@ export interface SMInit {
   music_list: {
     name: string;
   }[];
+  $extras?: Record<string, unknown>;
 }
 
 
@@ -745,6 +789,7 @@ export interface SP extends Packet {
 
 export interface SPInit {
   side: Side;
+  $extras?: Record<string, unknown>;
 }
 
 
@@ -759,6 +804,7 @@ export interface TIInit {
   timer_id: number;
   command: TimerCommand;
   time?: number;
+  $extras?: Record<string, unknown>;
 }
 
 
@@ -769,6 +815,7 @@ export interface ZZToClient extends Packet {
 
 export interface ZZToClientInit {
   reason: string;
+  $extras?: Record<string, unknown>;
 }
 
 
@@ -781,6 +828,7 @@ export interface ZZToServer extends Packet {
 export interface ZZToServerInit {
   reason?: string;
   reported_player_id?: number;
+  $extras?: Record<string, unknown>;
 }
 
 
@@ -789,7 +837,7 @@ export interface askchaa extends Packet {
 }
 
 export interface askchaaInit {
-
+  $extras?: Record<string, unknown>;
 }
 
 
@@ -800,6 +848,7 @@ export interface decryptor extends Packet {
 
 export interface decryptorInit {
   value: string;
+  $extras?: Record<string, unknown>;
 }
 
 

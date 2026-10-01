@@ -6,18 +6,28 @@ package aolib
 type ARUP struct {
 	UpdateType AreaUpdateType `json:"update_type"`
 	UpdateData []string       `json:"update_data"`
+	Extras     map[string]any `json:"-"`
 }
 
 func (p *ARUP) Header() string { return "ARUP" }
+
+func (p *ARUP) jsonOrder() []string { return []string{"update_type", "update_data"} }
+
+func (p *ARUP) extras() *map[string]any { return &p.Extras }
 
 func (p *ARUP) schemaPath() string { return "packets/schemas/ARUP.schema.json" }
 
 // ASS: Base URL the client downloads missing assets from.
 type ASS struct {
-	AssetUrl string `json:"asset_url"`
+	AssetUrl string         `json:"asset_url"`
+	Extras   map[string]any `json:"-"`
 }
 
 func (p *ASS) Header() string { return "ASS" }
+
+func (p *ASS) jsonOrder() []string { return []string{"asset_url"} }
+
+func (p *ASS) extras() *map[string]any { return &p.Extras }
 
 func (p *ASS) schemaPath() string { return "packets/schemas/ASS.schema.json" }
 
@@ -43,10 +53,15 @@ func ParseASS(body []string) (*ASS, error) {
 
 // AUTH: Result of a moderator login or logout.
 type AUTH struct {
-	AuthState AuthState `json:"auth_state"`
+	AuthState AuthState      `json:"auth_state"`
+	Extras    map[string]any `json:"-"`
 }
 
 func (p *AUTH) Header() string { return "AUTH" }
+
+func (p *AUTH) jsonOrder() []string { return []string{"auth_state"} }
+
+func (p *AUTH) extras() *map[string]any { return &p.Extras }
 
 func (p *AUTH) schemaPath() string { return "packets/schemas/AUTH.schema.json" }
 
@@ -72,9 +87,14 @@ func ParseAUTH(body []string) (*AUTH, error) {
 
 // Askchaa: Asks for the list sizes to start loading; the server replies with SI.
 type Askchaa struct {
+	Extras map[string]any `json:"-"`
 }
 
 func (p *Askchaa) Header() string { return "askchaa" }
+
+func (p *Askchaa) jsonOrder() []string { return []string{} }
+
+func (p *Askchaa) extras() *map[string]any { return &p.Extras }
 
 func (p *Askchaa) schemaPath() string { return "packets/schemas/askchaa.schema.json" }
 
@@ -90,10 +110,15 @@ func ParseAskchaa(body []string) (*Askchaa, error) {
 
 // BB: Server notice shown to the client in a popup.
 type BB struct {
-	Message string `json:"message"`
+	Message string         `json:"message"`
+	Extras  map[string]any `json:"-"`
 }
 
 func (p *BB) Header() string { return "BB" }
+
+func (p *BB) jsonOrder() []string { return []string{"message"} }
+
+func (p *BB) extras() *map[string]any { return &p.Extras }
 
 func (p *BB) schemaPath() string { return "packets/schemas/BB.schema.json" }
 
@@ -119,10 +144,15 @@ func ParseBB(body []string) (*BB, error) {
 
 // BD: Tells a connecting client it is banned.
 type BD struct {
-	Reason string `json:"reason"`
+	Reason string         `json:"reason"`
+	Extras map[string]any `json:"-"`
 }
 
 func (p *BD) Header() string { return "BD" }
+
+func (p *BD) jsonOrder() []string { return []string{"reason"} }
+
+func (p *BD) extras() *map[string]any { return &p.Extras }
 
 func (p *BD) schemaPath() string { return "packets/schemas/BD.schema.json" }
 
@@ -148,11 +178,16 @@ func ParseBD(body []string) (*BD, error) {
 
 // BN: Changes the area background, optionally moving the client to a position.
 type BN struct {
-	Background string `json:"background"`
-	Position   string `json:"position"`
+	Background string         `json:"background"`
+	Position   string         `json:"position"`
+	Extras     map[string]any `json:"-"`
 }
 
 func (p *BN) Header() string { return "BN" }
+
+func (p *BN) jsonOrder() []string { return []string{"background", "position"} }
+
+func (p *BN) extras() *map[string]any { return &p.Extras }
 
 func (p *BN) schemaPath() string { return "packets/schemas/BN.schema.json" }
 
@@ -181,12 +216,17 @@ func ParseBN(body []string) (*BN, error) {
 
 // CC: Character selection request; the server confirms with PV.
 type CC struct {
-	PlayerID     int    `json:"player_id"`
-	CharID       int    `json:"char_id"`
-	CharPassword string `json:"char_password"`
+	PlayerID     int            `json:"player_id"`
+	CharID       int            `json:"char_id"`
+	CharPassword string         `json:"char_password"`
+	Extras       map[string]any `json:"-"`
 }
 
 func (p *CC) Header() string { return "CC" }
+
+func (p *CC) jsonOrder() []string { return []string{"player_id", "char_id", "char_password"} }
+
+func (p *CC) extras() *map[string]any { return &p.Extras }
 
 func (p *CC) schemaPath() string { return "packets/schemas/CC.schema.json" }
 
@@ -218,10 +258,15 @@ func ParseCC(body []string) (*CC, error) {
 
 // CH: Keepalive sent periodically from the courtroom; the server answers with CHECK.
 type CH struct {
-	CharID int `json:"char_id"`
+	CharID int            `json:"char_id"`
+	Extras map[string]any `json:"-"`
 }
 
 func (p *CH) Header() string { return "CH" }
+
+func (p *CH) jsonOrder() []string { return []string{"char_id"} }
+
+func (p *CH) extras() *map[string]any { return &p.Extras }
 
 func (p *CH) schemaPath() string { return "packets/schemas/CH.schema.json" }
 
@@ -247,9 +292,14 @@ func ParseCH(body []string) (*CH, error) {
 
 // CHECK: Keepalive reply to CH; the client uses the round trip as its latency.
 type CHECK struct {
+	Extras map[string]any `json:"-"`
 }
 
 func (p *CHECK) Header() string { return "CHECK" }
+
+func (p *CHECK) jsonOrder() []string { return []string{} }
+
+func (p *CHECK) extras() *map[string]any { return &p.Extras }
 
 func (p *CHECK) schemaPath() string { return "packets/schemas/CHECK.schema.json" }
 
@@ -288,9 +338,14 @@ func parseCIEntriesItem(s string) CIEntriesItem {
 type CI struct {
 	BatchIndex int             `json:"batch_index"`
 	Entries    []CIEntriesItem `json:"entries"`
+	Extras     map[string]any  `json:"-"`
 }
 
 func (p *CI) Header() string { return "CI" }
+
+func (p *CI) jsonOrder() []string { return []string{"batch_index", "entries"} }
+
+func (p *CI) extras() *map[string]any { return &p.Extras }
 
 func (p *CI) schemaPath() string { return "packets/schemas/CI.schema.json" }
 
@@ -323,12 +378,17 @@ func ParseCI(body []string) (*CI, error) {
 
 // CTToClient: Out-of-character chat message.
 type CTToClient struct {
-	Name         string `json:"name"`
-	Message      string `json:"message"`
-	IsFromServer bool   `json:"is_from_server"`
+	Name         string         `json:"name"`
+	Message      string         `json:"message"`
+	IsFromServer bool           `json:"is_from_server"`
+	Extras       map[string]any `json:"-"`
 }
 
 func (p *CTToClient) Header() string { return "CT" }
+
+func (p *CTToClient) jsonOrder() []string { return []string{"name", "message", "is_from_server"} }
+
+func (p *CTToClient) extras() *map[string]any { return &p.Extras }
 
 func (p *CTToClient) schemaPath() string { return "packets/schemas/CTToClient.schema.json" }
 
@@ -360,11 +420,16 @@ func ParseCTToClient(body []string) (*CTToClient, error) {
 
 // CTToServer: Out-of-character chat message; servers treat a leading `/` as a command.
 type CTToServer struct {
-	Name    string `json:"name"`
-	Message string `json:"message"`
+	Name    string         `json:"name"`
+	Message string         `json:"message"`
+	Extras  map[string]any `json:"-"`
 }
 
 func (p *CTToServer) Header() string { return "CT" }
+
+func (p *CTToServer) jsonOrder() []string { return []string{"name", "message"} }
+
+func (p *CTToServer) extras() *map[string]any { return &p.Extras }
 
 func (p *CTToServer) schemaPath() string { return "packets/schemas/CTToServer.schema.json" }
 
@@ -393,10 +458,15 @@ func ParseCTToServer(body []string) (*CTToServer, error) {
 
 // CharsCheck: Which characters are taken.
 type CharsCheck struct {
-	Taken []CharAvailability `json:"taken"`
+	Taken  []CharAvailability `json:"taken"`
+	Extras map[string]any     `json:"-"`
 }
 
 func (p *CharsCheck) Header() string { return "CharsCheck" }
+
+func (p *CharsCheck) jsonOrder() []string { return []string{"taken"} }
+
+func (p *CharsCheck) extras() *map[string]any { return &p.Extras }
 
 func (p *CharsCheck) schemaPath() string { return "packets/schemas/CharsCheck.schema.json" }
 
@@ -420,10 +490,15 @@ func ParseCharsCheck(body []string) (*CharsCheck, error) {
 
 // DE: Deletes an evidence item from the current area.
 type DE struct {
-	ID int `json:"id"`
+	ID     int            `json:"id"`
+	Extras map[string]any `json:"-"`
 }
 
 func (p *DE) Header() string { return "DE" }
+
+func (p *DE) jsonOrder() []string { return []string{"id"} }
+
+func (p *DE) extras() *map[string]any { return &p.Extras }
 
 func (p *DE) schemaPath() string { return "packets/schemas/DE.schema.json" }
 
@@ -449,9 +524,14 @@ func ParseDE(body []string) (*DE, error) {
 
 // DONE: Ends the loading handshake; the client leaves the lobby and enters the courtroom.
 type DONE struct {
+	Extras map[string]any `json:"-"`
 }
 
 func (p *DONE) Header() string { return "DONE" }
+
+func (p *DONE) jsonOrder() []string { return []string{} }
+
+func (p *DONE) extras() *map[string]any { return &p.Extras }
 
 func (p *DONE) schemaPath() string { return "packets/schemas/DONE.schema.json" }
 
@@ -467,10 +547,15 @@ func ParseDONE(body []string) (*DONE, error) {
 
 // Decryptor: First packet from the server; the client replies with HI.
 type Decryptor struct {
-	Value string `json:"value"`
+	Value  string         `json:"value"`
+	Extras map[string]any `json:"-"`
 }
 
 func (p *Decryptor) Header() string { return "decryptor" }
+
+func (p *Decryptor) jsonOrder() []string { return []string{"value"} }
+
+func (p *Decryptor) extras() *map[string]any { return &p.Extras }
 
 func (p *Decryptor) schemaPath() string { return "packets/schemas/decryptor.schema.json" }
 
@@ -496,13 +581,18 @@ func ParseDecryptor(body []string) (*Decryptor, error) {
 
 // EE: Replaces an evidence item in the current area.
 type EE struct {
-	ID          int    `json:"id"`
-	Name        string `json:"name"`
-	Description string `json:"description"`
-	Image       string `json:"image"`
+	ID          int            `json:"id"`
+	Name        string         `json:"name"`
+	Description string         `json:"description"`
+	Image       string         `json:"image"`
+	Extras      map[string]any `json:"-"`
 }
 
 func (p *EE) Header() string { return "EE" }
+
+func (p *EE) jsonOrder() []string { return []string{"id", "name", "description", "image"} }
+
+func (p *EE) extras() *map[string]any { return &p.Extras }
 
 func (p *EE) schemaPath() string { return "packets/schemas/EE.schema.json" }
 
@@ -566,11 +656,16 @@ func parseEIDetails(s string) EIDetails {
 
 // EI: Legacy single evidence item sent during loading, from before LE; webAO's old loader only.
 type EI struct {
-	ID      int       `json:"id"`
-	Details EIDetails `json:"details"`
+	ID      int            `json:"id"`
+	Details EIDetails      `json:"details"`
+	Extras  map[string]any `json:"-"`
 }
 
 func (p *EI) Header() string { return "EI" }
+
+func (p *EI) jsonOrder() []string { return []string{"id", "details"} }
+
+func (p *EI) extras() *map[string]any { return &p.Extras }
 
 func (p *EI) schemaPath() string { return "packets/schemas/EI.schema.json" }
 
@@ -622,9 +717,14 @@ func parseEMEntriesItem(s string) EMEntriesItem {
 type EM struct {
 	BatchIndex int             `json:"batch_index"`
 	Entries    []EMEntriesItem `json:"entries"`
+	Extras     map[string]any  `json:"-"`
 }
 
 func (p *EM) Header() string { return "EM" }
+
+func (p *EM) jsonOrder() []string { return []string{"batch_index", "entries"} }
+
+func (p *EM) extras() *map[string]any { return &p.Extras }
 
 func (p *EM) schemaPath() string { return "packets/schemas/EM.schema.json" }
 
@@ -657,10 +757,15 @@ func ParseEM(body []string) (*EM, error) {
 
 // FA: Full area list; replaces the client's areas.
 type FA struct {
-	Areas []string `json:"areas"`
+	Areas  []string       `json:"areas"`
+	Extras map[string]any `json:"-"`
 }
 
 func (p *FA) Header() string { return "FA" }
+
+func (p *FA) jsonOrder() []string { return []string{"areas"} }
+
+func (p *FA) extras() *map[string]any { return &p.Extras }
 
 func (p *FA) schemaPath() string { return "packets/schemas/FA.schema.json" }
 
@@ -685,10 +790,15 @@ func ParseFA(body []string) (*FA, error) {
 
 // FL: Optional protocol features the server supports.
 type FL struct {
-	Features []string `json:"features"`
+	Features []string       `json:"features"`
+	Extras   map[string]any `json:"-"`
 }
 
 func (p *FL) Header() string { return "FL" }
+
+func (p *FL) jsonOrder() []string { return []string{"features"} }
+
+func (p *FL) extras() *map[string]any { return &p.Extras }
 
 func (p *FL) schemaPath() string { return "packets/schemas/FL.schema.json" }
 
@@ -731,9 +841,14 @@ func parseFMMusicListItem(s string) FMMusicListItem {
 // FM: Full music list; replaces the client's music list.
 type FM struct {
 	MusicList []FMMusicListItem `json:"music_list"`
+	Extras    map[string]any    `json:"-"`
 }
 
 func (p *FM) Header() string { return "FM" }
+
+func (p *FM) jsonOrder() []string { return []string{"music_list"} }
+
+func (p *FM) extras() *map[string]any { return &p.Extras }
 
 func (p *FM) schemaPath() string { return "packets/schemas/FM.schema.json" }
 
@@ -757,10 +872,15 @@ func ParseFM(body []string) (*FM, error) {
 
 // HI: Client hardware ID, sent in reply to decryptor; servers use it for bans.
 type HI struct {
-	HDID string `json:"hdid"`
+	HDID   string         `json:"hdid"`
+	Extras map[string]any `json:"-"`
 }
 
 func (p *HI) Header() string { return "HI" }
+
+func (p *HI) jsonOrder() []string { return []string{"hdid"} }
+
+func (p *HI) extras() *map[string]any { return &p.Extras }
 
 func (p *HI) schemaPath() string { return "packets/schemas/HI.schema.json" }
 
@@ -786,11 +906,16 @@ func ParseHI(body []string) (*HI, error) {
 
 // HPToClient: Sets a penalty bar.
 type HPToClient struct {
-	Bar   PenaltyBar `json:"bar"`
-	Value int        `json:"value"`
+	Bar    PenaltyBar     `json:"bar"`
+	Value  int            `json:"value"`
+	Extras map[string]any `json:"-"`
 }
 
 func (p *HPToClient) Header() string { return "HP" }
+
+func (p *HPToClient) jsonOrder() []string { return []string{"bar", "value"} }
+
+func (p *HPToClient) extras() *map[string]any { return &p.Extras }
 
 func (p *HPToClient) schemaPath() string { return "packets/schemas/HPToClient.schema.json" }
 
@@ -819,11 +944,16 @@ func ParseHPToClient(body []string) (*HPToClient, error) {
 
 // HPToServer: Requests a penalty bar change.
 type HPToServer struct {
-	Bar   PenaltyBar `json:"bar"`
-	Value int        `json:"value"`
+	Bar    PenaltyBar     `json:"bar"`
+	Value  int            `json:"value"`
+	Extras map[string]any `json:"-"`
 }
 
 func (p *HPToServer) Header() string { return "HP" }
+
+func (p *HPToServer) jsonOrder() []string { return []string{"bar", "value"} }
+
+func (p *HPToServer) extras() *map[string]any { return &p.Extras }
 
 func (p *HPToServer) schemaPath() string { return "packets/schemas/HPToServer.schema.json" }
 
@@ -852,12 +982,17 @@ func ParseHPToServer(body []string) (*HPToServer, error) {
 
 // IDToClient: Server identification, sent after HI; the client replies with its own ID.
 type IDToClient struct {
-	PlayerID int    `json:"player_id"`
-	Software string `json:"software"`
-	Version  string `json:"version"`
+	PlayerID int            `json:"player_id"`
+	Software string         `json:"software"`
+	Version  string         `json:"version"`
+	Extras   map[string]any `json:"-"`
 }
 
 func (p *IDToClient) Header() string { return "ID" }
+
+func (p *IDToClient) jsonOrder() []string { return []string{"player_id", "software", "version"} }
+
+func (p *IDToClient) extras() *map[string]any { return &p.Extras }
 
 func (p *IDToClient) schemaPath() string { return "packets/schemas/IDToClient.schema.json" }
 
@@ -889,11 +1024,16 @@ func ParseIDToClient(body []string) (*IDToClient, error) {
 
 // IDToServer: Client identification, sent in reply to IDToClient.
 type IDToServer struct {
-	Software string `json:"software"`
-	Version  string `json:"version"`
+	Software string         `json:"software"`
+	Version  string         `json:"version"`
+	Extras   map[string]any `json:"-"`
 }
 
 func (p *IDToServer) Header() string { return "ID" }
+
+func (p *IDToServer) jsonOrder() []string { return []string{"software", "version"} }
+
+func (p *IDToServer) extras() *map[string]any { return &p.Extras }
 
 func (p *IDToServer) schemaPath() string { return "packets/schemas/IDToServer.schema.json" }
 
@@ -922,10 +1062,15 @@ func ParseIDToServer(body []string) (*IDToServer, error) {
 
 // JD: Shows or hides the judge controls for this client.
 type JD struct {
-	State JudgeState `json:"state"`
+	State  JudgeState     `json:"state"`
+	Extras map[string]any `json:"-"`
 }
 
 func (p *JD) Header() string { return "JD" }
+
+func (p *JD) jsonOrder() []string { return []string{"state"} }
+
+func (p *JD) extras() *map[string]any { return &p.Extras }
 
 func (p *JD) schemaPath() string { return "packets/schemas/JD.schema.json" }
 
@@ -951,10 +1096,15 @@ func ParseJD(body []string) (*JD, error) {
 
 // KB: Tells the client it was banned; the client returns to the lobby.
 type KB struct {
-	Reason string `json:"reason"`
+	Reason string         `json:"reason"`
+	Extras map[string]any `json:"-"`
 }
 
 func (p *KB) Header() string { return "KB" }
+
+func (p *KB) jsonOrder() []string { return []string{"reason"} }
+
+func (p *KB) extras() *map[string]any { return &p.Extras }
 
 func (p *KB) schemaPath() string { return "packets/schemas/KB.schema.json" }
 
@@ -980,10 +1130,15 @@ func ParseKB(body []string) (*KB, error) {
 
 // KK: Tells the client it was kicked; the client returns to the lobby.
 type KK struct {
-	Reason string `json:"reason"`
+	Reason string         `json:"reason"`
+	Extras map[string]any `json:"-"`
 }
 
 func (p *KK) Header() string { return "KK" }
+
+func (p *KK) jsonOrder() []string { return []string{"reason"} }
+
+func (p *KK) extras() *map[string]any { return &p.Extras }
 
 func (p *KK) schemaPath() string { return "packets/schemas/KK.schema.json" }
 
@@ -1035,9 +1190,14 @@ func parseLEEvidenceItem(s string) LEEvidenceItem {
 // LE: Full evidence list for the current area.
 type LE struct {
 	Evidence []LEEvidenceItem `json:"evidence"`
+	Extras   map[string]any   `json:"-"`
 }
 
 func (p *LE) Header() string { return "LE" }
+
+func (p *LE) jsonOrder() []string { return []string{"evidence"} }
+
+func (p *LE) extras() *map[string]any { return &p.Extras }
 
 func (p *LE) schemaPath() string { return "packets/schemas/LE.schema.json" }
 
@@ -1061,12 +1221,17 @@ func ParseLE(body []string) (*LE, error) {
 
 // MA: Moderator action: kicks or bans a player.
 type MA struct {
-	PlayerID        int    `json:"player_id"`
-	DurationMinutes int    `json:"duration_minutes"`
-	Reason          string `json:"reason"`
+	PlayerID        int            `json:"player_id"`
+	DurationMinutes int            `json:"duration_minutes"`
+	Reason          string         `json:"reason"`
+	Extras          map[string]any `json:"-"`
 }
 
 func (p *MA) Header() string { return "MA" }
+
+func (p *MA) jsonOrder() []string { return []string{"player_id", "duration_minutes", "reason"} }
+
+func (p *MA) extras() *map[string]any { return &p.Extras }
 
 func (p *MA) schemaPath() string { return "packets/schemas/MA.schema.json" }
 
@@ -1098,15 +1263,22 @@ func ParseMA(body []string) (*MA, error) {
 
 // MCToClient: Plays a track on a music channel.
 type MCToClient struct {
-	Name     string       `json:"name"`
-	CharID   int          `json:"char_id"`
-	Showname string       `json:"showname"`
-	Looping  bool         `json:"looping"`
-	Channel  MusicChannel `json:"channel"`
-	Effects  MusicEffects `json:"effects"`
+	Name     string         `json:"name"`
+	CharID   int            `json:"char_id"`
+	Showname string         `json:"showname"`
+	Looping  bool           `json:"looping"`
+	Channel  MusicChannel   `json:"channel"`
+	Effects  MusicEffects   `json:"effects"`
+	Extras   map[string]any `json:"-"`
 }
 
 func (p *MCToClient) Header() string { return "MC" }
+
+func (p *MCToClient) jsonOrder() []string {
+	return []string{"name", "char_id", "showname", "looping", "channel", "effects"}
+}
+
+func (p *MCToClient) extras() *map[string]any { return &p.Extras }
 
 func (p *MCToClient) schemaPath() string { return "packets/schemas/MCToClient.schema.json" }
 
@@ -1159,13 +1331,18 @@ func ParseMCToClient(body []string) (*MCToClient, error) {
 
 // MCToServer: Requests a track, or an area change when `name` is an area name.
 type MCToServer struct {
-	Name     string       `json:"name"`
-	CharID   int          `json:"char_id"`
-	Showname string       `json:"showname"`
-	Effects  MusicEffects `json:"effects"`
+	Name     string         `json:"name"`
+	CharID   int            `json:"char_id"`
+	Showname string         `json:"showname"`
+	Effects  MusicEffects   `json:"effects"`
+	Extras   map[string]any `json:"-"`
 }
 
 func (p *MCToServer) Header() string { return "MC" }
+
+func (p *MCToServer) jsonOrder() []string { return []string{"name", "char_id", "showname", "effects"} }
+
+func (p *MCToServer) extras() *map[string]any { return &p.Extras }
 
 func (p *MCToServer) schemaPath() string { return "packets/schemas/MCToServer.schema.json" }
 
@@ -1200,39 +1377,46 @@ func ParseMCToServer(body []string) (*MCToServer, error) {
 
 // MSToClient: In-character message as broadcast by the server, with the pair's data filled in.
 type MSToClient struct {
-	DeskModifier           DeskModifier  `json:"desk_modifier"`
-	Preanim                string        `json:"preanim"`
-	Character              string        `json:"character"`
-	Emote                  string        `json:"emote"`
-	Message                string        `json:"message"`
-	Side                   Side          `json:"side"`
-	SfxName                string        `json:"sfx_name"`
-	EmoteModifier          EmoteModifier `json:"emote_modifier"`
-	CharID                 int           `json:"char_id"`
-	SfxDelay               int           `json:"sfx_delay"`
-	ShoutModifier          ShoutModifier `json:"shout_modifier"`
-	EvidenceID             int           `json:"evidence_id"`
-	Flip                   Flip          `json:"flip"`
-	Realization            bool          `json:"realization"`
-	TextColor              TextColor     `json:"text_color"`
-	Showname               string        `json:"showname"`
-	PairedCharID           int           `json:"paired_charid"`
-	PairedName             string        `json:"paired_name"`
-	PairedEmote            string        `json:"paired_emote"`
-	Offset                 Offset        `json:"offset"`
-	PairedOffset           Offset        `json:"paired_offset"`
-	PairedFlip             Flip          `json:"paired_flip"`
-	NoninterruptingPreanim bool          `json:"noninterrupting_preanim"`
-	SfxLooping             bool          `json:"sfx_looping"`
-	Screenshake            bool          `json:"screenshake"`
-	FramesShake            string        `json:"frames_shake"`
-	FramesRealization      string        `json:"frames_realization"`
-	FramesSfx              string        `json:"frames_sfx"`
-	Additive               bool          `json:"additive"`
-	Effect                 Effect        `json:"effect"`
+	DeskModifier           DeskModifier   `json:"desk_modifier"`
+	Preanim                string         `json:"preanim"`
+	Character              string         `json:"character"`
+	Emote                  string         `json:"emote"`
+	Message                string         `json:"message"`
+	Side                   Side           `json:"side"`
+	SfxName                string         `json:"sfx_name"`
+	EmoteModifier          EmoteModifier  `json:"emote_modifier"`
+	CharID                 int            `json:"char_id"`
+	SfxDelay               int            `json:"sfx_delay"`
+	ShoutModifier          ShoutModifier  `json:"shout_modifier"`
+	EvidenceID             int            `json:"evidence_id"`
+	Flip                   Flip           `json:"flip"`
+	Realization            bool           `json:"realization"`
+	TextColor              TextColor      `json:"text_color"`
+	Showname               string         `json:"showname"`
+	PairedCharID           int            `json:"paired_charid"`
+	PairedName             string         `json:"paired_name"`
+	PairedEmote            string         `json:"paired_emote"`
+	Offset                 Offset         `json:"offset"`
+	PairedOffset           Offset         `json:"paired_offset"`
+	PairedFlip             Flip           `json:"paired_flip"`
+	NoninterruptingPreanim bool           `json:"noninterrupting_preanim"`
+	SfxLooping             bool           `json:"sfx_looping"`
+	Screenshake            bool           `json:"screenshake"`
+	FramesShake            string         `json:"frames_shake"`
+	FramesRealization      string         `json:"frames_realization"`
+	FramesSfx              string         `json:"frames_sfx"`
+	Additive               bool           `json:"additive"`
+	Effect                 Effect         `json:"effect"`
+	Extras                 map[string]any `json:"-"`
 }
 
 func (p *MSToClient) Header() string { return "MS" }
+
+func (p *MSToClient) jsonOrder() []string {
+	return []string{"desk_modifier", "preanim", "character", "emote", "message", "side", "sfx_name", "emote_modifier", "char_id", "sfx_delay", "shout_modifier", "evidence_id", "flip", "realization", "text_color", "showname", "paired_charid", "paired_name", "paired_emote", "offset", "paired_offset", "paired_flip", "noninterrupting_preanim", "sfx_looping", "screenshake", "frames_shake", "frames_realization", "frames_sfx", "additive", "effect"}
+}
+
+func (p *MSToClient) extras() *map[string]any { return &p.Extras }
 
 func (p *MSToClient) schemaPath() string { return "packets/schemas/MSToClient.schema.json" }
 
@@ -1386,35 +1570,42 @@ func ParseMSToClient(body []string) (*MSToClient, error) {
 
 // MSToServer: In-character message sent by the speaker.
 type MSToServer struct {
-	DeskModifier           DeskModifier  `json:"desk_modifier"`
-	Preanim                string        `json:"preanim"`
-	Character              string        `json:"character"`
-	Emote                  string        `json:"emote"`
-	Message                string        `json:"message"`
-	Side                   Side          `json:"side"`
-	SfxName                string        `json:"sfx_name"`
-	EmoteModifier          EmoteModifier `json:"emote_modifier"`
-	CharID                 int           `json:"char_id"`
-	SfxDelay               int           `json:"sfx_delay"`
-	ShoutModifier          ShoutModifier `json:"shout_modifier"`
-	EvidenceID             int           `json:"evidence_id"`
-	Flip                   Flip          `json:"flip"`
-	Realization            bool          `json:"realization"`
-	TextColor              TextColor     `json:"text_color"`
-	Showname               string        `json:"showname"`
-	PairedCharID           int           `json:"paired_charid"`
-	Offset                 Offset        `json:"offset"`
-	NoninterruptingPreanim bool          `json:"noninterrupting_preanim"`
-	SfxLooping             bool          `json:"sfx_looping"`
-	Screenshake            bool          `json:"screenshake"`
-	FramesShake            string        `json:"frames_shake"`
-	FramesRealization      string        `json:"frames_realization"`
-	FramesSfx              string        `json:"frames_sfx"`
-	Additive               bool          `json:"additive"`
-	Effect                 Effect        `json:"effect"`
+	DeskModifier           DeskModifier   `json:"desk_modifier"`
+	Preanim                string         `json:"preanim"`
+	Character              string         `json:"character"`
+	Emote                  string         `json:"emote"`
+	Message                string         `json:"message"`
+	Side                   Side           `json:"side"`
+	SfxName                string         `json:"sfx_name"`
+	EmoteModifier          EmoteModifier  `json:"emote_modifier"`
+	CharID                 int            `json:"char_id"`
+	SfxDelay               int            `json:"sfx_delay"`
+	ShoutModifier          ShoutModifier  `json:"shout_modifier"`
+	EvidenceID             int            `json:"evidence_id"`
+	Flip                   Flip           `json:"flip"`
+	Realization            bool           `json:"realization"`
+	TextColor              TextColor      `json:"text_color"`
+	Showname               string         `json:"showname"`
+	PairedCharID           int            `json:"paired_charid"`
+	Offset                 Offset         `json:"offset"`
+	NoninterruptingPreanim bool           `json:"noninterrupting_preanim"`
+	SfxLooping             bool           `json:"sfx_looping"`
+	Screenshake            bool           `json:"screenshake"`
+	FramesShake            string         `json:"frames_shake"`
+	FramesRealization      string         `json:"frames_realization"`
+	FramesSfx              string         `json:"frames_sfx"`
+	Additive               bool           `json:"additive"`
+	Effect                 Effect         `json:"effect"`
+	Extras                 map[string]any `json:"-"`
 }
 
 func (p *MSToServer) Header() string { return "MS" }
+
+func (p *MSToServer) jsonOrder() []string {
+	return []string{"desk_modifier", "preanim", "character", "emote", "message", "side", "sfx_name", "emote_modifier", "char_id", "sfx_delay", "shout_modifier", "evidence_id", "flip", "realization", "text_color", "showname", "paired_charid", "offset", "noninterrupting_preanim", "sfx_looping", "screenshake", "frames_shake", "frames_realization", "frames_sfx", "additive", "effect"}
+}
+
+func (p *MSToServer) extras() *map[string]any { return &p.Extras }
 
 func (p *MSToServer) schemaPath() string { return "packets/schemas/MSToServer.schema.json" }
 
@@ -1552,12 +1743,17 @@ func ParseMSToServer(body []string) (*MSToServer, error) {
 
 // PE: Adds an evidence item to the current area.
 type PE struct {
-	Name        string `json:"name"`
-	Description string `json:"description"`
-	Image       string `json:"image"`
+	Name        string         `json:"name"`
+	Description string         `json:"description"`
+	Image       string         `json:"image"`
+	Extras      map[string]any `json:"-"`
 }
 
 func (p *PE) Header() string { return "PE" }
+
+func (p *PE) jsonOrder() []string { return []string{"name", "description", "image"} }
+
+func (p *PE) extras() *map[string]any { return &p.Extras }
 
 func (p *PE) schemaPath() string { return "packets/schemas/PE.schema.json" }
 
@@ -1589,12 +1785,19 @@ func ParsePE(body []string) (*PE, error) {
 
 // PN: Player count and server description, shown in the lobby.
 type PN struct {
-	PlayerCount       int    `json:"player_count"`
-	MaxPlayers        int    `json:"max_players"`
-	ServerDescription string `json:"server_description"`
+	PlayerCount       int            `json:"player_count"`
+	MaxPlayers        int            `json:"max_players"`
+	ServerDescription string         `json:"server_description"`
+	Extras            map[string]any `json:"-"`
 }
 
 func (p *PN) Header() string { return "PN" }
+
+func (p *PN) jsonOrder() []string {
+	return []string{"player_count", "max_players", "server_description"}
+}
+
+func (p *PN) extras() *map[string]any { return &p.Extras }
 
 func (p *PN) schemaPath() string { return "packets/schemas/PN.schema.json" }
 
@@ -1626,11 +1829,16 @@ func ParsePN(body []string) (*PN, error) {
 
 // PR: Adds or removes a player-list entry.
 type PR struct {
-	ID   int              `json:"id"`
-	Type PlayerListUpdate `json:"type"`
+	ID     int              `json:"id"`
+	Type   PlayerListUpdate `json:"type"`
+	Extras map[string]any   `json:"-"`
 }
 
 func (p *PR) Header() string { return "PR" }
+
+func (p *PR) jsonOrder() []string { return []string{"id", "type"} }
+
+func (p *PR) extras() *map[string]any { return &p.Extras }
 
 func (p *PR) schemaPath() string { return "packets/schemas/PR.schema.json" }
 
@@ -1659,12 +1867,17 @@ func ParsePR(body []string) (*PR, error) {
 
 // PU: Updates one field of a player-list entry.
 type PU struct {
-	ID   int            `json:"id"`
-	Type PlayerDataType `json:"type"`
-	Data string         `json:"data"`
+	ID     int            `json:"id"`
+	Type   PlayerDataType `json:"type"`
+	Data   string         `json:"data"`
+	Extras map[string]any `json:"-"`
 }
 
 func (p *PU) Header() string { return "PU" }
+
+func (p *PU) jsonOrder() []string { return []string{"id", "type", "data"} }
+
+func (p *PU) extras() *map[string]any { return &p.Extras }
 
 func (p *PU) schemaPath() string { return "packets/schemas/PU.schema.json" }
 
@@ -1696,11 +1909,16 @@ func ParsePU(body []string) (*PU, error) {
 
 // PV: Confirms a character selection (reply to CC).
 type PV struct {
-	PlayerID int `json:"player_id"`
-	CharID   int `json:"char_id"`
+	PlayerID int            `json:"player_id"`
+	CharID   int            `json:"char_id"`
+	Extras   map[string]any `json:"-"`
 }
 
 func (p *PV) Header() string { return "PV" }
+
+func (p *PV) jsonOrder() []string { return []string{"player_id", "_cid", "char_id"} }
+
+func (p *PV) extras() *map[string]any { return &p.Extras }
 
 func (p *PV) jsonConsts() map[string]string {
 	return map[string]string{"_cid": "CID"}
@@ -1735,9 +1953,14 @@ func ParsePV(body []string) (*PV, error) {
 
 // RC: Requests the character list; the server replies with SC.
 type RC struct {
+	Extras map[string]any `json:"-"`
 }
 
 func (p *RC) Header() string { return "RC" }
+
+func (p *RC) jsonOrder() []string { return []string{} }
+
+func (p *RC) extras() *map[string]any { return &p.Extras }
 
 func (p *RC) schemaPath() string { return "packets/schemas/RC.schema.json" }
 
@@ -1753,9 +1976,14 @@ func ParseRC(body []string) (*RC, error) {
 
 // RD: Tells the server the client has loaded its lists; the server sends area state and DONE.
 type RD struct {
+	Extras map[string]any `json:"-"`
 }
 
 func (p *RD) Header() string { return "RD" }
+
+func (p *RD) jsonOrder() []string { return []string{} }
+
+func (p *RD) extras() *map[string]any { return &p.Extras }
 
 func (p *RD) schemaPath() string { return "packets/schemas/RD.schema.json" }
 
@@ -1771,9 +1999,14 @@ func ParseRD(body []string) (*RD, error) {
 
 // RM: Requests the music list; the server replies with SM.
 type RM struct {
+	Extras map[string]any `json:"-"`
 }
 
 func (p *RM) Header() string { return "RM" }
+
+func (p *RM) jsonOrder() []string { return []string{} }
+
+func (p *RM) extras() *map[string]any { return &p.Extras }
 
 func (p *RM) schemaPath() string { return "packets/schemas/RM.schema.json" }
 
@@ -1789,10 +2022,15 @@ func ParseRM(body []string) (*RM, error) {
 
 // RMC: Seeks the currently playing track to an offset. Only webAO handles it; AO2-Client ignores it.
 type RMC struct {
-	ToTime string `json:"to_time"`
+	ToTime string         `json:"to_time"`
+	Extras map[string]any `json:"-"`
 }
 
 func (p *RMC) Header() string { return "RMC" }
+
+func (p *RMC) jsonOrder() []string { return []string{"to_time"} }
+
+func (p *RMC) extras() *map[string]any { return &p.Extras }
 
 func (p *RMC) schemaPath() string { return "packets/schemas/RMC.schema.json" }
 
@@ -1818,21 +2056,31 @@ func ParseRMC(body []string) (*RMC, error) {
 
 // RTToClient: Plays a testimony or verdict animation.
 type RTToClient struct {
-	Animation RTAnimation `json:"animation"`
-	Name      string      `json:"name"`
+	Animation RTAnimation    `json:"animation"`
+	Name      string         `json:"name"`
+	Extras    map[string]any `json:"-"`
 }
 
 func (p *RTToClient) Header() string { return "RT" }
+
+func (p *RTToClient) jsonOrder() []string { return []string{"animation", "name"} }
+
+func (p *RTToClient) extras() *map[string]any { return &p.Extras }
 
 func (p *RTToClient) schemaPath() string { return "packets/schemas/RTToClient.schema.json" }
 
 // RTToServer: Requests a testimony or verdict animation.
 type RTToServer struct {
-	Animation RTAnimation `json:"animation"`
-	Name      string      `json:"name"`
+	Animation RTAnimation    `json:"animation"`
+	Name      string         `json:"name"`
+	Extras    map[string]any `json:"-"`
 }
 
 func (p *RTToServer) Header() string { return "RT" }
+
+func (p *RTToServer) jsonOrder() []string { return []string{"animation", "name"} }
+
+func (p *RTToServer) extras() *map[string]any { return &p.Extras }
 
 func (p *RTToServer) schemaPath() string { return "packets/schemas/RTToServer.schema.json" }
 
@@ -1864,9 +2112,14 @@ func parseSCCharDataItem(s string) SCCharDataItem {
 // SC: Character list, sent in reply to RC.
 type SC struct {
 	CharData []SCCharDataItem `json:"char_data"`
+	Extras   map[string]any   `json:"-"`
 }
 
 func (p *SC) Header() string { return "SC" }
+
+func (p *SC) jsonOrder() []string { return []string{"char_data"} }
+
+func (p *SC) extras() *map[string]any { return &p.Extras }
 
 func (p *SC) schemaPath() string { return "packets/schemas/SC.schema.json" }
 
@@ -1890,12 +2143,17 @@ func ParseSC(body []string) (*SC, error) {
 
 // SI: List sizes, sent in reply to askchaa; the client then requests SC with RC.
 type SI struct {
-	CharCount int `json:"char_count"`
-	EviCount  int `json:"evi_count"`
-	MusCount  int `json:"mus_count"`
+	CharCount int            `json:"char_count"`
+	EviCount  int            `json:"evi_count"`
+	MusCount  int            `json:"mus_count"`
+	Extras    map[string]any `json:"-"`
 }
 
 func (p *SI) Header() string { return "SI" }
+
+func (p *SI) jsonOrder() []string { return []string{"char_count", "evi_count", "mus_count"} }
+
+func (p *SI) extras() *map[string]any { return &p.Extras }
 
 func (p *SI) schemaPath() string { return "packets/schemas/SI.schema.json" }
 
@@ -1945,9 +2203,14 @@ func parseSMMusicListItem(s string) SMMusicListItem {
 // SM: Legacy combined area and music list, sent in reply to RM; the client replies with RD.
 type SM struct {
 	MusicList []SMMusicListItem `json:"music_list"`
+	Extras    map[string]any    `json:"-"`
 }
 
 func (p *SM) Header() string { return "SM" }
+
+func (p *SM) jsonOrder() []string { return []string{"music_list"} }
+
+func (p *SM) extras() *map[string]any { return &p.Extras }
 
 func (p *SM) schemaPath() string { return "packets/schemas/SM.schema.json" }
 
@@ -1971,10 +2234,15 @@ func ParseSM(body []string) (*SM, error) {
 
 // SP: Moves the client to a position.
 type SP struct {
-	Side Side `json:"side"`
+	Side   Side           `json:"side"`
+	Extras map[string]any `json:"-"`
 }
 
 func (p *SP) Header() string { return "SP" }
+
+func (p *SP) jsonOrder() []string { return []string{"side"} }
+
+func (p *SP) extras() *map[string]any { return &p.Extras }
 
 func (p *SP) schemaPath() string { return "packets/schemas/SP.schema.json" }
 
@@ -2000,12 +2268,17 @@ func ParseSP(body []string) (*SP, error) {
 
 // TI: Controls a countdown clock.
 type TI struct {
-	TimerID int          `json:"timer_id"`
-	Command TimerCommand `json:"command"`
-	Time    int          `json:"time"`
+	TimerID int            `json:"timer_id"`
+	Command TimerCommand   `json:"command"`
+	Time    int            `json:"time"`
+	Extras  map[string]any `json:"-"`
 }
 
 func (p *TI) Header() string { return "TI" }
+
+func (p *TI) jsonOrder() []string { return []string{"timer_id", "command", "time"} }
+
+func (p *TI) extras() *map[string]any { return &p.Extras }
 
 func (p *TI) schemaPath() string { return "packets/schemas/TI.schema.json" }
 
@@ -2037,10 +2310,15 @@ func ParseTI(body []string) (*TI, error) {
 
 // ZZToClient: Mod call notice delivered to moderators.
 type ZZToClient struct {
-	Reason string `json:"reason"`
+	Reason string         `json:"reason"`
+	Extras map[string]any `json:"-"`
 }
 
 func (p *ZZToClient) Header() string { return "ZZ" }
+
+func (p *ZZToClient) jsonOrder() []string { return []string{"reason"} }
+
+func (p *ZZToClient) extras() *map[string]any { return &p.Extras }
 
 func (p *ZZToClient) schemaPath() string { return "packets/schemas/ZZToClient.schema.json" }
 
@@ -2066,11 +2344,16 @@ func ParseZZToClient(body []string) (*ZZToClient, error) {
 
 // ZZToServer: Calls a moderator.
 type ZZToServer struct {
-	Reason           string `json:"reason"`
-	ReportedPlayerID int    `json:"reported_player_id"`
+	Reason           string         `json:"reason"`
+	ReportedPlayerID int            `json:"reported_player_id"`
+	Extras           map[string]any `json:"-"`
 }
 
 func (p *ZZToServer) Header() string { return "ZZ" }
+
+func (p *ZZToServer) jsonOrder() []string { return []string{"reason", "reported_player_id"} }
+
+func (p *ZZToServer) extras() *map[string]any { return &p.Extras }
 
 func (p *ZZToServer) schemaPath() string { return "packets/schemas/ZZToServer.schema.json" }
 

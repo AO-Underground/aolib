@@ -1,8 +1,10 @@
 package aolib
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
+	"sort"
 	"strings"
 )
 
@@ -32,7 +34,7 @@ func Encode(p Outgoing, mode WireMode) ([]byte, error) {
 		if err := validateJSON(p, raw); err != nil {
 			return nil, err
 		}
-		return raw, nil
+		return appendExtras(p, raw)
 	case WireFanta:
 		if err := validatePacket(p); err != nil {
 			return nil, err
@@ -128,29 +130,102 @@ func decodeJSON(raw []byte, decoders map[string]jsonDecoder) (string, any, error
 	return header, p, err
 }
 
-// encodeJSON marshals a typed packet to the meta JSON envelope: the struct's
-// named fields plus a "$header" const and any const slots the schema requires.
-// Enum fields are Go string types, so they serialise to their meta string
-// values (e.g. "shown", "def") and Offset stays an {x,y} object.
+// encodeJSON marshals a typed packet to the JSON envelope: "$header", then the
+// schema's fields in schema order, const slots included. Enum fields are Go
+// string types, so they serialise to their meta string values (e.g. "shown").
 func encodeJSON(p Outgoing) ([]byte, error) {
 	obj, err := toObject(p)
 	if err != nil {
 		return nil, fmt.Errorf("aolib: JSON encode failed for %q: %w", p.Header(), err)
 	}
-	h, _ := json.Marshal(p.Header())
-	obj["$header"] = h
 	if c, ok := p.(interface{ jsonConsts() map[string]string }); ok {
 		for k, v := range c.jsonConsts() {
-			obj[k], _ = json.Marshal(v)
+			obj[k], _ = marshalJSON(v)
 		}
 	}
-	return json.Marshal(obj)
+	h, _ := marshalJSON(p.Header())
+	var b bytes.Buffer
+	b.WriteString(`{"$header":`)
+	b.Write(h)
+	var order []string
+	if o, ok := p.(interface{ jsonOrder() []string }); ok {
+		order = o.jsonOrder()
+	}
+	for _, k := range order {
+		if v, ok := obj[k]; ok {
+			writeJSONMember(&b, k, v)
+			delete(obj, k)
+		}
+	}
+	for _, k := range sortedKeys(obj) {
+		writeJSONMember(&b, k, obj[k])
+	}
+	b.WriteByte('}')
+	return b.Bytes(), nil
+}
+
+// appendExtras adds a packet's Extras as top-level keys, sorted, after the
+// schema fields. They are JSON-only and unvalidated.
+func appendExtras(p Outgoing, raw []byte) ([]byte, error) {
+	e, ok := p.(interface{ extras() *map[string]any })
+	if !ok || len(*e.extras()) == 0 {
+		return raw, nil
+	}
+	schema := map[string]bool{}
+	if o, ok := p.(interface{ jsonOrder() []string }); ok {
+		for _, k := range o.jsonOrder() {
+			schema[k] = true
+		}
+	}
+	extras := *e.extras()
+	b := bytes.NewBuffer(raw[:len(raw)-1])
+	for _, k := range sortedKeys(extras) {
+		if schema[k] || strings.HasPrefix(k, "$") {
+			return nil, fmt.Errorf("aolib: Extras key %q collides with a schema field or reserved name", k)
+		}
+		v, err := marshalJSON(extras[k])
+		if err != nil {
+			return nil, fmt.Errorf("aolib: Extras key %q: %w", k, err)
+		}
+		writeJSONMember(b, k, v)
+	}
+	b.WriteByte('}')
+	return b.Bytes(), nil
+}
+
+// marshalJSON is json.Marshal without HTML escaping, so `&`, `<` and `>` go
+// out literally, as in aolib-ts.
+func marshalJSON(v any) ([]byte, error) {
+	var b bytes.Buffer
+	enc := json.NewEncoder(&b)
+	enc.SetEscapeHTML(false)
+	if err := enc.Encode(v); err != nil {
+		return nil, err
+	}
+	return bytes.TrimSuffix(b.Bytes(), []byte("\n")), nil
+}
+
+func writeJSONMember(b *bytes.Buffer, k string, v []byte) {
+	key, _ := marshalJSON(k)
+	b.WriteByte(',')
+	b.Write(key)
+	b.WriteByte(':')
+	b.Write(v)
+}
+
+func sortedKeys[V any](m map[string]V) []string {
+	keys := make([]string, 0, len(m))
+	for k := range m {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys)
+	return keys
 }
 
 // toObject marshals v and re-reads it as a field map, so a "$header" key can be
 // injected without the struct needing a dedicated field.
 func toObject(v any) (map[string]json.RawMessage, error) {
-	raw, err := json.Marshal(v)
+	raw, err := marshalJSON(v)
 	if err != nil {
 		return nil, err
 	}
@@ -198,17 +273,59 @@ func jsonDecoderFor[T any](raw []byte) (any, error) {
 	if d, ok := any(p).(interface{ applyDefaults() }); ok {
 		d.applyDefaults()
 	}
+	raw, extras, err := splitExtras(p, raw)
+	if err != nil {
+		return nil, err
+	}
 	if err := json.Unmarshal(raw, p); err != nil {
 		return nil, err
 	}
-	raw, err := withJSONConsts(p, raw)
-	if err != nil {
+	if raw, err = withJSONConsts(p, raw); err != nil {
 		return nil, err
 	}
 	if err := validateJSON(p, raw); err != nil {
 		return nil, err
 	}
+	if e, ok := any(p).(interface{ extras() *map[string]any }); ok && len(extras) > 0 {
+		*e.extras() = extras
+	}
 	return p, nil
+}
+
+// splitExtras moves the keys p's schema does not define out of a JSON frame.
+func splitExtras(p any, raw []byte) ([]byte, map[string]any, error) {
+	o, ok := p.(interface{ jsonOrder() []string })
+	if !ok {
+		return raw, nil, nil
+	}
+	var obj map[string]json.RawMessage
+	if err := json.Unmarshal(raw, &obj); err != nil {
+		return nil, nil, err
+	}
+	known := map[string]bool{"$header": true, "header": true}
+	for _, k := range o.jsonOrder() {
+		known[k] = true
+	}
+	var extras map[string]any
+	for k, v := range obj {
+		if known[k] {
+			continue
+		}
+		var val any
+		if err := json.Unmarshal(v, &val); err != nil {
+			return nil, nil, err
+		}
+		if extras == nil {
+			extras = map[string]any{}
+		}
+		extras[k] = val
+		delete(obj, k)
+	}
+	if extras == nil {
+		return raw, nil, nil
+	}
+	raw, err := json.Marshal(obj)
+	return raw, extras, err
 }
 
 // withJSONConsts adds any const slot (e.g. PV's "_cid") the frame omits, so

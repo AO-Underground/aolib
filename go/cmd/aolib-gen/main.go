@@ -640,8 +640,17 @@ func emitPackets(packets []*Schema, enumNames, typeNames map[string]*Schema) str
 			}
 			fmt.Fprintf(&b, "\t%s %s `json:%q`\n", pascalCase(p.Name), ft, p.Name)
 		}
+		b.WriteString("\tExtras map[string]any `json:\"-\"`\n")
 		b.WriteString("}\n\n")
 		fmt.Fprintf(&b, "func (p *%s) Header() string { return %q }\n\n", s.Name, s.Header)
+		var order []string
+		for _, p := range s.Properties {
+			if p.Name != "$header" {
+				order = append(order, strconv.Quote(p.Name))
+			}
+		}
+		fmt.Fprintf(&b, "func (p *%s) jsonOrder() []string { return []string{%s} }\n\n", s.Name, strings.Join(order, ", "))
+		fmt.Fprintf(&b, "func (p *%s) extras() *map[string]any { return &p.Extras }\n\n", s.Name)
 		var consts []string
 		for _, p := range s.Properties {
 			if p.Schema.Const != "" {

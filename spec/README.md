@@ -64,7 +64,16 @@ Each library wires its JSON Schema validator (e.g. Ajv in TS) and a
 fanta-format walker to the same schemas:
 
 - **JSON envelope**: packet body is the schema as-is, with `$header`
-  prepended. `const` slots (e.g. `PV._cid`) are included.
+  prepended. `const` slots (e.g. `PV._cid`) are included. Keys are written
+  in order: `$header`, then the schema's properties in schema order (nested
+  objects likewise), then any extras.
+- **Extras (JSON only)**: keys a packet's schema does not define are not an
+  error. A decoder collects them, with their JSON values, into a `$extras`
+  map on the parsed packet; an encoder writes `$extras` back as top-level
+  keys after the schema fields, sorted by key. An extras key that names a
+  schema property or starts with `$` is an encode error. Extras are not
+  validated and FantaCode never carries them: they are dropped on encode,
+  and extra positional slots are ignored on decode.
 - **Fanta wire**: `HEADER#field1#field2#...#%`, one positional slot per
   top-level property (skipping `$header`). The walker derives per-slot
   encoding from the property's JSON type:
@@ -81,6 +90,12 @@ fanta-format walker to the same schemas:
     (by the value's index in `enum`); decode maps the integer token back to the
     string. A plain enum with no `x-wire-ints` (e.g. `Side`) uses its base-type
     rule above (the string is sent verbatim)
+
+Every connection starts in FantaCode, and each side switches its own outbound
+format to JSON only on a signal: a client when it receives `decryptor` with
+value `JSON` (and wants JSON), a server when it receives a frame from that
+client starting with `{`. Inbound frames are decoded by their first byte in
+either mode.
 
 Validation (defaults, required-field checks, type coercion errors) is
 delegated to the JSON Schema validator on both encode (pre-serialize) and

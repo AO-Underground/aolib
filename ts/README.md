@@ -405,9 +405,15 @@ symmetrically.
   several connected clients can have some on fanta and some on JSON
   simultaneously. Outbound mode is per-session and starts at fanta;
   the application calls `session.setJsonMode(true)` when it sees the
-  protocol's mode-switch signal (e.g. on receipt of `decryptor`). The
-  library does not inspect packet contents to flip modes on its own.
+  protocol's mode-switch signal: a client on `decryptor#JSON`, a server
+  when a frame from that client starts with `{`. The library does not
+  inspect packet contents to flip modes on its own.
   Inbound always auto-detects.
+
+- **Unknown JSON keys are kept.** Keys a schema doesn't define land in
+  the packet's `$extras` map on decode, and `$extras` is written back as
+  top-level keys after the schema fields on encode. JSON-only; FantaCode
+  drops them.
 
 - **Schemas don't disagree with types.** The JSON Schema files under
   `spec/` are the source for both runtime walks and the

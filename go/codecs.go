@@ -54,7 +54,7 @@ func (p ARUP) MarshalJSON() ([]byte, error) {
 			data[i] = n
 		}
 	}
-	return json.Marshal(struct {
+	return marshalJSON(struct {
 		UpdateType AreaUpdateType `json:"update_type"`
 		UpdateData []any          `json:"update_data"`
 	}{p.UpdateType, data})

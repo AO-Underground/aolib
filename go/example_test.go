@@ -41,27 +41,31 @@ func TestExampleServerClient(t *testing.T) {
 	}
 }
 
-// TestExampleAutoJSON shows the wire format being auto-detected: after the
-// server advertises decryptor#JSON, the client speaks JSON and the server's
-// session flips to JSON outbound without the caller touching the wire format.
-func TestExampleAutoJSON(t *testing.T) {
-	var serverSide *ClientSession
-	var clientSide *ServerSession
-	serverSide = NewClient(SessionConfig{Send: func(w []byte) { clientSide.Receive(w) }})
-	clientSide = NewServer(SessionConfig{Send: func(w []byte) { serverSide.Receive(w) }})
+// TestJSONModeIsManual: receiving JSON decodes fine but leaves outbound on
+// FantaCode; only SetJSONMode switches it.
+func TestJSONModeIsManual(t *testing.T) {
+	var sent []byte
+	serverSide := NewClient(SessionConfig{Send: func(w []byte) { sent = w }})
+	gotHI := false
+	serverSide.OnHI(func(*HI) { gotHI = true })
 
-	// Server advertises JSON support (sent as FantaCode).
-	serverSide.SendDecryptor(&Decryptor{})
-
-	// Client opts into JSON and sends a JSON-encoded HI.
 	jsonHI, err := Encode(&HI{HDID: "json-client"}, WireJSON)
 	if err != nil {
 		t.Fatalf("encode: %v", err)
 	}
 	serverSide.Receive(jsonHI)
+	if !gotHI || serverSide.JSONMode() {
+		t.Fatalf("after a JSON frame: handled=%v JSONMode=%v, want true, false", gotHI, serverSide.JSONMode())
+	}
+	serverSide.SendDONE(&DONE{})
+	if string(sent) != "DONE#%" {
+		t.Fatalf("outbound before SetJSONMode = %q, want FantaCode", sent)
+	}
 
-	if !serverSide.JSONMode() {
-		t.Fatal("server should have auto-flipped to JSON after receiving a JSON packet")
+	serverSide.SetJSONMode(true)
+	serverSide.SendDONE(&DONE{})
+	if string(sent) != `{"$header":"DONE"}` {
+		t.Fatalf("outbound after SetJSONMode = %q, want JSON", sent)
 	}
 }
 

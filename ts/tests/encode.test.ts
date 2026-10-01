@@ -53,13 +53,28 @@ describe("encode: JSON mode", () => {
     );
   });
 
-  it("const-typed schema properties appear in the envelope (Ajv fills from default)", () => {
+  it("const-typed schema properties appear in the envelope, in schema order", () => {
     expect(encode(CC, { char_id: 5 }, "json")).toBe(
-      '{"$header":"CC","char_id":5,"_0":0,"_pw":""}',
+      '{"$header":"CC","_0":0,"char_id":5,"_pw":""}',
     );
     expect(encode(PV, { player_id: 3, char_id: 7 }, "json")).toBe(
-      '{"$header":"PV","player_id":3,"char_id":7,"_cid":"CID"}',
+      '{"$header":"PV","player_id":3,"_cid":"CID","char_id":7}',
     );
+  });
+
+  it("writes $extras as top-level keys after the schema fields, sorted", () => {
+    expect(encode(PV, { char_id: 7, player_id: 3, $extras: { zeta: 1, alpha: { a: true } } }, "json")).toBe(
+      '{"$header":"PV","player_id":3,"_cid":"CID","char_id":7,"alpha":{"a":true},"zeta":1}',
+    );
+  });
+
+  it("drops $extras on FantaCode", () => {
+    expect(encode(PV, { player_id: 3, char_id: 7, $extras: { blips: "male" } }, "fanta")).toBe("PV#3#CID#7#%");
+  });
+
+  it("rejects $extras keys that collide with schema fields or start with $", () => {
+    expect(() => encode(PV, { player_id: 3, char_id: 7, $extras: { char_id: 1 } }, "json")).toThrow(/collides/);
+    expect(() => encode(PV, { player_id: 3, char_id: 7, $extras: { $x: 1 } }, "json")).toThrow(/collides/);
   });
 
   it("optional fields with provided values keep them", () => {

@@ -49,7 +49,7 @@
         },
         "side": {
           "type": "string",
-          "description": "Court position (e.g. def/pro/wit). Defaults to `wit` when the file has no `side` key.",
+          "description": "Court position (e.g. def/pro/wit). Defaults to `wit` when the file has no `side` key. The old `pos` key is not read as `side`.",
           "default": "wit"
         },
         "blips": {
@@ -77,6 +77,37 @@
           "type": "string",
           "description": "PMX model file for a 3D character; absent/empty for 2D.",
           "default": ""
+        },
+        "scaling": {
+          "type": "string",
+          "enum": [
+            "auto",
+            "smooth",
+            "pixel"
+          ],
+          "default": "auto",
+          "description": "Sprite scaling filter: `smooth` from `smooth`, `pixel` from `pixel` or `fast`, otherwise `auto` (the client chooses). Case-sensitive, as in AO2-Client."
+        },
+        "stretch": {
+          "type": "boolean",
+          "default": false,
+          "description": "Stretch sprites to fill the viewport: true when the value starts with `true`, as in AO2-Client."
+        },
+        "realization": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "default": null,
+          "description": "Sound played for a realization, resolved like other sound names; null (absent or empty) uses the theme's realization sound."
+        },
+        "shouts": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "default": null,
+          "description": "Folder for the character's shout bubbles and sounds, read by AO2-Client 2.8; later clients take them from `chat`. Null (absent or empty) uses the theme's."
         }
       },
       "required": [
@@ -85,7 +116,12 @@
         "side",
         "blips",
         "chat",
-        "category"
+        "category",
+        "model",
+        "scaling",
+        "stretch",
+        "realization",
+        "shouts"
       ],
       "additionalProperties": {
         "type": "string"
@@ -160,6 +196,19 @@
           "type": "integer",
           "description": "Sound delay in 40 ms ticks, as MS sfx_delay carries it. Default 0. Authoritative for legacy [soundt]; derived (ms / 40, rounded half up) for [emote] blocks.",
           "default": 0
+        },
+        "soundlooping": {
+          "type": "boolean",
+          "default": false,
+          "description": "Loop the emote's sound. Legacy [SoundL] `<id> = 1`; any other value or none is false. Blocks: `soundlooping = true`."
+        },
+        "preanimdurationms": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "default": null,
+          "description": "Cap on how long the preanimation plays, in milliseconds, or null for no cap. Legacy [Time] `<preanim> = <ms>`, keyed by the emote's preanim name; blocks: `preanimdurationms`. A value that is not a positive integer is null."
         }
       },
       "required": [
@@ -173,7 +222,9 @@
         "deskmod",
         "sound",
         "sounddelayms",
-        "sounddelayticks"
+        "sounddelayticks",
+        "soundlooping",
+        "preanimdurationms"
       ],
       "additionalProperties": false
     }

@@ -26,6 +26,9 @@ import aolib "github.com/AO-Underground/aolib/go/v2"
   `aolib.DecodeToServer(raw, mode)` / `aolib.DecodeToClient(raw, mode)` by
   direction: wire encode/decode of any typed packet. `aolib.ReadHeader(raw)`
   reads just the header; `aolib.Validate(pkt)` checks a packet against its schema.
+- `Extras map[string]any` on every packet struct: JSON keys the schema doesn't
+  define, kept on decode and written after the schema fields on encode.
+  JSON-only; FantaCode drops them.
 - `aolib.ParseCharIni(text)`: char.ini parser per [`spec/assets`](../spec/assets/README.md).
 - `aolib.NewPacket(raw)` / `Packet.String()`: raw FantaCode framing.
 - `aolib.MSToServer` / `aolib.MSToClient`: the in-character (`MS`) packet, split
@@ -52,8 +55,10 @@ FantaCode, `c2sJSON` / `s2cJSON` for JSON); there is no giant `switch`.
 Every packet is validated against its `spec/` schema on decode and encode,
 failing with a `*ValidationError`. `Receive` never panics; failures route to
 `SessionConfig` hooks (`OnMalformedFrame`, `OnUnknownHeader`, `OnDecodeError`,
-`OnEncodeError`, `OnUnhandled`, `OnHandlerError`). Wire mode is per-session and inbound always auto-detects
-JSON; `SetJSONMode` flips the outbound format.
+`OnEncodeError`, `OnUnhandled`, `OnHandlerError`). Inbound frames are decoded
+in either format. Outbound starts as FantaCode and switches only via
+`SetJSONMode`: a client calls it on `decryptor#JSON`, a server when a frame
+from that client starts with `{`.
 
 ```go
 // Server side: one session per connected client.

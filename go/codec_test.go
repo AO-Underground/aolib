@@ -1,6 +1,7 @@
 package aolib
 
 import (
+	"reflect"
 	"strings"
 	"testing"
 )
@@ -71,7 +72,7 @@ func TestDecodeRTLenientForms(t *testing.T) {
 		if err != nil {
 			t.Fatalf("Decode(%q): %v", c.wire, err)
 		}
-		if got, ok := v.(*RTToServer); !ok || *got != c.want {
+		if got, ok := v.(*RTToServer); !ok || !reflect.DeepEqual(*got, c.want) {
 			t.Fatalf("Decode(%q) = %#v, want %#v", c.wire, v, c.want)
 		}
 	}
@@ -127,7 +128,7 @@ func TestDecodeZZReasonlessForm(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Decode: %v", err)
 	}
-	if got, ok := v.(*ZZToServer); !ok || *got != (ZZToServer{Reason: "", ReportedPlayerID: -1}) {
+	if got, ok := v.(*ZZToServer); !ok || !reflect.DeepEqual(*got, ZZToServer{Reason: "", ReportedPlayerID: -1}) {
 		t.Fatalf("Decode(ZZ#%%) = %#v", v)
 	}
 }
@@ -148,7 +149,7 @@ func TestDecodeTITwoSlotForm(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Decode: %v", err)
 	}
-	if got, ok := v.(*TI); !ok || *got != (TI{TimerID: 0, Command: TimerCommandShow, Time: 0}) {
+	if got, ok := v.(*TI); !ok || !reflect.DeepEqual(*got, TI{TimerID: 0, Command: TimerCommandShow, Time: 0}) {
 		t.Fatalf("Decode(TI#0#2#%%) = %#v", v)
 	}
 }

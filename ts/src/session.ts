@@ -63,20 +63,10 @@ type OnMap<Outputs> = {
 };
 
 /**
- * Raw send/receive escape hatch, shared by both session roles.
- *
- * These bypass the schema layer: they carry custom or extended packets a
- * peer understands but the meta schemas don't model. The packet is a
- * plain object with a `$header`; `onCustom` dispatches inbound frames by
- * `$header`, passing the object (extra fields preserved).
- *
- * Both wire formats are supported. JSON uses the object verbatim. FantaCode
- * requires a codec registered for that header via `registerCodec` (the same
- * mechanism ARUP uses, just caller-defined): `sendCustom` encodes through it
- * in fanta mode, and `onCustom` decodes through it for inbound fanta frames.
- * The rule: a custom packet that travels over FantaCode must register a codec;
- * there is no fanta-less custom packet. For a given header you register
- * `on.<X>` or `onCustom("X")`, not both, the second registration throws.
+ * Custom packets: headers the meta schemas don't model. Each needs a codec
+ * registered with `registerCodec`, which encodes and decodes it in both wire
+ * formats; `sendCustom` throws without one. A header takes `on.<X>` or
+ * `onCustom("X")`, not both; the second registration throws.
  */
 interface CustomChannel {
   // The generic P (vs a plain `Packet` param) is what lets an inline literal
@@ -113,7 +103,6 @@ export interface ClientSession extends CustomChannel {
    * `false` = positional fanta. Inbound always auto-detects.
    */
   setJsonMode(enabled: boolean): void;
-  area?: number;
 }
 
 // Implementation
@@ -232,9 +221,8 @@ function makeSession(role: Role, config: SessionConfig): ServerSession & ClientS
       return;
     }
 
-    // Custom handlers win over the typed path and reach headers the schemas
-    // don't model. JSON uses the object verbatim; fanta decodes through the
-    // header's registered codec.
+    // Custom handlers win over the typed path; the header's codec decodes the
+    // frame in either format.
     const custom = customHandlers[header];
     if (custom) {
       const codec = lookupCodec(header);

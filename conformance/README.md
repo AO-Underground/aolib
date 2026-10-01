@@ -10,7 +10,7 @@ pins one packet's canonical wire bytes in both formats:
 Each binding has a test (`go/conformance_test.go`,
 `ts/tests/conformance.test.ts`) that, per vector, decodes both wire forms,
 asserts they yield the same packet, and re-encodes to each form checking it
-matches the pinned bytes exactly. Because every binding validates against the
+matches the pinned bytes exactly (JSON in the spec's key order). Because every binding validates against the
 same vectors, passing them means the bindings emit and accept identical wire
 data: they interoperate.
 

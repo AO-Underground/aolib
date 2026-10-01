@@ -24,6 +24,7 @@ func NewClient(send func([]byte), json bool, want string) *Client {
 	c.Session = s
 
 	s.OnDecryptor(func(p *aolib.Decryptor) {
+		// decryptor#JSON advertises JSON; this client then switches if it wants it.
 		s.SetJSONMode(c.json && p.Value == "JSON")
 		s.SendHI(&aolib.HI{HDID: "example-hdid"})
 	})

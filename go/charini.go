@@ -17,30 +17,83 @@ type CharIni struct {
 	Sections map[string]map[string]string `json:"sections"`
 }
 
-// CharIniOptions is the [options] section. Chat and Category are nil when the
-// key is absent, distinct from an explicit empty value.
-type CharIniOptions struct {
-	Name     string
-	Showname string
-	Side     string
-	Blips    string
-	Chat     *string
-	Category *string
-	Model    string
-	// Extra holds the remaining [options] keys, lowercased.
-	Extra map[string]string
+// CharIniOptions is the [options] section, lowercased keys. Specified keys hold
+// their parsed values (side defaulted, blips resolved, scaling normalized,
+// stretch "true" or "false"); a key whose value is null is absent. Other keys
+// keep their raw value. The file's raw values are in CharIni.Sections.
+type CharIniOptions map[string]string
+
+func (o CharIniOptions) Name() string         { return o["name"] }
+func (o CharIniOptions) Showname() string     { return o["showname"] }
+func (o CharIniOptions) Side() string         { return o["side"] }
+func (o CharIniOptions) Blips() string        { return o["blips"] }
+func (o CharIniOptions) Model() string        { return o["model"] }
+func (o CharIniOptions) Scaling() Scaling     { return Scaling(o["scaling"]) }
+func (o CharIniOptions) Stretch() bool        { return o["stretch"] == "true" }
+func (o CharIniOptions) Chat() *string        { return o.optional("chat") }
+func (o CharIniOptions) Category() *string    { return o.optional("category") }
+func (o CharIniOptions) Realization() *string { return o.optional("realization") }
+func (o CharIniOptions) Shouts() *string      { return o.optional("shouts") }
+
+func (o CharIniOptions) optional(key string) *string {
+	if v, ok := o[key]; ok {
+		return &v
+	}
+	return nil
 }
 
-// MarshalJSON emits the schema's shape: typed keys plus Extra inline.
+// MarshalJSON emits the schema's shape: stretch as a boolean, absent optional keys as null.
 func (o CharIniOptions) MarshalJSON() ([]byte, error) {
 	m := map[string]any{}
-	for k, v := range o.Extra {
+	for k, v := range o {
 		m[k] = v
 	}
-	m["name"], m["showname"], m["side"], m["blips"] = o.Name, o.Showname, o.Side, o.Blips
-	m["chat"], m["category"], m["model"] = o.Chat, o.Category, o.Model
+	m["stretch"] = o.Stretch()
+	m["chat"], m["category"], m["realization"], m["shouts"] = o.Chat(), o.Category(), o.Realization(), o.Shouts()
 	return json.Marshal(m)
 }
+
+// parseOptions fills the specified [options] keys with their parsed values.
+func parseOptions(raw map[string]string) CharIniOptions {
+	o := CharIniOptions{}
+	for k, v := range raw {
+		o[k] = v
+	}
+	o["showname"], o["model"] = raw["showname"], raw["model"]
+	if _, ok := raw["side"]; !ok {
+		o["side"] = "wit"
+	}
+	if _, ok := raw["blips"]; !ok {
+		o["blips"] = "male"
+		if v, ok := raw["gender"]; ok {
+			o["blips"] = v
+		}
+	}
+	switch raw["scaling"] {
+	case "smooth":
+		o["scaling"] = string(ScalingSmooth)
+	case "pixel", "fast":
+		o["scaling"] = string(ScalingPixel)
+	default:
+		o["scaling"] = string(ScalingAuto)
+	}
+	o["stretch"] = strconv.FormatBool(strings.HasPrefix(raw["stretch"], "true"))
+	for _, k := range []string{"realization", "shouts"} {
+		if raw[k] == "" {
+			delete(o, k)
+		}
+	}
+	return o
+}
+
+// Scaling is a char.ini sprite scaling filter.
+type Scaling string
+
+const (
+	ScalingAuto   Scaling = "auto"
+	ScalingSmooth Scaling = "smooth"
+	ScalingPixel  Scaling = "pixel"
+)
 
 // CharEmote is one emote, from an [emote <name>] block or a legacy
 // [emotions] row. Nil Preanim, Postanim, Camera and Sound mean none.
@@ -56,6 +109,9 @@ type CharEmote struct {
 	Sound           *string       `json:"sound"`
 	SoundDelayMs    int           `json:"sounddelayms"`
 	SoundDelayTicks int           `json:"sounddelayticks"`
+	SoundLooping    bool          `json:"soundlooping"`
+	// PreanimDurationMs caps how long the preanim plays; nil for no cap.
+	PreanimDurationMs *int `json:"preanimdurationms"`
 }
 
 // The modifier/deskmod names the spec accepts in blocks and legacy rows.
@@ -77,28 +133,7 @@ func ParseCharIni(data string) (*CharIni, error) {
 	if opt["name"] == "" {
 		return nil, fmt.Errorf("char.ini: [options] is missing the required name")
 	}
-	o := CharIniOptions{Name: opt["name"], Showname: opt["showname"], Side: "wit", Blips: "male", Model: opt["model"], Extra: map[string]string{}}
-	if v, ok := opt["side"]; ok {
-		o.Side = v
-	}
-	if v, ok := opt["blips"]; ok {
-		o.Blips = v
-	} else if v, ok := opt["gender"]; ok {
-		o.Blips = v
-	}
-	if v, ok := opt["chat"]; ok {
-		o.Chat = &v
-	}
-	if v, ok := opt["category"]; ok {
-		o.Category = &v
-	}
-	for k, v := range opt {
-		switch k {
-		case "name", "showname", "side", "blips", "chat", "category", "model":
-		default:
-			o.Extra[k] = v
-		}
-	}
+	o := parseOptions(opt)
 
 	ini := &CharIni{Options: o, Sections: sections}
 	if len(blocks) == 0 {
@@ -186,11 +221,13 @@ func blockEmote(key string, block map[string]string) (CharEmote, error) {
 	}
 	e.SoundDelayMs = intOr(block["sounddelayms"], 0)
 	e.SoundDelayTicks = MsToTicks(e.SoundDelayMs)
+	e.SoundLooping = block["soundlooping"] == "true"
+	e.PreanimDurationMs = positiveMs(block["preanimdurationms"])
 	return e, nil
 }
 
 func legacyEmotes(sections map[string]map[string]string) []CharEmote {
-	rows, soundN, soundT := sections["emotions"], sections["soundn"], sections["soundt"]
+	rows, soundN, soundT, soundL := sections["emotions"], sections["soundn"], sections["soundt"], sections["soundl"]
 	var emotes []CharEmote
 	for id := 1; id <= intOr(rows["number"], 0); id++ {
 		key := strconv.Itoa(id)
@@ -223,6 +260,10 @@ func legacyEmotes(sections map[string]map[string]string) []CharEmote {
 		}
 		e.SoundDelayTicks = intOr(soundT[key], 0)
 		e.SoundDelayMs = TicksToMs(e.SoundDelayTicks)
+		e.SoundLooping = strings.TrimSpace(soundL[key]) == "1"
+		if e.Preanim != nil {
+			e.PreanimDurationMs = positiveMs(sections["time"][strings.ToLower(*e.Preanim)])
+		}
 		emotes = append(emotes, e)
 	}
 	return emotes
@@ -276,6 +317,14 @@ func legacyEnum[E ~string](v string, allowed []E, fromWire map[int]E, fallback E
 		}
 	}
 	return fallback
+}
+
+// positiveMs reads a duration cap: a positive integer, else nil.
+func positiveMs(v string) *int {
+	if n := intOr(v, 0); n > 0 {
+		return &n
+	}
+	return nil
 }
 
 func intOr(v string, fallback int) int {

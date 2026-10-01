@@ -11,7 +11,6 @@ func TestDecodeRejectsSchemaViolations(t *testing.T) {
 		mode WireMode
 	}{
 		"unknown enum name":      {`{"$header":"RT","animation":"bogus","name":""}`, WireJSON},
-		"extra field":            {`{"$header":"CC","player_id":1,"char_id":2,"char_password":"","extra":1}`, WireJSON},
 		"custom RT without name": {`{"$header":"RT","animation":"custom"}`, WireJSON},
 		"HP out of range":        {`{"$header":"HP","bar":"defense","value":11}`, WireJSON},
 		"unknown enum wire int":  {"HP#9#5#%", WireFanta},

@@ -66,9 +66,16 @@ function decodeJson(
     );
   }
 
-  validate(schema, parsed);
-  stripConsts(schema, parsed);
-  return parsed;
+  const props = schema.properties ?? {};
+  const fields: Record<string, unknown> = {};
+  const extras: Record<string, unknown> = {};
+  for (const [key, value] of Object.entries(parsed)) {
+    (key in props ? fields : extras)[key] = value;
+  }
+  validate(schema, fields);
+  stripConsts(schema, fields);
+  if (Object.keys(extras).length > 0) fields.$extras = extras;
+  return fields;
 }
 
 /**

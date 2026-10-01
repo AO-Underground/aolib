@@ -16,8 +16,9 @@ func NewServer(chars, areas, music []string) *Server {
 	return &Server{chars: chars, areas: areas, music: music, taken: map[int]*aolib.ClientSession{}}
 }
 
-// Accept handles a new connection; send delivers one frame to that client.
-func (s *Server) Accept(send func([]byte)) *aolib.ClientSession {
+// Accept handles a new connection: send delivers one frame to that client, and
+// the returned function takes each frame the client sends.
+func (s *Server) Accept(send func([]byte)) func([]byte) {
 	c := aolib.NewClient(aolib.SessionConfig{Send: send})
 	playerID := len(s.clients)
 	s.clients = append(s.clients, c)
@@ -67,7 +68,13 @@ func (s *Server) Accept(send func([]byte)) *aolib.ClientSession {
 	})
 
 	c.SendDecryptor(&aolib.Decryptor{Value: "JSON"})
-	return c
+	return func(wire []byte) {
+		// A client opts into JSON by sending JSON.
+		if len(wire) > 0 && wire[0] == '{' {
+			c.SetJSONMode(true)
+		}
+		c.Receive(wire)
+	}
 }
 
 func (s *Server) charsCheck() *aolib.CharsCheck {

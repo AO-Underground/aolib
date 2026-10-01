@@ -1,6 +1,7 @@
 package aolib
 
 import (
+	"bytes"
 	"encoding/json"
 	"os"
 	"path/filepath"
@@ -69,21 +70,13 @@ func TestConformanceVectors(t *testing.T) {
 			if err != nil {
 				t.Fatalf("encode json: %v", err)
 			}
-			assertJSONEqual(t, gotJSON, v.JSON)
+			var want bytes.Buffer
+			if err := json.Compact(&want, v.JSON); err != nil {
+				t.Fatal(err)
+			}
+			if string(gotJSON) != want.String() {
+				t.Fatalf("json mismatch:\n  got:  %s\n  want: %s", gotJSON, want.String())
+			}
 		})
-	}
-}
-
-func assertJSONEqual(t *testing.T, got, want []byte) {
-	t.Helper()
-	var g, w any
-	if err := json.Unmarshal(got, &g); err != nil {
-		t.Fatalf("got is not JSON: %v (%s)", err, got)
-	}
-	if err := json.Unmarshal(want, &w); err != nil {
-		t.Fatalf("want is not JSON: %v", err)
-	}
-	if !reflect.DeepEqual(g, w) {
-		t.Fatalf("json mismatch:\n  got:  %s\n  want: %s", got, want)
 	}
 }

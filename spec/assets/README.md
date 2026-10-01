@@ -18,6 +18,12 @@ start of a line or after whitespace, so `model = model.pmx ; 3D` reads as
 (`url = http://example.com`). `#` is never a comment: it delimits legacy emote
 fields.
 
+`[options]` keys are `name` (required), `showname`, `side` (default `wit`;
+the old `pos` key is not read), `blips` (falling back to the obsolete
+`gender`, then `male`), `chat`, `category`, `model`, `scaling`, `stretch`,
+`realization` and `shouts`; their parsed forms and defaults are in
+`CharIni.schema.json`. Other keys are kept as strings.
+
 A character is **3D** when `[options] model` names a `.pmx`, otherwise **2D**.
 The emote table normalizes to one shape either way; `anim` is a sprite stem
 for 2D and a base VMD stem for 3D.
@@ -70,7 +76,9 @@ has a default, so the parsed `Emote` is a complete shape either way. Block field
 names are the lowercased `Emote` field names: `name` (display label; defaults to
 the block name), `anim`, `preanim` (`-`/absent → null), `postanim` (`-`/absent →
 null), `camera` (`-`/absent → null), `sound` (absent → null), `sounddelayms`
-(milliseconds; absent → 0), `deskmod` (absent → `shown`, or `hidden` when
+(milliseconds; absent → 0), `soundlooping` (`true` loops the sound; absent →
+false), `preanimdurationms` (positive milliseconds capping the preanim;
+absent → null), `deskmod` (absent → `shown`, or `hidden` when
 `modifier` is `zoom` or `objection_zoom`), and `modifier`
 (absent → `no_preanim`). The normalized emote list is in button order, so there is no id.
 Unlike the legacy stems, a block's file references **must carry the file
@@ -143,6 +151,12 @@ integer or one of the names the block form allows, in lowercase only (`5` and
 `deskmod` is `shown`. When
 no `[emote <name>]` blocks are present a parser reads these banks. Normalized `key` is the
 stringified id.
+
+Two more legacy sections attach to the same emotes. `[SoundL]` is keyed by id
+like `[soundn]`: `N = 1` sets `soundlooping`, any other value or none leaves it
+false. `[Time]` is keyed by preanim name, not id: `deskslam = 900` caps every
+emote whose preanim is `deskslam` at 900 ms (`preanimdurationms`); a value that
+is not a positive integer means no cap.
 
 ### Sound delay
 

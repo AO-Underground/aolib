@@ -46,6 +46,8 @@ number = 2
       sound: null,
       sounddelayms: 0,
       sounddelayticks: 0,
+      soundlooping: false,
+      preanimdurationms: null,
     });
   });
 
@@ -377,6 +379,21 @@ describe("parseCharIni: real-world edge cases", () => {
     expect(emotes[1]).toMatchObject({ key: "2", preanim: "pre" });
   });
 
+  it("reads scaling, stretch, realization and shouts, and ignores pos", () => {
+    const cases: [string, (string | boolean | null)[]][] = [
+      ["", ["auto", false, null, null]],
+      ["scaling = smooth\nstretch = true\nrealization = sfx-realization\nshouts = YTTD", ["smooth", true, "sfx-realization", "YTTD"]],
+      ["scaling = fast\nstretch = trueish", ["pixel", true, null, null]],
+      ["scaling = pixel\nstretch = false\nrealization =\nshouts =", ["pixel", false, null, null]],
+      ["scaling = Smooth\nstretch = True", ["auto", false, null, null]],
+    ];
+    for (const [lines, want] of cases) {
+      const { options: o } = parseCharIni(`[options]\nname = A\npos = def\n${lines}\n` + EMOTE);
+      expect([o.scaling, o.stretch, o.realization, o.shouts]).toEqual(want);
+      expect(o.side).toBe("wit");
+    }
+  });
+
   it("reads the [options] model key (3D marker)", () => {
     const { options } = parseCharIni("[options]\nname = Bot\nmodel = model.pmx\n" + EMOTE);
     expect(options.model).toBe("model.pmx");
@@ -425,6 +442,8 @@ anim = think_loop.vmd
       sound: "objection.opus",
       sounddelayms: 480,
       sounddelayticks: 12,
+      soundlooping: false,
+      preanimdurationms: null,
     });
   });
 
@@ -442,6 +461,8 @@ anim = think_loop.vmd
       sound: null,
       sounddelayms: 0,
       sounddelayticks: 0,
+      soundlooping: false,
+      preanimdurationms: null,
     });
   });
 
@@ -563,6 +584,8 @@ anim = think_loop.vmd
       sound: null,
       sounddelayms: 0,
       sounddelayticks: 0,
+      soundlooping: false,
+      preanimdurationms: null,
     });
   });
 
@@ -684,6 +707,34 @@ describe("parseCharIni: example fixtures", () => {
       sounddelayms: 480,
       sounddelayticks: 12,
     });
+  });
+});
+
+describe("sound looping and preanim duration", () => {
+  it("reads [SoundL] by id and [Time] by preanim name", () => {
+    const { emotes } = parseCharIni(
+      "[options]\nname = T\n[emotions]\nnumber = 4\n" +
+        "1 = a#Point#a#1\n2 = b#point#b#1\n3 = c#-#c#0\n4 = d#slam#d#1\n" +
+        "[soundl]\n1 = 1\n2 = 0\n3 = yes\n" +
+        "[Time]\npoint = 900\nslam = 0\n3 = 500\n",
+    );
+    expect(emotes.map((e) => [e.soundlooping, e.preanimdurationms])).toEqual([
+      [true, 900],
+      [false, 900],
+      [false, null],
+      [false, null],
+    ]);
+  });
+
+  it("reads soundlooping and preanimdurationms from blocks", () => {
+    const { emotes } = parseCharIni(
+      "[options]\nname = T\n[emote a]\nanim = a.gif\nsoundlooping = true\npreanimdurationms = 600\n" +
+        "[emote b]\nanim = b.gif\nsoundlooping = 1\npreanimdurationms = -5\n",
+    );
+    expect(emotes.map((e) => [e.soundlooping, e.preanimdurationms])).toEqual([
+      [true, 600],
+      [false, null],
+    ]);
   });
 });
 

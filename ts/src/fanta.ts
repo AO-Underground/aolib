@@ -104,7 +104,7 @@ function resolvePath(ref: string, base: string): string {
  * Resolve a `$ref` against the registry. Sibling keywords on the
  * referring property (e.g. `default`) win over the referenced schema.
  */
-function resolveRef(s: JsonSchema, baseId: string): JsonSchema {
+export function resolveRef(s: JsonSchema, baseId: string): JsonSchema {
   if (!s.$ref) return s;
   const target = refSchemas.get(resolvePath(s.$ref, baseId));
   if (!target) return s;

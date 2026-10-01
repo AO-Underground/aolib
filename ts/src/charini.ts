@@ -91,6 +91,10 @@ export interface CharEmote {
   sounddelayms: number;
   /** Sound delay in 40 ms ticks, as MS `sfx_delay` carries it. */
   sounddelayticks: number;
+  /** Loop the sound. */
+  soundlooping: boolean;
+  /** Cap on how long the preanim plays, in ms; null for no cap. */
+  preanimdurationms: number | null;
 }
 
 /** `[options]` block. Common keys are typed; the rest stay on the index. */
@@ -108,7 +112,15 @@ export interface CharIniOptions {
   category: string | null;
   /** PMX model file for a 3D character; empty for 2D. */
   model: string;
-  [key: string]: string | null;
+  /** Sprite scaling filter: `smooth`, `pixel` (from `pixel` or `fast`), else `auto`. */
+  scaling: "auto" | "smooth" | "pixel";
+  /** Stretch sprites to fill the viewport: the value starts with `true`. */
+  stretch: boolean;
+  /** Realization sound; null uses the theme's. */
+  realization: string | null;
+  /** Shout asset folder; null uses the theme's. */
+  shouts: string | null;
+  [key: string]: string | boolean | null;
 }
 
 export interface CharIni {
@@ -163,6 +175,12 @@ const BLOCK_MODIFIERS = EmoteModifierSchema.enum;
 /** Deskmod of an emote that does not set one: hidden for the zoom modifiers, as AO2-Client does. */
 function unsetDeskmod(modifier: EmoteModifier): DeskModifier {
   return modifier === "zoom" || modifier === "objection_zoom" ? "hidden" : "shown";
+}
+
+/** A duration cap: a positive integer, else null. */
+function positiveMs(value: string | undefined): number | null {
+  const n = toInt(value, 0);
+  return n > 0 ? n : null;
 }
 
 function normSound(value: string | undefined): string | null {
@@ -252,6 +270,10 @@ export function parseCharIni(data: string): CharIni {
     // explicit empty `chat =` / `category =`.
     chat: opt.chat ?? null,
     category: opt.category ?? null,
+    scaling: opt.scaling === "smooth" ? "smooth" : opt.scaling === "pixel" || opt.scaling === "fast" ? "pixel" : "auto",
+    stretch: opt.stretch?.startsWith("true") ?? false,
+    realization: opt.realization || null,
+    shouts: opt.shouts || null,
   };
 
   const emotionSection = sections.emotions ?? {};
@@ -308,6 +330,8 @@ function readBlockEmotes(
       deskmod: (requireEnumName(block.deskmod, DeskModifierSchema.enum, "deskmod", key) ?? unsetDeskmod(modifier)) as DeskModifier,
       sound,
       ...soundDelayFromMs(block.sounddelayms !== undefined ? toInt(block.sounddelayms, 0) : 0),
+      soundlooping: block.soundlooping === "true",
+      preanimdurationms: positiveMs(block.preanimdurationms),
     });
   }
   return emotes;
@@ -321,6 +345,8 @@ function readLegacyEmotes(
 ): CharEmote[] {
   const soundN = sections.soundn ?? {};
   const soundT = sections.soundt ?? {};
+  const soundL = sections.soundl ?? {};
+  const time = sections.time ?? {};
 
   const emotes: CharEmote[] = [];
   for (let id = 1; id <= count; id++) {
@@ -330,17 +356,20 @@ function readLegacyEmotes(
     const parts = def.split("#");
     const delay = soundT[String(id)];
     const modifier = parseEnum(parts[3], BLOCK_MODIFIERS, EmoteModifierSchema, "no_preanim") as EmoteModifier;
+    const preanim = normPreanim(parts[1]);
     emotes.push({
       key: String(id),
       name: parts[0] ?? "",
       anim: parts[2] ?? "",
-      preanim: normPreanim(parts[1]),
+      preanim,
       postanim: null,
       camera: null,
       modifier,
       deskmod: (parts[4]?.trim() ? parseEnum(parts[4], DeskModifierSchema.enum, DeskModifierSchema, "shown") : unsetDeskmod(modifier)) as DeskModifier,
       sound: normLegacySound(soundN[String(id)]),
       ...soundDelayFromTicks(delay !== undefined ? toInt(delay, 0) : 0),
+      soundlooping: soundL[String(id)]?.trim() === "1",
+      preanimdurationms: preanim === null ? null : positiveMs(time[preanim.toLowerCase()]),
     });
   }
   return emotes;

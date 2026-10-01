@@ -1,7 +1,5 @@
 package main
 
-import aolib "github.com/AO-Underground/aolib/go/v2"
-
 // Frame is one packet on the in-memory network.
 type Frame struct {
 	ToServer bool
@@ -22,10 +20,10 @@ type Network struct {
 func (n *Network) Connect(srv *Server, json bool, char string) *Client {
 	conn := n.conns
 	n.conns++
-	var cs *aolib.ClientSession
+	var toServer func([]byte)
 	var cl *Client
-	cl = NewClient(n.link(true, conn, func(w []byte) { cs.Receive(w) }), json, char)
-	cs = srv.Accept(n.link(false, conn, func(w []byte) { cl.Session.Receive(w) }))
+	cl = NewClient(n.link(true, conn, func(w []byte) { toServer(w) }), json, char)
+	toServer = srv.Accept(n.link(false, conn, func(w []byte) { cl.Session.Receive(w) }))
 	return cl
 }
 

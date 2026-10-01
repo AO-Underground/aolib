@@ -30,7 +30,8 @@ declare const WebSocketServer: { new (opts: { port: number }): WSS };
 
 // Server state.
 
-const clients = new Set<ClientSession>();
+// Each connected client and the area it is in; area changes update it.
+const clients = new Map<ClientSession, number>();
 const wss = new WebSocketServer({ port: 8080 });
 
 // Per-connection setup. One `aolib.client(...)` session per accepted
@@ -45,13 +46,16 @@ wss.on("connection", (ws) => {
     },
   });
 
-  clients.add(client);
+  clients.set(client, 0);
   ws.on("close", () => clients.delete(client));
-  ws.on("message", (data) => { client.receive(data.toString()); });
+  ws.on("message", (data) => {
+    const wire = data.toString();
+    // A client opts into JSON by sending JSON; switch only this session.
+    if (wire.startsWith("{")) client.setJsonMode(true);
+    client.receive(wire);
+  });
 
-  // Advertise wire-format support. If THIS particular client echoes
-  // back in JSON, THIS session auto-flips to JSON for outbound. Other
-  // sessions keep whatever format their respective client picked.
+  // Advertise JSON support.
   client.send.decryptor({ value: "JSON" });
 
   // Handlers, what the server does with packets received FROM this
@@ -74,7 +78,7 @@ wss.on("connection", (ws) => {
   client.on.MC((packet) => {
     // Music change request, re-broadcast to every connected client
     // in the same area as a server-side MC announcement.
-    broadcastMC(client.area ?? 0, packet, client);
+    broadcastMC(clients.get(client) ?? 0, packet, client);
   });
 });
 
@@ -87,9 +91,9 @@ function broadcastMC(
   request: { name: string; char_id: number },
   except?: ClientSession,
 ): void {
-  for (const peer of clients) {
+  for (const [peer, peerArea] of clients) {
     if (peer === except) continue;
-    if (peer.area === area) {
+    if (peerArea === area) {
       peer.send.MC({
         name: request.name,
         char_id: request.char_id,

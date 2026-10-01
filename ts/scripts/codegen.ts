@@ -284,7 +284,7 @@ function emitPacketTypes(name: string, schema: JsonSchema, ctx: RenderCtx): stri
 
   return (
     `export interface ${name} extends Packet {\n${decoded.join("\n")}\n}\n\n` +
-    `export interface ${name}Init {\n${init.join("\n")}\n}\n`
+    `export interface ${name}Init {\n${[...init, "  $extras?: Record<string, unknown>;"].join("\n")}\n}\n`
   );
 }
 
@@ -409,7 +409,6 @@ function main(): void {
 
   const parts: string[] = [
     "// AUTO-GENERATED from spec/. Do not edit; run `bun run codegen`.\n",
-    "/* eslint-disable */\n",
     enumImports + typeImports,
   ];
 
@@ -446,7 +445,11 @@ function main(): void {
 
   // Shared base: every decoded packet carries its wire header as a literal
   // discriminant, so `AnyPacket` narrows on `$header`.
-  parts.push("export interface Packet {\n  $header: string;\n}\n");
+  parts.push(
+    "export interface Packet {\n  $header: string;\n" +
+      "  /** JSON keys the schema does not define; FantaCode never carries them. */\n" +
+      "  $extras?: Record<string, unknown>;\n}\n",
+  );
 
   for (const block of packetBlocks) {
     parts.push(block);

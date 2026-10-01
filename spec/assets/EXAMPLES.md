@@ -4,7 +4,7 @@ Complete `char.ini` files and the `CharIni` object each parses to (see `README.m
 
 ## Legacy banks
 
-An existing 2D character using `[Emotions]`, `[SoundN]` and `[SoundT]`.
+An existing 2D character using `[Emotions]`, `[SoundN]`, `[SoundT]`, `[SoundL]` and `[Time]`.
 
 ```ini
 [Options]
@@ -27,6 +27,12 @@ number = 3
 
 [SoundT]
 3 = 7
+
+[SoundL]
+3 = 1
+
+[Time]
+deskslam = 900
 ```
 
 ```json
@@ -38,7 +44,11 @@ number = 3
     "model": "",
     "blips": "male",
     "chat": "aa",
-    "category": null
+    "category": null,
+    "scaling": "auto",
+    "stretch": false,
+    "realization": null,
+    "shouts": null
   },
   "emotes": [
     {
@@ -52,7 +62,9 @@ number = 3
       "deskmod": "shown",
       "sound": null,
       "sounddelayms": 0,
-      "sounddelayticks": 0
+      "sounddelayticks": 0,
+      "soundlooping": false,
+      "preanimdurationms": null
     },
     {
       "key": "2",
@@ -65,7 +77,9 @@ number = 3
       "deskmod": "shown",
       "sound": null,
       "sounddelayms": 0,
-      "sounddelayticks": 0
+      "sounddelayticks": 0,
+      "soundlooping": false,
+      "preanimdurationms": null
     },
     {
       "key": "3",
@@ -78,7 +92,9 @@ number = 3
       "deskmod": "hidden",
       "sound": "sfx-deskslam",
       "sounddelayms": 280,
-      "sounddelayticks": 7
+      "sounddelayticks": 7,
+      "soundlooping": true,
+      "preanimdurationms": 900
     }
   ]
 }
@@ -87,6 +103,7 @@ number = 3
 - Section and key names are case-insensitive (`[Options]`, `[SoundT]`).
 - Each emote's `key` is its id; fields come from `desc#preanim#anim#modifier#deskmod`, with `-` meaning no preanim.
 - `[SoundT] 3 = 7` is ticks: `sounddelayticks` is 7 and `sounddelayms` is derived as 280.
+- `[SoundL] 3 = 1` loops emote 3's sound; `[Time] deskslam = 900` caps the `deskslam` preanim at 900 ms (keyed by preanim name, not id).
 - `[SoundN]` values `1` and `0` are legacy "no sound" placeholders and parse to `sound: null`; an emote with no `[SoundT]` entry has a delay of 0.
 - `modifier` and `deskmod` are wire integers on disk (`1`, `0`) and parse to enum names (`preanim`, `hidden`).
 - Unset options take their defaults: `model` is empty (2D) and `category` is null.
@@ -113,6 +130,8 @@ preanim  = deskslam.webp
 postanim = straighten.webp
 sound    = sfx-deskslam.opus
 sounddelayms = 500
+soundlooping = true
+preanimdurationms = 900
 modifier = preanim
 deskmod  = hidden
 ```
@@ -126,7 +145,11 @@ deskmod  = hidden
     "model": "",
     "blips": "male",
     "chat": "aa",
-    "category": null
+    "category": null,
+    "scaling": "auto",
+    "stretch": false,
+    "realization": null,
+    "shouts": null
   },
   "emotes": [
     {
@@ -140,7 +163,9 @@ deskmod  = hidden
       "deskmod": "shown",
       "sound": null,
       "sounddelayms": 0,
-      "sounddelayticks": 0
+      "sounddelayticks": 0,
+      "soundlooping": false,
+      "preanimdurationms": null
     },
     {
       "key": "deskslam",
@@ -153,7 +178,9 @@ deskmod  = hidden
       "deskmod": "hidden",
       "sound": "sfx-deskslam.opus",
       "sounddelayms": 500,
-      "sounddelayticks": 13
+      "sounddelayticks": 13,
+      "soundlooping": true,
+      "preanimdurationms": 900
     }
   ]
 }
@@ -197,7 +224,11 @@ anim = think_loop.vmd
     "model": "fenomeno.pmx",
     "blips": "male",
     "chat": null,
-    "category": null
+    "category": null,
+    "scaling": "auto",
+    "stretch": false,
+    "realization": null,
+    "shouts": null
   },
   "emotes": [
     {
@@ -211,7 +242,9 @@ anim = think_loop.vmd
       "deskmod": "shown",
       "sound": "objection.opus",
       "sounddelayms": 480,
-      "sounddelayticks": 12
+      "sounddelayticks": 12,
+      "soundlooping": false,
+      "preanimdurationms": null
     },
     {
       "key": "think",
@@ -224,7 +257,9 @@ anim = think_loop.vmd
       "deskmod": "shown",
       "sound": null,
       "sounddelayms": 0,
-      "sounddelayticks": 0
+      "sounddelayticks": 0,
+      "soundlooping": false,
+      "preanimdurationms": null
     }
   ]
 }

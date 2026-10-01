@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 	"reflect"
 	"regexp"
+	"strconv"
 	"strings"
 	"testing"
 )
@@ -78,8 +79,8 @@ func TestCharIniReadmeBlockExample(t *testing.T) {
 		t.Fatal("README.md has no [options] ini example")
 	}
 	ini := mustParseCharIni(t, m[1])
-	if ini.Options.Model != "model.pmx" || len(ini.Emotes) != 2 {
-		t.Fatalf("model %q, %d emotes", ini.Options.Model, len(ini.Emotes))
+	if ini.Options.Model() != "model.pmx" || len(ini.Emotes) != 2 {
+		t.Fatalf("model %q, %d emotes", ini.Options.Model(), len(ini.Emotes))
 	}
 	want := CharEmote{
 		Key: "objection", Name: "objection", Anim: "objection.gif", Preanim: str("point.gif"), Postanim: str("bow.gif"),
@@ -181,14 +182,14 @@ number = 9
 func TestCharIniTextGrammar(t *testing.T) {
 	ini := mustParseCharIni(t, "\uFEFF[Options]\r\nName\t= Phoenix ; inline\r\n// showname = hidden\r\n; side = pro\r\nchat =\r\ngender = female\r\nshouts = custom\r\nstray author note\r\nurl = http://example.com/x\r\n[Emotions]\r\nnumber = 1\r\n1 = Desk slam#-#slam#0#1 // why\r\n")
 	o := ini.Options
-	if o.Name != "Phoenix" || o.Showname != "" || o.Side != "wit" || o.Blips != "female" || o.Model != "" {
-		t.Errorf("options = %+v", o)
+	if o.Name() != "Phoenix" || o.Showname() != "" || o.Side() != "wit" || o.Blips() != "female" || o.Model() != "" {
+		t.Errorf("options = %v", o)
 	}
-	if o.Chat == nil || *o.Chat != "" || o.Category != nil {
-		t.Errorf("explicit empty chat must be \"\", absent category nil: %v %v", o.Chat, o.Category)
+	if c := o.Chat(); c == nil || *c != "" || o.Category() != nil {
+		t.Errorf("explicit empty chat must be \"\", absent category nil: %v %v", o.Chat(), o.Category())
 	}
-	if o.Extra["shouts"] != "custom" || o.Extra["url"] != "http://example.com/x" {
-		t.Errorf("extra options = %v", o.Extra)
+	if o["shouts"] != "custom" || o["url"] != "http://example.com/x" || o["gender"] != "female" {
+		t.Errorf("other options must be on options directly: %v", o)
 	}
 	if e := ini.Emotes[0]; e.Name != "Desk slam" || e.Anim != "slam" || e.Deskmod != DeskModifierShown {
 		t.Errorf("`#` is never a comment: %+v", e)
@@ -198,8 +199,8 @@ func TestCharIniTextGrammar(t *testing.T) {
 	}
 
 	ini = mustParseCharIni(t, "[options]\nname = Bare\n[emote a]\nanim = a.gif\n")
-	if o := ini.Options; o.Showname != "" || o.Side != "wit" || o.Blips != "male" || o.Chat != nil || o.Model != "" {
-		t.Errorf("option defaults: %+v", o)
+	if o := ini.Options; o.Showname() != "" || o.Side() != "wit" || o.Blips() != "male" || o.Chat() != nil || o.Model() != "" {
+		t.Errorf("option defaults: %v", o)
 	}
 }
 
@@ -287,3 +288,67 @@ func TestCharIniLegacyModifiers(t *testing.T) {
 		t.Errorf("unused_4 on the wire = %s, %v; want wire 4", raw, err)
 	}
 }
+
+func TestCharIniOptionKeys(t *testing.T) {
+	for _, tc := range []struct {
+		lines       string
+		scaling     Scaling
+		stretch     bool
+		realization *string
+		shouts      *string
+	}{
+		{"", ScalingAuto, false, nil, nil},
+		{"scaling = smooth\nstretch = true\nrealization = sfx-realization\nshouts = YTTD", ScalingSmooth, true, str("sfx-realization"), str("YTTD")},
+		{"scaling = fast\nstretch = trueish", ScalingPixel, true, nil, nil},
+		{"scaling = pixel\nstretch = false\nrealization =\nshouts =", ScalingPixel, false, nil, nil},
+		{"scaling = Smooth\nstretch = True", ScalingAuto, false, nil, nil},
+	} {
+		ini := mustParseCharIni(t, "[options]\nname = A\npos = def\n"+tc.lines+"\n[emote a]\nanim = a.gif\n")
+		o := ini.Options
+		got := []any{o.Scaling(), o.Stretch(), o.Realization(), o.Shouts(), o.Side()}
+		want := []any{tc.scaling, tc.stretch, tc.realization, tc.shouts, "wit"}
+		if !reflect.DeepEqual(got, want) {
+			t.Errorf("%q: got %v, want %v", tc.lines, got, want)
+		}
+		if o["scaling"] != string(tc.scaling) || o["stretch"] != strconv.FormatBool(tc.stretch) || o["side"] != "wit" || o["pos"] != "def" {
+			t.Errorf("%q: options map %v must hold parsed values", tc.lines, o)
+		}
+		if _, raw := ini.Sections["options"]["side"]; raw {
+			t.Errorf("%q: defaulted side leaked into Sections", tc.lines)
+		}
+	}
+}
+
+func TestCharIniSoundLoopingAndPreanimDuration(t *testing.T) {
+	ini := mustParseCharIni(t, opts+`[emotions]
+number = 4
+1 = a#Point#a#1
+2 = b#point#b#1
+3 = c#-#c#0
+4 = d#slam#d#1
+[soundl]
+1 = 1
+2 = 0
+3 = yes
+[Time]
+point = 900
+slam = 0
+3 = 500
+`)
+	for i, w := range []struct {
+		loop bool
+		ms   *int
+	}{{true, intPtr(900)}, {false, intPtr(900)}, {false, nil}, {false, nil}} {
+		e := ini.Emotes[i]
+		if e.SoundLooping != w.loop || !reflect.DeepEqual(e.PreanimDurationMs, w.ms) {
+			t.Errorf("emote %d: soundlooping %v, preanimdurationms %v; want %v, %v", i+1, e.SoundLooping, e.PreanimDurationMs, w.loop, w.ms)
+		}
+	}
+
+	ini = mustParseCharIni(t, opts+"[emote a]\nanim = a.gif\nsoundlooping = true\npreanimdurationms = 600\n[emote b]\nanim = b.gif\nsoundlooping = 1\npreanimdurationms = -5\n")
+	if a, b := ini.Emotes[0], ini.Emotes[1]; !a.SoundLooping || *a.PreanimDurationMs != 600 || b.SoundLooping || b.PreanimDurationMs != nil {
+		t.Errorf("blocks: %+v / %+v", a, b)
+	}
+}
+
+func intPtr(n int) *int { return &n }

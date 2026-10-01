@@ -145,13 +145,17 @@ describe("decode: JSON mode", () => {
     expect(() => decode(MC, "{not really json}")).toThrow(/Invalid JSON wire/);
   });
 
-  it("extra keys in the JSON envelope are silently dropped", () => {
+  it("keys the schema does not define go into $extras", () => {
     const out = decode(
       MC,
-      '{"$header":"MC","name":"x","char_id":5,"extra":"junk"}',
+      '{"$header":"MC","name":"x","char_id":5,"extra":"junk","n":{"a":1}}',
     );
-    expect(out).toEqual({ $header: "MC", name: "x", char_id: 5, showname: "", effects: 0 });
-    expect("extra" in out).toBe(false);
+    expect(out).toEqual({ $header: "MC", name: "x", char_id: 5, showname: "", effects: 0, $extras: { extra: "junk", n: { a: 1 } } });
+  });
+
+  it("omits $extras when there are none, and FantaCode never produces it", () => {
+    expect("$extras" in decode(MC, '{"$header":"MC","name":"x","char_id":5}')).toBe(false);
+    expect("$extras" in decode(MC, "MC#x#5##0#extra#%")).toBe(false);
   });
 });
 

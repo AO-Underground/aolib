@@ -110,7 +110,6 @@ func (s *session) send(p Outgoing) {
 // routes to exactly one SessionConfig hook.
 func (s *session) receive(raw []byte) {
 	if len(raw) > 0 && raw[0] == '{' {
-		s.jsonMode = true
 		s.receiveJSON(raw)
 		return
 	}
@@ -276,7 +275,8 @@ func (s *session) onCustom(header string, h func(any)) error {
 }
 
 // setJSONMode toggles the outbound wire format: true = JSON, false = FantaCode.
-// Inbound always auto-detects.
+// Outbound starts as FantaCode and changes only here; inbound always
+// auto-detects.
 func (s *session) setJSONMode(enabled bool) { s.jsonMode = enabled }
 
 // ServerSession represents a remote *server*. Client-side code uses it: Send

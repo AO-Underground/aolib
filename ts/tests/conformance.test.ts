@@ -46,7 +46,7 @@ describe("conformance vectors (interop with aolib-go)", () => {
       expect(fromFanta).toEqual(fromJson);
 
       expect(encode(schema, fromJson, "fanta")).toBe(v.fanta);
-      expect(JSON.parse(encode(schema, fromJson, "json"))).toEqual(v.json);
+      expect(encode(schema, fromJson, "json")).toBe(JSON.stringify(v.json));
     });
   }
 });
