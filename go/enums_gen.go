@@ -95,7 +95,7 @@ var deskModifierFromWire = map[int]DeskModifier{
 	5: DeskModifierShowDuringPreanimThenCenter,
 }
 
-// EmoteModifier: Emote behavior selector. Spec values 3 and 4 are documented as unused.
+// EmoteModifier: Emote behavior selector. Wire values 3 and 4 have no defined behavior and are carried as-is.
 type EmoteModifier string
 
 const (

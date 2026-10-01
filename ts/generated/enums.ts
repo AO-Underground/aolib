@@ -35,7 +35,7 @@ export const DeskModifier = {
   show_during_preanim_then_center: "show_during_preanim_then_center",
 } as const;
 
-/** Emote behavior selector. Spec values 3 and 4 are documented as unused. */
+/** Emote behavior selector. Wire values 3 and 4 have no defined behavior and are carried as-is. */
 export type EmoteModifier = "no_preanim" | "preanim" | "preanim_and_objection" | "unused_3" | "unused_4" | "zoom" | "objection_zoom";
 export const EmoteModifier = {
   no_preanim: "no_preanim",

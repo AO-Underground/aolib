@@ -87,7 +87,7 @@ export const EmoteModifierEnumSchema = {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/types/EmoteModifier.schema.json",
   "title": "EmoteModifier",
-  "description": "Emote behavior selector. Spec values 3 and 4 are documented as unused.",
+  "description": "Emote behavior selector. Wire values 3 and 4 have no defined behavior and are carried as-is.",
   "type": "string",
   "enum": [
     "no_preanim",
@@ -106,6 +106,15 @@ export const EmoteModifierEnumSchema = {
     4,
     5,
     6
+  ],
+  "x-enum-description": [
+    "no preanimation",
+    "play the preanimation",
+    "play the preanimation, with an objection",
+    "undefined",
+    "undefined",
+    "zoom background, no preanimation",
+    "preanimation, then zoom background"
   ]
 };
 

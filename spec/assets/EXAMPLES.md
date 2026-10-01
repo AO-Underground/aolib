@@ -161,9 +161,9 @@ deskmod  = hidden
 
 - Each block is one emote, in file order; the block name is the `key`, and `name` defaults to it (`normal`).
 - File references keep their extensions.
-- `modifier = preanim` and `deskmod = hidden` are enum names (case-insensitive) and stay names in the object.
+- `modifier = preanim` and `deskmod = hidden` are enum names (lowercase only) and stay names in the object.
 - `sounddelayms = 500` is milliseconds: `sounddelayticks` is derived as 13 (rounded half up, plays at 520 ms).
-- Omitted fields take their defaults: no `preanim`/`postanim`/`sound` is null, `modifier` is `no_preanim`, `deskmod` is `shown`.
+- Omitted fields take their defaults: no `preanim`/`postanim`/`sound` is null, `modifier` is `no_preanim`, `deskmod` is `shown` (it would be `hidden` if `modifier` were `zoom` or `objection_zoom`).
 
 ## 3D character
 

@@ -120,9 +120,8 @@ export interface CharIni {
 }
 
 function toInt(value: string | undefined, fallback: number): number {
-  if (value === undefined) return fallback;
-  const n = Number.parseInt(value, 10);
-  return Number.isNaN(n) ? fallback : n;
+  const v = value?.trim();
+  return v !== undefined && /^[+-]?\d+$/.test(v) ? Number(v) : fallback;
 }
 
 /** `-`, empty, or absent means "no pre-animation"; else the base name. */
@@ -130,13 +129,12 @@ function normPreanim(value: string | undefined): string | null {
   return value === undefined || value === "" || value === "-" ? null : value;
 }
 
-/** Legacy positional enum field: a wire integer (or a name); unknown values map to wire 0. */
-function parseEnum(value: string | undefined, schema: WireEnum): string {
-  const lower = value?.toLowerCase();
-  if (lower !== undefined && schema.enum.includes(lower)) return lower;
-  const ints = schema["x-wire-ints"];
-  const i = ints.indexOf(toInt(value, 0));
-  return schema.enum[i === -1 ? ints.indexOf(0) : i] ?? "";
+/** Legacy row enum field: a lowercase name from `allowed`, or a wire integer; anything else is `fallback`. */
+function parseEnum(value: string | undefined, allowed: readonly string[], schema: WireEnum, fallback: string): string {
+  const v = value?.trim() ?? "";
+  if (allowed.includes(v)) return v;
+  const i = /^[+-]?\d+$/.test(v) ? schema["x-wire-ints"].indexOf(Number(v)) : -1;
+  return i === -1 ? fallback : schema.enum[i] ?? fallback;
 }
 
 /**
@@ -146,18 +144,25 @@ function parseEnum(value: string | undefined, schema: WireEnum): string {
  */
 function requireEnumName(
   value: string | undefined,
-  schema: WireEnum,
+  allowed: readonly string[],
   field: string,
   key: string,
 ): string | undefined {
   if (value === undefined || value === "") return undefined;
-  const lower = value.toLowerCase();
-  if (!schema.enum.includes(lower)) {
+  if (!allowed.includes(value)) {
     throw new Error(
-      `char.ini emote "${key}": ${field} "${value}" must be one of: ${schema.enum.join(", ")}`,
+      `char.ini emote "${key}": ${field} "${value}" must be one of: ${allowed.join(", ")}`,
     );
   }
-  return lower;
+  return value;
+}
+
+// The modifier names spec/assets/README.md allows, in blocks and legacy rows.
+const BLOCK_MODIFIERS = EmoteModifierSchema.enum;
+
+/** Deskmod of an emote that does not set one: hidden for the zoom modifiers, as AO2-Client does. */
+function unsetDeskmod(modifier: EmoteModifier): DeskModifier {
+  return modifier === "zoom" || modifier === "objection_zoom" ? "hidden" : "shown";
 }
 
 function normSound(value: string | undefined): string | null {
@@ -181,11 +186,16 @@ function requireExtension(value: string, field: string, key: string): void {
   }
 }
 
+/** Drop `;`/`//` comments at a line start or after whitespace (spec/assets/README.md). */
+function stripComments(data: string): string {
+  return data.replace(/(^|[ \t])(;|\/\/).*$/gm, "");
+}
+
 /**
  * Parse char.ini text into a typed {@link CharIni}.
  *
- * Requires an `[options]` section with a non-empty `name`; throws
- * otherwise. Other `[options]` keys default so the shape is stable.
+ * Requires an `[options]` section with a non-empty `name` and at least
+ * one emote; throws otherwise. Other `[options]` keys default so the shape is stable.
  *
  * Also throws when a `[emote <name>]` block references an animation or
  * sound without a file extension, or gives `modifier`/`deskmod` as a
@@ -193,15 +203,9 @@ function requireExtension(value: string, field: string, key: string): void {
  * enums). The legacy stem encoding is otherwise read leniently.
  */
 export function parseCharIni(data: string): CharIni {
-  // `;` is the canonical INI comment; `//` shows up in real char.ini
-  // files where authors disable a line. js-ini only strips line-leading
-  // comments, so neither can corrupt the `#`-delimited emote values.
-  //
-  // `nothrow` skips lines that are neither section, comment, nor
-  // key=value instead of throwing. Real char.ini files are littered with
-  // stray author notes ("made by ...") and `#`-led header lines, and a
-  // parser for them must degrade rather than crash.
-  const raw = parseIni(data, {
+  // Comments are stripped here: js-ini only knows line-leading ones. `nothrow`
+  // skips stray lines (author notes, `#`-led headers) instead of throwing.
+  const raw = parseIni(stripComments(data), {
     comment: [";", "//"],
     autoTyping: false,
     nothrow: true,
@@ -259,6 +263,9 @@ export function parseCharIni(data: string): CharIni {
     blockOrder.length > 0
       ? readBlockEmotes(sections, blockOrder)
       : readLegacyEmotes(emotionSection, sections, count);
+  if (emotes.length === 0) {
+    throw new Error("char.ini: no emotes; at least one [emote <name>] block or [emotions] row is required");
+  }
 
   return { options, emotes, sections };
 }
@@ -289,6 +296,7 @@ function readBlockEmotes(
     const sound = normSound(block.sound);
     if (sound !== null) requireExtension(sound, "sound", key);
 
+    const modifier = (requireEnumName(block.modifier, BLOCK_MODIFIERS, "modifier", key) ?? "no_preanim") as EmoteModifier;
     emotes.push({
       key,
       name: block.name ?? key,
@@ -296,9 +304,8 @@ function readBlockEmotes(
       preanim,
       postanim,
       camera,
-      // Blocks require named enum identifiers, no bare magic numbers.
-      modifier: (requireEnumName(block.modifier, EmoteModifierSchema, "modifier", key) ?? "no_preanim") as EmoteModifier,
-      deskmod: (requireEnumName(block.deskmod, DeskModifierSchema, "deskmod", key) ?? "shown") as DeskModifier,
+      modifier,
+      deskmod: (requireEnumName(block.deskmod, DeskModifierSchema.enum, "deskmod", key) ?? unsetDeskmod(modifier)) as DeskModifier,
       sound,
       ...soundDelayFromMs(block.sounddelayms !== undefined ? toInt(block.sounddelayms, 0) : 0),
     });
@@ -322,6 +329,7 @@ function readLegacyEmotes(
 
     const parts = def.split("#");
     const delay = soundT[String(id)];
+    const modifier = parseEnum(parts[3], BLOCK_MODIFIERS, EmoteModifierSchema, "no_preanim") as EmoteModifier;
     emotes.push({
       key: String(id),
       name: parts[0] ?? "",
@@ -329,8 +337,8 @@ function readLegacyEmotes(
       preanim: normPreanim(parts[1]),
       postanim: null,
       camera: null,
-      modifier: parseEnum(parts[3], EmoteModifierSchema) as EmoteModifier,
-      deskmod: parts.length > 4 ? parseEnum(parts[4], DeskModifierSchema) as DeskModifier : "shown",
+      modifier,
+      deskmod: (parts[4]?.trim() ? parseEnum(parts[4], DeskModifierSchema.enum, DeskModifierSchema, "shown") : unsetDeskmod(modifier)) as DeskModifier,
       sound: normLegacySound(soundN[String(id)]),
       ...soundDelayFromTicks(delay !== undefined ? toInt(delay, 0) : 0),
     });

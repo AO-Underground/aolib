@@ -10,10 +10,11 @@
     },
     "emotes": {
       "type": "array",
-      "description": "Emote table in button order, normalized from either [emote <name>] blocks or the legacy [emotions] banks.",
+      "description": "Emote table in button order, normalized from either [emote <name>] blocks or the legacy [emotions] banks. At least one emote is required.",
       "items": {
         "$ref": "#/definitions/Emote"
-      }
+      },
+      "minItems": 1
     },
     "sections": {
       "type": "object",
@@ -39,7 +40,8 @@
       "properties": {
         "name": {
           "type": "string",
-          "default": ""
+          "minLength": 1,
+          "description": "Character name. Required: a char.ini without a non-empty [options] name is rejected."
         },
         "showname": {
           "type": "string",
@@ -134,12 +136,12 @@
         "modifier": {
           "$ref": "../types/EmoteModifier.schema.json",
           "default": "no_preanim",
-          "description": "Emote modifier. Legacy banks give the wire integer, mapped to the name (unknown integers map to wire 0). For 3D the zoom variants are advisory; camera treatment comes from the emote's `camera` VMD."
+          "description": "Emote modifier. Legacy banks give the wire integer or a lowercase name allowed in blocks; anything else is `no_preanim`. For 3D the zoom variants are advisory; camera treatment comes from the emote's `camera` VMD."
         },
         "deskmod": {
           "$ref": "../types/DeskModifier.schema.json",
           "default": "shown",
-          "description": "Desk modifier. Legacy banks give the wire integer, mapped to the name (unknown integers map to wire 0)."
+          "description": "Desk modifier. When unset (absent, or an empty legacy field) it is `hidden` if `modifier` is `zoom` or `objection_zoom`, else `shown`. Legacy banks give the wire integer or a lowercase name; an unrecognised value is `shown`."
         },
         "sound": {
           "type": [

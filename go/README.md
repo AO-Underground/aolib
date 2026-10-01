@@ -26,7 +26,7 @@ import aolib "github.com/AO-Underground/aolib/go/v2"
   `aolib.DecodeToServer(raw, mode)` / `aolib.DecodeToClient(raw, mode)` by
   direction: wire encode/decode of any typed packet. `aolib.ReadHeader(raw)`
   reads just the header; `aolib.Validate(pkt)` checks a packet against its schema.
-- `aolib.ParseCharIni(text)`: char.ini parser, matching aolib-ts's `parseCharIni`.
+- `aolib.ParseCharIni(text)`: char.ini parser per [`spec/assets`](../spec/assets/README.md).
 - `aolib.NewPacket(raw)` / `Packet.String()`: raw FantaCode framing.
 - `aolib.MSToServer` / `aolib.MSToClient`: the in-character (`MS`) packet, split
   by direction, with `ParseMSToServer` / `ParseMSToClient` / `Args`.

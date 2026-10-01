@@ -1,270 +1,285 @@
 package aolib
 
 import (
+	"encoding/json"
 	"fmt"
 	"regexp"
-	"sort"
 	"strconv"
 	"strings"
 )
 
-// CharEmote is one emote, normalized from an [emote <name>] block or a legacy
-// [emotions] row. Empty Preanim, Postanim, Camera and Sound mean none.
-type CharEmote struct {
-	// Key is the block name, or the legacy row id as a string.
-	Key             string        `json:"key"`
-	Name            string        `json:"name"`
-	Anim            string        `json:"anim"`
-	Preanim         string        `json:"preanim"`
-	Postanim        string        `json:"postanim"`
-	Camera          string        `json:"camera"`
-	Modifier        EmoteModifier `json:"modifier"`
-	Deskmod         DeskModifier  `json:"deskmod"`
-	Sound           string        `json:"sound"`
-	SoundDelayMs    int           `json:"sounddelayms"`
-	SoundDelayTicks int           `json:"sounddelayticks"`
+// CharIni is a parsed char.ini, shaped by spec/assets/CharIni.schema.json; the
+// text grammar is spec/assets/README.md.
+type CharIni struct {
+	Options CharIniOptions `json:"options"`
+	Emotes  []CharEmote    `json:"emotes"`
+	// Sections holds every section, section and key names lowercased, values verbatim.
+	Sections map[string]map[string]string `json:"sections"`
 }
 
 // CharIniOptions is the [options] section. Chat and Category are nil when the
 // key is absent, distinct from an explicit empty value.
 type CharIniOptions struct {
-	Name     string  `json:"name"`
-	Showname string  `json:"showname"`
-	Side     string  `json:"side"`
-	Blips    string  `json:"blips"`
-	Chat     *string `json:"chat"`
-	Category *string `json:"category"`
-	Model    string  `json:"model"`
-	// All holds every [options] key, lowercased, values verbatim.
-	All map[string]string `json:"-"`
+	Name     string
+	Showname string
+	Side     string
+	Blips    string
+	Chat     *string
+	Category *string
+	Model    string
+	// Extra holds the remaining [options] keys, lowercased.
+	Extra map[string]string
 }
 
-// CharIni is a parsed char.ini. Section and key names are lowercased; values
-// are kept verbatim.
-type CharIni struct {
-	Options  CharIniOptions               `json:"options"`
-	Emotes   []CharEmote                  `json:"emotes"`
-	Sections map[string]map[string]string `json:"sections"`
+// MarshalJSON emits the schema's shape: typed keys plus Extra inline.
+func (o CharIniOptions) MarshalJSON() ([]byte, error) {
+	m := map[string]any{}
+	for k, v := range o.Extra {
+		m[k] = v
+	}
+	m["name"], m["showname"], m["side"], m["blips"] = o.Name, o.Showname, o.Side, o.Blips
+	m["chat"], m["category"], m["model"] = o.Chat, o.Category, o.Model
+	return json.Marshal(m)
 }
 
-// ParseCharIni parses char.ini text. It fails when [options] or its name is
-// missing, and when an [emote <name>] block names a file without an extension
-// or gives modifier/deskmod as a number. Legacy rows are read leniently.
+// CharEmote is one emote, from an [emote <name>] block or a legacy
+// [emotions] row. Nil Preanim, Postanim, Camera and Sound mean none.
+type CharEmote struct {
+	Key             string        `json:"key"`
+	Name            string        `json:"name"`
+	Anim            string        `json:"anim"`
+	Preanim         *string       `json:"preanim"`
+	Postanim        *string       `json:"postanim"`
+	Camera          *string       `json:"camera"`
+	Modifier        EmoteModifier `json:"modifier"`
+	Deskmod         DeskModifier  `json:"deskmod"`
+	Sound           *string       `json:"sound"`
+	SoundDelayMs    int           `json:"sounddelayms"`
+	SoundDelayTicks int           `json:"sounddelayticks"`
+}
+
+// The modifier/deskmod names the spec accepts in blocks and legacy rows.
+var (
+	blockEmoteModifiers = []EmoteModifier{EmoteModifierNoPreanim, EmoteModifierPreanim, EmoteModifierPreanimAndObjection, EmoteModifierUnused3, EmoteModifierUnused4, EmoteModifierZoom, EmoteModifierObjectionZoom}
+	blockDeskModifiers  = []DeskModifier{DeskModifierHidden, DeskModifierShown, DeskModifierHideDuringPreanim, DeskModifierShowDuringPreanim, DeskModifierHideAndCenterDuringPreanim, DeskModifierShowDuringPreanimThenCenter}
+)
+
+// ParseCharIni parses char.ini text. It fails where the spec rejects a file:
+// no [options] name, no emotes, or an [emote <name>] block whose file
+// reference lacks an extension or whose modifier/deskmod is not an enum name.
 func ParseCharIni(data string) (*CharIni, error) {
-	sections, blockOrder := parseIni(data)
+	sections, blocks := parseIni(data)
 
 	opt, ok := sections["options"]
 	if !ok {
 		return nil, fmt.Errorf("char.ini: missing required [options] section")
 	}
 	if opt["name"] == "" {
-		return nil, fmt.Errorf("char.ini: [options] is missing the required `name` key")
+		return nil, fmt.Errorf("char.ini: [options] is missing the required name")
 	}
-	options := CharIniOptions{
-		Name:     opt["name"],
-		Showname: opt["showname"],
-		Side:     "wit",
-		Blips:    "male",
-		Model:    opt["model"],
-		All:      opt,
-	}
+	o := CharIniOptions{Name: opt["name"], Showname: opt["showname"], Side: "wit", Blips: "male", Model: opt["model"], Extra: map[string]string{}}
 	if v, ok := opt["side"]; ok {
-		options.Side = v
+		o.Side = v
 	}
 	if v, ok := opt["blips"]; ok {
-		options.Blips = v
+		o.Blips = v
 	} else if v, ok := opt["gender"]; ok {
-		options.Blips = v
+		o.Blips = v
 	}
 	if v, ok := opt["chat"]; ok {
-		options.Chat = &v
+		o.Chat = &v
 	}
 	if v, ok := opt["category"]; ok {
-		options.Category = &v
+		o.Category = &v
+	}
+	for k, v := range opt {
+		switch k {
+		case "name", "showname", "side", "blips", "chat", "category", "model":
+		default:
+			o.Extra[k] = v
+		}
 	}
 
-	var emotes []CharEmote
-	var err error
-	if len(blockOrder) > 0 {
-		emotes, err = readBlockEmotes(sections, blockOrder)
-	} else {
-		emotes = readLegacyEmotes(sections)
+	ini := &CharIni{Options: o, Sections: sections}
+	if len(blocks) == 0 {
+		ini.Emotes = legacyEmotes(sections)
 	}
-	if err != nil {
-		return nil, err
+	for _, key := range blocks {
+		e, err := blockEmote(key, sections["emote "+strings.ToLower(key)])
+		if err != nil {
+			return nil, err
+		}
+		ini.Emotes = append(ini.Emotes, e)
 	}
-	if emotes == nil {
-		emotes = []CharEmote{}
+	if len(ini.Emotes) == 0 {
+		return nil, fmt.Errorf("char.ini: no emotes; at least one [emote <name>] block or [emotions] row is required")
 	}
-	return &CharIni{Options: options, Emotes: emotes, Sections: sections}, nil
+	return ini, nil
 }
 
-// parseIni reads sections and key=value lines, skipping comments (`;`, `//`)
-// and any other line. `#` is never a comment: emote rows are #-delimited.
-func parseIni(data string) (map[string]map[string]string, []string) {
-	sections := map[string]map[string]string{}
-	var blockOrder []string
+// parseIni reads [section] headers and key = value lines. Comments start with
+// `;` or `//` at the start of a line or after whitespace; `#` is never a
+// comment because it delimits legacy emote fields. Other lines are skipped.
+func parseIni(data string) (sections map[string]map[string]string, blocks []string) {
+	sections = map[string]map[string]string{}
 	var cur map[string]string
 	for _, line := range strings.Split(strings.TrimPrefix(data, "\uFEFF"), "\n") {
-		line = strings.TrimSpace(line)
-		if line == "" || strings.HasPrefix(line, ";") || strings.HasPrefix(line, "//") {
-			continue
-		}
+		line = strings.TrimSpace(stripComment(line))
 		if strings.HasPrefix(line, "[") && strings.HasSuffix(line, "]") {
-			name := line[1 : len(line)-1]
+			name := strings.TrimSpace(line[1 : len(line)-1])
 			lower := strings.ToLower(name)
-			if _, ok := sections[lower]; !ok {
+			if sections[lower] == nil {
 				sections[lower] = map[string]string{}
 				if strings.HasPrefix(lower, "emote ") {
-					blockOrder = append(blockOrder, name[len("emote "):])
+					blocks = append(blocks, strings.TrimSpace(name[len("emote "):]))
 				}
 			}
 			cur = sections[lower]
 			continue
 		}
-		k, v, ok := strings.Cut(line, "=")
-		if !ok || cur == nil {
-			continue
+		if k, v, ok := strings.Cut(line, "="); ok && cur != nil {
+			cur[strings.ToLower(strings.TrimSpace(k))] = strings.TrimSpace(v)
 		}
-		cur[strings.ToLower(strings.TrimSpace(k))] = strings.TrimSpace(v)
 	}
-	return sections, blockOrder
+	return sections, blocks
 }
 
-func readBlockEmotes(sections map[string]map[string]string, blockOrder []string) ([]CharEmote, error) {
-	var emotes []CharEmote
-	for _, key := range blockOrder {
-		block := sections["emote "+strings.ToLower(key)]
-		e := CharEmote{
-			Key:      key,
-			Name:     key,
-			Anim:     block["anim"],
-			Preanim:  noneIfDash(block["preanim"]),
-			Postanim: noneIfDash(block["postanim"]),
-			Camera:   noneIfDash(block["camera"]),
-			Sound:    block["sound"],
-			Modifier: EmoteModifierNoPreanim,
-			Deskmod:  DeskModifierShown,
-		}
-		if v, ok := block["name"]; ok {
-			e.Name = v
-		}
-		if err := requireExtension(e.Anim, "anim", key); err != nil {
-			return nil, err
-		}
-		for field, v := range map[string]string{"preanim": e.Preanim, "postanim": e.Postanim, "camera": e.Camera, "sound": e.Sound} {
-			if v != "" {
-				if err := requireExtension(v, field, key); err != nil {
-					return nil, err
-				}
-			}
-		}
-		var err error
-		if e.Modifier, err = requireEnumName(block["modifier"], emoteModifierToWire, "modifier", key, e.Modifier); err != nil {
-			return nil, err
-		}
-		if e.Deskmod, err = requireEnumName(block["deskmod"], deskModifierToWire, "deskmod", key, e.Deskmod); err != nil {
-			return nil, err
-		}
-		e.SoundDelayMs = leadingInt(block["sounddelayms"], 0)
-		e.SoundDelayTicks = MsToTicks(e.SoundDelayMs)
-		emotes = append(emotes, e)
+var commentStart = regexp.MustCompile(`(^|\s)(;|//)`)
+
+func stripComment(line string) string {
+	if loc := commentStart.FindStringIndex(line); loc != nil {
+		return line[:loc[0]]
 	}
-	return emotes, nil
+	return line
 }
 
-func readLegacyEmotes(sections map[string]map[string]string) []CharEmote {
-	rows := sections["emotions"]
-	soundN, soundT := sections["soundn"], sections["soundt"]
+func blockEmote(key string, block map[string]string) (CharEmote, error) {
+	e := CharEmote{
+		Key:      key,
+		Name:     key,
+		Anim:     block["anim"],
+		Preanim:  noneUnlessSet(block["preanim"], true),
+		Postanim: noneUnlessSet(block["postanim"], true),
+		Camera:   noneUnlessSet(block["camera"], true),
+		Sound:    noneUnlessSet(block["sound"], false),
+		Modifier: EmoteModifierNoPreanim,
+		Deskmod:  DeskModifierShown,
+	}
+	if v, ok := block["name"]; ok {
+		e.Name = v
+	}
+	files := []struct {
+		field string
+		v     *string
+	}{{"anim", &e.Anim}, {"preanim", e.Preanim}, {"postanim", e.Postanim}, {"camera", e.Camera}, {"sound", e.Sound}}
+	for _, f := range files {
+		if f.v != nil && !hasExtension.MatchString(*f.v) {
+			return e, fmt.Errorf("char.ini [emote %s]: %s %q must include a file extension", key, f.field, *f.v)
+		}
+	}
+	var err error
+	if e.Modifier, err = blockEnum(block["modifier"], blockEmoteModifiers, "modifier", key, e.Modifier); err != nil {
+		return e, err
+	}
+	if e.Deskmod, err = blockEnum(block["deskmod"], blockDeskModifiers, "deskmod", key, unsetDeskmod(e.Modifier)); err != nil {
+		return e, err
+	}
+	e.SoundDelayMs = intOr(block["sounddelayms"], 0)
+	e.SoundDelayTicks = MsToTicks(e.SoundDelayMs)
+	return e, nil
+}
+
+func legacyEmotes(sections map[string]map[string]string) []CharEmote {
+	rows, soundN, soundT := sections["emotions"], sections["soundn"], sections["soundt"]
 	var emotes []CharEmote
-	for id := 1; id <= leadingInt(rows["number"], 0); id++ {
+	for id := 1; id <= intOr(rows["number"], 0); id++ {
 		key := strconv.Itoa(id)
-		def, ok := rows[key]
+		row, ok := rows[key]
 		if !ok {
 			continue
 		}
-		parts := strings.Split(def, "#")
-		part := func(i int) string {
-			if i < len(parts) {
-				return parts[i]
+		f := strings.Split(row, "#")
+		field := func(i int) string {
+			if i < len(f) {
+				return f[i]
 			}
 			return ""
 		}
 		e := CharEmote{
 			Key:      key,
-			Name:     part(0),
-			Anim:     part(2),
-			Preanim:  noneIfDash(part(1)),
-			Modifier: legacyEnum(part(3), emoteModifierToWire, emoteModifierFromWire),
+			Name:     field(0),
+			Preanim:  noneUnlessSet(field(1), true),
+			Anim:     field(2),
+			Modifier: legacyEnum(field(3), blockEmoteModifiers, emoteModifierFromWire, EmoteModifierNoPreanim),
 			Deskmod:  DeskModifierShown,
-			Sound:    soundN[key],
 		}
-		if len(parts) > 4 {
-			e.Deskmod = legacyEnum(part(4), deskModifierToWire, deskModifierFromWire)
+		if strings.TrimSpace(field(4)) == "" {
+			e.Deskmod = unsetDeskmod(e.Modifier)
+		} else {
+			e.Deskmod = legacyEnum(field(4), blockDeskModifiers, deskModifierFromWire, DeskModifierShown)
 		}
-		if e.Sound == "0" || e.Sound == "1" || e.Sound == "-" {
-			e.Sound = ""
+		if s := soundN[key]; s != "0" && s != "1" && s != "-" {
+			e.Sound = noneUnlessSet(s, false)
 		}
-		e.SoundDelayTicks = leadingInt(soundT[key], 0)
+		e.SoundDelayTicks = intOr(soundT[key], 0)
 		e.SoundDelayMs = TicksToMs(e.SoundDelayTicks)
 		emotes = append(emotes, e)
 	}
 	return emotes
 }
 
-func noneIfDash(v string) string {
-	if v == "-" {
-		return ""
+// unsetDeskmod is the deskmod of an emote that does not set one: hidden for the
+// zoom modifiers, as AO2-Client does, else shown.
+func unsetDeskmod(m EmoteModifier) DeskModifier {
+	if m == EmoteModifierZoom || m == EmoteModifierObjectionZoom {
+		return DeskModifierHidden
 	}
-	return v
+	return DeskModifierShown
 }
 
-var hasExtension = regexp.MustCompile(`\.[^.\s]+$`)
-
-func requireExtension(v, field, key string) error {
-	if !hasExtension.MatchString(v) {
-		return fmt.Errorf("char.ini emote %q: %s %q must include a file extension", key, field, v)
+// noneUnlessSet maps an empty value (or `-`, when dash is true) to nil.
+func noneUnlessSet(v string, dash bool) *string {
+	if v == "" || (dash && v == "-") {
+		return nil
 	}
-	return nil
+	return &v
 }
 
-// requireEnumName accepts a block enum only by name; empty keeps def.
-func requireEnumName[E ~string](v string, toWire map[E]int, field, key string, def E) (E, error) {
+var hasExtension = regexp.MustCompile(`\.[^.\s/\\]+$`)
+
+func blockEnum[E ~string](v string, allowed []E, field, key string, def E) (E, error) {
 	if v == "" {
 		return def, nil
 	}
-	if _, ok := toWire[E(strings.ToLower(v))]; ok {
-		return E(strings.ToLower(v)), nil
+	names := make([]string, len(allowed))
+	for i, e := range allowed {
+		if v == string(e) {
+			return e, nil
+		}
+		names[i] = string(e)
 	}
-	return def, fmt.Errorf("char.ini emote %q: %s %q must be one of: %s", key, field, v, strings.Join(enumNames(toWire), ", "))
+	return def, fmt.Errorf("char.ini [emote %s]: %s %q must be one of: %s", key, field, v, strings.Join(names, ", "))
 }
 
-// legacyEnum reads a legacy row field as a name or wire integer; anything else
-// is the wire-0 value.
-func legacyEnum[E ~string](v string, toWire map[E]int, fromWire map[int]E) E {
-	if _, ok := toWire[E(strings.ToLower(v))]; ok {
-		return E(strings.ToLower(v))
+// legacyEnum reads a legacy row field: a lowercase name from allowed, or a
+// wire integer; anything else is fallback.
+func legacyEnum[E ~string](v string, allowed []E, fromWire map[int]E, fallback E) E {
+	v = strings.TrimSpace(v)
+	for _, e := range allowed {
+		if v == string(e) {
+			return e
+		}
 	}
-	if e, ok := fromWire[leadingInt(v, 0)]; ok {
-		return e
+	if n, err := strconv.Atoi(v); err == nil {
+		if e, ok := fromWire[n]; ok {
+			return e
+		}
 	}
-	return fromWire[0]
+	return fallback
 }
 
-func enumNames[E ~string](toWire map[E]int) []string {
-	names := make([]string, 0, len(toWire))
-	for e := range toWire {
-		names = append(names, string(e))
-	}
-	sort.Slice(names, func(i, j int) bool { return toWire[E(names[i])] < toWire[E(names[j])] })
-	return names
-}
-
-var leadingIntRe = regexp.MustCompile(`^[+-]?\d+`)
-
-// leadingInt parses a leading integer like JavaScript's parseInt, else fallback.
-func leadingInt(v string, fallback int) int {
-	n, err := strconv.Atoi(leadingIntRe.FindString(strings.TrimSpace(v)))
+func intOr(v string, fallback int) int {
+	n, err := strconv.Atoi(strings.TrimSpace(v))
 	if err != nil {
 		return fallback
 	}

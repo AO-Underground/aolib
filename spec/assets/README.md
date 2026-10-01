@@ -8,6 +8,16 @@ specified below.
 
 - `CharIni`: parsed `char.ini`. Worked examples in [EXAMPLES.md](./EXAMPLES.md).
 
+A char.ini MUST have an `[options]` section with a non-empty `name`, and at
+least one emote (one `[emote <name>]` block, or one legacy `[emotions]` row);
+a parser rejects a file missing any of these.
+
+Comments start with `;` or `//` and run to the end of the line, either at the
+start of a line or after whitespace, so `model = model.pmx ; 3D` reads as
+`model.pmx`. A marker not preceded by whitespace is part of the value
+(`url = http://example.com`). `#` is never a comment: it delimits legacy emote
+fields.
+
 A character is **3D** when `[options] model` names a `.pmx`, otherwise **2D**.
 The emote table normalizes to one shape either way; `anim` is a sprite stem
 for 2D and a base VMD stem for 3D.
@@ -30,6 +40,7 @@ blocks, in the order they appear in the file:
 
 ```ini
 [options]
+name = Fenomeno3D        ; required
 model = model.pmx        ; present => 3D character
 
 [emote objection]
@@ -59,19 +70,21 @@ has a default, so the parsed `Emote` is a complete shape either way. Block field
 names are the lowercased `Emote` field names: `name` (display label; defaults to
 the block name), `anim`, `preanim` (`-`/absent → null), `postanim` (`-`/absent →
 null), `camera` (`-`/absent → null), `sound` (absent → null), `sounddelayms`
-(milliseconds; absent → 0), `deskmod` (absent → `shown`), and `modifier`
+(milliseconds; absent → 0), `deskmod` (absent → `shown`, or `hidden` when
+`modifier` is `zoom` or `objection_zoom`), and `modifier`
 (absent → `no_preanim`). The normalized emote list is in button order, so there is no id.
 Unlike the legacy stems, a block's file references **must carry the file
 extension**, no extension guessing:
 `anim`/`preanim`/`postanim` (`.gif`/`.webp`/`.png` for 2D, `.vmd` for 3D),
 `camera` (a `.vmd` with a camera track, 3D only), and `sound`
 (`.opus`/`.wav`/`.ogg`). `modifier` and `deskmod` must each be the matching
-enum NAME, case-insensitive: a bare number is rejected, so the meaning is never
+enum NAME, in lowercase: `ZOOM` and a bare number are rejected, so the meaning is never
 a magic value. EmoteModifier for `modifier` (`no_preanim`, `preanim`,
-`preanim_and_objection`, `zoom`, `objection_zoom`) and DeskModifier for
+`preanim_and_objection`, `unused_3`, `unused_4`, `zoom`, `objection_zoom`) and
+DeskModifier for
 `deskmod` (`hidden`, `shown`, `hide_during_preanim`, `show_during_preanim`,
 `hide_and_center_during_preanim`, `show_during_preanim_then_center`). (The
-legacy `#` banks keep their positional numeric fields.)
+legacy `#` banks also accept the wire integer; see below.)
 
 `postanim` is an exit animation, the mirror of `preanim`. The preanim phase is
 gated: it runs only when preanim is enabled **for that message**: the sender's
@@ -122,11 +135,14 @@ number = 2
 
 `N = desc#preanim#anim#modifier#deskmod`, zipped with `[soundn]` (sound) and
 `[soundt]` (sound delay, in ticks; see below) by id. `[soundn]` values `0`, `1`
-and `-` mean no sound. `modifier` and `deskmod` are wire integers, parsed to
-their enum names like the block form (an unknown integer maps to wire 0). When
+and `-` mean no sound. `modifier` and `deskmod` are each either the wire
+integer or one of the names the block form allows, in lowercase only (`5` and
+`zoom` are the same modifier). Any other `modifier`, including `ZOOM`, is
+`no_preanim`. An empty or absent `deskmod` is `shown`, or `hidden` when
+`modifier` is `zoom` or `objection_zoom` (as AO2-Client does); any other
+`deskmod` is `shown`. When
 no `[emote <name>]` blocks are present a parser reads these banks. Normalized `key` is the
-stringified id. Comment markers are `;` and `//` only, never `#` (it delimits
-emote fields).
+stringified id.
 
 ### Sound delay
 

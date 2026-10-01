@@ -2,6 +2,9 @@ import { describe, it, expect } from "bun:test";
 import { readFileSync } from "node:fs";
 import { parseCharIni, msToTicks, ticksToMs } from "../src/charini";
 
+// A minimal emote, for tests about other sections (a char.ini needs one).
+const EMOTE = "[emotions]\nnumber = 1\n1 = a#-#a#0\n";
+
 // The AO-specific quirk: emote values are `#`-delimited, so the parser
 // must not treat `#` as an inline comment.
 
@@ -90,7 +93,7 @@ Number = 1
 name = Matt
 showname = MATT
 side = WIT
-`);
+${EMOTE}`);
     expect(options.showname).toBe("MATT");
     expect(options.side).toBe("WIT");
   });
@@ -99,7 +102,7 @@ side = WIT
     const { options } = parseCharIni(`
 [options]
 name = Bare
-`);
+${EMOTE}`);
     expect(options.showname).toBe("");
     expect(options.side).toBe("wit");
     expect(options.blips).toBe("male");
@@ -108,9 +111,9 @@ name = Bare
   });
 
   it("defaults chat to null when absent, but keeps an explicit empty chat", () => {
-    expect(parseCharIni("[options]\nname = A\n").options.chat).toBeNull();
-    expect(parseCharIni("[options]\nname = A\nchat =\n").options.chat).toBe("");
-    expect(parseCharIni("[options]\nname = A\nchat = aa\n").options.chat).toBe(
+    expect(parseCharIni("[options]\nname = A\n" + EMOTE).options.chat).toBeNull();
+    expect(parseCharIni("[options]\nname = A\nchat =\n" + EMOTE).options.chat).toBe("");
+    expect(parseCharIni("[options]\nname = A\nchat = aa\n" + EMOTE).options.chat).toBe(
       "aa",
     );
   });
@@ -147,13 +150,13 @@ name = T
 
 [shouts]
 holdit = Hold it!!
-`);
+${EMOTE}`);
     expect(sections.shouts?.holdit).toBe("Hold it!!");
   });
 
-  it("parses an options-only file to empty emotes", () => {
-    const { emotes } = parseCharIni("[options]\nname = T\n");
-    expect(emotes).toEqual([]);
+  it("throws when the file has no emotes", () => {
+    expect(() => parseCharIni("[options]\nname = T\n")).toThrow(/no emotes/);
+    expect(() => parseCharIni("[options]\nname = T\n[emotions]\nnumber = 0\n")).toThrow(/no emotes/);
   });
 
   it("throws when the [options] section is missing", () => {
@@ -181,40 +184,72 @@ describe("parseCharIni: real-world edge cases", () => {
     expect(emotes[0]?.deskmod).toBe("shown");
   });
 
-  it("reads a trailing empty deskmod field as hidden (wire 0)", () => {
+  it("defaults an unset deskmod to hidden for zoom modifiers, else shown", () => {
     const { emotes } = parseCharIni(
-      "[options]\nname = T\n[emotions]\nnumber = 1\n1 = #-#void#0#\n",
+      "[options]\nname = T\n[emotions]\nnumber = 7\n" +
+        "1 = a#-#a#0#\n" + // unset, no_preanim
+        "2 = b#-#b#5# \n" + // empty, zoom
+        "3 = c#-#c#6\n" + // absent, objection_zoom
+        "4 = d#-#d#zoom#1\n" + // explicit shown
+        "5 = e#-#e#5#1s\n" + // explicit but invalid
+        "6 = f#-#f#0#7\n" + // explicit but invalid
+        "7 = g#-#g#1\n", // absent, preanim
     );
-    expect(emotes[0]).toMatchObject({ name: "", anim: "void", deskmod: "hidden" });
+    expect(emotes.map((e) => e.deskmod)).toEqual(["shown", "hidden", "hidden", "shown", "shown", "shown", "shown"]);
+
+    const blocks = parseCharIni(
+      "[options]\nname = T\n[emote a]\nanim = a.gif\nmodifier = zoom\n[emote b]\nanim = b.gif\nmodifier = zoom\ndeskmod = shown\n",
+    );
+    expect(blocks.emotes.map((e) => e.deskmod)).toEqual(["hidden", "shown"]);
+  });
+
+
+  it("strips inline `;` and `//` comments after whitespace, not inside values", () => {
+    const { options, emotes } = parseCharIni(
+      "[options]\nname = Bot ; required\nmodel = model.pmx\t// 3D\nurl = http://example.com/x\n" +
+        "[emote a]\nanim = a.gif ; animation file\n",
+    );
+    expect(options.name).toBe("Bot");
+    expect(options.model).toBe("model.pmx");
+    expect(options.url).toBe("http://example.com/x");
+    expect(emotes[0]?.anim).toBe("a.gif");
+  });
+
+  it("parses the spec README's block example", () => {
+    const readme = readFileSync(`${import.meta.dir}/../../spec/assets/README.md`, "utf8");
+    const example = readme.match(/```ini\n(\[options\][\s\S]*?)```/)?.[1] ?? "";
+    const { options, emotes } = parseCharIni(example);
+    expect(options.model).toBe("model.pmx");
+    expect(emotes[0]).toMatchObject({ key: "objection", anim: "objection.gif", camera: "objection_cam.vmd", sound: "objection.opus" });
   });
 
   it("ignores `//` line comments (used to disable an option)", () => {
     const { options } = parseCharIni(
-      "[options]\nname = Aether\n// chat = genshin\n",
+      "[options]\nname = Aether\n// chat = genshin\n" + EMOTE,
     );
     expect(options.chat).toBeNull();
     expect(Object.keys(options)).not.toContain("// chat");
   });
 
   it("parses tab-separated `key<tab>= value`", () => {
-    const { options } = parseCharIni("[options]\nname\t = Matt\n");
+    const { options } = parseCharIni("[options]\nname\t = Matt\n" + EMOTE);
     expect(options.name).toBe("Matt");
   });
 
   it("falls back to the obsolete `gender` key for blips", () => {
     // No blips: gender supplies it.
     expect(
-      parseCharIni("[options]\nname = T\ngender = female\n").options.blips,
+      parseCharIni("[options]\nname = T\ngender = female\n" + EMOTE).options.blips,
     ).toBe("female");
     // blips wins when both are present.
     expect(
-      parseCharIni("[options]\nname = T\nblips = male\ngender = female\n")
+      parseCharIni("[options]\nname = T\nblips = male\ngender = female\n" + EMOTE)
         .options.blips,
     ).toBe("male");
   });
 
   it("parses `key=value` with no surrounding spaces", () => {
-    const { options } = parseCharIni("[options]\nname=Abigail\nblips=Female\n");
+    const { options } = parseCharIni("[options]\nname=Abigail\nblips=Female\n" + EMOTE);
     expect(options.name).toBe("Abigail");
     expect(options.blips).toBe("Female");
   });
@@ -269,6 +304,24 @@ describe("parseCharIni: real-world edge cases", () => {
     expect(emotes.map((e) => e.key)).toEqual(["1"]);
   });
 
+  it("reads a legacy modifier/deskmod as a lowercase name or a wire integer", () => {
+    const { emotes } = parseCharIni(
+      "[options]\nname = T\n[emotions]\nnumber = 5\n" +
+        "1 = a#-#a#zoom#show_during_preanim\n" +
+        "2 = b#-#b#ZOOM#Shown\n" +
+        "3 = c#-#c#unused_3#3\n" +
+        "4 = d#-#d#5x#1\n" +
+        "5 = e#-#e# preanim #shown\n",
+    );
+    expect(emotes.map((e) => [e.modifier, e.deskmod])).toEqual([
+      ["zoom", "show_during_preanim"],
+      ["no_preanim", "shown"],
+      ["unused_3", "show_during_preanim"],
+      ["no_preanim", "shown"],
+      ["preanim", "shown"],
+    ]);
+  });
+
   it("defaults a non-numeric modifier to no_preanim", () => {
     const { emotes } = parseCharIni(
       "[options]\nname = T\n[emotions]\nnumber = 1\n1 = a#-#a#x\n",
@@ -287,7 +340,7 @@ describe("parseCharIni: real-world edge cases", () => {
   it("tolerates stray free-text lines without throwing", () => {
     // Real files contain author notes on their own line.
     const { options } = parseCharIni(
-      "[options]\nname = Note\nwhy are you reading the ini lmao\nshowname = Note\n",
+      "[options]\nname = Note\nwhy are you reading the ini lmao\nshowname = Note\n" + EMOTE,
     );
     expect(options.name).toBe("Note");
     expect(options.showname).toBe("Note");
@@ -325,7 +378,7 @@ describe("parseCharIni: real-world edge cases", () => {
   });
 
   it("reads the [options] model key (3D marker)", () => {
-    const { options } = parseCharIni("[options]\nname = Bot\nmodel = model.pmx\n");
+    const { options } = parseCharIni("[options]\nname = Bot\nmodel = model.pmx\n" + EMOTE);
     expect(options.model).toBe("model.pmx");
   });
 });
@@ -433,6 +486,28 @@ anim = think_loop.vmd
       parseCharIni("[options]\nname = T\n[emotions]\nnumber = 1\n1 = a\n[emote a]\nanim = a.gif\nmodifier = 5\n"),
     ).toThrow(/modifier "5" must be one of/);
   });
+
+  it("rejects a non-lowercase block `modifier` or `deskmod`", () => {
+    expect(() =>
+      parseCharIni("[options]\nname = T\n[emote a]\nanim = a.gif\nmodifier = ZOOM\n"),
+    ).toThrow(/modifier "ZOOM" must be one of/);
+    expect(() =>
+      parseCharIni("[options]\nname = T\n[emote a]\nanim = a.gif\ndeskmod = Hidden\n"),
+    ).toThrow(/deskmod "Hidden" must be one of/);
+  });
+
+  it("accepts unused_3 and unused_4, kept as wire 3 and 4", () => {
+    const { emotes } = parseCharIni(
+      "[options]\nname = T\n[emote a]\nanim = a.gif\nmodifier = unused_3\n[emote b]\nanim = b.gif\nmodifier = unused_4\n",
+    );
+    expect(emotes.map((e) => e.modifier)).toEqual(["unused_3", "unused_4"]);
+    const legacy = parseCharIni("[options]\nname = T\n[emotions]\nnumber = 2\n1 = a#-#a#3\n2 = b#-#b#unused_4\n");
+    expect(legacy.emotes.map((e) => e.modifier)).toEqual(["unused_3", "unused_4"]);
+    expect(() =>
+      parseCharIni("[options]\nname = T\n[emote a]\nanim = a.gif\nmodifier = UNUSED_4\n"),
+    ).toThrow(`modifier "UNUSED_4" must be one of: no_preanim, preanim, preanim_and_objection, unused_3, unused_4, zoom, objection_zoom`);
+  });
+
 
   it("rejects a bare number for a block `deskmod`", () => {
     expect(() =>

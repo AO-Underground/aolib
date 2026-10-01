@@ -1,9 +1,11 @@
 package aolib
 
 import (
+	"encoding/json"
 	"os"
 	"path/filepath"
 	"reflect"
+	"regexp"
 	"strings"
 	"testing"
 )
@@ -17,252 +19,271 @@ func mustParseCharIni(t *testing.T, data string) *CharIni {
 	return ini
 }
 
-func parseCharIniErr(t *testing.T, data, want string) {
+func str(s string) *string { return &s }
+
+// opts is the minimal valid [options] section.
+const opts = "[options]\nname = T\n"
+
+// readSpecAsset reads a file from the repo's spec/assets, skipping outside the monorepo.
+func readSpecAsset(t *testing.T, name string) string {
 	t.Helper()
-	_, err := ParseCharIni(data)
-	if err == nil || !strings.Contains(err.Error(), want) {
-		t.Fatalf("ParseCharIni error = %v, want containing %q", err, want)
+	raw, err := os.ReadFile(filepath.Join("..", "spec", "assets", name))
+	if err != nil {
+		t.Skipf("spec not available: %v", err)
+	}
+	return string(raw)
+}
+
+// TestCharIniSpecExamples parses each char.ini in spec/assets/EXAMPLES.md and
+// checks it against the object the spec gives for it, and against the schema.
+func TestCharIniSpecExamples(t *testing.T) {
+	doc := readSpecAsset(t, "EXAMPLES.md")
+	inis := regexp.MustCompile("(?s)```ini\n(.*?)```").FindAllStringSubmatch(doc, -1)
+	objs := regexp.MustCompile("(?s)```json\n(.*?)```").FindAllStringSubmatch(doc, -1)
+	if len(inis) == 0 || len(inis) != len(objs) {
+		t.Fatalf("EXAMPLES.md has %d ini and %d json blocks", len(inis), len(objs))
+	}
+	schema, err := schemaFor("assets/CharIni.schema.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	for i := range inis {
+		raw, err := json.Marshal(mustParseCharIni(t, inis[i][1]))
+		if err != nil {
+			t.Fatal(err)
+		}
+		var got, want map[string]any
+		if err := json.Unmarshal(raw, &got); err != nil {
+			t.Fatal(err)
+		}
+		if err := schema.Validate(got); err != nil {
+			t.Errorf("example %d does not match CharIni.schema.json: %v", i, err)
+		}
+		delete(got, "sections") // EXAMPLES.md omits it
+		if err := json.Unmarshal([]byte(objs[i][1]), &want); err != nil {
+			t.Fatal(err)
+		}
+		if !reflect.DeepEqual(got, want) {
+			g, _ := json.MarshalIndent(got, "", "  ")
+			t.Errorf("example %d:\ngot  %s\nwant %s", i, g, objs[i][1])
+		}
 	}
 }
 
-func emoteKeys(es []CharEmote) []string {
-	keys := []string{}
-	for _, e := range es {
-		keys = append(keys, e.Key)
+// The README's block example, inline `;` comments included.
+func TestCharIniReadmeBlockExample(t *testing.T) {
+	doc := readSpecAsset(t, "README.md")
+	m := regexp.MustCompile("(?s)```ini\n(\\[options\\].*?)```").FindStringSubmatch(doc)
+	if m == nil {
+		t.Fatal("README.md has no [options] ini example")
 	}
-	return keys
-}
-
-func eq(t *testing.T, name string, got, want any) {
-	t.Helper()
-	if !reflect.DeepEqual(got, want) {
-		t.Errorf("%s = %#v, want %#v", name, got, want)
+	ini := mustParseCharIni(t, m[1])
+	if ini.Options.Model != "model.pmx" || len(ini.Emotes) != 2 {
+		t.Fatalf("model %q, %d emotes", ini.Options.Model, len(ini.Emotes))
+	}
+	want := CharEmote{
+		Key: "objection", Name: "objection", Anim: "objection.gif", Preanim: str("point.gif"), Postanim: str("bow.gif"),
+		Camera: str("objection_cam.vmd"), Modifier: EmoteModifierZoom, Deskmod: DeskModifierShown,
+		Sound: str("objection.opus"), SoundDelayMs: 480, SoundDelayTicks: 12,
+	}
+	if !reflect.DeepEqual(ini.Emotes[0], want) {
+		t.Errorf("objection = %+v", ini.Emotes[0])
 	}
 }
-
-const legacyIni = `
-[options]
-name = Fenomeno3D
-showname = Fenomeno
-side = wit
-gender = male
-blips = male
-chat = default
-
-[emotions]
-number = 2
-1 = normal#-#idle#1
-2 = deskslam#slam#normal#5#1
-
-[soundn]
-1 = 0
-2 = objection
-
-[soundt]
-2 = 10
-`
-
-func TestCharIniLegacyRows(t *testing.T) {
-	ini := mustParseCharIni(t, legacyIni)
-	eq(t, "emote 0", ini.Emotes[0], CharEmote{Key: "1", Name: "normal", Anim: "idle", Modifier: EmoteModifierPreanim, Deskmod: DeskModifierShown})
-	eq(t, "emote 1 deskmod", ini.Emotes[1].Deskmod, DeskModifierShown)
-	eq(t, "emote 1 modifier", ini.Emotes[1].Modifier, EmoteModifierZoom)
-	eq(t, "emote 1 sound", ini.Emotes[1].Sound, "objection")
-	eq(t, "emote 1 delay", ini.Emotes[1].SoundDelayMs, 400)
-	eq(t, "options", []string{ini.Options.Name, ini.Options.Showname, ini.Options.Side}, []string{"Fenomeno3D", "Fenomeno", "wit"})
-}
-
-func TestCharIniTuning(t *testing.T) {
-	ini := mustParseCharIni(t, "[Options]\nName = Phoenix\nShowName = Phoenix Wright\n[Emotions]\nNumber = 1\n1 = point#-#point#5\n")
-	eq(t, "case-insensitive", []any{ini.Options.Name, ini.Options.Showname, len(ini.Emotes)}, []any{"Phoenix", "Phoenix Wright", 1})
-
-	ini = mustParseCharIni(t, "[options]\nname = Matt\nshowname = MATT\nside = WIT\n")
-	eq(t, "value case", []string{ini.Options.Showname, ini.Options.Side}, []string{"MATT", "WIT"})
-
-	ini = mustParseCharIni(t, "[options]\nname = Bare\n")
-	eq(t, "defaults", []any{ini.Options.Showname, ini.Options.Side, ini.Options.Blips, ini.Options.Chat, ini.Options.Category}, []any{"", "wit", "male", (*string)(nil), (*string)(nil)})
-
-	if c := mustParseCharIni(t, "[options]\nname = A\nchat =\n").Options.Chat; c == nil || *c != "" {
-		t.Errorf("explicit empty chat = %v", c)
-	}
-	if c := mustParseCharIni(t, "[options]\nname = A\nchat = aa\n").Options.Chat; c == nil || *c != "aa" {
-		t.Errorf("chat = %v", c)
-	}
-
-	ini = mustParseCharIni(t, "[options]\n; this is a comment\nname = Withcomment\n[emotions]\nnumber = 1\n1 = a#b#c#0\n")
-	eq(t, "; comment", []string{ini.Options.Name, ini.Emotes[0].Anim}, []string{"Withcomment", "c"})
-
-	ini = mustParseCharIni(t, "[options]\nname = T\n[emotions]\nnumber = 3\n1 = one#-#one#0\n3 = three#-#three#0\n")
-	eq(t, "skip missing ids", emoteKeys(ini.Emotes), []string{"1", "3"})
-
-	ini = mustParseCharIni(t, "[options]\nname = T\n[shouts]\nholdit = Hold it!!\n")
-	eq(t, "unmodeled section", ini.Sections["shouts"]["holdit"], "Hold it!!")
-
-	eq(t, "options only", mustParseCharIni(t, "[options]\nname = T\n").Emotes, []CharEmote{})
-
-	parseCharIniErr(t, "", "missing required [options]")
-	parseCharIniErr(t, "[emotions]\nnumber = 0\n", "missing required [options]")
-	parseCharIniErr(t, "[options]\nshowname = X\n", "missing the required `name`")
-}
-
-func TestCharIniRealWorldEdgeCases(t *testing.T) {
-	first := func(data string) CharEmote { t.Helper(); return mustParseCharIni(t, data).Emotes[0] }
-
-	eq(t, "4 fields", first("[options]\nname = T\n[emotions]\nnumber = 1\n1 = normal#pre#normal#0\n").Deskmod, DeskModifierShown)
-	e := first("[options]\nname = T\n[emotions]\nnumber = 1\n1 = #-#void#0#\n")
-	eq(t, "trailing empty deskmod", []any{e.Name, e.Anim, e.Deskmod}, []any{"", "void", DeskModifierHidden})
-
-	ini := mustParseCharIni(t, "[options]\nname = Aether\n// chat = genshin\n")
-	eq(t, "// comment", ini.Options.Chat, (*string)(nil))
-	if _, ok := ini.Options.All["// chat"]; ok {
-		t.Error("// line parsed as a key")
-	}
-
-	eq(t, "tab separator", mustParseCharIni(t, "[options]\nname\t = Matt\n").Options.Name, "Matt")
-	eq(t, "gender fallback", mustParseCharIni(t, "[options]\nname = T\ngender = female\n").Options.Blips, "female")
-	eq(t, "blips wins", mustParseCharIni(t, "[options]\nname = T\nblips = male\ngender = female\n").Options.Blips, "male")
-
-	ini = mustParseCharIni(t, "[options]\nname=Abigail\nblips=Female\n")
-	eq(t, "no spaces", []string{ini.Options.Name, ini.Options.Blips}, []string{"Abigail", "Female"})
-
-	eq(t, "trailing whitespace", first("[options]\nname = T\n[emotions]\nnumber = 1\n1 = a#-#a#0\n[soundt]\n1 = 3 \n").SoundDelayMs, 120)
-
-	ini = mustParseCharIni(t, "[options]\nname = T\n[time]\npre-smh = 0\npre-shout = 0\n[emotions]\nnumber = 1\n1 = a#-#a#0\n")
-	eq(t, "[time]", []any{len(ini.Emotes), ini.Sections["time"]["pre-smh"]}, []any{1, "0"})
-
-	eq(t, "spaces in name", first("[options]\nname = T\n[emotions]\nnumber = 1\n1 = Book Worried Down#-#bWorriedDown#0#0\n").Name, "Book Worried Down")
-	eq(t, "numeric name", first("[options]\nname = T\n[emotions]\nnumber = 1\n1 = 1#-#1#0#1\n").Name, "1")
-
-	ini = mustParseCharIni(t, "[options]\nname = T\n[emotions]\nnumber = 2\n1 = a#-#a#0\n2 = b#-#b#0\n[soundn]\n1 = et-objection\n")
-	eq(t, "sounds", []string{ini.Emotes[0].Sound, ini.Emotes[1].Sound}, []string{"et-objection", ""})
-
-	ini = mustParseCharIni(t, "\uFEFF[options]\nname = Boom\n[emotions]\nnumber = 1\n1 = a#-#a#0\n")
-	eq(t, "BOM", []any{ini.Options.Name, len(ini.Emotes)}, []any{"Boom", 1})
-
-	eq(t, "beyond number", emoteKeys(mustParseCharIni(t, "[options]\nname = T\n[emotions]\nnumber = 1\n1 = a#-#a#0\n2 = b#-#b#0\n").Emotes), []string{"1"})
-	eq(t, "non-numeric modifier", first("[options]\nname = T\n[emotions]\nnumber = 1\n1 = a#-#a#x\n").Modifier, EmoteModifierNoPreanim)
-
-	ini = mustParseCharIni(t, "[options]\r\nname = CRLF\r\n[emotions]\r\nnumber = 1\r\n1 = a#-#a#0\r\n")
-	eq(t, "CRLF", []string{ini.Options.Name, ini.Emotes[0].Anim}, []string{"CRLF", "a"})
-
-	ini = mustParseCharIni(t, "[options]\nname = Note\nwhy are you reading the ini lmao\nshowname = Note\n")
-	eq(t, "stray text", []string{ini.Options.Name, ini.Options.Showname}, []string{"Note", "Note"})
-
-	eq(t, "# header line", len(mustParseCharIni(t, "[options]\nname = T\n# Comment#Preanimation#Animation#Modifier\n[emotions]\nnumber = 1\n1 = a#-#a#0\n").Emotes), 1)
-	parseCharIniErr(t, "+[Options]\nname = Broken\n[emotions]\nnumber = 1\n1 = a#-#a#0\n", "missing required [options]")
-
-	ini = mustParseCharIni(t, "[options]\nname = T\n[emotions]\nnumber = 1\n1 = first#-#first#0\n1 = second#-#second#0\n")
-	eq(t, "duplicate id", []any{len(ini.Emotes), ini.Emotes[0].Anim}, []any{1, "second"})
-
-	ini = mustParseCharIni(t, "[options]\nname = T\n[emotions]\nnumber = 2\n1 = a#-#a#0\n2 = b#pre#b#1\n")
-	eq(t, "preanim", []string{ini.Emotes[0].Key, ini.Emotes[0].Preanim, ini.Emotes[1].Key, ini.Emotes[1].Preanim}, []string{"1", "", "2", "pre"})
-
-	eq(t, "model", mustParseCharIni(t, "[options]\nname = Bot\nmodel = model.pmx\n").Options.Model, "model.pmx")
-}
-
-const blockIni = `
-[options]
-name = Bot
-model = model.pmx
-
-[emotions]
-number = 2
-1 = objection
-2 = think
-
-[emote objection]
-anim    = objection.vmd
-preanim = point.vmd
-postanim = bow.vmd
-camera  = objection_cam.vmd
-sound   = objection.opus
-sounddelayms = 480
-modifier = zoom
-deskmod = shown
-
-[emote think]
-anim = think_loop.vmd
-`
 
 func TestCharIniBlocks(t *testing.T) {
-	ini := mustParseCharIni(t, blockIni)
-	eq(t, "objection", ini.Emotes[0], CharEmote{
-		Key: "objection", Name: "objection", Anim: "objection.vmd", Preanim: "point.vmd", Postanim: "bow.vmd",
-		Camera: "objection_cam.vmd", Modifier: EmoteModifierZoom, Deskmod: DeskModifierShown,
-		Sound: "objection.opus", SoundDelayMs: 480, SoundDelayTicks: 12,
-	})
-	eq(t, "think", ini.Emotes[1], CharEmote{Key: "think", Name: "think", Anim: "think_loop.vmd", Modifier: EmoteModifierNoPreanim, Deskmod: DeskModifierShown})
-
-	const head = "[options]\nname = T\n[emotions]\nnumber = 1\n1 = obj\n"
-	first := func(data string) CharEmote { t.Helper(); return mustParseCharIni(t, data).Emotes[0] }
-
-	e := first(head + "[emote obj]\nanim = obj.gif\nname = Objection!\n")
-	eq(t, "name override", []string{e.Key, e.Name}, []string{"obj", "Objection!"})
-	eq(t, "case-insensitive block", first("[options]\nname = T\n[Emotions]\nnumber = 1\n1 = Wave\n[Emote Wave]\nAnim = wave.gif\n").Anim, "wave.gif")
-	eq(t, "blocks win", first("[options]\nname = T\n[emotions]\nnumber = 1\n1 = real\n[emote real]\nanim = real.gif\n").Anim, "real.gif")
-
-	ini = mustParseCharIni(t, "[options]\nname = T\n[emote a]\nanim = a.gif\nmodifier = zoom\n[emote b]\nanim = b.gif\nmodifier = objection_zoom\n[emote c]\nanim = c.gif\nmodifier = preanim\n")
-	eq(t, "named modifiers", []EmoteModifier{ini.Emotes[0].Modifier, ini.Emotes[1].Modifier, ini.Emotes[2].Modifier}, []EmoteModifier{EmoteModifierZoom, EmoteModifierObjectionZoom, EmoteModifierPreanim})
-	ini = mustParseCharIni(t, "[options]\nname = T\n[emote a]\nanim = a.gif\ndeskmod = shown\n[emote b]\nanim = b.gif\ndeskmod = show_during_preanim\n")
-	eq(t, "named deskmods", []DeskModifier{ini.Emotes[0].Deskmod, ini.Emotes[1].Deskmod}, []DeskModifier{DeskModifierShown, DeskModifierShowDuringPreanim})
-
-	parseCharIniErr(t, head+"[emote obj]\nanim = obj.gif\nmodifier = 5\n", `modifier "5" must be one of: no_preanim, preanim,`)
-	parseCharIniErr(t, head+"[emote obj]\nanim = obj.gif\ndeskmod = 0\n", `deskmod "0" must be one of`)
-	parseCharIniErr(t, head+"[emote obj]\nanim = obj\n", "must include a file extension")
-	for _, field := range []string{"preanim", "postanim", "camera", "sound"} {
-		parseCharIniErr(t, head+"[emote obj]\nanim = obj.gif\n"+field+" = bare\n", field+` "bare" must include a file extension`)
-	}
-
-	eq(t, "minimal block", first("[options]\nname = T\n[emote objection]\nanim = objection.gif\n"),
-		CharEmote{Key: "objection", Name: "objection", Anim: "objection.gif", Modifier: EmoteModifierNoPreanim, Deskmod: DeskModifierShown})
-	eq(t, "postanim", first(head+"[emote obj]\nanim = obj.gif\npostanim = bow.gif\n").Postanim, "bow.gif")
-	eq(t, "camera", first(head+"[emote obj]\nanim = obj.vmd\ncamera = obj_cam.vmd\n").Camera, "obj_cam.vmd")
-
-	ini = mustParseCharIni(t, "[options]\nname = T\nmodel = model.pmx\n[emote jog]\nanim = run16.vmd\n[emote wave]\nanim = wave.vmd\n")
-	eq(t, "file order", []string{ini.Emotes[0].Key, ini.Emotes[0].Anim, ini.Emotes[1].Key, ini.Emotes[1].Anim}, []string{"jog", "run16.vmd", "wave", "wave.vmd"})
-	ini = mustParseCharIni(t, "[options]\nname = T\n[emotions]\nnumber = 1\n1 = wave\n[emote jog]\nanim = run16.vmd\n[emote wave]\nanim = wave.vmd\n")
-	eq(t, "[emotions] ignored", emoteKeys(ini.Emotes), []string{"jog", "wave"})
-}
-
-func TestCharIniExampleFixtures(t *testing.T) {
-	read := func(name string) *CharIni {
-		t.Helper()
-		raw, err := os.ReadFile(filepath.Join("..", "ts", "examples", "characters", name, "char.ini"))
-		if err != nil {
-			t.Skipf("fixture not available: %v", err)
-		}
-		return mustParseCharIni(t, string(raw))
-	}
-
-	ini := read("defender")
-	eq(t, "defender options", []string{ini.Options.Showname, ini.Options.Model}, []string{"The Defense", ""})
-	eq(t, "defender emotes", len(ini.Emotes), 3)
-	eq(t, "defender point", ini.Emotes[1], CharEmote{
-		Key: "2", Name: "Point", Anim: "point", Preanim: "point", Modifier: EmoteModifierZoom,
-		Deskmod: ini.Emotes[1].Deskmod, Sound: "point", SoundDelayMs: 320, SoundDelayTicks: 8,
-	})
-	eq(t, "defender preanim", ini.Emotes[0].Preanim, "")
-
-	ini = read("robot")
-	eq(t, "robot model", ini.Options.Model, "robot.pmx")
-	eq(t, "robot emotes", len(ini.Emotes), 2)
-	eq(t, "robot objection", ini.Emotes[1], CharEmote{
-		Key: "objection", Name: "objection", Anim: "objection.vmd", Preanim: "point.vmd", Postanim: "lower_arm.vmd",
-		Camera: ini.Emotes[1].Camera, Modifier: EmoteModifierZoom, Deskmod: DeskModifierShown,
-		Sound: "objection.opus", SoundDelayMs: 480, SoundDelayTicks: 12,
-	})
-}
-
-func TestCharIniSoundDelayAndPlaceholders(t *testing.T) {
-	e := mustParseCharIni(t, "[options]\nname = A\n[emote a]\nanim = a.gif\nsounddelayms = 500\n").Emotes[0]
-	eq(t, "block delay", []int{e.SoundDelayMs, e.SoundDelayTicks}, []int{500, 13})
-	e = mustParseCharIni(t, "[options]\nname = A\n[emotions]\nnumber = 1\n1 = a#-#a#0\n[soundt]\n1 = 7\n").Emotes[0]
-	eq(t, "legacy delay", []int{e.SoundDelayMs, e.SoundDelayTicks}, []int{280, 7})
-
-	ini := mustParseCharIni(t, "[options]\nname = A\n[emotions]\nnumber = 4\n1 = a#-#a#0\n2 = b#-#b#0\n3 = c#-#c#0\n4 = d#-#d#0\n[soundn]\n1 = 0\n2 = 1\n3 = -\n4 = sfx-x\n")
-	var sounds []string
+	ini := mustParseCharIni(t, "[options]\nname = T\n[emotions]\nnumber = 1\n1 = a#-#a#0\n[emote jog]\nanim = run.vmd\n[Emote Wave]\nAnim = wave.vmd\n[emote jog]\nsound = step.opus\n")
+	var keys []string
 	for _, e := range ini.Emotes {
-		sounds = append(sounds, e.Sound)
+		keys = append(keys, e.Key)
 	}
-	eq(t, "placeholders", sounds, []string{"", "", "", "sfx-x"})
+	if strings.Join(keys, ",") != "jog,Wave" {
+		t.Errorf("blocks must be the whole emote list in file order, [emotions] unread: got %v", keys)
+	}
+	if ini.Emotes[1].Anim != "wave.vmd" || ini.Emotes[0].Sound == nil || *ini.Emotes[0].Sound != "step.opus" {
+		t.Errorf("case-insensitive names / repeated section: %+v", ini.Emotes)
+	}
+
+	e := mustParseCharIni(t, opts+"[emote a]\nanim = a.gif\nname = Wave!\nmodifier = objection_zoom\ndeskmod = hidden\npreanim = -\n").Emotes[0]
+	if e.Name != "Wave!" || e.Modifier != EmoteModifierObjectionZoom || e.Deskmod != DeskModifierHidden || e.Preanim != nil {
+		t.Errorf("name override, enum names, `-` preanim: %+v", e)
+	}
+
+	for _, tc := range []struct{ body, want string }{
+		{"anim = a", `anim "a" must include a file extension`},
+		{"anim =", `anim "" must include a file extension`},
+		{"anim = a.gif\npreanim = p", `preanim "p" must include`},
+		{"anim = a.gif\npostanim = p", `postanim "p" must include`},
+		{"anim = a.vmd\ncamera = c", `camera "c" must include`},
+		{"anim = a.gif\nsound = s", `sound "s" must include`},
+		{"anim = a.gif\nmodifier = 5", `modifier "5" must be one of: no_preanim, preanim, preanim_and_objection, unused_3, unused_4, zoom, objection_zoom`},
+		{"anim = a.gif\nmodifier = UNUSED_4", `modifier "UNUSED_4" must be one of`},
+		{"anim = a.gif\ndeskmod = 1", `deskmod "1" must be one of`},
+		{"anim = a.gif\nmodifier = ZOOM", `modifier "ZOOM" must be one of`},
+		{"anim = a.gif\ndeskmod = Hidden", `deskmod "Hidden" must be one of`},
+	} {
+		if _, err := ParseCharIni(opts + "[emote a]\n" + tc.body + "\n"); err == nil || !strings.Contains(err.Error(), tc.want) {
+			t.Errorf("%q: error %v, want %q", tc.body, err, tc.want)
+		}
+	}
+}
+
+func TestCharIniLegacy(t *testing.T) {
+	ini := mustParseCharIni(t, opts+`[emotions]
+number = 9
+1 = a#-#a#5#2
+2 = b#pre#b#9#7
+3 = c##c#zoom#show_during_preanim
+4 = d#-#d#1
+6 = f#-#f#1# 
+7 = g#-#g#ZOOM#Shown
+8 = h#-#h#unused_3#3
+9 = i#-#i# preanim #shown
+10 = beyond#-#j#0
+[soundn]
+1 = 0
+2 = 1
+3 = -
+4 = sfx-x
+[soundt]
+4 = 7
+`)
+	want := []struct {
+		key      string
+		preanim  *string
+		modifier EmoteModifier
+		deskmod  DeskModifier
+		sound    *string
+		ticks    int
+	}{
+		{"1", nil, EmoteModifierZoom, DeskModifierHideDuringPreanim, nil, 0},
+		{"2", str("pre"), EmoteModifierNoPreanim, DeskModifierShown, nil, 0},
+		{"3", nil, EmoteModifierZoom, DeskModifierShowDuringPreanim, nil, 0},
+		{"4", nil, EmoteModifierPreanim, DeskModifierShown, str("sfx-x"), 7},
+		{"6", nil, EmoteModifierPreanim, DeskModifierShown, nil, 0},
+		{"7", nil, EmoteModifierNoPreanim, DeskModifierShown, nil, 0},
+		{"8", nil, EmoteModifierUnused3, DeskModifierShowDuringPreanim, nil, 0},
+		{"9", nil, EmoteModifierPreanim, DeskModifierShown, nil, 0},
+	}
+	if len(ini.Emotes) != len(want) {
+		t.Fatalf("%d emotes, want %d (missing ids skipped, rows past number ignored)", len(ini.Emotes), len(want))
+	}
+	for i, w := range want {
+		e := ini.Emotes[i]
+		got := []any{e.Key, e.Preanim, e.Modifier, e.Deskmod, e.Sound, e.SoundDelayTicks, e.SoundDelayMs}
+		exp := []any{w.key, w.preanim, w.modifier, w.deskmod, w.sound, w.ticks, w.ticks * 40}
+		if !reflect.DeepEqual(got, exp) {
+			t.Errorf("emote %d = %v, want %v", i, got, exp)
+		}
+	}
+}
+
+func TestCharIniTextGrammar(t *testing.T) {
+	ini := mustParseCharIni(t, "\uFEFF[Options]\r\nName\t= Phoenix ; inline\r\n// showname = hidden\r\n; side = pro\r\nchat =\r\ngender = female\r\nshouts = custom\r\nstray author note\r\nurl = http://example.com/x\r\n[Emotions]\r\nnumber = 1\r\n1 = Desk slam#-#slam#0#1 // why\r\n")
+	o := ini.Options
+	if o.Name != "Phoenix" || o.Showname != "" || o.Side != "wit" || o.Blips != "female" || o.Model != "" {
+		t.Errorf("options = %+v", o)
+	}
+	if o.Chat == nil || *o.Chat != "" || o.Category != nil {
+		t.Errorf("explicit empty chat must be \"\", absent category nil: %v %v", o.Chat, o.Category)
+	}
+	if o.Extra["shouts"] != "custom" || o.Extra["url"] != "http://example.com/x" {
+		t.Errorf("extra options = %v", o.Extra)
+	}
+	if e := ini.Emotes[0]; e.Name != "Desk slam" || e.Anim != "slam" || e.Deskmod != DeskModifierShown {
+		t.Errorf("`#` is never a comment: %+v", e)
+	}
+	if ini.Sections["options"]["name"] != "Phoenix" || ini.Sections["emotions"]["1"] != "Desk slam#-#slam#0#1" {
+		t.Errorf("sections = %v", ini.Sections)
+	}
+
+	ini = mustParseCharIni(t, "[options]\nname = Bare\n[emote a]\nanim = a.gif\n")
+	if o := ini.Options; o.Showname != "" || o.Side != "wit" || o.Blips != "male" || o.Chat != nil || o.Model != "" {
+		t.Errorf("option defaults: %+v", o)
+	}
+}
+
+func TestCharIniRequired(t *testing.T) {
+	for _, tc := range []struct{ ini, want string }{
+		{"", "missing required [options]"},
+		{"[emote a]\nanim = a.gif\n", "missing required [options]"},
+		{"+[Options]\nname = A\n[emote a]\nanim = a.gif\n", "missing required [options]"},
+		{"[options]\nshowname = A\n[emote a]\nanim = a.gif\n", "missing the required name"},
+		{"[options]\nname =\n[emote a]\nanim = a.gif\n", "missing the required name"},
+		{"[options]\nname = A\n", "no emotes"},
+		{"[options]\nname = A\n[emotions]\nnumber = 0\n", "no emotes"},
+		{"[options]\nname = A\n[emotions]\nnumber = 2\n3 = c#-#c#0\n", "no emotes"},
+	} {
+		if _, err := ParseCharIni(tc.ini); err == nil || !strings.Contains(err.Error(), tc.want) {
+			t.Errorf("%q: error %v, want %q", tc.ini, err, tc.want)
+		}
+	}
+}
+
+func TestCharIniSoundDelayRounding(t *testing.T) {
+	for ms, ticks := range map[int]int{0: 0, 19: 0, 20: 1, 480: 12, 500: 13} {
+		e := mustParseCharIni(t, opts+"[emote a]\nanim = a.gif\nsounddelayms = "+itoa(ms)+"\n").Emotes[0]
+		if e.SoundDelayMs != ms || e.SoundDelayTicks != ticks {
+			t.Errorf("sounddelayms %d -> %d ticks, want %d", ms, e.SoundDelayTicks, ticks)
+		}
+	}
+}
+
+func TestCharIniLegacyEnumForms(t *testing.T) {
+	ini := mustParseCharIni(t, opts+"[emotions]\nnumber = 5\n"+
+		"1 = a#-#a#zoom#show_during_preanim\n"+
+		"2 = b#-#b#ZOOM#Shown\n"+
+		"3 = c#-#c#unused_3#3\n"+
+		"4 = d#-#d#5x#1\n"+
+		"5 = e#-#e# preanim #shown\n")
+	want := [][2]string{
+		{"zoom", "show_during_preanim"},
+		{"no_preanim", "shown"},
+		{"unused_3", "show_during_preanim"},
+		{"no_preanim", "shown"},
+		{"preanim", "shown"},
+	}
+	for i, w := range want {
+		if got := [2]string{string(ini.Emotes[i].Modifier), string(ini.Emotes[i].Deskmod)}; got != w {
+			t.Errorf("row %d = %v, want %v", i+1, got, w)
+		}
+	}
+}
+
+func TestCharIniUnsetDeskmod(t *testing.T) {
+	ini := mustParseCharIni(t, opts+"[emotions]\nnumber = 7\n"+
+		"1 = a#-#a#0#\n"+
+		"2 = b#-#b#5# \n"+
+		"3 = c#-#c#6\n"+
+		"4 = d#-#d#zoom#1\n"+
+		"5 = e#-#e#5#1s\n"+
+		"6 = f#-#f#0#7\n"+
+		"7 = g#-#g#1\n")
+	want := []DeskModifier{DeskModifierShown, DeskModifierHidden, DeskModifierHidden, DeskModifierShown, DeskModifierShown, DeskModifierShown, DeskModifierShown}
+	for i, w := range want {
+		if got := ini.Emotes[i].Deskmod; got != w {
+			t.Errorf("legacy row %d deskmod = %s, want %s", i+1, got, w)
+		}
+	}
+
+	ini = mustParseCharIni(t, opts+"[emote a]\nanim = a.gif\nmodifier = zoom\n[emote b]\nanim = b.gif\nmodifier = zoom\ndeskmod = shown\n")
+	if a, b := ini.Emotes[0].Deskmod, ini.Emotes[1].Deskmod; a != DeskModifierHidden || b != DeskModifierShown {
+		t.Errorf("block deskmods = %s, %s; want hidden, shown", a, b)
+	}
+}
+
+func TestCharIniLegacyModifiers(t *testing.T) {
+	ini := mustParseCharIni(t, opts+"[emotions]\nnumber = 2\n1 = a#-#a#3\n2 = b#-#b#4\n[emote c]\nanim = c.gif\nmodifier = unused_4\n")
+	if m := ini.Emotes[0].Modifier; m != EmoteModifierUnused4 {
+		t.Errorf("block unused_4 = %s", m)
+	}
+	ini = mustParseCharIni(t, opts+"[emotions]\nnumber = 2\n1 = a#-#a#3\n2 = b#-#b#unused_4\n")
+	if a, b := ini.Emotes[0].Modifier, ini.Emotes[1].Modifier; a != EmoteModifierUnused3 || b != EmoteModifierUnused4 {
+		t.Errorf("legacy 3, unused_4 = %s, %s", a, b)
+	}
+	ms := &MSToServer{Character: "A", Emote: "a", Message: "m", Side: SideWit, EmoteModifier: ini.Emotes[1].Modifier}
+	raw, err := Encode(ms, WireFanta)
+	if err != nil || !strings.HasPrefix(string(raw), "MS#1##A#a#m#wit##4#") {
+		t.Errorf("unused_4 on the wire = %s, %v; want wire 4", raw, err)
+	}
 }
