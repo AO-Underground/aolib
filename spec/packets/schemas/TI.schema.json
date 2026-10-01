@@ -9,20 +9,22 @@
       "const": "TI"
     },
     "timer_id": {
-      "type": "number"
+      "type": "number",
+      "description": "Clock index, 0-4. akashi uses 0 for the global timer and 1-4 for area timers."
     },
     "command": {
       "$ref": "../../types/TimerCommand.schema.json"
     },
     "time": {
-      "type": "number"
+      "type": "number",
+      "default": 0,
+      "description": "Clock value in milliseconds for `start` and `pause`; 0 or negative stops the timer. Ignored by `show` and `hide`, which may omit it."
     }
   },
   "required": [
     "$header",
     "timer_id",
-    "command",
-    "time"
+    "command"
   ],
   "additionalProperties": false,
   "x-receiver": "client"

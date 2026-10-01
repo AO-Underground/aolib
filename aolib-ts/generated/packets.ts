@@ -1012,7 +1012,7 @@ export interface TI extends Packet {
 export interface TIInit {
   timer_id: number;
   command: TimerCommand;
-  time: number;
+  time?: number;
 }
 
 

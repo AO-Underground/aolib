@@ -142,3 +142,13 @@ func TestDecodeShortMSAppliesDefaults(t *testing.T) {
 		t.Fatalf("Decode(short MS) = %#v", v)
 	}
 }
+
+func TestDecodeTITwoSlotForm(t *testing.T) {
+	_, v, err := decodeFanta([]byte("TI#0#2#%"), s2cDecoders)
+	if err != nil {
+		t.Fatalf("Decode: %v", err)
+	}
+	if got, ok := v.(*TI); !ok || *got != (TI{TimerID: 0, Command: TimerCommandShow, Time: 0}) {
+		t.Fatalf("Decode(TI#0#2#%%) = %#v", v)
+	}
+}

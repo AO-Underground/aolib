@@ -117,6 +117,10 @@ describe("round-trips: optional-with-default packets", () => {
     expect(() => decode(c2sSchemas.MC, "MC#x#1##abc#%")).toThrow();
   });
 
+  it("TI decodes the two-slot show/hide form", () => {
+    expect(decode(s2cSchemas.TI, "TI#0#2#%")).toEqual({ $header: "TI", timer_id: 0, command: "show", time: 0 });
+  });
+
   it("ZZ fills reported_player_id=-1 when absent", () => {
     const out = decode(c2sSchemas.ZZ, encode(c2sSchemas.ZZ, { reason: "racism" }, "fanta"));
     expect(out).toEqual({ $header: "ZZ", reason: "racism", reported_player_id: -1 });
