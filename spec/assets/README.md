@@ -6,7 +6,7 @@ Schemas here describe **character asset files** (fetched by the client from
 grammar that JSON Schema can't express (char.ini is INI, not JSON) is
 specified below.
 
-- `CharIni`: parsed `char.ini`.
+- `CharIni`: parsed `char.ini`. Worked examples in [EXAMPLES.md](./EXAMPLES.md).
 
 A character is **3D** when `[options] model` names a `.pmx`, otherwise **2D**.
 The emote table normalizes to one shape either way; `anim` is a sprite stem
@@ -59,8 +59,8 @@ has a default, so the parsed `Emote` is a complete shape either way. Block field
 names are the lowercased `Emote` field names: `name` (display label; defaults to
 the block name), `anim`, `preanim` (`-`/absent → null), `postanim` (`-`/absent →
 null), `camera` (`-`/absent → null), `sound` (absent → null), `sounddelayms`
-(milliseconds; absent → 0), `deskmod` (absent → 1, shown), and `modifier`
-(absent → 0). The normalized emote list is in button order, so there is no id.
+(milliseconds; absent → 0), `deskmod` (absent → `shown`), and `modifier`
+(absent → `no_preanim`). The normalized emote list is in button order, so there is no id.
 Unlike the legacy stems, a block's file references **must carry the file
 extension**, no extension guessing:
 `anim`/`preanim`/`postanim` (`.gif`/`.webp`/`.png` for 2D, `.vmd` for 3D),
@@ -121,8 +121,19 @@ number = 2
 ```
 
 `N = desc#preanim#anim#modifier#deskmod`, zipped with `[soundn]` (sound) and
-`[soundt]` (sound delay) by id. `[soundt]` is in **ticks**: one tick is 60 ms,
-the message text update interval, and is normalized to milliseconds in
-`Emote.sounddelayms` (ticks × 60). When no `[emote <name>]` blocks are present a
-parser reads these banks. Normalized `key` is the stringified id. Comment
-markers are `;` and `//` only, never `#` (it delimits emote fields).
+`[soundt]` (sound delay, in ticks; see below) by id. `[soundn]` values `0`, `1`
+and `-` mean no sound. `modifier` and `deskmod` are wire integers, parsed to
+their enum names like the block form (an unknown integer maps to wire 0). When
+no `[emote <name>]` blocks are present a parser reads these banks. Normalized `key` is the
+stringified id. Comment markers are `;` and `//` only, never `#` (it delimits
+emote fields).
+
+### Sound delay
+
+A parsed `Emote` carries the delay in both units: `sounddelayms` (milliseconds)
+and `sounddelayticks` (40 ms ticks, the unit of MS `sfx_delay`). One is read from
+the file and the other derived from it:
+
+- Blocks give `sounddelayms`; `sounddelayticks = round(sounddelayms / 40)`,
+  rounding half up (500 ms is 13 ticks, which plays at 520 ms).
+- Legacy `[soundt]` gives ticks; `sounddelayms = sounddelayticks × 40`.

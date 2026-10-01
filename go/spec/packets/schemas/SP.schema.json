@@ -1,0 +1,21 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "/packets/schemas/SP.schema.json",
+  "title": "SP",
+  "type": "object",
+  "properties": {
+    "$header": {
+      "type": "string",
+      "const": "SP"
+    },
+    "side": {
+      "$ref": "../../types/Side.schema.json"
+    }
+  },
+  "required": [
+    "$header",
+    "side"
+  ],
+  "additionalProperties": false,
+  "x-receiver": "client"
+}

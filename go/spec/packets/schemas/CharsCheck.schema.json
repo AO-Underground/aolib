@@ -1,0 +1,24 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "/packets/schemas/CharsCheck.schema.json",
+  "title": "CharsCheck",
+  "type": "object",
+  "properties": {
+    "$header": {
+      "type": "string",
+      "const": "CharsCheck"
+    },
+    "taken": {
+      "type": "array",
+      "items": {
+        "$ref": "../../types/CharAvailability.schema.json"
+      }
+    }
+  },
+  "required": [
+    "$header",
+    "taken"
+  ],
+  "additionalProperties": false,
+  "x-receiver": "client"
+}

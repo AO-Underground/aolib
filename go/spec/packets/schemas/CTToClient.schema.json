@@ -1,0 +1,29 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "/packets/schemas/CTToClient.schema.json",
+  "title": "CT",
+  "type": "object",
+  "properties": {
+    "$header": {
+      "type": "string",
+      "const": "CT"
+    },
+    "name": {
+      "type": "string"
+    },
+    "message": {
+      "type": "string"
+    },
+    "is_from_server": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "required": [
+    "$header",
+    "name",
+    "message"
+  ],
+  "additionalProperties": false,
+  "x-receiver": "client"
+}

@@ -1,6 +1,6 @@
 # spec
 
-Schemas for the Attorney Online wire protocol — the single source of truth
+Schemas for the Attorney Online wire protocol: the single source of truth
 consumed by every `aolib-*` binding in this monorepo, so all bindings stay in
 sync.
 
@@ -15,8 +15,10 @@ packets/
   schemas/<Name>.schema.json   one per AO packet
   CODECS.md                    wire forms for x-fanta-codec packets
   EFFECTS.md                   the MS `effect` (`name|folder|sound`) field
+  EXAMPLES.md                  complete key packets in both wire forms
 types/<Name>.schema.json       shared enums and object types, $ref'd from packets
 assets/<Name>.schema.json      character asset-file formats (char.ini)
+assets/EXAMPLES.md             char.ini files and their parsed objects
 ```
 
 Each kind is a top-level directory with an intro `README.md`; packet schemas
@@ -36,7 +38,7 @@ both on the filesystem (for IDEs) and by URI resolution against the parent `$id`
 
 ## Codegen strategy
 
-A codegen consumer (see `aolib-ts/scripts/codegen.ts` for the TS reference
+A codegen consumer (see `ts/scripts/codegen.ts` for the TS reference
 implementation) walks the packet and shared (`types/`) schemas and emits, per
 file:
 
@@ -62,7 +64,7 @@ Each library wires its JSON Schema validator (e.g. Ajv in TS) and a
 fanta-format walker to the same schemas:
 
 - **JSON envelope**: packet body is the schema as-is, with `$header`
-  prepended.
+  prepended. `const` slots (e.g. `PV._cid`) are included.
 - **Fanta wire**: `HEADER#field1#field2#...#%`, one positional slot per
   top-level property (skipping `$header`). The walker derives per-slot
   encoding from the property's JSON type:
@@ -70,7 +72,8 @@ fanta-format walker to the same schemas:
   - `number` / `integer`: `String(n)` / `Number(token)`
   - `boolean`: `"1"` / `"0"`
   - `object`: recurse, joining sub-tokens with `&` (or the
-    `x-fanta-separator` value); see `x-fanta-separator` below
+    `x-fanta-separator` value); see `x-fanta-separator` below. An object with
+    `x-wire-bits` is instead one integer slot; see `x-wire-bits` below
   - `array`: greedy, trailing array consumes all remaining slots
   - `const`: emitted as the const value; on decode the slot is consumed
     and the schema-fixed value is used regardless of the token
@@ -138,6 +141,13 @@ wire encoding: this array is parallel to `enum` and gives each value's integer.
 The fanta walker encodes the integer and decodes an incoming integer back to the
 string, so real AO servers still see the numbers they expect. Enums without this
 keyword (e.g. `Side`) are sent as their string value on both sides.
+
+### `x-wire-bits: integer[]`
+
+On an `object` schema whose properties are all booleans. Parallel to
+`properties` (in order), giving each flag's bit. JSON carries the object; the
+fanta slot carries the integer OR of the set bits. On decode, bits with no
+property are ignored. Currently set on `MusicEffects` (MC `effects`).
 
 ### `x-fanta-separator: string`
 

@@ -340,5 +340,550 @@
         "free"
       ]
     }
+  },
+  {
+    "id": "PV",
+    "header": "PV",
+    "receiver": "client",
+    "fanta": "PV#5#CID#12#%",
+    "json": {
+      "$header": "PV",
+      "player_id": 5,
+      "_cid": "CID",
+      "char_id": 12
+    }
+  },
+  {
+    "id": "RTToServer-witness_testimony",
+    "header": "RT",
+    "receiver": "server",
+    "fanta": "RT#testimony1#0#%",
+    "json": {
+      "$header": "RT",
+      "animation": "witness_testimony",
+      "name": ""
+    }
+  },
+  {
+    "id": "RTToClient-end_animation",
+    "header": "RT",
+    "receiver": "client",
+    "fanta": "RT#testimony1#1#%",
+    "json": {
+      "$header": "RT",
+      "animation": "end_animation",
+      "name": ""
+    }
+  },
+  {
+    "id": "RTToServer-cross_examination",
+    "header": "RT",
+    "receiver": "server",
+    "fanta": "RT#testimony2#0#%",
+    "json": {
+      "$header": "RT",
+      "animation": "cross_examination",
+      "name": ""
+    }
+  },
+  {
+    "id": "RTToClient-not_guilty",
+    "header": "RT",
+    "receiver": "client",
+    "fanta": "RT#judgeruling#0#%",
+    "json": {
+      "$header": "RT",
+      "animation": "not_guilty",
+      "name": ""
+    }
+  },
+  {
+    "id": "RTToServer-guilty",
+    "header": "RT",
+    "receiver": "server",
+    "fanta": "RT#judgeruling#1#%",
+    "json": {
+      "$header": "RT",
+      "animation": "guilty",
+      "name": ""
+    }
+  },
+  {
+    "id": "RTToClient-custom",
+    "header": "RT",
+    "receiver": "client",
+    "fanta": "RT#knock<and>enter#%",
+    "json": {
+      "$header": "RT",
+      "animation": "custom",
+      "name": "knock&enter"
+    }
+  },
+  {
+    "id": "ARUP-player_count",
+    "header": "ARUP",
+    "receiver": "client",
+    "fanta": "ARUP#0#4#3#0#%",
+    "json": {
+      "$header": "ARUP",
+      "update_type": "player_count",
+      "update_data": [
+        4,
+        3,
+        0
+      ]
+    }
+  },
+  {
+    "id": "ARUP-status",
+    "header": "ARUP",
+    "receiver": "client",
+    "fanta": "ARUP#1#IDLE#CASING#LOOKING-FOR-PLAYERS#%",
+    "json": {
+      "$header": "ARUP",
+      "update_type": "status",
+      "update_data": [
+        "IDLE",
+        "CASING",
+        "LOOKING-FOR-PLAYERS"
+      ]
+    }
+  },
+  {
+    "id": "ARUP-case_manager-escape",
+    "header": "ARUP",
+    "receiver": "client",
+    "fanta": "ARUP#2#Phoenix <and> Maya#FREE#100<percent> <num>1#%",
+    "json": {
+      "$header": "ARUP",
+      "update_type": "case_manager",
+      "update_data": [
+        "Phoenix & Maya",
+        "FREE",
+        "100% #1"
+      ]
+    }
+  },
+  {
+    "id": "ARUP-locked",
+    "header": "ARUP",
+    "receiver": "client",
+    "fanta": "ARUP#3#FREE#SPECTATABLE#LOCKED#%",
+    "json": {
+      "$header": "ARUP",
+      "update_type": "locked",
+      "update_data": [
+        "FREE",
+        "SPECTATABLE",
+        "LOCKED"
+      ]
+    }
+  },
+  {
+    "id": "MCToServer-effects",
+    "header": "MC",
+    "receiver": "server",
+    "fanta": "MC#Cornered.opus#12#Wright#5#%",
+    "json": {
+      "$header": "MC",
+      "name": "Cornered.opus",
+      "char_id": 12,
+      "showname": "Wright",
+      "effects": {
+        "fade_in": true,
+        "fade_out": false,
+        "sync_position": true
+      }
+    }
+  },
+  {
+    "id": "MCToClient-effects",
+    "header": "MC",
+    "receiver": "client",
+    "fanta": "MC#Cornered.opus#12#Wright#1#0#3#%",
+    "json": {
+      "$header": "MC",
+      "name": "Cornered.opus",
+      "char_id": 12,
+      "showname": "Wright",
+      "looping": true,
+      "channel": "music",
+      "effects": {
+        "fade_in": true,
+        "fade_out": true,
+        "sync_position": false
+      }
+    }
+  },
+  {
+    "id": "MCToClient-no-effects",
+    "header": "MC",
+    "receiver": "client",
+    "fanta": "MC#~stop.mp3#3##0#0#0#%",
+    "json": {
+      "$header": "MC",
+      "name": "~stop.mp3",
+      "char_id": 3,
+      "showname": "",
+      "looping": false,
+      "channel": "music",
+      "effects": {
+        "fade_in": false,
+        "fade_out": false,
+        "sync_position": false
+      }
+    }
+  },
+  {
+    "id": "ASS",
+    "header": "ASS",
+    "receiver": "client",
+    "fanta": "ASS#x<num>asset_url<and>y<percent>z<dollar>#%",
+    "json": {
+      "$header": "ASS",
+      "asset_url": "x#asset_url&y%z$"
+    }
+  },
+  {
+    "id": "BB",
+    "header": "BB",
+    "receiver": "client",
+    "fanta": "BB#x<num>message<and>y<percent>z<dollar>#%",
+    "json": {
+      "$header": "BB",
+      "message": "x#message&y%z$"
+    }
+  },
+  {
+    "id": "BD",
+    "header": "BD",
+    "receiver": "client",
+    "fanta": "BD#x<num>reason<and>y<percent>z<dollar>#%",
+    "json": {
+      "$header": "BD",
+      "reason": "x#reason&y%z$"
+    }
+  },
+  {
+    "id": "BN",
+    "header": "BN",
+    "receiver": "client",
+    "fanta": "BN#x<num>background<and>y<percent>z<dollar>#x<num>position<and>y<percent>z<dollar>#%",
+    "json": {
+      "$header": "BN",
+      "background": "x#background&y%z$",
+      "position": "x#position&y%z$"
+    }
+  },
+  {
+    "id": "CC",
+    "header": "CC",
+    "receiver": "server",
+    "fanta": "CC#3#3#x<num>char_password<and>y<percent>z<dollar>#%",
+    "json": {
+      "$header": "CC",
+      "player_id": 3,
+      "char_id": 3,
+      "char_password": "x#char_password&y%z$"
+    }
+  },
+  {
+    "id": "CH",
+    "header": "CH",
+    "receiver": "server",
+    "fanta": "CH#3#%",
+    "json": {
+      "$header": "CH",
+      "char_id": 3
+    }
+  },
+  {
+    "id": "CHECK",
+    "header": "CHECK",
+    "receiver": "client",
+    "fanta": "CHECK#%",
+    "json": {
+      "$header": "CHECK"
+    }
+  },
+  {
+    "id": "CTToClient",
+    "header": "CT",
+    "receiver": "client",
+    "fanta": "CT#x<num>name<and>y<percent>z<dollar>#x<num>message<and>y<percent>z<dollar>#1#%",
+    "json": {
+      "$header": "CT",
+      "name": "x#name&y%z$",
+      "message": "x#message&y%z$",
+      "is_from_server": true
+    }
+  },
+  {
+    "id": "DE",
+    "header": "DE",
+    "receiver": "server",
+    "fanta": "DE#3#%",
+    "json": {
+      "$header": "DE",
+      "id": 3
+    }
+  },
+  {
+    "id": "DONE",
+    "header": "DONE",
+    "receiver": "client",
+    "fanta": "DONE#%",
+    "json": {
+      "$header": "DONE"
+    }
+  },
+  {
+    "id": "EE",
+    "header": "EE",
+    "receiver": "server",
+    "fanta": "EE#3#x<num>name<and>y<percent>z<dollar>#x<num>description<and>y<percent>z<dollar>#x<num>image<and>y<percent>z<dollar>#%",
+    "json": {
+      "$header": "EE",
+      "id": 3,
+      "name": "x#name&y%z$",
+      "description": "x#description&y%z$",
+      "image": "x#image&y%z$"
+    }
+  },
+  {
+    "id": "EI",
+    "header": "EI",
+    "receiver": "client",
+    "fanta": "EI#3#x<num>name<and>y<percent>z<dollar>&x<num>description<and>y<percent>z<dollar>&x<num>type<and>y<percent>z<dollar>&x<num>image<and>y<percent>z<dollar>#%",
+    "json": {
+      "$header": "EI",
+      "id": 3,
+      "details": {
+        "name": "x#name&y%z$",
+        "description": "x#description&y%z$",
+        "type": "x#type&y%z$",
+        "image": "x#image&y%z$"
+      }
+    }
+  },
+  {
+    "id": "FA",
+    "header": "FA",
+    "receiver": "client",
+    "fanta": "FA#x<num>areas<and>y<percent>z<dollar>#x<num>areas<and>y<percent>z<dollar>#%",
+    "json": {
+      "$header": "FA",
+      "areas": [
+        "x#areas&y%z$",
+        "x#areas&y%z$"
+      ]
+    }
+  },
+  {
+    "id": "HPToServer",
+    "header": "HP",
+    "receiver": "server",
+    "fanta": "HP#2#3#%",
+    "json": {
+      "$header": "HP",
+      "bar": "prosecution",
+      "value": 3
+    }
+  },
+  {
+    "id": "KB",
+    "header": "KB",
+    "receiver": "client",
+    "fanta": "KB#x<num>reason<and>y<percent>z<dollar>#%",
+    "json": {
+      "$header": "KB",
+      "reason": "x#reason&y%z$"
+    }
+  },
+  {
+    "id": "KK",
+    "header": "KK",
+    "receiver": "client",
+    "fanta": "KK#x<num>reason<and>y<percent>z<dollar>#%",
+    "json": {
+      "$header": "KK",
+      "reason": "x#reason&y%z$"
+    }
+  },
+  {
+    "id": "PE",
+    "header": "PE",
+    "receiver": "server",
+    "fanta": "PE#x<num>name<and>y<percent>z<dollar>#x<num>description<and>y<percent>z<dollar>#x<num>image<and>y<percent>z<dollar>#%",
+    "json": {
+      "$header": "PE",
+      "name": "x#name&y%z$",
+      "description": "x#description&y%z$",
+      "image": "x#image&y%z$"
+    }
+  },
+  {
+    "id": "PN",
+    "header": "PN",
+    "receiver": "client",
+    "fanta": "PN#3#3#x<num>server_description<and>y<percent>z<dollar>#%",
+    "json": {
+      "$header": "PN",
+      "player_count": 3,
+      "max_players": 3,
+      "server_description": "x#server_description&y%z$"
+    }
+  },
+  {
+    "id": "RC",
+    "header": "RC",
+    "receiver": "server",
+    "fanta": "RC#%",
+    "json": {
+      "$header": "RC"
+    }
+  },
+  {
+    "id": "RD",
+    "header": "RD",
+    "receiver": "server",
+    "fanta": "RD#%",
+    "json": {
+      "$header": "RD"
+    }
+  },
+  {
+    "id": "RM",
+    "header": "RM",
+    "receiver": "server",
+    "fanta": "RM#%",
+    "json": {
+      "$header": "RM"
+    }
+  },
+  {
+    "id": "RMC",
+    "header": "RMC",
+    "receiver": "client",
+    "fanta": "RMC#x<num>toTime<and>y<percent>z<dollar>#%",
+    "json": {
+      "$header": "RMC",
+      "toTime": "x#toTime&y%z$"
+    }
+  },
+  {
+    "id": "SI",
+    "header": "SI",
+    "receiver": "client",
+    "fanta": "SI#3#3#3#%",
+    "json": {
+      "$header": "SI",
+      "char_count": 3,
+      "evi_count": 3,
+      "mus_count": 3
+    }
+  },
+  {
+    "id": "SP",
+    "header": "SP",
+    "receiver": "client",
+    "fanta": "SP#pro#%",
+    "json": {
+      "$header": "SP",
+      "side": "pro"
+    }
+  },
+  {
+    "id": "askchaa",
+    "header": "askchaa",
+    "receiver": "server",
+    "fanta": "askchaa#%",
+    "json": {
+      "$header": "askchaa"
+    }
+  },
+  {
+    "id": "decryptor",
+    "header": "decryptor",
+    "receiver": "client",
+    "fanta": "decryptor#x<num>value<and>y<percent>z<dollar>#%",
+    "json": {
+      "$header": "decryptor",
+      "value": "x#value&y%z$"
+    }
+  },
+  {
+    "id": "MA",
+    "header": "MA",
+    "receiver": "server",
+    "fanta": "MA#5#1440#griefing <and> spam#%",
+    "json": {
+      "$header": "MA",
+      "player_id": 5,
+      "duration_minutes": 1440,
+      "reason": "griefing & spam"
+    }
+  },
+  {
+    "id": "ZZToServer-general",
+    "header": "ZZ",
+    "receiver": "server",
+    "fanta": "ZZ#need a mod in <num>3#-1#%",
+    "json": {
+      "$header": "ZZ",
+      "reason": "need a mod in #3",
+      "reported_player_id": -1
+    }
+  },
+  {
+    "id": "ZZToServer-report",
+    "header": "ZZ",
+    "receiver": "server",
+    "fanta": "ZZ#spamming <and> slurs#7#%",
+    "json": {
+      "$header": "ZZ",
+      "reason": "spamming & slurs",
+      "reported_player_id": 7
+    }
+  },
+  {
+    "id": "ZZToClient",
+    "header": "ZZ",
+    "receiver": "client",
+    "fanta": "ZZ#!!!MODCALL!!!\nArea: Basement\nCaller: [3]Phoenix\nRegarding: Edgeworth\nReason: spamming <and> slurs#%",
+    "json": {
+      "$header": "ZZ",
+      "reason": "!!!MODCALL!!!\nArea: Basement\nCaller: [3]Phoenix\nRegarding: Edgeworth\nReason: spamming & slurs"
+    }
+  },
+  {
+    "id": "MCToClient-ambience",
+    "header": "MC",
+    "receiver": "client",
+    "fanta": "MC#rain.opus#-1##1#1#7#%",
+    "json": {
+      "$header": "MC",
+      "name": "rain.opus",
+      "char_id": -1,
+      "showname": "",
+      "looping": true,
+      "channel": "ambience",
+      "effects": {
+        "fade_in": true,
+        "fade_out": true,
+        "sync_position": true
+      }
+    }
+  },
+  {
+    "id": "CTToServer-literal-backslash-u",
+    "header": "CT",
+    "receiver": "server",
+    "fanta": "CT#Phoenix#C:\\users \\u0041BC#%",
+    "json": {
+      "$header": "CT",
+      "name": "Phoenix",
+      "message": "C:\\users \\u0041BC"
+    }
   }
 ]

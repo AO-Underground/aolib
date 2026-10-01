@@ -7,8 +7,8 @@ pins one packet's canonical wire bytes in both formats:
 { "id", "header", "receiver", "fanta": "HEADER#...#%", "json": { "$header": ..., ... } }
 ```
 
-Each binding has a test (`aolib-go/conformance_test.go`,
-`aolib-ts/tests/conformance.test.ts`) that, per vector, decodes both wire forms,
+Each binding has a test (`go/conformance_test.go`,
+`ts/tests/conformance.test.ts`) that, per vector, decodes both wire forms,
 asserts they yield the same packet, and re-encodes to each form checking it
 matches the pinned bytes exactly. Because every binding validates against the
 same vectors, passing them means the bindings emit and accept identical wire
@@ -19,10 +19,6 @@ them spec-correct.
 
 ## Coverage
 
-Covered: simple scalar packets, both `ID` directions, arrays of scalars (`FL`),
-string escaping (`CT`), the rich `MS` (string enums, `{x,y}` offset, bools), and
-the object-item array packets (`SM`, `FM`, `SC`, `LE`, `CI`, `EM`).
-
-Not yet covered: **`x-fanta-codec` packets** with discriminator-typed payloads
-(e.g. `ARUP`, whose `update_data` element type depends on `update_type`) need
-dedicated vectors.
+Every packet schema, in each direction, has at least one vector. Strings carry
+`#`/`&`/`%`/`$` wherever a field allows them, so escaping is checked
+everywhere.

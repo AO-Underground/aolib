@@ -1,0 +1,15 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "/types/PlayerListUpdate.schema.json",
+  "type": "string",
+  "title": "PlayerListUpdate",
+  "description": "PR packet update type: add or remove a player from the playerlist.",
+  "enum": [
+    "add",
+    "remove"
+  ],
+  "x-wire-ints": [
+    0,
+    1
+  ]
+}
