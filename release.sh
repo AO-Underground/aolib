@@ -90,6 +90,7 @@ run_checks() {
 		bun run lint
 		bun test
 		bun run codegen >/dev/null
+		./scripts/pack-smoke.sh
 	)
 	[ "$(tree_state)" = "$before" ] || die "formatting or codegen changed files; regenerate and commit them first"
 	check_versions

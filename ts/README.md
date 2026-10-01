@@ -218,9 +218,11 @@ ts/
 ├── README.md                  ← you are here
 ├── package.json
 ├── scripts/
-│   └── codegen.ts             ← reads ../spec/, writes generated/
+│   ├── codegen.ts             ← reads ../spec/, writes generated/
+│   └── pack-smoke.sh          ← packs the tarball and imports it from a clean project
 ├── generated/                 ← committed; regenerate with `bun codegen`
 │   ├── packets.ts             ← packet types + Init, c2s/s2c schema maps
+│   ├── schemas.ts             ← every spec schema inlined, so the package ships them
 │   ├── enums.ts               ← enum union+const from types/*.schema.json
 │   └── types.ts               ← shared object types from types/*.schema.json
 ├── src/

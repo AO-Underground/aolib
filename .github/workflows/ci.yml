@@ -76,3 +76,5 @@ jobs:
         run: |
           bun run codegen
           git diff --exit-code || { echo "::error::generated TS is out of date; run bun codegen against ../spec"; exit 1; }
+      - name: packed tarball imports
+        run: ./scripts/pack-smoke.sh

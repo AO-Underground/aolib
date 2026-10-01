@@ -24,7 +24,6 @@
   "files": [
     "src/**/*.ts",
     "generated/**/*.ts",
-    "spec/**/*.json",
     "README.md",
     "LICENSE"
   ],

@@ -45,6 +45,7 @@ const TYPES_DIR = join(META_ROOT, "types");
 const OUT_PACKETS = join(ROOT, "generated/packets.ts");
 const OUT_ENUMS = join(ROOT, "generated/enums.ts");
 const OUT_TYPES = join(ROOT, "generated/types.ts");
+const OUT_SCHEMAS = join(ROOT, "generated/schemas.ts");
 
 // Read input
 
@@ -412,26 +413,27 @@ function main(): void {
     enumImports + typeImports,
   ];
 
-  // Enum + type schemas, imported as runtime values so validate.ts
-  // can register them with Ajv for $ref resolution. Both live in types/.
+  // Schemas are inlined rather than imported from ../spec, which lies
+  // outside the npm package and so never ships.
   const enumNames = [...enums.values()].map((e) => e.name).sort();
   const typeNames = [...types.values()].map((t) => t.name).sort();
-  for (const name of enumNames) {
-    parts.push(`import ${name}EnumSchema from "../../spec/types/${name}.schema.json";\n`);
-  }
-  for (const name of typeNames) {
-    parts.push(`import ${name}TypeSchema from "../../spec/types/${name}.schema.json";\n`);
-  }
-  parts.push("");
+  const schemaParts: string[] = [
+    "// AUTO-GENERATED from spec/. Do not edit; run `bun run codegen`.\n",
+  ];
+  const inline = (id: string, file: string) =>
+    schemaParts.push(`export const ${id} = ${JSON.stringify(loadJson(file), null, 2)};\n`);
+  for (const name of enumNames) inline(`${name}EnumSchema`, join(TYPES_DIR, `${name}.schema.json`));
+  for (const name of typeNames) inline(`${name}TypeSchema`, join(TYPES_DIR, `${name}.schema.json`));
+  for (const name of packets) inline(`${name}Schema`, join(PACKETS_DIR, `${name}.schema.json`));
+  writeFileSync(OUT_SCHEMAS, schemaParts.join("\n"));
 
-  for (const name of packets) {
-    parts.push(`import ${name}Schema from "../../spec/packets/schemas/${name}.schema.json";\n`);
-  }
-  parts.push("");
-
-  for (const name of packets) {
-    parts.push(`export { default as ${name}Schema } from "../../spec/packets/schemas/${name}.schema.json";\n`);
-  }
+  const schemaIds = [
+    ...enumNames.map((n) => `${n}EnumSchema`),
+    ...typeNames.map((n) => `${n}TypeSchema`),
+    ...packets.map((n) => `${n}Schema`),
+  ];
+  parts.push(`import { ${schemaIds.join(", ")} } from "./schemas";\n`);
+  parts.push(`export { ${packets.map((n) => `${n}Schema`).join(", ")} } from "./schemas";\n`);
   parts.push("");
 
   parts.push(

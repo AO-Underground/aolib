@@ -14,7 +14,7 @@
  */
 
 import { registerCodec, escapeFanta, unescapeFanta } from "../fanta";
-import AreaUpdateTypeSchema from "../../../spec/types/AreaUpdateType.schema.json";
+import { AreaUpdateTypeEnumSchema as AreaUpdateTypeSchema } from "../../generated/schemas";
 
 const VALUES = AreaUpdateTypeSchema.enum;
 const WIRE_INTS = AreaUpdateTypeSchema["x-wire-ints"];

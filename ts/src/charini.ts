@@ -31,8 +31,7 @@
  */
 
 import { parse as parseIni } from "js-ini";
-import EmoteModifierSchema from "../../spec/types/EmoteModifier.schema.json";
-import DeskModifierSchema from "../../spec/types/DeskModifier.schema.json";
+import { DeskModifierEnumSchema as DeskModifierSchema, EmoteModifierEnumSchema as EmoteModifierSchema } from "../generated/schemas";
 import type { DeskModifier, EmoteModifier } from "../generated/enums";
 
 // [soundt] and MS sfx_delay are in ticks of this many ms.
