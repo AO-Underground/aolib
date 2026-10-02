@@ -166,9 +166,9 @@ function enumFromWireInt(schema: JsonSchema, token: string, name: string): unkno
 function suffixOf(
   props: Record<string, JsonSchema>,
   base: string,
-): string | undefined {
+): [string, JsonSchema] | undefined {
   for (const [name, sub] of Object.entries(props)) {
-    if (sub["x-fanta-suffix-of"] === base) return name;
+    if (sub["x-fanta-suffix-of"] === base) return [name, sub];
   }
   return undefined;
 }
@@ -328,9 +328,10 @@ export function toFantaArgs(
       continue;
     }
 
-    const sfxName = suffixOf(props, name);
-    if (sfxName !== undefined) {
-      const sfxResolved = resolveRef(props[sfxName], baseId);
+    const entry = suffixOf(props, name);
+    if (entry !== undefined) {
+      const [sfxName, sfxSub] = entry;
+      const sfxResolved = resolveRef(sfxSub, baseId);
       const base = encodeToken(sub, packet[name], baseId);
       const baseDef = resolveRef(sub, baseId).default;
       if (packet[name] !== baseDef && packet[sfxName] !== sfxResolved.default) {
@@ -379,12 +380,13 @@ export function fromFantaArgs(
     const token = args[cursor++];
     if (token === undefined) continue; // Ajv fills the default
 
-    const sfxName = suffixOf(props, name);
-    if (sfxName !== undefined) {
+    const entry = suffixOf(props, name);
+    if (entry !== undefined) {
+      const [sfxName, sfxSub] = entry;
       const i = token.indexOf("^");
       if (i >= 0) {
         result[name] = decodeToken(sub, token.slice(0, i), name, baseId);
-        result[sfxName] = decodeToken(props[sfxName], token.slice(i + 1), sfxName, baseId);
+        result[sfxName] = decodeToken(sfxSub, token.slice(i + 1), sfxName, baseId);
       } else {
         result[name] = decodeToken(sub, token, name, baseId);
       }
