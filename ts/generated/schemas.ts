@@ -181,6 +181,22 @@ export const MusicChannelEnumSchema = {
   ]
 };
 
+export const PairOrderEnumSchema = {
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "/types/PairOrder.schema.json",
+  "title": "PairOrder",
+  "description": "Where the paired character renders relative to the speaker.",
+  "type": "string",
+  "enum": [
+    "behind",
+    "front"
+  ],
+  "x-wire-ints": [
+    0,
+    1
+  ]
+};
+
 export const PenaltyBarEnumSchema = {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/types/PenaltyBar.schema.json",
@@ -1697,6 +1713,12 @@ export const MSToClientSchema = {
       "default": -1,
       "description": "Paired character's ID, or -1 for no pair."
     },
+    "paired_order": {
+      "$ref": "../../types/PairOrder.schema.json",
+      "default": "behind",
+      "description": "Where the paired character renders relative to the speaker. Wire: packed onto paired_charid as `<id>^<order>` only when `front`; `behind` (and `<id>^0`) is the default and is encoded as the bare `<id>`.",
+      "x-fanta-suffix-of": "paired_charid"
+    },
     "paired_name": {
       "type": "string",
       "default": "",
@@ -1875,6 +1897,12 @@ export const MSToServerSchema = {
       "type": "number",
       "default": -1,
       "description": "Character to pair with, or -1 for no pair."
+    },
+    "paired_order": {
+      "$ref": "../../types/PairOrder.schema.json",
+      "default": "behind",
+      "description": "Where the paired character renders relative to the speaker. Wire: packed onto paired_charid as `<id>^<order>` only when `front`; `behind` (and `<id>^0`) is the default and is encoded as the bare `<id>`.",
+      "x-fanta-suffix-of": "paired_charid"
     },
     "offset": {
       "$ref": "../../types/Offset.schema.json",

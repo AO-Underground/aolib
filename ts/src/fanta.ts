@@ -162,6 +162,17 @@ function enumFromWireInt(schema: JsonSchema, token: string, name: string): unkno
   return schema.enum[idx];
 }
 
+/** Find the property that packs as a `^` suffix onto `base`, if any. */
+function suffixOf(
+  props: Record<string, JsonSchema>,
+  base: string,
+): string | undefined {
+  for (const [name, sub] of Object.entries(props)) {
+    if (sub["x-fanta-suffix-of"] === base) return name;
+  }
+  return undefined;
+}
+
 function encodeToken(rawSchema: JsonSchema, value: unknown, baseId: string): string {
   const schema = resolveRef(rawSchema, baseId);
   // `const` properties (literal padding like PV's _cid) emit the const
@@ -302,12 +313,26 @@ export function toFantaArgs(
   const props = schema.properties ?? {};
   for (const [name, sub] of Object.entries(props)) {
     if (name === "$header") continue;
+    if (sub["x-fanta-suffix-of"]) continue; // suffix, packed onto the base slot
 
     // Trailing array: greedy, fan out into one slot per element.
     if (jsonType(sub) === "array") {
       const items = (packet[name] as unknown[] | undefined) ?? [];
       const elem = sub.items ?? {};
       for (const item of items) args.push(encodeToken(elem, item, baseId));
+      continue;
+    }
+
+    const sfxName = suffixOf(props, name);
+    if (sfxName !== undefined) {
+      const sfxResolved = resolveRef(props[sfxName], baseId);
+      const base = encodeToken(sub, packet[name], baseId);
+      const baseDef = resolveRef(sub, baseId).default;
+      if (packet[name] !== baseDef && packet[sfxName] !== sfxResolved.default) {
+        args.push(`${base}^${wireIntOf(sfxResolved, packet[sfxName])}`);
+      } else {
+        args.push(base);
+      }
       continue;
     }
 
@@ -335,6 +360,7 @@ export function fromFantaArgs(
 
   for (const [name, sub] of Object.entries(props)) {
     if (name === "$header") continue;
+    if (sub["x-fanta-suffix-of"]) continue; // suffix, decoded from the base slot
 
     if (jsonType(sub) === "array") {
       const elem = sub.items ?? {};
@@ -347,6 +373,19 @@ export function fromFantaArgs(
 
     const token = args[cursor++];
     if (token === undefined) continue; // Ajv fills the default
+
+    const sfxName = suffixOf(props, name);
+    if (sfxName !== undefined) {
+      const i = token.indexOf("^");
+      if (i >= 0) {
+        result[name] = decodeToken(sub, token.slice(0, i), name, baseId);
+        result[sfxName] = decodeToken(props[sfxName], token.slice(i + 1), sfxName, baseId);
+      } else {
+        result[name] = decodeToken(sub, token, name, baseId);
+      }
+      continue;
+    }
+
     result[name] = decodeToken(sub, token, name, baseId);
   }
 

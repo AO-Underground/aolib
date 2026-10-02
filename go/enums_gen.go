@@ -191,6 +191,24 @@ var musicChannelFromWire = map[int]MusicChannel{
 	1: MusicChannelAmbience,
 }
 
+// PairOrder: Where the paired character renders relative to the speaker.
+type PairOrder string
+
+const (
+	PairOrderBehind PairOrder = "behind"
+	PairOrderFront  PairOrder = "front"
+)
+
+var pairOrderToWire = map[PairOrder]int{
+	PairOrderBehind: 0,
+	PairOrderFront:  1,
+}
+
+var pairOrderFromWire = map[int]PairOrder{
+	0: PairOrderBehind,
+	1: PairOrderFront,
+}
+
 // PenaltyBar: Which penalty (health) bar an HP packet updates.
 type PenaltyBar string
 

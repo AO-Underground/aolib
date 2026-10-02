@@ -89,6 +89,12 @@
       "default": -1,
       "description": "Paired character's ID, or -1 for no pair."
     },
+    "paired_order": {
+      "$ref": "../../types/PairOrder.schema.json",
+      "default": "behind",
+      "description": "Where the paired character renders relative to the speaker. Wire: packed onto paired_charid as `<id>^<order>` only when `front`; `behind` (and `<id>^0`) is the default and is encoded as the bare `<id>`.",
+      "x-fanta-suffix-of": "paired_charid"
+    },
     "paired_name": {
       "type": "string",
       "default": "",
