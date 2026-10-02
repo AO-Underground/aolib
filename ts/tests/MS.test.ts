@@ -482,6 +482,7 @@ describe("MS: JSON envelope round-trip", () => {
       text_color: TextColor.red,
       showname: "Phoenix Wright",
       paired_charid: -1,
+      paired_order: 0,
       paired_name: "",
       paired_emote: "",
       offset: { x: 0, y: 0 },
