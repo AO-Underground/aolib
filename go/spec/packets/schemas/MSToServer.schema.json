@@ -90,9 +90,9 @@
       "description": "Character to pair with, or -1 for no pair."
     },
     "paired_order": {
-      "$ref": "../../types/PairOrder.schema.json",
-      "default": "behind",
-      "description": "Where the paired character renders relative to the speaker. Wire: packed onto paired_charid as `<id>^<order>` only when `front`; `behind` (and `<id>^0`) is the default and is encoded as the bare `<id>`.",
+      "type": "integer",
+      "default": 0,
+      "description": "Z-order of the paired character relative to the speaker; 0 renders behind (the default), 1 in front. Packed onto paired_charid as `<id>^1` when 1, the bare `<id>` otherwise.",
       "x-fanta-suffix-of": "paired_charid"
     },
     "offset": {

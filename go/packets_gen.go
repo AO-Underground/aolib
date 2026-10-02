@@ -1627,7 +1627,7 @@ type MSToClient struct {
 	TextColor              TextColor      `json:"text_color"`
 	Showname               string         `json:"showname"`
 	PairedCharID           int            `json:"paired_charid"`
-	PairedOrder            PairOrder      `json:"paired_order"`
+	PairedOrder            int            `json:"paired_order"`
 	PairedName             string         `json:"paired_name"`
 	PairedEmote            string         `json:"paired_emote"`
 	Offset                 Offset         `json:"offset"`
@@ -1661,7 +1661,6 @@ func (p *MSToClient) applyDefaults() {
 	p.Flip = Flip("none")
 	p.TextColor = TextColor("white")
 	p.PairedCharID = -1
-	p.PairedOrder = PairOrder("behind")
 	p.PairedFlip = Flip("none")
 }
 
@@ -1689,9 +1688,6 @@ func (p *MSToClient) withDefaults() Outgoing {
 	if c.TextColor == "" {
 		c.TextColor = TextColor("white")
 	}
-	if c.PairedOrder == "" {
-		c.PairedOrder = PairOrder("behind")
-	}
 	if c.PairedFlip == "" {
 		c.PairedFlip = Flip("none")
 	}
@@ -1717,8 +1713,8 @@ func (p *MSToClient) Args() []string {
 	args = append(args, itoa(textColorToWire[p.TextColor]))
 	args = append(args, escapeFanta(p.Showname))
 	tok := itoa(p.PairedCharID)
-	if p.PairedCharID != -1 && p.PairedOrder != PairOrder("behind") {
-		tok += "^" + itoa(pairOrderToWire[p.PairedOrder])
+	if p.PairedCharID != -1 && p.PairedOrder != 0 {
+		tok += "^" + itoa(p.PairedOrder)
 	}
 	args = append(args, tok)
 	args = append(args, escapeFanta(p.PairedName))
@@ -1785,10 +1781,10 @@ func ParseMSToClient(body []string) (*MSToClient, error) {
 	if cursor < len(body) {
 		base, order := splitCaret(get(cursor))
 		p.PairedCharID = atoiOrZero(base)
-		p.PairedOrder = pairOrderFromWire[atoiOrZero(order)]
+		p.PairedOrder = atoiOrZero(order)
 	} else {
 		p.PairedCharID = -1
-		p.PairedOrder = PairOrder("behind")
+		p.PairedOrder = 0
 	}
 	cursor++
 	p.PairedName = unescapeFanta(get(cursor))
@@ -1839,7 +1835,7 @@ type MSToServer struct {
 	TextColor              TextColor      `json:"text_color"`
 	Showname               string         `json:"showname"`
 	PairedCharID           int            `json:"paired_charid"`
-	PairedOrder            PairOrder      `json:"paired_order"`
+	PairedOrder            int            `json:"paired_order"`
 	Offset                 Offset         `json:"offset"`
 	NoninterruptingPreanim bool           `json:"noninterrupting_preanim"`
 	SfxLooping             bool           `json:"sfx_looping"`
@@ -1869,7 +1865,6 @@ func (p *MSToServer) applyDefaults() {
 	p.Flip = Flip("none")
 	p.TextColor = TextColor("white")
 	p.PairedCharID = -1
-	p.PairedOrder = PairOrder("behind")
 }
 
 // NewMSToServer returns a MSToServer with the spec's defaults.
@@ -1896,9 +1891,6 @@ func (p *MSToServer) withDefaults() Outgoing {
 	if c.TextColor == "" {
 		c.TextColor = TextColor("white")
 	}
-	if c.PairedOrder == "" {
-		c.PairedOrder = PairOrder("behind")
-	}
 	return &c
 }
 
@@ -1921,8 +1913,8 @@ func (p *MSToServer) Args() []string {
 	args = append(args, itoa(textColorToWire[p.TextColor]))
 	args = append(args, escapeFanta(p.Showname))
 	tok := itoa(p.PairedCharID)
-	if p.PairedCharID != -1 && p.PairedOrder != PairOrder("behind") {
-		tok += "^" + itoa(pairOrderToWire[p.PairedOrder])
+	if p.PairedCharID != -1 && p.PairedOrder != 0 {
+		tok += "^" + itoa(p.PairedOrder)
 	}
 	args = append(args, tok)
 	args = append(args, offsetToWire(p.Offset))
@@ -1985,10 +1977,10 @@ func ParseMSToServer(body []string) (*MSToServer, error) {
 	if cursor < len(body) {
 		base, order := splitCaret(get(cursor))
 		p.PairedCharID = atoiOrZero(base)
-		p.PairedOrder = pairOrderFromWire[atoiOrZero(order)]
+		p.PairedOrder = atoiOrZero(order)
 	} else {
 		p.PairedCharID = -1
-		p.PairedOrder = PairOrder("behind")
+		p.PairedOrder = 0
 	}
 	cursor++
 	p.Offset = offsetFromWire(get(cursor))

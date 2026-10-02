@@ -71,13 +71,6 @@ export const MusicChannel = {
   ambience: "ambience",
 } as const;
 
-/** Where the paired character renders relative to the speaker. */
-export type PairOrder = "behind" | "front";
-export const PairOrder = {
-  behind: "behind",
-  front: "front",
-} as const;
-
 /** Which penalty (health) bar an HP packet updates. */
 export type PenaltyBar = "defense" | "prosecution";
 export const PenaltyBar = {

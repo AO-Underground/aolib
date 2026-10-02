@@ -91,7 +91,7 @@
       "text_color": "red",
       "showname": "Nick",
       "paired_charid": -1,
-      "paired_order": "behind",
+      "paired_order": 0,
       "offset": {
         "x": 5,
         "y": -3
@@ -134,7 +134,7 @@
       "text_color": "white",
       "showname": "",
       "paired_charid": 4,
-      "paired_order": "front",
+      "paired_order": 1,
       "offset": {
         "x": 0,
         "y": 0
@@ -177,7 +177,7 @@
       "text_color": "red",
       "showname": "Nick",
       "paired_charid": -1,
-      "paired_order": "behind",
+      "paired_order": 0,
       "paired_name": "",
       "paired_emote": "",
       "offset": {

@@ -1,14 +1,14 @@
 // AUTO-GENERATED from spec/. Do not edit; run `bun run codegen`.
 
-import { AreaUpdateType, AuthState, CharAvailability, DeskModifier, EmoteModifier, Flip, JudgeState, MusicChannel, PairOrder, PenaltyBar, PlayerDataType, PlayerListUpdate, RTAnimation, ShoutModifier, Side, TextColor, TimerCommand } from "./enums";
+import { AreaUpdateType, AuthState, CharAvailability, DeskModifier, EmoteModifier, Flip, JudgeState, MusicChannel, PenaltyBar, PlayerDataType, PlayerListUpdate, RTAnimation, ShoutModifier, Side, TextColor, TimerCommand } from "./enums";
 import { Effect, MusicEffects, Offset } from "./types";
 
-import { AreaUpdateTypeEnumSchema, AuthStateEnumSchema, CharAvailabilityEnumSchema, DeskModifierEnumSchema, EmoteModifierEnumSchema, FlipEnumSchema, JudgeStateEnumSchema, MusicChannelEnumSchema, PairOrderEnumSchema, PenaltyBarEnumSchema, PlayerDataTypeEnumSchema, PlayerListUpdateEnumSchema, RTAnimationEnumSchema, ShoutModifierEnumSchema, SideEnumSchema, TextColorEnumSchema, TimerCommandEnumSchema, EffectTypeSchema, MusicEffectsTypeSchema, OffsetTypeSchema, ARUPSchema, ASSSchema, AUTHSchema, BBSchema, BDSchema, BNSchema, CASEAToClientSchema, CASEAToServerSchema, CCSchema, CHSchema, CHECKSchema, CISchema, CTToClientSchema, CTToServerSchema, CharsCheckSchema, DESchema, DONESchema, EESchema, EISchema, EMSchema, FASchema, FLSchema, FMSchema, HISchema, HPToClientSchema, HPToServerSchema, IDToClientSchema, IDToServerSchema, JDSchema, KBSchema, KKSchema, LESchema, MASchema, MCToClientSchema, MCToServerSchema, MSToClientSchema, MSToServerSchema, PESchema, PNSchema, PRSchema, PUSchema, PVSchema, RCSchema, RDSchema, RMSchema, RMCSchema, RTToClientSchema, RTToServerSchema, SCSchema, SETCASESchema, SISchema, SMSchema, SPSchema, STSchema, TISchema, ZZToClientSchema, ZZToServerSchema, askchaaSchema, decryptorSchema } from "./schemas";
+import { AreaUpdateTypeEnumSchema, AuthStateEnumSchema, CharAvailabilityEnumSchema, DeskModifierEnumSchema, EmoteModifierEnumSchema, FlipEnumSchema, JudgeStateEnumSchema, MusicChannelEnumSchema, PenaltyBarEnumSchema, PlayerDataTypeEnumSchema, PlayerListUpdateEnumSchema, RTAnimationEnumSchema, ShoutModifierEnumSchema, SideEnumSchema, TextColorEnumSchema, TimerCommandEnumSchema, EffectTypeSchema, MusicEffectsTypeSchema, OffsetTypeSchema, ARUPSchema, ASSSchema, AUTHSchema, BBSchema, BDSchema, BNSchema, CASEAToClientSchema, CASEAToServerSchema, CCSchema, CHSchema, CHECKSchema, CISchema, CTToClientSchema, CTToServerSchema, CharsCheckSchema, DESchema, DONESchema, EESchema, EISchema, EMSchema, FASchema, FLSchema, FMSchema, HISchema, HPToClientSchema, HPToServerSchema, IDToClientSchema, IDToServerSchema, JDSchema, KBSchema, KKSchema, LESchema, MASchema, MCToClientSchema, MCToServerSchema, MSToClientSchema, MSToServerSchema, PESchema, PNSchema, PRSchema, PUSchema, PVSchema, RCSchema, RDSchema, RMSchema, RMCSchema, RTToClientSchema, RTToServerSchema, SCSchema, SETCASESchema, SISchema, SMSchema, SPSchema, STSchema, TISchema, ZZToClientSchema, ZZToServerSchema, askchaaSchema, decryptorSchema } from "./schemas";
 
 export { ARUPSchema, ASSSchema, AUTHSchema, BBSchema, BDSchema, BNSchema, CASEAToClientSchema, CASEAToServerSchema, CCSchema, CHSchema, CHECKSchema, CISchema, CTToClientSchema, CTToServerSchema, CharsCheckSchema, DESchema, DONESchema, EESchema, EISchema, EMSchema, FASchema, FLSchema, FMSchema, HISchema, HPToClientSchema, HPToServerSchema, IDToClientSchema, IDToServerSchema, JDSchema, KBSchema, KKSchema, LESchema, MASchema, MCToClientSchema, MCToServerSchema, MSToClientSchema, MSToServerSchema, PESchema, PNSchema, PRSchema, PUSchema, PVSchema, RCSchema, RDSchema, RMSchema, RMCSchema, RTToClientSchema, RTToServerSchema, SCSchema, SETCASESchema, SISchema, SMSchema, SPSchema, STSchema, TISchema, ZZToClientSchema, ZZToServerSchema, askchaaSchema, decryptorSchema } from "./schemas";
 
 
-export const enumSchemas = [AreaUpdateTypeEnumSchema, AuthStateEnumSchema, CharAvailabilityEnumSchema, DeskModifierEnumSchema, EmoteModifierEnumSchema, FlipEnumSchema, JudgeStateEnumSchema, MusicChannelEnumSchema, PairOrderEnumSchema, PenaltyBarEnumSchema, PlayerDataTypeEnumSchema, PlayerListUpdateEnumSchema, RTAnimationEnumSchema, ShoutModifierEnumSchema, SideEnumSchema, TextColorEnumSchema, TimerCommandEnumSchema];
+export const enumSchemas = [AreaUpdateTypeEnumSchema, AuthStateEnumSchema, CharAvailabilityEnumSchema, DeskModifierEnumSchema, EmoteModifierEnumSchema, FlipEnumSchema, JudgeStateEnumSchema, MusicChannelEnumSchema, PenaltyBarEnumSchema, PlayerDataTypeEnumSchema, PlayerListUpdateEnumSchema, RTAnimationEnumSchema, ShoutModifierEnumSchema, SideEnumSchema, TextColorEnumSchema, TimerCommandEnumSchema];
 
 export const typeSchemas = [EffectTypeSchema, MusicEffectsTypeSchema, OffsetTypeSchema];
 
@@ -529,7 +529,7 @@ export interface MSToClient extends Packet {
   text_color: TextColor;
   showname: string;
   paired_charid: number;
-  paired_order: PairOrder;
+  paired_order: number;
   paired_name: string;
   paired_emote: string;
   offset: Offset;
@@ -563,7 +563,7 @@ export interface MSToClientInit {
   text_color?: TextColor;
   showname?: string;
   paired_charid?: number;
-  paired_order?: PairOrder;
+  paired_order?: number;
   paired_name?: string;
   paired_emote?: string;
   offset?: Offset;
@@ -600,7 +600,7 @@ export interface MSToServer extends Packet {
   text_color: TextColor;
   showname: string;
   paired_charid: number;
-  paired_order: PairOrder;
+  paired_order: number;
   offset: Offset;
   noninterrupting_preanim: boolean;
   sfx_looping: boolean;
@@ -630,7 +630,7 @@ export interface MSToServerInit {
   text_color?: TextColor;
   showname?: string;
   paired_charid?: number;
-  paired_order?: PairOrder;
+  paired_order?: number;
   offset?: Offset;
   noninterrupting_preanim?: boolean;
   sfx_looping?: boolean;

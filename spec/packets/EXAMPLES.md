@@ -51,7 +51,7 @@ MS#2#pointing#Phoenix#handsondesk#The defense has evidence <num>3 <and> it chang
 
 ## MS (client to server), paired character in front
 
-`paired_order: "front"` packs a `^1` suffix onto `paired_charid`, so the pair renders in front of the speaker. The default `behind` keeps the bare `<id>`.
+`paired_order: 1` packs a `^1` suffix onto `paired_charid`, so the pair renders in front of the speaker. The default `0` keeps the bare `<id>`.
 
 ```
 MS#1##Phoenix#normal#Take that!#def##0#12#0#0#0#0#0#0##4^1#0&0#0#0#0####0##%
@@ -77,7 +77,7 @@ MS#1##Phoenix#normal#Take that!#def##0#12#0#0#0#0#0#0##4^1#0&0#0#0#0####0##%
   "text_color": "white",
   "showname": "",
   "paired_charid": 4,
-  "paired_order": "front",
+  "paired_order": 1,
   "offset": {
     "x": 0,
     "y": 0

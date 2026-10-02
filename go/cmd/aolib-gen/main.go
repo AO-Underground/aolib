@@ -533,12 +533,15 @@ func defaultGoLiteral(p *Prop) string {
 	return "0"
 }
 
-// suffixDefaultLiteral returns the Go literal for a suffix field's default enum
-// value, e.g. `PairOrder("behind")`.
+// suffixDefaultLiteral returns the Go literal for a suffix field's default:
+// an enum's `EnumName("value")` or a scalar's Go literal (`0`).
 func suffixDefaultLiteral(sfx *Prop, enumNames map[string]*Schema) string {
-	e, _ := enumFor(sfx, enumNames)
-	d, _ := sfx.Schema.Default.(string)
-	return fmt.Sprintf("%s(%q)", e.Name, d)
+	if e, ok := enumFor(sfx, enumNames); ok {
+		if d, ok := sfx.Schema.Default.(string); ok {
+			return fmt.Sprintf("%s(%q)", e.Name, d)
+		}
+	}
+	return defaultGoLiteral(sfx)
 }
 
 // isObjectArray reports whether a property is an array whose items are objects
@@ -771,12 +774,15 @@ func emitPackets(packets []*Schema, enumNames, typeNames map[string]*Schema) str
 				continue
 			}
 			if sfx, ok := suffixFor(s.Properties, p.Name); ok {
-				e, _ := enumFor(sfx, enumNames)
 				baseF := pascalCase(p.Name)
 				sfxF := pascalCase(sfx.Name)
 				fmt.Fprintf(&b, "\ttok := %s\n", encodeExpr(&p, enumNames, typeNames))
 				fmt.Fprintf(&b, "\tif p.%s != %s && p.%s != %s {\n", baseF, defaultGoLiteral(&p), sfxF, suffixDefaultLiteral(sfx, enumNames))
-				fmt.Fprintf(&b, "\t\ttok += \"^\" + itoa(%sToWire[p.%s])\n", lowerFirst(e.Name), sfxF)
+				if e, ok := enumFor(sfx, enumNames); ok && len(e.XWireInts) > 0 {
+					fmt.Fprintf(&b, "\t\ttok += \"^\" + itoa(%sToWire[p.%s])\n", lowerFirst(e.Name), sfxF)
+				} else {
+					fmt.Fprintf(&b, "\t\ttok += \"^\" + itoa(p.%s)\n", sfxF)
+				}
 				fmt.Fprintf(&b, "\t}\n")
 				fmt.Fprintf(&b, "\targs = append(args, tok)\n")
 				continue

@@ -173,6 +173,11 @@ function suffixOf(
   return undefined;
 }
 
+/** The `^`-suffix token for a suffix field: an x-wire-ints enum's integer, or a number's decimal string. */
+function suffixWireOf(schema: JsonSchema, value: unknown): string {
+  return wireIntOf(schema, value) ?? String(value);
+}
+
 function encodeToken(rawSchema: JsonSchema, value: unknown, baseId: string): string {
   const schema = resolveRef(rawSchema, baseId);
   // `const` properties (literal padding like PV's _cid) emit the const
@@ -329,7 +334,7 @@ export function toFantaArgs(
       const base = encodeToken(sub, packet[name], baseId);
       const baseDef = resolveRef(sub, baseId).default;
       if (packet[name] !== baseDef && packet[sfxName] !== sfxResolved.default) {
-        args.push(`${base}^${wireIntOf(sfxResolved, packet[sfxName])}`);
+        args.push(`${base}^${suffixWireOf(sfxResolved, packet[sfxName])}`);
       } else {
         args.push(base);
       }

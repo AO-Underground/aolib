@@ -6,8 +6,7 @@ import (
 )
 
 // Pair order is the optional "^<order>" suffix packed onto paired_charid. The
-// default "behind" keeps the bare id; "front" emits "^1"; an unpaired -1 is
-// never suffixed.
+// default 0 keeps the bare id; 1 emits "^1"; an unpaired -1 is never suffixed.
 
 func TestMSPairOrderFrontPacksCaretSuffix(t *testing.T) {
 	p := NewMSToServer()
@@ -17,7 +16,7 @@ func TestMSPairOrderFrontPacksCaretSuffix(t *testing.T) {
 	p.Side = "def"
 	p.CharID = 12
 	p.PairedCharID = 4
-	p.PairedOrder = PairOrderFront
+	p.PairedOrder = 1
 
 	raw, err := Encode(p, WireFanta)
 	if err != nil {
@@ -38,7 +37,7 @@ func TestMSPairOrderDefaultIsBareID(t *testing.T) {
 	p.Message = "Take that!"
 	p.Side = "def"
 	p.CharID = 12
-	p.PairedCharID = 4 // PairedOrder left at default "behind"
+	p.PairedCharID = 4 // PairedOrder left at default 0
 
 	raw, err := Encode(p, WireFanta)
 	if err != nil {
@@ -60,7 +59,7 @@ func TestMSPairOrderUnpairedNeverSuffixed(t *testing.T) {
 	p.Side = "def"
 	p.CharID = 12
 	p.PairedCharID = -1
-	p.PairedOrder = PairOrderFront // meaningless when unpaired; must stay bare
+	p.PairedOrder = 1 // meaningless when unpaired; must stay bare
 
 	raw, err := Encode(p, WireFanta)
 	if err != nil {
@@ -77,8 +76,8 @@ func TestMSPairOrderDecodesCaretSuffix(t *testing.T) {
 		t.Fatalf("decode front: %v", err)
 	}
 	p := v.(*MSToServer)
-	if p.PairedCharID != 4 || p.PairedOrder != PairOrderFront {
-		t.Fatalf("paired_charid=%d paired_order=%q, want 4/front", p.PairedCharID, p.PairedOrder)
+	if p.PairedCharID != 4 || p.PairedOrder != 1 {
+		t.Fatalf("paired_charid=%d paired_order=%d, want 4/1", p.PairedCharID, p.PairedOrder)
 	}
 
 	v2, err := DecodeToServer([]byte("MS#1##Phoenix#normal#Take that!#def##0#12#0#0#0#0#0#0##4#0&0#0#0#0####0##%"), WireFanta)
@@ -86,7 +85,7 @@ func TestMSPairOrderDecodesCaretSuffix(t *testing.T) {
 		t.Fatalf("decode default: %v", err)
 	}
 	p2 := v2.(*MSToServer)
-	if p2.PairedCharID != 4 || p2.PairedOrder != PairOrderBehind {
-		t.Fatalf("paired_charid=%d paired_order=%q, want 4/behind", p2.PairedCharID, p2.PairedOrder)
+	if p2.PairedCharID != 4 || p2.PairedOrder != 0 {
+		t.Fatalf("paired_charid=%d paired_order=%d, want 4/0", p2.PairedCharID, p2.PairedOrder)
 	}
 }
