@@ -31,7 +31,10 @@ import aolib "github.com/AO-Underground/aolib/go/v2"
 - `aolib.ParseCharIni(text)`: char.ini parser per [`spec/assets`](../spec/assets/README.md).
 - `aolib.NewPacket(raw)` / `Packet.String()`: raw FantaCode framing.
 - `aolib.MSToServer` / `aolib.MSToClient`: the in-character (`MS`) packet, split
-  by direction, with `ParseMSToServer` / `ParseMSToClient` / `Args`.
+  by direction, with `ParseMSToServer` / `ParseMSToClient` / `Args`. The
+  `PairedOrder` field (an `int`, `0` = paired character behind the speaker, `1`
+  = in front) packs onto `PairedCharID` as a `^` suffix on the FantaCode wire
+  (`4^1`), never as its own slot.
 - `aolib.NewServer` / `aolib.NewClient`: the typed session surface (below).
 - `aolib.NewMSToServer()` and a `New*` for every packet: the packet with the
   spec's defaults. Start from these rather than a struct literal: a literal

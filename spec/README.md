@@ -201,6 +201,10 @@ type; a missing or unknown suffix is the `default`. Currently set on MS
 `paired_order` (an integer z-offset), suffixed onto `paired_charid` — the
 `^` slot only round-trips `0`/`1`, so richer group ordering is JSON-only.
 
+For example, `paired_charid: 4` + `paired_order: 1` encodes the
+`paired_charid` slot as `4^1`; `paired_order: 0` (or an unpaired `-1`) stays
+the bare `4` / `-1`.
+
 ## Custom packets
 
 A library caller can register a header this spec doesn't define. Given a

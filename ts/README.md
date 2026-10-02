@@ -325,6 +325,11 @@ Spec quirks that recur become custom extensions (see
   packets whose wire form is discriminator-driven, like `ARUP`.
 - **`x-fanta-unescape-amp: true`**, on an object-typed schema, tell
   decoders to tolerate the legacy `<and>` escape in incoming tokens.
+- **`x-fanta-suffix-of: "<field>"`**, on a numeric field (or an `x-wire-ints`
+  enum), pack it as a trailing `^`-joined suffix onto the named sibling slot
+  instead of giving it its own slot. Used for `MS.paired_order` — an integer
+  z-offset (`0` behind the speaker, `1` in front) packed onto `paired_charid`
+  as `4^1`.
 
 After editing schemas, run:
 

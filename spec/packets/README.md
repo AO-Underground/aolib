@@ -16,3 +16,14 @@ FantaCode wire keeps the integer: `JD.state` (JudgeState), `AUTH.auth_state`
 (AuthState), `HP.bar` (PenaltyBar), `PR.type` (PlayerListUpdate), `PU.type`
 (PlayerDataType), `TI.command` (TimerCommand), `MC.channel` (MusicChannel),
 and `CharsCheck.taken[]` (CharAvailability).
+
+## Pair order
+
+`MS.paired_order` is the paired character's z-offset relative to the speaker:
+`0` renders behind (the default), `1` in front. On the FantaCode wire it packs
+onto the `paired_charid` slot as a `^`-joined suffix — `4^1` means "pair with
+character 4, in front" — and is omitted when `0` (the bare `4`), because
+`<id>^0` is redundant and strict parsers reject it. The `^` slot only
+round-trips `0`/`1`, so richer group ordering is JSON-only. The suffix packing
+is declared by the `x-fanta-suffix-of` keyword (see the root `README.md`).
+
