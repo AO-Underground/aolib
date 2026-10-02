@@ -49,6 +49,54 @@ MS#2#pointing#Phoenix#handsondesk#The defense has evidence <num>3 <and> it chang
 }
 ```
 
+## MS (client to server), paired character in front
+
+`paired_order: 1` packs a `^1` suffix onto `paired_charid`, so the pair renders in front of the speaker. The default `0` keeps the bare `<id>`.
+
+```
+MS#1##Phoenix#normal#Take that!#def##0#12#0#0#0#0#0#0##4^1#0&0#0#0#0####0##%
+```
+
+```json
+{
+  "$header": "MS",
+  "desk_modifier": "shown",
+  "preanim": "",
+  "character": "Phoenix",
+  "emote": "normal",
+  "message": "Take that!",
+  "side": "def",
+  "sfx_name": "",
+  "emote_modifier": "no_preanim",
+  "char_id": 12,
+  "sfx_delay": 0,
+  "shout_modifier": "none",
+  "evidence_id": 0,
+  "flip": "none",
+  "realization": false,
+  "text_color": "white",
+  "showname": "",
+  "paired_charid": 4,
+  "paired_order": 1,
+  "offset": {
+    "x": 0,
+    "y": 0
+  },
+  "noninterrupting_preanim": false,
+  "sfx_looping": false,
+  "screenshake": false,
+  "frames_shake": "",
+  "frames_realization": "",
+  "frames_sfx": "",
+  "additive": false,
+  "effect": {
+    "name": "",
+    "folder": "",
+    "sound": ""
+  }
+}
+```
+
 ## MS (server to client), paired
 
 The same message as rebroadcast by the server, with the pair partner's name, emote, offset and flip filled in.

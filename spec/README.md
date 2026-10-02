@@ -187,6 +187,20 @@ object types whose wire slot historically used the chat-escape form on
 the way in but no longer does on the way out. Currently set on
 `Offset`.
 
+### `x-fanta-suffix-of: string`
+
+On a numeric field (`integer`/`number`, or a string enum carrying
+`x-wire-ints`). Marks the field as a trailing `^`-joined suffix packed
+onto the named sibling slot, so it consumes no wire slot of its own. On
+encode the suffix is appended to the named slot only when the field's
+value differs from its schema `default` and the named base slot differs
+from its own `default` (an unpaired `paired_charid` of `-1` stays the
+bare sentinel). On decode the named slot is split on `^`: the first token
+is the base slot's value and a trailing token maps back to the field's
+type; a missing or unknown suffix is the `default`. Currently set on MS
+`paired_order` (an integer z-offset), suffixed onto `paired_charid` — the
+`^` slot only round-trips `0`/`1`, so richer group ordering is JSON-only.
+
 ## Custom packets
 
 A library caller can register a header this spec doesn't define. Given a

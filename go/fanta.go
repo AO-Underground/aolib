@@ -117,6 +117,15 @@ func joinAmp(parts []string) string { return strings.Join(parts, "&") }
 // ampersands survive as "<and>" and are not separators.
 func splitAmp(s string, n int) []string { return strings.SplitN(s, "&", n) }
 
+// splitCaret splits a slot carrying an optional "^order" suffix (e.g. a pair
+// target) into its base token and suffix token. The suffix is "" when absent.
+func splitCaret(s string) (base, suffix string) {
+	if i := strings.IndexByte(s, '^'); i >= 0 {
+		return s[:i], s[i+1:]
+	}
+	return s, ""
+}
+
 // intsToStrs maps an int slice to its decimal string form.
 func intsToStrs(ns []int) []string {
 	out := make([]string, len(ns))

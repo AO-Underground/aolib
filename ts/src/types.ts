@@ -43,6 +43,13 @@ export interface JsonSchema {
   "x-wire-bits"?: number[];
   /** On a packet root: replace the whole walker with a registered codec. */
   "x-fanta-codec"?: string;
+  /**
+   * On a numeric field (or an `x-wire-ints` enum): pack as a trailing
+   * `^`-joined suffix onto the named sibling slot (no slot of its own).
+   * Encoded only when both this field and the named base field differ from
+   * their defaults.
+   */
+  "x-fanta-suffix-of"?: string;
 
   [key: string]: unknown;
 }

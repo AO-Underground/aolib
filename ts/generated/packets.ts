@@ -529,6 +529,7 @@ export interface MSToClient extends Packet {
   text_color: TextColor;
   showname: string;
   paired_charid: number;
+  paired_order: number;
   paired_name: string;
   paired_emote: string;
   offset: Offset;
@@ -562,6 +563,7 @@ export interface MSToClientInit {
   text_color?: TextColor;
   showname?: string;
   paired_charid?: number;
+  paired_order?: number;
   paired_name?: string;
   paired_emote?: string;
   offset?: Offset;
@@ -598,6 +600,7 @@ export interface MSToServer extends Packet {
   text_color: TextColor;
   showname: string;
   paired_charid: number;
+  paired_order: number;
   offset: Offset;
   noninterrupting_preanim: boolean;
   sfx_looping: boolean;
@@ -627,6 +630,7 @@ export interface MSToServerInit {
   text_color?: TextColor;
   showname?: string;
   paired_charid?: number;
+  paired_order?: number;
   offset?: Offset;
   noninterrupting_preanim?: boolean;
   sfx_looping?: boolean;

@@ -134,6 +134,7 @@ type Schema struct {
 	Items             *Schema
 	IsObject          bool
 	XFantaUnescapeAmp bool
+	XFantaSuffixOf    string
 	Ref               string
 	TypeStr           string
 	Const             string
@@ -159,6 +160,7 @@ func schemaFromJSON(name string, o *ojson) *Schema {
 	s.XWireInts = o.intSlice("x-wire-ints")
 	s.XWireBits = o.intSlice("x-wire-bits")
 	s.XFantaUnescapeAmp = o.has("x-fanta-unescape-amp")
+	s.XFantaSuffixOf = o.str("x-fanta-suffix-of")
 	s.TypeStr = o.str("type")
 	if s.TypeStr == "object" {
 		s.IsObject = true
@@ -478,8 +480,13 @@ func encodeExpr(p *Prop, enumNames, typeNames map[string]*Schema) string {
 // decodeStmt returns the Go statement assigning a property from the current
 // wire token (read via the local `get(cursor)` closure).
 func decodeStmt(p *Prop, enumNames, typeNames map[string]*Schema) string {
+	return decodeStmtTok(p, "get(cursor)", enumNames, typeNames)
+}
+
+// decodeStmtTok is decodeStmt with an explicit token expression, so suffix
+// packing can decode a sub-token instead of the whole slot.
+func decodeStmtTok(p *Prop, tok string, enumNames, typeNames map[string]*Schema) string {
 	f := "p." + pascalCase(p.Name)
-	tok := "get(cursor)"
 	if e, ok := enumFor(p, enumNames); ok {
 		if len(e.XWireInts) > 0 {
 			return fmt.Sprintf("%s = %sFromWire[atoiOrZero(%s)]", f, lowerFirst(e.Name), tok)
@@ -497,6 +504,44 @@ func decodeStmt(p *Prop, enumNames, typeNames map[string]*Schema) string {
 	default:
 		return fmt.Sprintf("%s = unescapeFanta(%s)", f, tok)
 	}
+}
+
+// suffixFor returns the property whose `x-fanta-suffix-of` names `base`, if any.
+func suffixFor(props []Prop, base string) (*Prop, bool) {
+	for i := range props {
+		if props[i].Schema.XFantaSuffixOf == base {
+			return &props[i], true
+		}
+	}
+	return nil, false
+}
+
+// defaultGoLiteral is the explicit Go literal for a scalar field's schema
+// default, for comparing a value against its default ("0" when unset).
+func defaultGoLiteral(p *Prop) string {
+	switch d := p.Schema.Default.(type) {
+	case float64:
+		return strconv.Itoa(int(d))
+	case bool:
+		if d {
+			return "true"
+		}
+		return "false"
+	case string:
+		return strconv.Quote(d)
+	}
+	return "0"
+}
+
+// suffixDefaultLiteral returns the Go literal for a suffix field's default:
+// an enum's `EnumName("value")` or a scalar's Go literal (`0`).
+func suffixDefaultLiteral(sfx *Prop, enumNames map[string]*Schema) string {
+	if e, ok := enumFor(sfx, enumNames); ok {
+		if d, ok := sfx.Schema.Default.(string); ok {
+			return fmt.Sprintf("%s(%q)", e.Name, d)
+		}
+	}
+	return defaultGoLiteral(sfx)
 }
 
 // isObjectArray reports whether a property is an array whose items are objects
@@ -702,6 +747,10 @@ func emitPackets(packets []*Schema, enumNames, typeNames map[string]*Schema) str
 				fmt.Fprintf(&b, "\targs = append(args, %q)\n", p.Schema.Const)
 				continue
 			}
+			if p.Schema.XFantaSuffixOf != "" {
+				continue // suffix: packs onto the named base slot, no slot of its own
+			}
+
 			if p.Schema.TypeStr == "array" {
 				switch {
 				case isObjectArray(p.Schema):
@@ -724,6 +773,21 @@ func emitPackets(packets []*Schema, enumNames, typeNames map[string]*Schema) str
 				fmt.Fprintf(&b, "\targs = append(args, p.%s.wireFields())\n", pascalCase(p.Name))
 				continue
 			}
+			if sfx, ok := suffixFor(s.Properties, p.Name); ok {
+				baseF := pascalCase(p.Name)
+				sfxF := pascalCase(sfx.Name)
+				fmt.Fprintf(&b, "\ttok := %s\n", encodeExpr(&p, enumNames, typeNames))
+				fmt.Fprintf(&b, "\tif p.%s != %s && p.%s != %s {\n", baseF, defaultGoLiteral(&p), sfxF, suffixDefaultLiteral(sfx, enumNames))
+				if e, ok := enumFor(sfx, enumNames); ok && len(e.XWireInts) > 0 {
+					fmt.Fprintf(&b, "\t\ttok += \"^\" + itoa(%sToWire[p.%s])\n", lowerFirst(e.Name), sfxF)
+				} else {
+					fmt.Fprintf(&b, "\t\ttok += \"^\" + itoa(p.%s)\n", sfxF)
+				}
+				fmt.Fprintf(&b, "\t}\n")
+				fmt.Fprintf(&b, "\targs = append(args, tok)\n")
+				continue
+			}
+
 			fmt.Fprintf(&b, "\targs = append(args, %s)\n", encodeExpr(&p, enumNames, typeNames))
 		}
 		b.WriteString("\treturn args\n}\n\n")
@@ -747,6 +811,10 @@ func emitPackets(packets []*Schema, enumNames, typeNames map[string]*Schema) str
 				b.WriteString("\tcursor++ // const slot\n")
 				continue
 			}
+			if p.Schema.XFantaSuffixOf != "" {
+				continue // suffix: decoded from the named base slot, no slot of its own
+			}
+
 			if p.Schema.TypeStr == "array" {
 				if isObjectArray(p.Schema) {
 					item := itemTypeName(s.Name, p.Name)
@@ -777,6 +845,17 @@ func emitPackets(packets []*Schema, enumNames, typeNames map[string]*Schema) str
 				fmt.Fprintf(&b, "\tp.%s = parse%s%s(get(cursor))\n\tcursor++\n", pascalCase(p.Name), s.Name, pascalCase(p.Name))
 				continue
 			}
+			if sfx, ok := suffixFor(s.Properties, p.Name); ok {
+				baseF := pascalCase(p.Name)
+				sfxF := pascalCase(sfx.Name)
+				fmt.Fprintf(&b, "\tif cursor < len(body) {\n\t\tbase, order := splitCaret(get(cursor))\n\t\t%s\n\t\t%s\n\t} else {\n\t\tp.%s = %s\n\t\tp.%s = %s\n\t}\n\tcursor++\n",
+					decodeStmtTok(&p, "base", enumNames, typeNames),
+					decodeStmtTok(sfx, "order", enumNames, typeNames),
+					baseF, defaultGoLiteral(&p),
+					sfxF, suffixDefaultLiteral(sfx, enumNames))
+				continue
+			}
+
 			if lit := defaultLiteral(&p, enumNames); lit != "" {
 				fmt.Fprintf(&b, "\tif cursor < len(body) {\n\t\t%s\n\t} else {\n\t\tp.%s = %s\n\t}\n\tcursor++\n", decodeStmt(&p, enumNames, typeNames), pascalCase(p.Name), lit)
 				continue

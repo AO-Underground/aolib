@@ -1627,6 +1627,7 @@ type MSToClient struct {
 	TextColor              TextColor      `json:"text_color"`
 	Showname               string         `json:"showname"`
 	PairedCharID           int            `json:"paired_charid"`
+	PairedOrder            int            `json:"paired_order"`
 	PairedName             string         `json:"paired_name"`
 	PairedEmote            string         `json:"paired_emote"`
 	Offset                 Offset         `json:"offset"`
@@ -1646,7 +1647,7 @@ type MSToClient struct {
 func (p *MSToClient) Header() string { return "MS" }
 
 func (p *MSToClient) jsonOrder() []string {
-	return []string{"desk_modifier", "preanim", "character", "emote", "message", "side", "sfx_name", "emote_modifier", "char_id", "sfx_delay", "shout_modifier", "evidence_id", "flip", "realization", "text_color", "showname", "paired_charid", "paired_name", "paired_emote", "offset", "paired_offset", "paired_flip", "noninterrupting_preanim", "sfx_looping", "screenshake", "frames_shake", "frames_realization", "frames_sfx", "additive", "effect"}
+	return []string{"desk_modifier", "preanim", "character", "emote", "message", "side", "sfx_name", "emote_modifier", "char_id", "sfx_delay", "shout_modifier", "evidence_id", "flip", "realization", "text_color", "showname", "paired_charid", "paired_order", "paired_name", "paired_emote", "offset", "paired_offset", "paired_flip", "noninterrupting_preanim", "sfx_looping", "screenshake", "frames_shake", "frames_realization", "frames_sfx", "additive", "effect"}
 }
 
 func (p *MSToClient) extras() *map[string]any { return &p.Extras }
@@ -1711,7 +1712,11 @@ func (p *MSToClient) Args() []string {
 	args = append(args, boolToWire(p.Realization))
 	args = append(args, itoa(textColorToWire[p.TextColor]))
 	args = append(args, escapeFanta(p.Showname))
-	args = append(args, itoa(p.PairedCharID))
+	tok := itoa(p.PairedCharID)
+	if p.PairedCharID != -1 && p.PairedOrder != 0 {
+		tok += "^" + itoa(p.PairedOrder)
+	}
+	args = append(args, tok)
 	args = append(args, escapeFanta(p.PairedName))
 	args = append(args, escapeFanta(p.PairedEmote))
 	args = append(args, offsetToWire(p.Offset))
@@ -1774,9 +1779,12 @@ func ParseMSToClient(body []string) (*MSToClient, error) {
 	p.Showname = unescapeFanta(get(cursor))
 	cursor++
 	if cursor < len(body) {
-		p.PairedCharID = atoiOrZero(get(cursor))
+		base, order := splitCaret(get(cursor))
+		p.PairedCharID = atoiOrZero(base)
+		p.PairedOrder = atoiOrZero(order)
 	} else {
 		p.PairedCharID = -1
+		p.PairedOrder = 0
 	}
 	cursor++
 	p.PairedName = unescapeFanta(get(cursor))
@@ -1827,6 +1835,7 @@ type MSToServer struct {
 	TextColor              TextColor      `json:"text_color"`
 	Showname               string         `json:"showname"`
 	PairedCharID           int            `json:"paired_charid"`
+	PairedOrder            int            `json:"paired_order"`
 	Offset                 Offset         `json:"offset"`
 	NoninterruptingPreanim bool           `json:"noninterrupting_preanim"`
 	SfxLooping             bool           `json:"sfx_looping"`
@@ -1842,7 +1851,7 @@ type MSToServer struct {
 func (p *MSToServer) Header() string { return "MS" }
 
 func (p *MSToServer) jsonOrder() []string {
-	return []string{"desk_modifier", "preanim", "character", "emote", "message", "side", "sfx_name", "emote_modifier", "char_id", "sfx_delay", "shout_modifier", "evidence_id", "flip", "realization", "text_color", "showname", "paired_charid", "offset", "noninterrupting_preanim", "sfx_looping", "screenshake", "frames_shake", "frames_realization", "frames_sfx", "additive", "effect"}
+	return []string{"desk_modifier", "preanim", "character", "emote", "message", "side", "sfx_name", "emote_modifier", "char_id", "sfx_delay", "shout_modifier", "evidence_id", "flip", "realization", "text_color", "showname", "paired_charid", "paired_order", "offset", "noninterrupting_preanim", "sfx_looping", "screenshake", "frames_shake", "frames_realization", "frames_sfx", "additive", "effect"}
 }
 
 func (p *MSToServer) extras() *map[string]any { return &p.Extras }
@@ -1903,7 +1912,11 @@ func (p *MSToServer) Args() []string {
 	args = append(args, boolToWire(p.Realization))
 	args = append(args, itoa(textColorToWire[p.TextColor]))
 	args = append(args, escapeFanta(p.Showname))
-	args = append(args, itoa(p.PairedCharID))
+	tok := itoa(p.PairedCharID)
+	if p.PairedCharID != -1 && p.PairedOrder != 0 {
+		tok += "^" + itoa(p.PairedOrder)
+	}
+	args = append(args, tok)
 	args = append(args, offsetToWire(p.Offset))
 	args = append(args, boolToWire(p.NoninterruptingPreanim))
 	args = append(args, boolToWire(p.SfxLooping))
@@ -1962,9 +1975,12 @@ func ParseMSToServer(body []string) (*MSToServer, error) {
 	p.Showname = unescapeFanta(get(cursor))
 	cursor++
 	if cursor < len(body) {
-		p.PairedCharID = atoiOrZero(get(cursor))
+		base, order := splitCaret(get(cursor))
+		p.PairedCharID = atoiOrZero(base)
+		p.PairedOrder = atoiOrZero(order)
 	} else {
 		p.PairedCharID = -1
+		p.PairedOrder = 0
 	}
 	cursor++
 	p.Offset = offsetFromWire(get(cursor))

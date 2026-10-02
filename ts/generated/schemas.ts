@@ -1697,6 +1697,12 @@ export const MSToClientSchema = {
       "default": -1,
       "description": "Paired character's ID, or -1 for no pair."
     },
+    "paired_order": {
+      "type": "integer",
+      "default": 0,
+      "description": "Z-order of the paired character relative to the speaker; 0 renders behind (the default), 1 in front. Packed onto paired_charid as `<id>^1` when 1, the bare `<id>` otherwise.",
+      "x-fanta-suffix-of": "paired_charid"
+    },
     "paired_name": {
       "type": "string",
       "default": "",
@@ -1875,6 +1881,12 @@ export const MSToServerSchema = {
       "type": "number",
       "default": -1,
       "description": "Character to pair with, or -1 for no pair."
+    },
+    "paired_order": {
+      "type": "integer",
+      "default": 0,
+      "description": "Z-order of the paired character relative to the speaker; 0 renders behind (the default), 1 in front. Packed onto paired_charid as `<id>^1` when 1, the bare `<id>` otherwise.",
+      "x-fanta-suffix-of": "paired_charid"
     },
     "offset": {
       "$ref": "../../types/Offset.schema.json",
