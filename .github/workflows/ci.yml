@@ -99,3 +99,23 @@ jobs:
           cmake --build build --target aolib-gen
           ./build/aolib-gen -meta ../spec -out .
           git diff --exit-code || { echo "::error::generated C++ is out of date; run aolib-gen against ../spec"; exit 1; }
+
+  python:
+    name: aolib-python
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: python
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: install
+        run: pip install -e ".[test]"
+      - name: test
+        run: pytest
+      - name: codegen matches spec
+        run: |
+          python scripts/codegen.py
+          git diff --exit-code || { echo "::error::generated Python is out of date; run scripts/codegen.py against ../spec"; exit 1; }
