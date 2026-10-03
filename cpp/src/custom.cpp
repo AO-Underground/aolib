@@ -110,7 +110,7 @@ std::string encode_token(const nlohmann::ordered_json& raw, const nlohmann::json
     return v.dump();
 }
 
-nlohmann::json decode_token(const nlohmann::ordered_json& raw, const std::string& tok, const std::string& base) {
+nlohmann::ordered_json decode_token(const nlohmann::ordered_json& raw, const std::string& tok, const std::string& base) {
     nlohmann::ordered_json s = resolve_ref(raw, base);
     if (s.contains("const")) return s["const"];
     if (s.contains("enum") && s.contains("x-wire-ints")) {
@@ -176,7 +176,7 @@ std::vector<std::string> to_fanta_args(const nlohmann::ordered_json& schema, con
     return args;
 }
 
-nlohmann::json from_fanta_args(const nlohmann::ordered_json& schema, const std::vector<std::string>& args) {
+nlohmann::ordered_json from_fanta_args(const nlohmann::ordered_json& schema, const std::vector<std::string>& args) {
     std::string base = schema.value("$id", "");
     nlohmann::ordered_json result = nlohmann::ordered_json::object();
     std::size_t cursor = 0;
