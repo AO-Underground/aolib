@@ -79,3 +79,23 @@ jobs:
           git diff --exit-code || { echo "::error::generated TS is out of date; run bun codegen against ../spec"; exit 1; }
       - name: packed tarball imports
         run: ./scripts/pack-smoke.sh
+
+  cpp:
+    name: aolib-cpp
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: cpp
+    steps:
+      - uses: actions/checkout@v4
+      - name: configure
+        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+      - name: build
+        run: cmake --build build
+      - name: test
+        run: ctest --test-dir build --output-on-failure
+      - name: codegen matches spec
+        run: |
+          cmake --build build --target aolib-gen
+          ./build/aolib-gen -meta ../spec -out .
+          git diff --exit-code || { echo "::error::generated C++ is out of date; run aolib-gen against ../spec"; exit 1; }
