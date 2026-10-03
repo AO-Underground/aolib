@@ -240,6 +240,8 @@ void validate_custom(const nlohmann::ordered_json& schema, const std::string& he
     }
 }
 
+}  // namespace
+
 void register_packet(const std::string& header, const PacketOptions& options) {
     if (is_spec_header(header)) {
         throw Error("aolib: '" + header + "' is a spec packet; add fields to it with $extras");
@@ -353,7 +355,4 @@ std::optional<nlohmann::json> decode_custom(const std::string& header, const std
 }
 
 }  // namespace aolib
-
-
-}  // namespace
 
