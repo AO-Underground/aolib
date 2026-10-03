@@ -189,6 +189,14 @@ def emit_packets(packets: Dict[str, Dict], enums: Dict[str, Dict], types: Dict[s
     return "".join(lines)
 
 
+def _write_text(path: Path, text: str) -> None:
+    # Always LF: the generated files are committed and diffed byte-for-byte in
+    # CI (Ubuntu). Windows' default newline translation would emit CRLF and
+    # make the codegen-determinism check see every line changed.
+    with open(path, "w", encoding="utf-8", newline="\n") as f:
+        f.write(text)
+
+
 def main() -> None:
     OUT.mkdir(parents=True, exist_ok=True)
     enums, types = load_types()
@@ -196,11 +204,11 @@ def main() -> None:
     enum_names = set(enums)
     type_names = set(types)
 
-    (OUT / "__init__.py").write_text("", encoding="utf-8")
-    (OUT / "enums.py").write_text(emit_enums(enums), encoding="utf-8")
-    (OUT / "types.py").write_text(emit_types(types, enum_names, type_names), encoding="utf-8")
-    (OUT / "schemas.py").write_text(emit_schemas(enums, types, packets), encoding="utf-8")
-    (OUT / "packets.py").write_text(emit_packets(packets, enums, types), encoding="utf-8")
+    _write_text(OUT / "__init__.py", "")
+    _write_text(OUT / "enums.py", emit_enums(enums))
+    _write_text(OUT / "types.py", emit_types(types, enum_names, type_names))
+    _write_text(OUT / "schemas.py", emit_schemas(enums, types, packets))
+    _write_text(OUT / "packets.py", emit_packets(packets, enums, types))
     print(
         f"Wrote {OUT} ({len(enums)} enums, {len(types)} types, {len(packets)} packets)"
     )
