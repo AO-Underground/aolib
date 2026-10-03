@@ -5,9 +5,9 @@
 
 namespace aolib {
 
-const std::map<std::string, nlohmann::json>& spec_schemas() {
-    static const std::map<std::string, nlohmann::json> schemas = {
-        {"/types/AreaUpdateType.schema.json", nlohmann::json::parse(R"AOLIB({
+const std::map<std::string, nlohmann::ordered_json>& spec_schemas() {
+    static const std::map<std::string, nlohmann::ordered_json> schemas = {
+        {"/types/AreaUpdateType.schema.json", nlohmann::ordered_json::parse(R"AOLIB({
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/types/AreaUpdateType.schema.json",
   "title": "AreaUpdateType",
@@ -27,7 +27,7 @@ const std::map<std::string, nlohmann::json>& spec_schemas() {
   ]
 }
 )AOLIB")},
-        {"/types/AuthState.schema.json", nlohmann::json::parse(R"AOLIB({
+        {"/types/AuthState.schema.json", nlohmann::ordered_json::parse(R"AOLIB({
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/types/AuthState.schema.json",
   "type": "string",
@@ -50,7 +50,7 @@ const std::map<std::string, nlohmann::json>& spec_schemas() {
   ]
 }
 )AOLIB")},
-        {"/types/CharAvailability.schema.json", nlohmann::json::parse(R"AOLIB({
+        {"/types/CharAvailability.schema.json", nlohmann::ordered_json::parse(R"AOLIB({
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/types/CharAvailability.schema.json",
   "type": "string",
@@ -66,7 +66,7 @@ const std::map<std::string, nlohmann::json>& spec_schemas() {
   ]
 }
 )AOLIB")},
-        {"/types/DeskModifier.schema.json", nlohmann::json::parse(R"AOLIB({
+        {"/types/DeskModifier.schema.json", nlohmann::ordered_json::parse(R"AOLIB({
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/types/DeskModifier.schema.json",
   "title": "DeskModifier",
@@ -90,7 +90,7 @@ const std::map<std::string, nlohmann::json>& spec_schemas() {
   ]
 }
 )AOLIB")},
-        {"/types/Effect.schema.json", nlohmann::json::parse(R"AOLIB({
+        {"/types/Effect.schema.json", nlohmann::ordered_json::parse(R"AOLIB({
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/types/Effect.schema.json",
   "title": "Effect",
@@ -119,7 +119,7 @@ const std::map<std::string, nlohmann::json>& spec_schemas() {
   "x-fanta-separator": "|"
 }
 )AOLIB")},
-        {"/types/EmoteModifier.schema.json", nlohmann::json::parse(R"AOLIB({
+        {"/types/EmoteModifier.schema.json", nlohmann::ordered_json::parse(R"AOLIB({
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/types/EmoteModifier.schema.json",
   "title": "EmoteModifier",
@@ -154,7 +154,7 @@ const std::map<std::string, nlohmann::json>& spec_schemas() {
   ]
 }
 )AOLIB")},
-        {"/types/Flip.schema.json", nlohmann::json::parse(R"AOLIB({
+        {"/types/Flip.schema.json", nlohmann::ordered_json::parse(R"AOLIB({
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/types/Flip.schema.json",
   "title": "Flip",
@@ -174,7 +174,7 @@ const std::map<std::string, nlohmann::json>& spec_schemas() {
   ]
 }
 )AOLIB")},
-        {"/types/JudgeState.schema.json", nlohmann::json::parse(R"AOLIB({
+        {"/types/JudgeState.schema.json", nlohmann::ordered_json::parse(R"AOLIB({
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/types/JudgeState.schema.json",
   "type": "string",
@@ -197,7 +197,7 @@ const std::map<std::string, nlohmann::json>& spec_schemas() {
   ]
 }
 )AOLIB")},
-        {"/types/MusicChannel.schema.json", nlohmann::json::parse(R"AOLIB({
+        {"/types/MusicChannel.schema.json", nlohmann::ordered_json::parse(R"AOLIB({
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/types/MusicChannel.schema.json",
   "title": "MusicChannel",
@@ -217,7 +217,7 @@ const std::map<std::string, nlohmann::json>& spec_schemas() {
   ]
 }
 )AOLIB")},
-        {"/types/MusicEffects.schema.json", nlohmann::json::parse(R"AOLIB({
+        {"/types/MusicEffects.schema.json", nlohmann::ordered_json::parse(R"AOLIB({
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/types/MusicEffects.schema.json",
   "title": "MusicEffects",
@@ -253,7 +253,7 @@ const std::map<std::string, nlohmann::json>& spec_schemas() {
   ]
 }
 )AOLIB")},
-        {"/types/Offset.schema.json", nlohmann::json::parse(R"AOLIB({
+        {"/types/Offset.schema.json", nlohmann::ordered_json::parse(R"AOLIB({
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/types/Offset.schema.json",
   "title": "Offset",
@@ -278,7 +278,7 @@ const std::map<std::string, nlohmann::json>& spec_schemas() {
   "x-fanta-unescape-amp": true
 }
 )AOLIB")},
-        {"/types/PenaltyBar.schema.json", nlohmann::json::parse(R"AOLIB({
+        {"/types/PenaltyBar.schema.json", nlohmann::ordered_json::parse(R"AOLIB({
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/types/PenaltyBar.schema.json",
   "type": "string",
@@ -294,7 +294,7 @@ const std::map<std::string, nlohmann::json>& spec_schemas() {
   ]
 }
 )AOLIB")},
-        {"/types/PlayerDataType.schema.json", nlohmann::json::parse(R"AOLIB({
+        {"/types/PlayerDataType.schema.json", nlohmann::ordered_json::parse(R"AOLIB({
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/types/PlayerDataType.schema.json",
   "type": "string",
@@ -314,7 +314,7 @@ const std::map<std::string, nlohmann::json>& spec_schemas() {
   ]
 }
 )AOLIB")},
-        {"/types/PlayerListUpdate.schema.json", nlohmann::json::parse(R"AOLIB({
+        {"/types/PlayerListUpdate.schema.json", nlohmann::ordered_json::parse(R"AOLIB({
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/types/PlayerListUpdate.schema.json",
   "type": "string",
@@ -330,7 +330,7 @@ const std::map<std::string, nlohmann::json>& spec_schemas() {
   ]
 }
 )AOLIB")},
-        {"/types/RTAnimation.schema.json", nlohmann::json::parse(R"AOLIB({
+        {"/types/RTAnimation.schema.json", nlohmann::ordered_json::parse(R"AOLIB({
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/types/RTAnimation.schema.json",
   "title": "RTAnimation",
@@ -354,7 +354,7 @@ const std::map<std::string, nlohmann::json>& spec_schemas() {
   ]
 }
 )AOLIB")},
-        {"/types/ShoutModifier.schema.json", nlohmann::json::parse(R"AOLIB({
+        {"/types/ShoutModifier.schema.json", nlohmann::ordered_json::parse(R"AOLIB({
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/types/ShoutModifier.schema.json",
   "title": "ShoutModifier",
@@ -376,7 +376,7 @@ const std::map<std::string, nlohmann::json>& spec_schemas() {
   ]
 }
 )AOLIB")},
-        {"/types/Side.schema.json", nlohmann::json::parse(R"AOLIB({
+        {"/types/Side.schema.json", nlohmann::ordered_json::parse(R"AOLIB({
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/types/Side.schema.json",
   "title": "Side",
@@ -404,7 +404,7 @@ const std::map<std::string, nlohmann::json>& spec_schemas() {
   ]
 }
 )AOLIB")},
-        {"/types/TextColor.schema.json", nlohmann::json::parse(R"AOLIB({
+        {"/types/TextColor.schema.json", nlohmann::ordered_json::parse(R"AOLIB({
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/types/TextColor.schema.json",
   "title": "TextColor",
@@ -436,7 +436,7 @@ const std::map<std::string, nlohmann::json>& spec_schemas() {
   ]
 }
 )AOLIB")},
-        {"/types/TimerCommand.schema.json", nlohmann::json::parse(R"AOLIB({
+        {"/types/TimerCommand.schema.json", nlohmann::ordered_json::parse(R"AOLIB({
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/types/TimerCommand.schema.json",
   "type": "string",
@@ -462,7 +462,7 @@ const std::map<std::string, nlohmann::json>& spec_schemas() {
   ]
 }
 )AOLIB")},
-        {"/packets/schemas/ARUP.schema.json", nlohmann::json::parse(R"AOLIB({
+        {"/packets/schemas/ARUP.schema.json", nlohmann::ordered_json::parse(R"AOLIB({
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/ARUP.schema.json",
   "title": "ARUP",
@@ -498,7 +498,7 @@ const std::map<std::string, nlohmann::json>& spec_schemas() {
   "x-receiver": "client"
 }
 )AOLIB")},
-        {"/packets/schemas/ASS.schema.json", nlohmann::json::parse(R"AOLIB({
+        {"/packets/schemas/ASS.schema.json", nlohmann::ordered_json::parse(R"AOLIB({
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/ASS.schema.json",
   "title": "ASS",
@@ -522,7 +522,7 @@ const std::map<std::string, nlohmann::json>& spec_schemas() {
   "x-receiver": "client"
 }
 )AOLIB")},
-        {"/packets/schemas/AUTH.schema.json", nlohmann::json::parse(R"AOLIB({
+        {"/packets/schemas/AUTH.schema.json", nlohmann::ordered_json::parse(R"AOLIB({
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/AUTH.schema.json",
   "title": "AUTH",
@@ -546,7 +546,7 @@ const std::map<std::string, nlohmann::json>& spec_schemas() {
   "x-receiver": "client"
 }
 )AOLIB")},
-        {"/packets/schemas/BB.schema.json", nlohmann::json::parse(R"AOLIB({
+        {"/packets/schemas/BB.schema.json", nlohmann::ordered_json::parse(R"AOLIB({
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/BB.schema.json",
   "title": "BB",
@@ -570,7 +570,7 @@ const std::map<std::string, nlohmann::json>& spec_schemas() {
   "x-receiver": "client"
 }
 )AOLIB")},
-        {"/packets/schemas/BD.schema.json", nlohmann::json::parse(R"AOLIB({
+        {"/packets/schemas/BD.schema.json", nlohmann::ordered_json::parse(R"AOLIB({
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/BD.schema.json",
   "title": "BD",
@@ -594,7 +594,7 @@ const std::map<std::string, nlohmann::json>& spec_schemas() {
   "x-receiver": "client"
 }
 )AOLIB")},
-        {"/packets/schemas/BN.schema.json", nlohmann::json::parse(R"AOLIB({
+        {"/packets/schemas/BN.schema.json", nlohmann::ordered_json::parse(R"AOLIB({
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/BN.schema.json",
   "title": "BN",
@@ -623,7 +623,7 @@ const std::map<std::string, nlohmann::json>& spec_schemas() {
   "x-receiver": "client"
 }
 )AOLIB")},
-        {"/packets/schemas/CASEAToClient.schema.json", nlohmann::json::parse(R"AOLIB({
+        {"/packets/schemas/CASEAToClient.schema.json", nlohmann::ordered_json::parse(R"AOLIB({
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/CASEAToClient.schema.json",
   "title": "CASEA",
@@ -678,7 +678,7 @@ const std::map<std::string, nlohmann::json>& spec_schemas() {
   "x-receiver": "client"
 }
 )AOLIB")},
-        {"/packets/schemas/CASEAToServer.schema.json", nlohmann::json::parse(R"AOLIB({
+        {"/packets/schemas/CASEAToServer.schema.json", nlohmann::ordered_json::parse(R"AOLIB({
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/CASEAToServer.schema.json",
   "title": "CASEA",
@@ -727,7 +727,7 @@ const std::map<std::string, nlohmann::json>& spec_schemas() {
   "x-receiver": "server"
 }
 )AOLIB")},
-        {"/packets/schemas/CC.schema.json", nlohmann::json::parse(R"AOLIB({
+        {"/packets/schemas/CC.schema.json", nlohmann::ordered_json::parse(R"AOLIB({
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/CC.schema.json",
   "title": "CC",
@@ -761,7 +761,7 @@ const std::map<std::string, nlohmann::json>& spec_schemas() {
   "x-receiver": "server"
 }
 )AOLIB")},
-        {"/packets/schemas/CH.schema.json", nlohmann::json::parse(R"AOLIB({
+        {"/packets/schemas/CH.schema.json", nlohmann::ordered_json::parse(R"AOLIB({
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/CH.schema.json",
   "title": "CH",
@@ -785,7 +785,7 @@ const std::map<std::string, nlohmann::json>& spec_schemas() {
   "x-receiver": "server"
 }
 )AOLIB")},
-        {"/packets/schemas/CHECK.schema.json", nlohmann::json::parse(R"AOLIB({
+        {"/packets/schemas/CHECK.schema.json", nlohmann::ordered_json::parse(R"AOLIB({
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/CHECK.schema.json",
   "title": "CHECK",
@@ -804,7 +804,7 @@ const std::map<std::string, nlohmann::json>& spec_schemas() {
   "x-receiver": "client"
 }
 )AOLIB")},
-        {"/packets/schemas/CI.schema.json", nlohmann::json::parse(R"AOLIB({
+        {"/packets/schemas/CI.schema.json", nlohmann::ordered_json::parse(R"AOLIB({
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/CI.schema.json",
   "title": "CI",
@@ -851,7 +851,7 @@ const std::map<std::string, nlohmann::json>& spec_schemas() {
   "x-receiver": "client"
 }
 )AOLIB")},
-        {"/packets/schemas/CTToClient.schema.json", nlohmann::json::parse(R"AOLIB({
+        {"/packets/schemas/CTToClient.schema.json", nlohmann::ordered_json::parse(R"AOLIB({
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/CTToClient.schema.json",
   "title": "CT",
@@ -885,7 +885,7 @@ const std::map<std::string, nlohmann::json>& spec_schemas() {
   "x-receiver": "client"
 }
 )AOLIB")},
-        {"/packets/schemas/CTToServer.schema.json", nlohmann::json::parse(R"AOLIB({
+        {"/packets/schemas/CTToServer.schema.json", nlohmann::ordered_json::parse(R"AOLIB({
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/CTToServer.schema.json",
   "title": "CT",
@@ -914,7 +914,7 @@ const std::map<std::string, nlohmann::json>& spec_schemas() {
   "x-receiver": "server"
 }
 )AOLIB")},
-        {"/packets/schemas/CharsCheck.schema.json", nlohmann::json::parse(R"AOLIB({
+        {"/packets/schemas/CharsCheck.schema.json", nlohmann::ordered_json::parse(R"AOLIB({
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/CharsCheck.schema.json",
   "title": "CharsCheck",
@@ -941,7 +941,7 @@ const std::map<std::string, nlohmann::json>& spec_schemas() {
   "x-receiver": "client"
 }
 )AOLIB")},
-        {"/packets/schemas/DE.schema.json", nlohmann::json::parse(R"AOLIB({
+        {"/packets/schemas/DE.schema.json", nlohmann::ordered_json::parse(R"AOLIB({
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/DE.schema.json",
   "title": "DE",
@@ -965,7 +965,7 @@ const std::map<std::string, nlohmann::json>& spec_schemas() {
   "x-receiver": "server"
 }
 )AOLIB")},
-        {"/packets/schemas/DONE.schema.json", nlohmann::json::parse(R"AOLIB({
+        {"/packets/schemas/DONE.schema.json", nlohmann::ordered_json::parse(R"AOLIB({
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/DONE.schema.json",
   "title": "DONE",
@@ -984,7 +984,7 @@ const std::map<std::string, nlohmann::json>& spec_schemas() {
   "x-receiver": "client"
 }
 )AOLIB")},
-        {"/packets/schemas/EE.schema.json", nlohmann::json::parse(R"AOLIB({
+        {"/packets/schemas/EE.schema.json", nlohmann::ordered_json::parse(R"AOLIB({
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/EE.schema.json",
   "title": "EE",
@@ -1023,7 +1023,7 @@ const std::map<std::string, nlohmann::json>& spec_schemas() {
   "x-receiver": "server"
 }
 )AOLIB")},
-        {"/packets/schemas/EI.schema.json", nlohmann::json::parse(R"AOLIB({
+        {"/packets/schemas/EI.schema.json", nlohmann::ordered_json::parse(R"AOLIB({
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/EI.schema.json",
   "title": "EI",
@@ -1077,7 +1077,7 @@ const std::map<std::string, nlohmann::json>& spec_schemas() {
   "x-receiver": "client"
 }
 )AOLIB")},
-        {"/packets/schemas/EM.schema.json", nlohmann::json::parse(R"AOLIB({
+        {"/packets/schemas/EM.schema.json", nlohmann::ordered_json::parse(R"AOLIB({
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/EM.schema.json",
   "title": "EM",
@@ -1124,7 +1124,7 @@ const std::map<std::string, nlohmann::json>& spec_schemas() {
   "x-receiver": "client"
 }
 )AOLIB")},
-        {"/packets/schemas/FA.schema.json", nlohmann::json::parse(R"AOLIB({
+        {"/packets/schemas/FA.schema.json", nlohmann::ordered_json::parse(R"AOLIB({
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/FA.schema.json",
   "title": "FA",
@@ -1151,7 +1151,7 @@ const std::map<std::string, nlohmann::json>& spec_schemas() {
   "x-receiver": "client"
 }
 )AOLIB")},
-        {"/packets/schemas/FL.schema.json", nlohmann::json::parse(R"AOLIB({
+        {"/packets/schemas/FL.schema.json", nlohmann::ordered_json::parse(R"AOLIB({
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/FL.schema.json",
   "title": "FL",
@@ -1178,7 +1178,7 @@ const std::map<std::string, nlohmann::json>& spec_schemas() {
   "x-receiver": "client"
 }
 )AOLIB")},
-        {"/packets/schemas/FM.schema.json", nlohmann::json::parse(R"AOLIB({
+        {"/packets/schemas/FM.schema.json", nlohmann::ordered_json::parse(R"AOLIB({
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/FM.schema.json",
   "title": "FM",
@@ -1215,7 +1215,7 @@ const std::map<std::string, nlohmann::json>& spec_schemas() {
   "x-receiver": "client"
 }
 )AOLIB")},
-        {"/packets/schemas/HI.schema.json", nlohmann::json::parse(R"AOLIB({
+        {"/packets/schemas/HI.schema.json", nlohmann::ordered_json::parse(R"AOLIB({
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/HI.schema.json",
   "title": "HI",
@@ -1239,7 +1239,7 @@ const std::map<std::string, nlohmann::json>& spec_schemas() {
   "x-receiver": "server"
 }
 )AOLIB")},
-        {"/packets/schemas/HPToClient.schema.json", nlohmann::json::parse(R"AOLIB({
+        {"/packets/schemas/HPToClient.schema.json", nlohmann::ordered_json::parse(R"AOLIB({
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/HPToClient.schema.json",
   "title": "HP",
@@ -1270,7 +1270,7 @@ const std::map<std::string, nlohmann::json>& spec_schemas() {
   "x-receiver": "client"
 }
 )AOLIB")},
-        {"/packets/schemas/HPToServer.schema.json", nlohmann::json::parse(R"AOLIB({
+        {"/packets/schemas/HPToServer.schema.json", nlohmann::ordered_json::parse(R"AOLIB({
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/HPToServer.schema.json",
   "title": "HP",
@@ -1301,7 +1301,7 @@ const std::map<std::string, nlohmann::json>& spec_schemas() {
   "x-receiver": "server"
 }
 )AOLIB")},
-        {"/packets/schemas/IDToClient.schema.json", nlohmann::json::parse(R"AOLIB({
+        {"/packets/schemas/IDToClient.schema.json", nlohmann::ordered_json::parse(R"AOLIB({
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/IDToClient.schema.json",
   "title": "ID",
@@ -1335,7 +1335,7 @@ const std::map<std::string, nlohmann::json>& spec_schemas() {
   "x-receiver": "client"
 }
 )AOLIB")},
-        {"/packets/schemas/IDToServer.schema.json", nlohmann::json::parse(R"AOLIB({
+        {"/packets/schemas/IDToServer.schema.json", nlohmann::ordered_json::parse(R"AOLIB({
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/IDToServer.schema.json",
   "title": "ID",
@@ -1364,7 +1364,7 @@ const std::map<std::string, nlohmann::json>& spec_schemas() {
   "x-receiver": "server"
 }
 )AOLIB")},
-        {"/packets/schemas/JD.schema.json", nlohmann::json::parse(R"AOLIB({
+        {"/packets/schemas/JD.schema.json", nlohmann::ordered_json::parse(R"AOLIB({
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/JD.schema.json",
   "title": "JD",
@@ -1388,7 +1388,7 @@ const std::map<std::string, nlohmann::json>& spec_schemas() {
   "x-receiver": "client"
 }
 )AOLIB")},
-        {"/packets/schemas/KB.schema.json", nlohmann::json::parse(R"AOLIB({
+        {"/packets/schemas/KB.schema.json", nlohmann::ordered_json::parse(R"AOLIB({
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/KB.schema.json",
   "title": "KB",
@@ -1412,7 +1412,7 @@ const std::map<std::string, nlohmann::json>& spec_schemas() {
   "x-receiver": "client"
 }
 )AOLIB")},
-        {"/packets/schemas/KK.schema.json", nlohmann::json::parse(R"AOLIB({
+        {"/packets/schemas/KK.schema.json", nlohmann::ordered_json::parse(R"AOLIB({
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/KK.schema.json",
   "title": "KK",
@@ -1436,7 +1436,7 @@ const std::map<std::string, nlohmann::json>& spec_schemas() {
   "x-receiver": "client"
 }
 )AOLIB")},
-        {"/packets/schemas/LE.schema.json", nlohmann::json::parse(R"AOLIB({
+        {"/packets/schemas/LE.schema.json", nlohmann::ordered_json::parse(R"AOLIB({
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/LE.schema.json",
   "title": "LE",
@@ -1483,7 +1483,7 @@ const std::map<std::string, nlohmann::json>& spec_schemas() {
   "x-receiver": "client"
 }
 )AOLIB")},
-        {"/packets/schemas/MA.schema.json", nlohmann::json::parse(R"AOLIB({
+        {"/packets/schemas/MA.schema.json", nlohmann::ordered_json::parse(R"AOLIB({
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/MA.schema.json",
   "title": "MA",
@@ -1517,7 +1517,7 @@ const std::map<std::string, nlohmann::json>& spec_schemas() {
   "x-receiver": "server"
 }
 )AOLIB")},
-        {"/packets/schemas/MCToClient.schema.json", nlohmann::json::parse(R"AOLIB({
+        {"/packets/schemas/MCToClient.schema.json", nlohmann::ordered_json::parse(R"AOLIB({
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/MCToClient.schema.json",
   "title": "MC",
@@ -1570,7 +1570,7 @@ const std::map<std::string, nlohmann::json>& spec_schemas() {
   "x-receiver": "client"
 }
 )AOLIB")},
-        {"/packets/schemas/MCToServer.schema.json", nlohmann::json::parse(R"AOLIB({
+        {"/packets/schemas/MCToServer.schema.json", nlohmann::ordered_json::parse(R"AOLIB({
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/MCToServer.schema.json",
   "title": "MC",
@@ -1613,7 +1613,7 @@ const std::map<std::string, nlohmann::json>& spec_schemas() {
   "x-receiver": "server"
 }
 )AOLIB")},
-        {"/packets/schemas/MSToClient.schema.json", nlohmann::json::parse(R"AOLIB({
+        {"/packets/schemas/MSToClient.schema.json", nlohmann::ordered_json::parse(R"AOLIB({
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/MSToClient.schema.json",
   "title": "MS",
@@ -1798,7 +1798,7 @@ const std::map<std::string, nlohmann::json>& spec_schemas() {
   "x-receiver": "client"
 }
 )AOLIB")},
-        {"/packets/schemas/MSToServer.schema.json", nlohmann::json::parse(R"AOLIB({
+        {"/packets/schemas/MSToServer.schema.json", nlohmann::ordered_json::parse(R"AOLIB({
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/MSToServer.schema.json",
   "title": "MS",
@@ -1960,7 +1960,7 @@ const std::map<std::string, nlohmann::json>& spec_schemas() {
   "x-receiver": "server"
 }
 )AOLIB")},
-        {"/packets/schemas/PE.schema.json", nlohmann::json::parse(R"AOLIB({
+        {"/packets/schemas/PE.schema.json", nlohmann::ordered_json::parse(R"AOLIB({
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/PE.schema.json",
   "title": "PE",
@@ -1994,7 +1994,7 @@ const std::map<std::string, nlohmann::json>& spec_schemas() {
   "x-receiver": "server"
 }
 )AOLIB")},
-        {"/packets/schemas/PN.schema.json", nlohmann::json::parse(R"AOLIB({
+        {"/packets/schemas/PN.schema.json", nlohmann::ordered_json::parse(R"AOLIB({
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/PN.schema.json",
   "title": "PN",
@@ -2028,7 +2028,7 @@ const std::map<std::string, nlohmann::json>& spec_schemas() {
   "x-receiver": "client"
 }
 )AOLIB")},
-        {"/packets/schemas/PR.schema.json", nlohmann::json::parse(R"AOLIB({
+        {"/packets/schemas/PR.schema.json", nlohmann::ordered_json::parse(R"AOLIB({
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/PR.schema.json",
   "title": "PR",
@@ -2057,7 +2057,7 @@ const std::map<std::string, nlohmann::json>& spec_schemas() {
   "x-receiver": "client"
 }
 )AOLIB")},
-        {"/packets/schemas/PU.schema.json", nlohmann::json::parse(R"AOLIB({
+        {"/packets/schemas/PU.schema.json", nlohmann::ordered_json::parse(R"AOLIB({
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/PU.schema.json",
   "title": "PU",
@@ -2091,7 +2091,7 @@ const std::map<std::string, nlohmann::json>& spec_schemas() {
   "x-receiver": "client"
 }
 )AOLIB")},
-        {"/packets/schemas/PV.schema.json", nlohmann::json::parse(R"AOLIB({
+        {"/packets/schemas/PV.schema.json", nlohmann::ordered_json::parse(R"AOLIB({
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/PV.schema.json",
   "title": "PV",
@@ -2126,7 +2126,7 @@ const std::map<std::string, nlohmann::json>& spec_schemas() {
   "x-receiver": "client"
 }
 )AOLIB")},
-        {"/packets/schemas/RC.schema.json", nlohmann::json::parse(R"AOLIB({
+        {"/packets/schemas/RC.schema.json", nlohmann::ordered_json::parse(R"AOLIB({
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/RC.schema.json",
   "title": "RC",
@@ -2145,7 +2145,7 @@ const std::map<std::string, nlohmann::json>& spec_schemas() {
   "x-receiver": "server"
 }
 )AOLIB")},
-        {"/packets/schemas/RD.schema.json", nlohmann::json::parse(R"AOLIB({
+        {"/packets/schemas/RD.schema.json", nlohmann::ordered_json::parse(R"AOLIB({
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/RD.schema.json",
   "title": "RD",
@@ -2164,7 +2164,7 @@ const std::map<std::string, nlohmann::json>& spec_schemas() {
   "x-receiver": "server"
 }
 )AOLIB")},
-        {"/packets/schemas/RM.schema.json", nlohmann::json::parse(R"AOLIB({
+        {"/packets/schemas/RM.schema.json", nlohmann::ordered_json::parse(R"AOLIB({
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/RM.schema.json",
   "title": "RM",
@@ -2183,7 +2183,7 @@ const std::map<std::string, nlohmann::json>& spec_schemas() {
   "x-receiver": "server"
 }
 )AOLIB")},
-        {"/packets/schemas/RMC.schema.json", nlohmann::json::parse(R"AOLIB({
+        {"/packets/schemas/RMC.schema.json", nlohmann::ordered_json::parse(R"AOLIB({
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/RMC.schema.json",
   "title": "RMC",
@@ -2207,7 +2207,7 @@ const std::map<std::string, nlohmann::json>& spec_schemas() {
   "x-receiver": "client"
 }
 )AOLIB")},
-        {"/packets/schemas/RTToClient.schema.json", nlohmann::json::parse(R"AOLIB({
+        {"/packets/schemas/RTToClient.schema.json", nlohmann::ordered_json::parse(R"AOLIB({
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/RTToClient.schema.json",
   "title": "RT",
@@ -2264,7 +2264,7 @@ const std::map<std::string, nlohmann::json>& spec_schemas() {
   "x-receiver": "client"
 }
 )AOLIB")},
-        {"/packets/schemas/RTToServer.schema.json", nlohmann::json::parse(R"AOLIB({
+        {"/packets/schemas/RTToServer.schema.json", nlohmann::ordered_json::parse(R"AOLIB({
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/RTToServer.schema.json",
   "title": "RT",
@@ -2321,7 +2321,7 @@ const std::map<std::string, nlohmann::json>& spec_schemas() {
   "x-receiver": "server"
 }
 )AOLIB")},
-        {"/packets/schemas/SC.schema.json", nlohmann::json::parse(R"AOLIB({
+        {"/packets/schemas/SC.schema.json", nlohmann::ordered_json::parse(R"AOLIB({
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/SC.schema.json",
   "title": "SC",
@@ -2368,7 +2368,7 @@ const std::map<std::string, nlohmann::json>& spec_schemas() {
   "x-receiver": "client"
 }
 )AOLIB")},
-        {"/packets/schemas/SETCASE.schema.json", nlohmann::json::parse(R"AOLIB({
+        {"/packets/schemas/SETCASE.schema.json", nlohmann::ordered_json::parse(R"AOLIB({
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/SETCASE.schema.json",
   "title": "SETCASE",
@@ -2422,7 +2422,7 @@ const std::map<std::string, nlohmann::json>& spec_schemas() {
   "x-receiver": "server"
 }
 )AOLIB")},
-        {"/packets/schemas/SI.schema.json", nlohmann::json::parse(R"AOLIB({
+        {"/packets/schemas/SI.schema.json", nlohmann::ordered_json::parse(R"AOLIB({
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/SI.schema.json",
   "title": "SI",
@@ -2456,7 +2456,7 @@ const std::map<std::string, nlohmann::json>& spec_schemas() {
   "x-receiver": "client"
 }
 )AOLIB")},
-        {"/packets/schemas/SM.schema.json", nlohmann::json::parse(R"AOLIB({
+        {"/packets/schemas/SM.schema.json", nlohmann::ordered_json::parse(R"AOLIB({
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/SM.schema.json",
   "title": "SM",
@@ -2493,7 +2493,7 @@ const std::map<std::string, nlohmann::json>& spec_schemas() {
   "x-receiver": "client"
 }
 )AOLIB")},
-        {"/packets/schemas/SP.schema.json", nlohmann::json::parse(R"AOLIB({
+        {"/packets/schemas/SP.schema.json", nlohmann::ordered_json::parse(R"AOLIB({
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/SP.schema.json",
   "title": "SP",
@@ -2517,7 +2517,7 @@ const std::map<std::string, nlohmann::json>& spec_schemas() {
   "x-receiver": "client"
 }
 )AOLIB")},
-        {"/packets/schemas/ST.schema.json", nlohmann::json::parse(R"AOLIB({
+        {"/packets/schemas/ST.schema.json", nlohmann::ordered_json::parse(R"AOLIB({
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/ST.schema.json",
   "title": "ST",
@@ -2546,7 +2546,7 @@ const std::map<std::string, nlohmann::json>& spec_schemas() {
   "x-receiver": "client"
 }
 )AOLIB")},
-        {"/packets/schemas/TI.schema.json", nlohmann::json::parse(R"AOLIB({
+        {"/packets/schemas/TI.schema.json", nlohmann::ordered_json::parse(R"AOLIB({
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/TI.schema.json",
   "title": "TI",
@@ -2580,7 +2580,7 @@ const std::map<std::string, nlohmann::json>& spec_schemas() {
   "x-receiver": "client"
 }
 )AOLIB")},
-        {"/packets/schemas/ZZToClient.schema.json", nlohmann::json::parse(R"AOLIB({
+        {"/packets/schemas/ZZToClient.schema.json", nlohmann::ordered_json::parse(R"AOLIB({
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/ZZToClient.schema.json",
   "title": "ZZ",
@@ -2604,7 +2604,7 @@ const std::map<std::string, nlohmann::json>& spec_schemas() {
   "x-receiver": "client"
 }
 )AOLIB")},
-        {"/packets/schemas/ZZToServer.schema.json", nlohmann::json::parse(R"AOLIB({
+        {"/packets/schemas/ZZToServer.schema.json", nlohmann::ordered_json::parse(R"AOLIB({
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/ZZToServer.schema.json",
   "title": "ZZ",
@@ -2634,7 +2634,7 @@ const std::map<std::string, nlohmann::json>& spec_schemas() {
   "x-receiver": "server"
 }
 )AOLIB")},
-        {"/packets/schemas/askchaa.schema.json", nlohmann::json::parse(R"AOLIB({
+        {"/packets/schemas/askchaa.schema.json", nlohmann::ordered_json::parse(R"AOLIB({
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/askchaa.schema.json",
   "title": "askchaa",
@@ -2653,7 +2653,7 @@ const std::map<std::string, nlohmann::json>& spec_schemas() {
   "x-receiver": "server"
 }
 )AOLIB")},
-        {"/packets/schemas/decryptor.schema.json", nlohmann::json::parse(R"AOLIB({
+        {"/packets/schemas/decryptor.schema.json", nlohmann::ordered_json::parse(R"AOLIB({
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/packets/schemas/decryptor.schema.json",
   "title": "decryptor",

@@ -23,6 +23,18 @@ struct CIEntriesItem {
     static CIEntriesItem from_json_object(const nlohmann::ordered_json& j);
 };
 
+struct EIDetails {
+    std::string name{};
+    std::string description{};
+    std::string type{};
+    std::string image{};
+
+    std::string wire_fields() const;
+    static EIDetails parse_item(const std::string& s);
+    nlohmann::ordered_json to_json_object() const;
+    static EIDetails from_json_object(const nlohmann::ordered_json& j);
+};
+
 struct EMEntriesItem {
     int index{0};
     std::string name{};
@@ -400,7 +412,7 @@ struct EE : Outgoing {
 
 struct EI : Outgoing {
     int id{0};
-    std::string details{};
+    EIDetails details{};
     nlohmann::json extras;
 
     std::string header() const override { return "EI"; }

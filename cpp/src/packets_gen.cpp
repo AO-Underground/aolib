@@ -31,6 +31,38 @@ CIEntriesItem CIEntriesItem::from_json_object(const nlohmann::ordered_json& j) {
     return o;
 }
 
+std::string EIDetails::wire_fields() const {
+    return join_amp({escape_fanta(name), escape_fanta(description), escape_fanta(type), escape_fanta(image)});
+}
+
+EIDetails EIDetails::parse_item(const std::string& s) {
+    auto parts = split_amp(s, 4);
+    EIDetails it;
+    if (parts.size() > 0) it.name = unescape_fanta(parts[0]);
+    if (parts.size() > 1) it.description = unescape_fanta(parts[1]);
+    if (parts.size() > 2) it.type = unescape_fanta(parts[2]);
+    if (parts.size() > 3) it.image = unescape_fanta(parts[3]);
+    return it;
+}
+
+nlohmann::ordered_json EIDetails::to_json_object() const {
+    nlohmann::ordered_json j;
+    j["name"] = name;
+    j["description"] = description;
+    j["type"] = type;
+    j["image"] = image;
+    return j;
+}
+
+EIDetails EIDetails::from_json_object(const nlohmann::ordered_json& j) {
+    EIDetails o;
+    if (j.contains("name")) o.name = j["name"].get<std::string>();
+    if (j.contains("description")) o.description = j["description"].get<std::string>();
+    if (j.contains("type")) o.type = j["type"].get<std::string>();
+    if (j.contains("image")) o.image = j["image"].get<std::string>();
+    return o;
+}
+
 std::string EMEntriesItem::wire_fields() const {
     return join_amp({std::to_string(index), escape_fanta(name)});
 }
@@ -824,7 +856,7 @@ std::map<std::string, std::string> EI::json_consts() const {
 std::vector<std::string> EI::args() const {
     std::vector<std::string> args;
     args.push_back(std::to_string(id));
-    args.push_back(escape_fanta(details));
+    args.push_back(details.wire_fields());
     return args;
 }
 
@@ -833,7 +865,7 @@ EI EI::parse(const std::vector<std::string>& body) {
     std::size_t cursor = 0;
     if (cursor < body.size()) p.id = parse_wire_int(body[cursor], "id");
     cursor++;
-    if (cursor < body.size()) p.details = unescape_fanta(body[cursor]);
+    if (cursor < body.size()) p.details = EIDetails::parse_item(body[cursor]);
     cursor++;
     return p;
 }
@@ -847,7 +879,7 @@ nlohmann::ordered_json EI::to_json_object() const {
 
 void EI::from_json_object(const nlohmann::ordered_json& j) {
     if (j.contains("id")) id = j["id"].get<int>();
-    if (j.contains("details")) details = j["details"].get<std::string>();
+    if (j.contains("details")) details = EIDetails::from_json_object(j["details"]);
 }
 
 std::vector<std::string> EM::json_order() const {

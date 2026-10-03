@@ -9,6 +9,6 @@
 namespace aolib {
 
 // Every spec schema (packets + types) keyed by its $id.
-const std::map<std::string, nlohmann::json>& spec_schemas();
+const std::map<std::string, nlohmann::ordered_json>& spec_schemas();
 
 }  // namespace aolib

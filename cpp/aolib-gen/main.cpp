@@ -295,8 +295,14 @@ bool is_object_array(const ordered_json& s) {
     return json_type(s) == "array" && s.contains("items") && json_type(s["items"]) == "object";
 }
 
+bool is_inline_object(const ordered_json& s) { return json_type(s) == "object"; }
+
 std::string item_struct_name(const std::string& pkt, const std::string& field) {
     return pkt + pascal_case(field) + "Item";
+}
+
+std::string inline_object_name(const std::string& pkt, const std::string& field) {
+    return pkt + pascal_case(field);
 }
 
 std::string field_cpp_type(const ordered_json& s, const Model& m, const std::string& pkt, const std::string& field) {
@@ -315,6 +321,7 @@ std::string field_cpp_type(const ordered_json& s, const Model& m, const std::str
         if (itt == "boolean") return "std::vector<bool>";
         return "std::vector<std::string>";
     }
+    if (is_inline_object(s)) return inline_object_name(pkt, field);
     return field_type(s, m);
 }
 
@@ -552,6 +559,7 @@ void emit_args_field(std::string& out, const PacketInfo& p, const PropInfo& prop
         else out += "    for (const auto& v : " + key + ") args.push_back(" + wenc("v", it, m) + ");\n";
         return;
     }
+    if (is_inline_object(s)) { out += "    args.push_back(" + key + ".wire_fields());\n"; return; }
     if (const PropInfo* sfx = suffix_for(p.props, key)) {
         out += "    auto tok = " + wenc(key, s, m) + ";\n";
         out += "    if (" + key + " != " + default_expr(s, m) + " && " + sfx->key + " != " + default_expr(sfx->schema, m) + ") tok += \"^\" + " + wenc(sfx->key, sfx->schema, m) + ";\n";
@@ -571,6 +579,10 @@ void emit_parse_field(std::string& out, const PacketInfo& p, const PropInfo& pro
         if (json_type(it) == "object") out += "    for (std::size_t i = cursor; i < body.size(); ++i) p." + key + ".push_back(" + item_struct_name(p.name, key) + "::parse_item(body[i]));\n";
         else out += "    for (std::size_t i = cursor; i < body.size(); ++i) p." + key + ".push_back(" + wdec("body[i]", key + "[i]", it, m) + ");\n";
         out += "    cursor = body.size();\n";
+        return;
+    }
+    if (is_inline_object(s)) {
+        out += "    if (cursor < body.size()) p." + key + " = " + inline_object_name(p.name, key) + "::parse_item(body[cursor]);\n    cursor++;\n";
         return;
     }
     if (const PropInfo* sfx = suffix_for(p.props, key)) {
@@ -622,6 +634,10 @@ void emit_fromjson_field(std::string& out, const PacketInfo& p, const PropInfo& 
         }
         return;
     }
+    if (is_inline_object(s)) {
+        out += "    if (j.contains(" + cpp_string_literal(key) + ")) " + key + " = " + inline_object_name(p.name, key) + "::from_json_object(j[" + cpp_string_literal(key) + "]);\n";
+        return;
+    }
     out += "    if (j.contains(" + cpp_string_literal(key) + ")) " + key + " = " + jdec("j[" + cpp_string_literal(key) + "]", s, m) + ";\n";
 }
 
@@ -632,9 +648,11 @@ std::string emit_packets_header(const Model& m) {
 
     for (const auto& p : m.packets) {
         for (const auto& prop : p.props) {
-            if (!is_object_array(prop.schema)) continue;
-            std::string iname = item_struct_name(p.name, prop.key);
-            const ordered_json& items = prop.schema["items"];
+            bool obj_array = is_object_array(prop.schema);
+            bool inline_obj = !obj_array && is_inline_object(prop.schema);
+            if (!obj_array && !inline_obj) continue;
+            std::string iname = obj_array ? item_struct_name(p.name, prop.key) : inline_object_name(p.name, prop.key);
+            const ordered_json& items = obj_array ? prop.schema["items"] : prop.schema;
             std::vector<std::pair<std::string, ordered_json>> sub;
             for (auto it = items["properties"].begin(); it != items["properties"].end(); ++it)
                 sub.emplace_back(it.key(), it.value());
@@ -681,9 +699,11 @@ std::string emit_packets_cpp(const Model& m) {
     // Item struct methods.
     for (const auto& p : m.packets) {
         for (const auto& prop : p.props) {
-            if (!is_object_array(prop.schema)) continue;
-            std::string iname = item_struct_name(p.name, prop.key);
-            const ordered_json& items = prop.schema["items"];
+            bool obj_array = is_object_array(prop.schema);
+            bool inline_obj = !obj_array && is_inline_object(prop.schema);
+            if (!obj_array && !inline_obj) continue;
+            std::string iname = obj_array ? item_struct_name(p.name, prop.key) : inline_object_name(p.name, prop.key);
+            const ordered_json& items = obj_array ? prop.schema["items"] : prop.schema;
             std::vector<std::pair<std::string, ordered_json>> sub;
             for (auto it = items["properties"].begin(); it != items["properties"].end(); ++it)
                 sub.emplace_back(it.key(), it.value());
@@ -765,7 +785,7 @@ std::string emit_packets_cpp(const Model& m) {
 std::string emit_registry_header() {
     std::string out;
     out += "// AUTO-GENERATED from spec. Do not edit; run aolib-gen.\n";
-    out += "#pragma once\n\n#include <any>\n#include <functional>\n#include <map>\n#include <string>\n#include <vector>\n\nnamespace aolib {\n\n";
+    out += "#pragma once\n\n#include <any>\n#include <functional>\n#include <map>\n#include <memory>\n#include <string>\n#include <vector>\n\nnamespace aolib {\n\n";
     out += "using FantaDecoder = std::function<std::any(const std::vector<std::string>&)>;\n";
     out += "using JsonDecoder = std::function<std::any(const std::string&)>;\n";
     out += "using PacketConstructor = std::function<std::any()>;\n\n";
@@ -791,27 +811,27 @@ std::string emit_registry_cpp(const Model& m) {
 
     out += "const std::map<std::string, FantaDecoder> c2s_decoders = {\n";
     for (const auto* p : c2s)
-        out += "    {" + cpp_string_literal(p->header) + ", [](const std::vector<std::string>& b) { auto p = " + p->name + "::parse(b); validate_packet(p); return std::any{std::move(p)}; }},\n";
+        out += "    {" + cpp_string_literal(p->header) + ", [](const std::vector<std::string>& b) { auto p = " + p->name + "::parse(b); validate_packet(p); return std::any{std::shared_ptr<Outgoing>(std::make_shared<" + p->name + ">(std::move(p)))}; }},\n";
     out += "};\n\n";
 
     out += "const std::map<std::string, FantaDecoder> s2c_decoders = {\n";
     for (const auto* p : s2c)
-        out += "    {" + cpp_string_literal(p->header) + ", [](const std::vector<std::string>& b) { auto p = " + p->name + "::parse(b); validate_packet(p); return std::any{std::move(p)}; }},\n";
+        out += "    {" + cpp_string_literal(p->header) + ", [](const std::vector<std::string>& b) { auto p = " + p->name + "::parse(b); validate_packet(p); return std::any{std::shared_ptr<Outgoing>(std::make_shared<" + p->name + ">(std::move(p)))}; }},\n";
     out += "};\n\n";
 
     out += "const std::map<std::string, JsonDecoder> c2s_json = {\n";
     for (const auto* p : c2s)
-        out += "    {" + cpp_string_literal(p->header) + ", [](const std::string& raw) { " + p->name + " p; decode_json_into(p, raw); return std::any{std::move(p)}; }},\n";
+        out += "    {" + cpp_string_literal(p->header) + ", [](const std::string& raw) { " + p->name + " p; decode_json_into(p, raw); return std::any{std::shared_ptr<Outgoing>(std::make_shared<" + p->name + ">(std::move(p)))}; }},\n";
     out += "};\n\n";
 
     out += "const std::map<std::string, JsonDecoder> s2c_json = {\n";
     for (const auto* p : s2c)
-        out += "    {" + cpp_string_literal(p->header) + ", [](const std::string& raw) { " + p->name + " p; decode_json_into(p, raw); return std::any{std::move(p)}; }},\n";
+        out += "    {" + cpp_string_literal(p->header) + ", [](const std::string& raw) { " + p->name + " p; decode_json_into(p, raw); return std::any{std::shared_ptr<Outgoing>(std::make_shared<" + p->name + ">(std::move(p)))}; }},\n";
     out += "};\n\n";
 
     out += "const std::map<std::string, PacketConstructor> packet_constructors = {\n";
     for (const auto& p : m.packets)
-        out += "    {" + cpp_string_literal(p.name) + ", []() { return std::any{" + p.name + "{}}; }},\n";
+        out += "    {" + cpp_string_literal(p.name) + ", []() { return std::any{std::shared_ptr<Outgoing>(std::make_shared<" + p.name + ">())}; }},\n";
     out += "};\n\n";
 
     out += "}  // namespace aolib\n";
@@ -822,7 +842,7 @@ std::string emit_registry_cpp(const Model& m) {
 // session_{server,client}_gen.hpp
 // ---------------------------------------------------------------------------
 
-std::string emit_session_gen(const Model& m, const std::string& typ, const std::string& remote) {
+std::string emit_session_gen(const Model& m, const std::string& remote) {
     std::vector<const PacketInfo*> packets;
     for (const auto& p : m.packets) packets.push_back(&p);
     std::sort(packets.begin(), packets.end(), [](const PacketInfo* a, const PacketInfo* b) {
@@ -831,17 +851,15 @@ std::string emit_session_gen(const Model& m, const std::string& typ, const std::
     });
 
     std::string out;
-    out += "// AUTO-GENERATED from spec. Do not edit; run aolib-gen.\n";
-    out += "#pragma once\n\n#include <any>\n#include <functional>\n\n#include \"aolib/session.hpp\"\n#include \"aolib/packets_gen.hpp\"\n\nnamespace aolib {\n\n";
+    out += "    // AUTO-GENERATED from spec. Do not edit; run aolib-gen.\n";
     for (const auto* p : packets) {
         std::string method = capitalize_first(p->header);
         if (p->x_receiver == remote) {
-            out += "inline void " + typ + "::Send" + method + "(const " + p->name + "& p) { core()->send(p); }\n";
+            out += "    void Send" + method + "(const " + p->name + "& p) { core()->send(p); }\n";
         } else {
-            out += "inline void " + typ + "::On" + method + "(std::function<void(const " + p->name + "&)> h) { core()->on(" + cpp_string_literal(p->header) + ", [h](std::any a) { h(std::any_cast<" + p->name + ">(a)); }); }\n";
+            out += "    void On" + method + "(std::function<void(const " + p->name + "&)> h) { core()->on(" + cpp_string_literal(p->header) + ", [h](std::any a) { auto sp = std::any_cast<std::shared_ptr<Outgoing>>(a); h(*std::dynamic_pointer_cast<" + p->name + ">(sp)); }); }\n";
         }
     }
-    out += "\n}  // namespace aolib\n";
     return out;
 }
 
@@ -852,18 +870,18 @@ std::string emit_session_gen(const Model& m, const std::string& typ, const std::
 std::string emit_schemas_header() {
     std::string out;
     out += "// AUTO-GENERATED from spec. Do not edit; run aolib-gen.\n";
-    out += "#pragma once\n\n#include <map>\n#include <string>\n\n#include <nlohmann/json.hpp>\n\nnamespace aolib {\n\n// Every spec schema (packets + types) keyed by its $id.\nconst std::map<std::string, nlohmann::json>& spec_schemas();\n\n}  // namespace aolib\n";
+    out += "#pragma once\n\n#include <map>\n#include <string>\n\n#include <nlohmann/json.hpp>\n\nnamespace aolib {\n\n// Every spec schema (packets + types) keyed by its $id.\nconst std::map<std::string, nlohmann::ordered_json>& spec_schemas();\n\n}  // namespace aolib\n";
     return out;
 }
 
 std::string emit_schemas_cpp(const Model&, const fs::path& meta) {
     std::string out;
     out += "// AUTO-GENERATED from spec. Do not edit; run aolib-gen.\n";
-    out += "#include \"aolib/schemas_gen.hpp\"\n\n#include <nlohmann/json.hpp>\n\nnamespace aolib {\n\nconst std::map<std::string, nlohmann::json>& spec_schemas() {\n    static const std::map<std::string, nlohmann::json> schemas = {\n";
+    out += "#include \"aolib/schemas_gen.hpp\"\n\n#include <nlohmann/json.hpp>\n\nnamespace aolib {\n\nconst std::map<std::string, nlohmann::ordered_json>& spec_schemas() {\n    static const std::map<std::string, nlohmann::ordered_json> schemas = {\n";
 
     auto emit_one = [&](const fs::path& file, const std::string& id) {
         std::string raw = read_file(file);
-        out += "        {" + cpp_string_literal(id) + ", nlohmann::json::parse(R\"AOLIB(" + raw + ")AOLIB\")},\n";
+        out += "        {" + cpp_string_literal(id) + ", nlohmann::ordered_json::parse(R\"AOLIB(" + raw + ")AOLIB\")},\n";
     };
 
     fs::path types_dir = meta / "types";
@@ -911,8 +929,8 @@ int main(int argc, char** argv) {
         write_file(src / "packets_gen.cpp", emit_packets_cpp(m));
         write_file(inc / "registry_gen.hpp", emit_registry_header());
         write_file(src / "registry_gen.cpp", emit_registry_cpp(m));
-        write_file(inc / "session_server_gen.hpp", emit_session_gen(m, "ServerSession", "server"));
-        write_file(inc / "session_client_gen.hpp", emit_session_gen(m, "ClientSession", "client"));
+        write_file(inc / "session_server_gen.hpp", emit_session_gen(m, "server"));
+        write_file(inc / "session_client_gen.hpp", emit_session_gen(m, "client"));
         write_file(inc / "schemas_gen.hpp", emit_schemas_header());
         write_file(src / "schemas_gen.cpp", emit_schemas_cpp(m, meta_dir));
         return 0;
