@@ -8,8 +8,15 @@
 
 #define AOLIB_CPP_VERSION "2.6.1"
 
+#include "aolib/error.hpp"
+#include "aolib/fanta.hpp"
+#include "aolib/aopacket.hpp"
+#include "aolib/ticks.hpp"
+#include "aolib/outgoing.hpp"
+
 namespace aolib {
 // Library version string.
 const char* version();
 }  // namespace aolib
+
 

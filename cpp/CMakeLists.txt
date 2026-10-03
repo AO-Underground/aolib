@@ -59,7 +59,8 @@ target_link_libraries(aolib-gen PRIVATE nlohmann_json)
 # ---------------------------------------------------------------------------
 
 enable_testing()
-add_executable(aolib-tests ${CMAKE_CURRENT_SOURCE_DIR}/tests/test_main.cpp)
+file(GLOB AOLIB_TEST_SOURCES CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/tests/*.cpp)
+add_executable(aolib-tests ${AOLIB_TEST_SOURCES})
 target_include_directories(aolib-tests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/third_party)
 target_link_libraries(aolib-tests PRIVATE aolib-cpp)
 add_test(NAME aolib-tests COMMAND aolib-tests)
