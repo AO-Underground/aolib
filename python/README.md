@@ -90,7 +90,18 @@ server.on.ID(lambda p: print(p["player_id"]))
 ## Extending
 
 Extra fields on spec packets (`$extras`) and custom packets
-(`register_packet`): see [EXTENDING.md](EXTENDING.md).
+(`register_packet`): see [EXTENDING.md](EXTENDING.md), and
+[CUSTOM_PACKETS.md](CUSTOM_PACKETS.md) for the full "extend the wire without
+touching the spec" guide.
+
+## Example
+
+[`examples/courtroom`](examples/courtroom) runs the full AO2 join handshake
+between a server and a JSON and a FantaCode client over an in-memory network:
+
+```sh
+python -m examples.courtroom.main
+```
 
 ## Codegen
 
