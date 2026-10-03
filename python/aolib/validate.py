@@ -41,6 +41,11 @@ def _validator(schema: Dict[str, Any]) -> Draft7Validator:
     return v
 
 
+def compile_schema(schema: Dict[str, Any]) -> None:
+    """Eagerly check a caller's schema (e.g. a custom packet) is well-formed."""
+    Draft7Validator.check_schema(schema)
+
+
 def apply_defaults(schema: Dict[str, Any], value: Dict[str, Any], base_id: str = "") -> None:
     """Fill ``default`` values for missing properties, recursively."""
     schema = resolve_ref(schema, base_id)
