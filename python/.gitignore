@@ -1,0 +1,15 @@
+# Byte-compiled / cache
+__pycache__/
+*.py[cod]
+*.egg-info/
+*.egg
+
+# Packaging / virtual environments
+.venv/
+venv/
+build/
+dist/
+
+# Test / tooling caches
+.pytest_cache/
+.coverage

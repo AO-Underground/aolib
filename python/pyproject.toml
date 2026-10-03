@@ -1,0 +1,23 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "aolib-python"
+version = "2.6.1"
+description = "The Attorney Online 2 wire protocol in Python, generated from the canonical aolib spec/"
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.9"
+authors = [{ name = "AO-Underground" }]
+keywords = ["attorney-online", "ao2", "protocol", "aolib"]
+dependencies = ["jsonschema>=4.0"]
+
+[project.optional-dependencies]
+test = ["pytest>=7"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["aolib"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
