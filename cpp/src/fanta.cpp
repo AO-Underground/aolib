@@ -60,6 +60,8 @@ int parse_wire_int(const std::string& token, const std::string& name) {
     return std::stoi(token);
 }
 
+bool is_wire_int(const std::string& s) { return is_integer(s); }
+
 bool parse_wire_bool(const std::string& token, const std::string& name) {
     if (token != "0" && token != "1") {
         throw Error("Invalid boolean for field '" + name +
@@ -73,6 +75,19 @@ std::vector<std::string> split_amp(const std::string& s, int n) {
     std::size_t start = 0;
     while (out.size() + 1 < static_cast<std::size_t>(n)) {
         std::size_t pos = s.find('&', start);
+        if (pos == std::string::npos) break;
+        out.push_back(s.substr(start, pos - start));
+        start = pos + 1;
+    }
+    out.push_back(s.substr(start));
+    return out;
+}
+
+std::vector<std::string> split_on(const std::string& s, char sep, int n) {
+    std::vector<std::string> out;
+    std::size_t start = 0;
+    while (out.size() + 1 < static_cast<std::size_t>(n)) {
+        std::size_t pos = s.find(sep, start);
         if (pos == std::string::npos) break;
         out.push_back(s.substr(start, pos - start));
         start = pos + 1;

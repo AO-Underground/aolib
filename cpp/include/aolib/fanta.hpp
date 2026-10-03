@@ -23,9 +23,15 @@ bool wire_to_bool(const std::string& s);
 int parse_wire_int(const std::string& token, const std::string& name);
 bool parse_wire_bool(const std::string& token, const std::string& name);
 
+// True when s is an optional-sign decimal integer.
+bool is_wire_int(const std::string& s);
+
 // Split an object slot into at most n subfields on '&'. Escaped ampersands
 // survive as "<and>" and are not separators.
 std::vector<std::string> split_amp(const std::string& s, int n);
+
+// Split a string into at most n fields on the given separator character.
+std::vector<std::string> split_on(const std::string& s, char sep, int n);
 
 // Join already-encoded subfields with '&'.
 std::string join_amp(const std::vector<std::string>& parts);

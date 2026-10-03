@@ -34,8 +34,8 @@ public:
     virtual void from_json_object(const nlohmann::ordered_json& fields) = 0;
 
     // JSON keys the schema does not define (null when none).
-    virtual nlohmann::json* extras() = 0;
-    virtual const nlohmann::json* extras() const = 0;
+    virtual nlohmann::json* extras_ptr() = 0;
+    virtual const nlohmann::json* extras_ptr() const = 0;
 };
 
 }  // namespace aolib
