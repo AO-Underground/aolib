@@ -37,8 +37,8 @@
     },
     "sfx_name": {
       "type": "string",
-      "default": "",
-      "description": "Sound effect to play; `1`, `0` or empty for none."
+      "default": "0",
+      "description": "Sound effect to play; `1`, `0` or empty for none. Defaults to `0`: servers such as KFO-Server reject an empty slot."
     },
     "emote_modifier": {
       "$ref": "../../types/EmoteModifier.schema.json",
@@ -120,17 +120,17 @@
     },
     "frames_shake": {
       "type": "string",
-      "default": "",
-      "description": "Frame-triggered screenshakes from char.ini: one `^`-terminated segment per emote (preanim, `(b)`, `(a)`), each `emote|frame=value|...`."
+      "default": "-",
+      "description": "Frame-triggered screenshakes from char.ini: one `^`-terminated segment per emote (preanim, `(b)`, `(a)`), each `emote|frame=value|...`; `-` for none (servers such as KFO-Server reject an empty slot)."
     },
     "frames_realization": {
       "type": "string",
-      "default": "",
+      "default": "-",
       "description": "Frame-triggered realization flashes, in the `frames_shake` format."
     },
     "frames_sfx": {
       "type": "string",
-      "default": "",
+      "default": "-",
       "description": "Frame-triggered sound effects, in the `frames_shake` format."
     },
     "additive": {

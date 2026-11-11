@@ -369,7 +369,7 @@ export const EffectTypeSchema = {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "/types/Effect.schema.json",
   "title": "Effect",
-  "description": "MS screen-effect overlay request: effect name, misc folder, and sound, packed into one `name|folder|sound` wire slot. An all-empty value is the no-effect sentinel and encodes to an empty slot.",
+  "description": "MS screen-effect overlay request: effect name, misc folder, and sound, packed into one `name|folder|sound` wire slot. An all-empty value means no effect and encodes as `||`, as AO2 sends it; an empty slot from older senders decodes to it.",
   "type": "object",
   "properties": {
     "name": {
@@ -1830,8 +1830,8 @@ export const MSToServerSchema = {
     },
     "sfx_name": {
       "type": "string",
-      "default": "",
-      "description": "Sound effect to play; `1`, `0` or empty for none."
+      "default": "0",
+      "description": "Sound effect to play; `1`, `0` or empty for none. Defaults to `0`: servers such as KFO-Server reject an empty slot."
     },
     "emote_modifier": {
       "$ref": "../../types/EmoteModifier.schema.json",
@@ -1913,17 +1913,17 @@ export const MSToServerSchema = {
     },
     "frames_shake": {
       "type": "string",
-      "default": "",
-      "description": "Frame-triggered screenshakes from char.ini: one `^`-terminated segment per emote (preanim, `(b)`, `(a)`), each `emote|frame=value|...`."
+      "default": "-",
+      "description": "Frame-triggered screenshakes from char.ini: one `^`-terminated segment per emote (preanim, `(b)`, `(a)`), each `emote|frame=value|...`; `-` for none (servers such as KFO-Server reject an empty slot)."
     },
     "frames_realization": {
       "type": "string",
-      "default": "",
+      "default": "-",
       "description": "Frame-triggered realization flashes, in the `frames_shake` format."
     },
     "frames_sfx": {
       "type": "string",
-      "default": "",
+      "default": "-",
       "description": "Frame-triggered sound effects, in the `frames_shake` format."
     },
     "additive": {

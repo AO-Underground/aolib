@@ -19,8 +19,9 @@ parts are ignored.
 | 2 | `name\|sound` | legacy; `folder` still falls back |
 | 3 | `name\|folder\|sound` | AO2 ≥ 2.8 |
 
-A sender emits the 3-part form `name|folder|sound`, or an empty string for "no
-effect".
+A sender emits the 3-part form `name|folder|sound`; "no effect" is `||`, as AO2
+sends it (KFO-Server rejects an MS whose effect slot is empty). Receivers also
+accept an empty slot as "no effect".
 
 ## `name` (the effect)
 

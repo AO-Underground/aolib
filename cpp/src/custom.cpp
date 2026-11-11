@@ -104,7 +104,6 @@ std::string encode_token(const nlohmann::ordered_json& raw, const nlohmann::json
             first = false;
             out += encode_token(sub, v.contains(k) ? v[k] : nlohmann::json(nullptr), base);
         }
-        if (sep == "|" && out.find_first_not_of('|') == std::string::npos) return "";
         return out;
     }
     return v.dump();

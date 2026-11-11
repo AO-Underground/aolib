@@ -35,7 +35,6 @@ inline Effect Effect::from_json_object(const nlohmann::ordered_json& j) {
 }
 
 inline std::string effect_to_wire(const Effect& v) {
-    if (v.name.empty() && v.folder.empty() && v.sound.empty()) return "";
     return escape_fanta(v.name) + "|" + escape_fanta(v.folder) + "|" + escape_fanta(v.sound);
 }
 

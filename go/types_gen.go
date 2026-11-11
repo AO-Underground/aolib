@@ -2,7 +2,7 @@
 
 package aolib
 
-// Effect: MS screen-effect overlay request: effect name, misc folder, and sound, packed into one `name|folder|sound` wire slot. An all-empty value is the no-effect sentinel and encodes to an empty slot.
+// Effect: MS screen-effect overlay request: effect name, misc folder, and sound, packed into one `name|folder|sound` wire slot. An all-empty value means no effect and encodes as `||`, as AO2 sends it; an empty slot from older senders decodes to it.
 type Effect struct {
 	Name   string `json:"name"`
 	Folder string `json:"folder"`

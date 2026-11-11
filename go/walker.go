@@ -215,19 +215,12 @@ func encodeSlot(raw *node, v any, baseID string) string {
 			return strconv.Itoa(n)
 		}
 		sep := s.str("x-fanta-separator")
-		custom := sep != ""
-		if !custom {
+		if sep == "" {
 			sep = "&"
 		}
 		var parts []string
-		allEmpty := true
 		for _, k := range props.keys {
-			p := encodeSlot(props.child(k), obj.get(k), baseID)
-			allEmpty = allEmpty && p == ""
-			parts = append(parts, p)
-		}
-		if custom && allEmpty {
-			return ""
+			parts = append(parts, encodeSlot(props.child(k), obj.get(k), baseID))
 		}
 		return strings.Join(parts, sep)
 	}

@@ -1860,11 +1860,15 @@ func (p *MSToServer) schemaPath() string { return "packets/schemas/MSToServer.sc
 
 func (p *MSToServer) applyDefaults() {
 	p.DeskModifier = DeskModifier("shown")
+	p.SfxName = "0"
 	p.EmoteModifier = EmoteModifier("no_preanim")
 	p.ShoutModifier = ShoutModifier("none")
 	p.Flip = Flip("none")
 	p.TextColor = TextColor("white")
 	p.PairedCharID = -1
+	p.FramesShake = "-"
+	p.FramesRealization = "-"
+	p.FramesSfx = "-"
 }
 
 // NewMSToServer returns a MSToServer with the spec's defaults.
@@ -1954,7 +1958,11 @@ func ParseMSToServer(body []string) (*MSToServer, error) {
 	cursor++
 	p.Side = Side(get(cursor))
 	cursor++
-	p.SfxName = unescapeFanta(get(cursor))
+	if cursor < len(body) {
+		p.SfxName = unescapeFanta(get(cursor))
+	} else {
+		p.SfxName = "0"
+	}
 	cursor++
 	p.EmoteModifier = emoteModifierFromWire[atoiOrZero(get(cursor))]
 	cursor++
@@ -1991,11 +1999,23 @@ func ParseMSToServer(body []string) (*MSToServer, error) {
 	cursor++
 	p.Screenshake = wireToBool(get(cursor))
 	cursor++
-	p.FramesShake = unescapeFanta(get(cursor))
+	if cursor < len(body) {
+		p.FramesShake = unescapeFanta(get(cursor))
+	} else {
+		p.FramesShake = "-"
+	}
 	cursor++
-	p.FramesRealization = unescapeFanta(get(cursor))
+	if cursor < len(body) {
+		p.FramesRealization = unescapeFanta(get(cursor))
+	} else {
+		p.FramesRealization = "-"
+	}
 	cursor++
-	p.FramesSfx = unescapeFanta(get(cursor))
+	if cursor < len(body) {
+		p.FramesSfx = unescapeFanta(get(cursor))
+	} else {
+		p.FramesSfx = "-"
+	}
 	cursor++
 	p.Additive = wireToBool(get(cursor))
 	cursor++

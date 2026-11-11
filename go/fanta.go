@@ -5,8 +5,8 @@ package aolib
 //
 //   - strings escape #/&/%/$ as <num>/<and>/<percent>/<dollar>
 //   - enums with x-wire-ints map to their legacy integer
-//   - objects (Offset) join sub-tokens with &; Effect joins with | (and an
-//     all-empty Effect collapses to an empty slot)
+//   - objects (Offset) join sub-tokens with &; Effect joins with | (an
+//     all-empty Effect encodes as ||)
 //   - booleans are "1"/"0"
 
 import (
@@ -81,19 +81,15 @@ func offsetFromWire(s string) Offset {
 	return o
 }
 
-// effectToWire packs an Effect into one `name|folder|sound` slot. An all-empty
-// Effect is the no-effect sentinel and collapses to an empty slot. See
-// spec/packets/EFFECTS.md.
+// effectToWire packs an Effect into one `name|folder|sound` slot; no effect is
+// `||`, as AO2 sends it. See spec/packets/EFFECTS.md.
 func effectToWire(e Effect) string {
-	if e.Name == "" && e.Folder == "" && e.Sound == "" {
-		return ""
-	}
 	return escapeFanta(e.Name) + "|" + escapeFanta(e.Folder) + "|" + escapeFanta(e.Sound)
 }
 
 // effectFromWire splits a `name|folder|sound` slot into an Effect, tolerating
-// the legacy 1- and 2-part forms positionally. An empty slot is the no-effect
-// sentinel.
+// the legacy 1- and 2-part forms positionally. An empty slot (older senders)
+// means no effect.
 func effectFromWire(s string) Effect {
 	if s == "" {
 		return Effect{}
