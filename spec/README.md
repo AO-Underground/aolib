@@ -166,9 +166,10 @@ property are ignored. Currently set on `MusicEffects` (MC `effects`).
 On an `object`-typed schema. The object occupies a single fanta slot whose
 sub-tokens are joined (encode) and split (decode) by this separator instead of
 the default `&`. The separator must not be a chat metacharacter (`#`/`&`/`%`/`$`),
-since those are escaped inside string sub-tokens. As a no-value sentinel, an
-object whose sub-tokens are all empty encodes to an empty slot, and an empty slot
-decodes back to the all-empty object. Scoped to objects carrying it; plain
+since those are escaped inside string sub-tokens. Encoders always emit every
+sub-token, so an all-empty object encodes as bare separators (`||`), the form
+AO2 sends and KFO-Server requires; an empty slot from older senders decodes to
+the all-empty object. Scoped to objects carrying it; plain
 `&`-objects (e.g. `Offset`) are unaffected. Currently set on `Effect`
 (separator `|`), the MS `effect` field (see `packets/EFFECTS.md`).
 

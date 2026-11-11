@@ -35,8 +35,7 @@ export interface JsonSchema {
   /**
    * On a nested object: join/split its sub-tokens with this separator
    * instead of the default `&` (`|` for MS effect). An all-empty object
-   * collapses to an empty slot on encode, and an empty slot decodes back
-   * to it.
+   * encodes as bare separators (`||`), and an empty slot decodes to it.
    */
   "x-fanta-separator"?: string;
   /** On a boolean-flag object: each property's bit, in property order; the slot is their OR. */

@@ -508,17 +508,6 @@ std::string emit_types(const Model& m) {
             bool unescape_amp = t->schema.value("x-fanta-unescape-amp", false);
 
             out += "inline std::string " + sn + "_to_wire(const " + t->name + "& v) {\n";
-            if (sep == "|") {
-                out += "    if (";
-                bool first = true;
-                for (const auto& [key, sub] : props) {
-                    if (json_type(sub) != "string") continue;
-                    if (!first) out += " && ";
-                    out += "v." + key + ".empty()";
-                    first = false;
-                }
-                out += ") return \"\";\n";
-            }
             std::string join;
             for (std::size_t i = 0; i < props.size(); ++i) {
                 if (i) { join += " + "; join += cpp_string_literal(std::string(1, sep[0])); join += " + "; }

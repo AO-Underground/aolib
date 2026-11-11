@@ -30,14 +30,14 @@ func TestEffectPacksAsPipeSlot(t *testing.T) {
 	}
 }
 
-func TestEffectEmptyCollapsesToEmptySlot(t *testing.T) {
+func TestEffectEmptyEncodesAsPipes(t *testing.T) {
 	p := &MSToClient{Character: "Phoenix", Emote: "normal", Message: "hi", Side: "pro", CharID: 1}
 	raw, err := Encode(p, WireFanta)
 	if err != nil {
 		t.Fatalf("Encode: %v", err)
 	}
-	if got := effectSlot(t, raw); got != "" {
-		t.Fatalf("empty effect slot = %q, want empty", got)
+	if got := effectSlot(t, raw); got != "||" {
+		t.Fatalf("empty effect slot = %q, want ||", got)
 	}
 }
 

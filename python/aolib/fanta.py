@@ -8,7 +8,7 @@ framing layer carries). Per-property semantics come from the JSON Schema:
   ``"boolean"``          ``"1"``/``"0"`` on encode, ``token == "1"`` on decode
   ``"object"``           recurse, join sub-tokens with ``&`` (or the
                          ``x-fanta-separator`` value, ``|`` for MS effect; an
-                         all-empty object collapses to an empty slot). Optional
+                         all-empty object encodes as ``||``). Optional
                          ``x-fanta-unescape-amp: true`` tolerates the legacy
                          ``<and>`` form on decode. With ``x-wire-bits``, one
                          integer slot of OR'd flags.
@@ -266,8 +266,6 @@ def encode_token(raw_schema: Dict[str, Any], value: Any, base_id: str) -> str:
             encode_token(sub, obj.get(k), base_id)
             for k, sub in schema.get("properties", {}).items()
         ]
-        if schema.get("x-fanta-separator") and all(p == "" for p in parts):
-            return ""
         return sep.join(parts)
 
     return _encode_scalar(t, value)

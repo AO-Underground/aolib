@@ -151,6 +151,20 @@ describe("MS: minimal-input encoding fills every default", () => {
     expect(parts[parts.length - 1]).toBe("%");
   });
 
+  it("that minimal wire fills every slot KFO-Server requires to be non-empty", () => {
+    const wire = encode(
+      MSToServer,
+      { character: "Phoenix", emote: "normal", message: "Hello", side: Side.wit, char_id: 5 },
+      "fanta",
+    );
+    // KFO-Server's 2.8 net_cmd_ms form allows only preanim, emote, message and showname to be empty.
+    const args = wire.slice(3, -2).split("#");
+    const mayBeEmpty = new Set([1, 3, 4, 15]);
+    expect(args.length).toBe(26);
+    expect(args.map((a, i) => (a === "" && !mayBeEmpty.has(i) ? i : -1)).filter((i) => i >= 0)).toEqual([]);
+    expect(args[25]).toBe("||");
+  });
+
   it("decode of that minimal wire fills all defaults", () => {
     const wire = encode(
       MSToServer,
@@ -171,7 +185,7 @@ describe("MS: minimal-input encoding fills every default", () => {
       emote: "normal",
       message: "Hello",
       side: Side.wit,
-      sfx_name: "",
+      sfx_name: "0",
       emote_modifier: EmoteModifier.no_preanim,
       char_id: 5,
       sfx_delay: 0,
@@ -186,9 +200,9 @@ describe("MS: minimal-input encoding fills every default", () => {
       noninterrupting_preanim: false,
       sfx_looping: false,
       screenshake: false,
-      frames_shake: "",
-      frames_realization: "",
-      frames_sfx: "",
+      frames_shake: "-",
+      frames_realization: "-",
+      frames_sfx: "-",
       additive: false,
       effect: { name: "", folder: "", sound: "" },
     });
@@ -320,9 +334,9 @@ describe("MS: effect codec", () => {
     expect(effectSlot(wire)).toBe("realization|custom|realize.wav");
   });
 
-  it("an all-empty effect collapses to an empty slot", () => {
+  it("an all-empty effect encodes as AO2's ||", () => {
     const wire = encode(MSToClient, { ...base, effect: { name: "", folder: "", sound: "" } }, "fanta");
-    expect(effectSlot(wire)).toBe("");
+    expect(effectSlot(wire)).toBe("||");
   });
 
   it("round-trips a full effect through the fanta wire", () => {
@@ -332,9 +346,10 @@ describe("MS: effect codec", () => {
     expect(decoded.effect).toEqual(eff);
   });
 
-  it("an empty slot decodes back to the all-empty effect", () => {
-    const wire = encode(MSToClient, { ...base }, "fanta");
-    const decoded = decode(MSToClient, wire) as unknown as MSToClientType;
+  it("an empty slot from older senders decodes to the all-empty effect", () => {
+    const wire = encode(MSToClient, { ...base }, "fanta").split("#");
+    wire[wire.length - 2] = "";
+    const decoded = decode(MSToClient, wire.join("#")) as unknown as MSToClientType;
     expect(decoded.effect).toEqual({ name: "", folder: "", sound: "" });
   });
 
