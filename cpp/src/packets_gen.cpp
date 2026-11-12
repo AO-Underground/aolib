@@ -1560,11 +1560,11 @@ MSToClient MSToClient::parse(const std::vector<std::string>& body) {
     cursor++;
     if (cursor < body.size()) p.char_id = parse_wire_int(body[cursor], "char_id");
     cursor++;
-    if (cursor < body.size()) p.sfx_delay = parse_wire_int(body[cursor], "sfx_delay");
+    if (cursor < body.size() && !body[cursor].empty()) p.sfx_delay = parse_wire_int(body[cursor], "sfx_delay");
     cursor++;
     if (cursor < body.size()) p.shout_modifier = shout_modifier_from_wire(parse_wire_int(body[cursor], "shout_modifier"));
     cursor++;
-    if (cursor < body.size()) p.evidence_id = parse_wire_int(body[cursor], "evidence_id");
+    if (cursor < body.size() && !body[cursor].empty()) p.evidence_id = parse_wire_int(body[cursor], "evidence_id");
     cursor++;
     if (cursor < body.size()) p.flip = flip_from_wire(parse_wire_int(body[cursor], "flip"));
     cursor++;
@@ -1741,11 +1741,11 @@ MSToServer MSToServer::parse(const std::vector<std::string>& body) {
     cursor++;
     if (cursor < body.size()) p.char_id = parse_wire_int(body[cursor], "char_id");
     cursor++;
-    if (cursor < body.size()) p.sfx_delay = parse_wire_int(body[cursor], "sfx_delay");
+    if (cursor < body.size() && !body[cursor].empty()) p.sfx_delay = parse_wire_int(body[cursor], "sfx_delay");
     cursor++;
     if (cursor < body.size()) p.shout_modifier = shout_modifier_from_wire(parse_wire_int(body[cursor], "shout_modifier"));
     cursor++;
-    if (cursor < body.size()) p.evidence_id = parse_wire_int(body[cursor], "evidence_id");
+    if (cursor < body.size() && !body[cursor].empty()) p.evidence_id = parse_wire_int(body[cursor], "evidence_id");
     cursor++;
     if (cursor < body.size()) p.flip = flip_from_wire(parse_wire_int(body[cursor], "flip"));
     cursor++;
@@ -2026,7 +2026,7 @@ std::vector<std::string> PV::args() const {
 PV PV::parse(const std::vector<std::string>& body) {
     PV p;
     std::size_t cursor = 0;
-    if (cursor < body.size()) p.player_id = parse_wire_int(body[cursor], "player_id");
+    if (cursor < body.size() && !body[cursor].empty()) p.player_id = parse_wire_int(body[cursor], "player_id");
     cursor++;
     cursor++;
     if (cursor < body.size()) p.char_id = parse_wire_int(body[cursor], "char_id");
@@ -2318,9 +2318,9 @@ SI SI::parse(const std::vector<std::string>& body) {
     std::size_t cursor = 0;
     if (cursor < body.size()) p.char_count = parse_wire_int(body[cursor], "char_count");
     cursor++;
-    if (cursor < body.size()) p.evi_count = parse_wire_int(body[cursor], "evi_count");
+    if (cursor < body.size() && !body[cursor].empty()) p.evi_count = parse_wire_int(body[cursor], "evi_count");
     cursor++;
-    if (cursor < body.size()) p.mus_count = parse_wire_int(body[cursor], "mus_count");
+    if (cursor < body.size() && !body[cursor].empty()) p.mus_count = parse_wire_int(body[cursor], "mus_count");
     cursor++;
     return p;
 }
@@ -2467,7 +2467,7 @@ TI TI::parse(const std::vector<std::string>& body) {
     cursor++;
     if (cursor < body.size()) p.command = timer_command_from_wire(parse_wire_int(body[cursor], "command"));
     cursor++;
-    if (cursor < body.size()) p.time = parse_wire_int(body[cursor], "time");
+    if (cursor < body.size() && !body[cursor].empty()) p.time = parse_wire_int(body[cursor], "time");
     cursor++;
     return p;
 }
@@ -2538,7 +2538,7 @@ ZZToServer ZZToServer::parse(const std::vector<std::string>& body) {
     std::size_t cursor = 0;
     if (cursor < body.size()) p.reason = unescape_fanta(body[cursor]);
     cursor++;
-    if (cursor < body.size()) p.reported_player_id = parse_wire_int(body[cursor], "reported_player_id");
+    if (cursor < body.size() && !body[cursor].empty()) p.reported_player_id = parse_wire_int(body[cursor], "reported_player_id");
     cursor++;
     return p;
 }

@@ -179,6 +179,12 @@ there is no pair), and a sub-token missing from the end of an object slot
 decodes to that sub-property's `default` (legacy senders send an `Offset` as
 `x` alone). Encoders still emit the full form.
 
+Likewise at the top level, decoders take a field's `default` for a slot missing
+from the end of the packet, and for an empty `number`/`integer` slot (some
+servers send `SI#110###%` or `PV###7#%`). An empty slot of any other type keeps
+its own meaning (an empty string stays empty), and an empty number without a
+`default` is still an error. `conformance/lenient.json` pins these cases.
+
 ### `x-fanta-unescape-amp: true`
 
 On an `object`-typed schema. Encoders never emit the legacy `<and>`

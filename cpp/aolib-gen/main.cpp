@@ -587,7 +587,9 @@ void emit_parse_field(std::string& out, const PacketInfo& p, const PropInfo& pro
         out += "    if (cursor < body.size() && !body[cursor].empty()) p." + key + " = " + sn + "_from_wire(body[cursor]);\n    cursor++;\n";
         return;
     }
-    out += "    if (cursor < body.size()) p." + key + " = " + wdec("body[cursor]", key, s, m) + ";\n    cursor++;\n";
+    // A blank number with a default keeps the default (spec/README.md, lenient decoding).
+    std::string blank = (json_type(s) == "number" || json_type(s) == "integer") && has_default(s) ? " && !body[cursor].empty()" : "";
+    out += "    if (cursor < body.size()" + blank + ") p." + key + " = " + wdec("body[cursor]", key, s, m) + ";\n    cursor++;\n";
 }
 
 void emit_tojson_field(std::string& out, const PropInfo& prop, const Model& m) {

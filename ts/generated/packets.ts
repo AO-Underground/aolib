@@ -387,7 +387,7 @@ export interface IDToClient extends Packet {
 export interface IDToClientInit {
   player_id: number;
   software: string;
-  version: string;
+  version?: string;
   $extras?: Record<string, unknown>;
 }
 
@@ -709,7 +709,7 @@ export interface PV extends Packet {
 }
 
 export interface PVInit {
-  player_id: number;
+  player_id?: number;
   char_id: number;
   $extras?: Record<string, unknown>;
 }
@@ -830,8 +830,8 @@ export interface SI extends Packet {
 
 export interface SIInit {
   char_count: number;
-  evi_count: number;
-  mus_count: number;
+  evi_count?: number;
+  mus_count?: number;
   $extras?: Record<string, unknown>;
 }
 

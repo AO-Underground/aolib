@@ -6,6 +6,7 @@ from aolib.encode import encode
 from aolib.wire import c2s_schemas, s2c_schemas
 
 VECTORS_PATH = Path(__file__).resolve().parent.parent.parent / "conformance" / "vectors.json"
+LENIENT_PATH = VECTORS_PATH.with_name("lenient.json")
 
 
 def _load_vectors():
@@ -37,3 +38,13 @@ def test_conformance_vectors() -> None:
         # Cross-wire: both decodes yield the same packet.
         assert encode(schema, from_fanta, "json") == json_str, f"{v['id']}: cross-wire json"
         assert encode(schema, from_json, "fanta") == fanta, f"{v['id']}: cross-wire fanta"
+
+
+def test_lenient_decoding() -> None:
+    """Malformed packets real servers send: the fanta form must decode like the JSON form."""
+    vectors = json.loads(LENIENT_PATH.read_text(encoding="utf-8"))
+    assert vectors, "no lenient vectors found"
+    for v in vectors:
+        schema = c2s_schemas[v["header"]] if v["receiver"] == "server" else s2c_schemas[v["header"]]
+        json_str = json.dumps(v["json"], separators=(",", ":"), ensure_ascii=False)
+        assert decode(schema, v["fanta"]) == decode(schema, json_str), v["id"]

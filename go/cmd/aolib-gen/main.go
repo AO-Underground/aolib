@@ -857,7 +857,12 @@ func emitPackets(packets []*Schema, enumNames, typeNames map[string]*Schema) str
 			}
 
 			if lit := defaultLiteral(&p, enumNames); lit != "" {
-				fmt.Fprintf(&b, "\tif cursor < len(body) {\n\t\t%s\n\t} else {\n\t\tp.%s = %s\n\t}\n\tcursor++\n", decodeStmt(&p, enumNames, typeNames), pascalCase(p.Name), lit)
+				present := "cursor < len(body)"
+				// A blank number takes the default too (spec/README.md, lenient decoding).
+				if t := p.Schema.TypeStr; t == "number" || t == "integer" {
+					present += " && get(cursor) != \"\""
+				}
+				fmt.Fprintf(&b, "\tif %s {\n\t\t%s\n\t} else {\n\t\tp.%s = %s\n\t}\n\tcursor++\n", present, decodeStmt(&p, enumNames, typeNames), pascalCase(p.Name), lit)
 				continue
 			}
 			fmt.Fprintf(&b, "\t%s\n\tcursor++\n", decodeStmt(&p, enumNames, typeNames))

@@ -1322,14 +1322,14 @@ const std::map<std::string, nlohmann::ordered_json>& spec_schemas() {
     },
     "version": {
       "type": "string",
-      "description": "Server software version."
+      "description": "Server software version.",
+      "default": ""
     }
   },
   "required": [
     "$header",
     "player_id",
-    "software",
-    "version"
+    "software"
   ],
   "additionalProperties": false,
   "x-receiver": "client"
@@ -2104,7 +2104,8 @@ const std::map<std::string, nlohmann::ordered_json>& spec_schemas() {
     },
     "player_id": {
       "type": "number",
-      "description": "Client's player ID; AO2-Client ignores it."
+      "description": "Client's player ID; AO2-Client ignores it.",
+      "default": -1
     },
     "_cid": {
       "type": "string",
@@ -2439,11 +2440,13 @@ const std::map<std::string, nlohmann::ordered_json>& spec_schemas() {
     },
     "evi_count": {
       "type": "number",
-      "description": "Number of evidence items."
+      "description": "Number of evidence items.",
+      "default": 0
     },
     "mus_count": {
       "type": "number",
-      "description": "Number of music list entries."
+      "description": "Number of music list entries.",
+      "default": 0
     }
   },
   "required": [

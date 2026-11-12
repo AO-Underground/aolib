@@ -1,0 +1,23 @@
+[
+  {
+    "id": "IDToClient-no-version",
+    "header": "ID",
+    "receiver": "client",
+    "fanta": "ID#0#CSDWASASH#%",
+    "json": { "$header": "ID", "player_id": 0, "software": "CSDWASASH", "version": "" }
+  },
+  {
+    "id": "SI-blank-counts",
+    "header": "SI",
+    "receiver": "client",
+    "fanta": "SI#110###%",
+    "json": { "$header": "SI", "char_count": 110, "evi_count": 0, "mus_count": 0 }
+  },
+  {
+    "id": "PV-blank-player-id",
+    "header": "PV",
+    "receiver": "client",
+    "fanta": "PV###7#%",
+    "json": { "$header": "PV", "player_id": -1, "_cid": "CID", "char_id": 7 }
+  }
+]

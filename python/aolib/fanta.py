@@ -318,6 +318,9 @@ def decode_token(raw_schema: Dict[str, Any], token: str, name: str, base_id: str
                 result[k] = decode_token(sub, part if part is not None else "", f"{name}.{k}", base_id)
         return result
 
+    # Some servers leave numbers blank (``SI#110###%``); the field's default stands in.
+    if token == "" and t in ("integer", "number") and "default" in schema:
+        return copy.deepcopy(schema["default"])
     return _decode_scalar(t, token, name)
 
 

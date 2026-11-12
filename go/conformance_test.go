@@ -80,3 +80,36 @@ func TestConformanceVectors(t *testing.T) {
 		})
 	}
 }
+
+// TestLenientDecoding checks malformed packets real servers send
+// (conformance/lenient.json): the fanta form must decode like the JSON form.
+func TestLenientDecoding(t *testing.T) {
+	path := filepath.Join("..", "conformance", "lenient.json")
+	raw, err := os.ReadFile(path)
+	if err != nil {
+		t.Skipf("lenient vectors unavailable at %s (standalone checkout): %v", path, err)
+	}
+	var vectors []conformanceVector
+	if err := json.Unmarshal(raw, &vectors); err != nil {
+		t.Fatalf("parse vectors: %v", err)
+	}
+	for _, v := range vectors {
+		t.Run(v.ID, func(t *testing.T) {
+			fantaReg, jsonReg := s2cDecoders, s2cJSON
+			if v.Receiver == "server" {
+				fantaReg, jsonReg = c2sDecoders, c2sJSON
+			}
+			_, fromJSON, err := decodeJSON(v.JSON, jsonReg)
+			if err != nil {
+				t.Fatalf("decode json: %v", err)
+			}
+			_, fromFanta, err := decodeFanta([]byte(v.Fanta), fantaReg)
+			if err != nil {
+				t.Fatalf("decode fanta: %v", err)
+			}
+			if !reflect.DeepEqual(fromJSON, fromFanta) {
+				t.Fatalf("fanta decodes differently from json:\n  json:  %#v\n  fanta: %#v", fromJSON, fromFanta)
+			}
+		})
+	}
+}

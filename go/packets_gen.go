@@ -2221,8 +2221,16 @@ func (p *PV) jsonConsts() map[string]string {
 
 func (p *PV) schemaPath() string { return "packets/schemas/PV.schema.json" }
 
+func (p *PV) applyDefaults() {
+	p.PlayerID = -1
+}
+
 // NewPV returns a PV with the spec's defaults.
-func NewPV() *PV { return &PV{} }
+func NewPV() *PV {
+	p := &PV{}
+	p.applyDefaults()
+	return p
+}
 
 func (p *PV) Args() []string {
 	var args []string
@@ -2241,7 +2249,11 @@ func ParsePV(body []string) (*PV, error) {
 		return ""
 	}
 	cursor := 0
-	p.PlayerID = atoiOrZero(get(cursor))
+	if cursor < len(body) && get(cursor) != "" {
+		p.PlayerID = atoiOrZero(get(cursor))
+	} else {
+		p.PlayerID = -1
+	}
 	cursor++
 	cursor++ // const slot
 	p.CharID = atoiOrZero(get(cursor))
@@ -2824,7 +2836,7 @@ func ParseZZToServer(body []string) (*ZZToServer, error) {
 	cursor := 0
 	p.Reason = unescapeFanta(get(cursor))
 	cursor++
-	if cursor < len(body) {
+	if cursor < len(body) && get(cursor) != "" {
 		p.ReportedPlayerID = atoiOrZero(get(cursor))
 	} else {
 		p.ReportedPlayerID = -1

@@ -18,9 +18,9 @@ std::string read_file(const std::string& path) {
     return ss.str();
 }
 
-nlohmann::ordered_json load_vectors() {
-    for (const char* p : {"../../conformance/vectors.json", "../conformance/vectors.json", "conformance/vectors.json"}) {
-        std::string raw = read_file(p);
+nlohmann::ordered_json load_vectors(const std::string& file = "vectors.json") {
+    for (const char* dir : {"../../conformance/", "../conformance/", "conformance/"}) {
+        std::string raw = read_file(dir + file);
         if (!raw.empty()) return nlohmann::ordered_json::parse(raw);
     }
     return nlohmann::ordered_json::array();
@@ -51,5 +51,24 @@ TEST_CASE("conformance vectors decode and re-encode byte-identically") {
         // Cross-wire: both decodes yield the same packet.
         CHECK(aolib::encode_decoded(from_fanta, aolib::WireMode::json) == json);
         CHECK(aolib::encode_decoded(from_json, aolib::WireMode::fanta) == fanta);
+    }
+}
+
+// Malformed packets real servers send: the fanta form must decode like the JSON form.
+TEST_CASE("lenient vectors decode like their JSON form") {
+    nlohmann::ordered_json vectors = load_vectors("lenient.json");
+    REQUIRE(!vectors.empty());
+
+    for (const auto& v : vectors) {
+        std::string id = v["id"].get<std::string>();
+        std::string receiver = v["receiver"].get<std::string>();
+        std::string json = v["json"].dump();
+        CAPTURE(id);
+        auto decode = [&](const std::string& raw, aolib::WireMode m) {
+            return receiver == "server" ? aolib::decode_to_server(raw, m) : aolib::decode_to_client(raw, m);
+        };
+        std::any from_fanta = decode(v["fanta"].get<std::string>(), aolib::WireMode::fanta);
+        std::any from_json = decode(json, aolib::WireMode::json);
+        CHECK(aolib::encode_decoded(from_fanta, aolib::WireMode::json) == aolib::encode_decoded(from_json, aolib::WireMode::json));
     }
 }
