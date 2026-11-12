@@ -15,11 +15,13 @@
     },
     "evi_count": {
       "type": "number",
-      "description": "Number of evidence items."
+      "description": "Number of evidence items.",
+      "default": 0
     },
     "mus_count": {
       "type": "number",
-      "description": "Number of music list entries."
+      "description": "Number of music list entries.",
+      "default": 0
     }
   },
   "required": [

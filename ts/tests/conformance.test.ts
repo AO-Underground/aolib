@@ -69,3 +69,18 @@ describe("custom packet conformance", () => {
     });
   }
 });
+
+// Malformed packets real servers send: the fanta form must decode like the JSON form.
+describe("lenient decoding", () => {
+  const lenient = JSON.parse(
+    readFileSync(join(import.meta.dir, "..", "..", "conformance", "lenient.json"), "utf8"),
+  ) as Vector[];
+
+  for (const v of lenient) {
+    it(v.id, () => {
+      const schema = (v.receiver === "server" ? c2s : s2c)[v.header];
+      if (!schema) throw new Error(`no schema for ${v.header}`);
+      expect(decode(schema, v.fanta)).toEqual(decode(schema, JSON.stringify(v.json)));
+    });
+  }
+});

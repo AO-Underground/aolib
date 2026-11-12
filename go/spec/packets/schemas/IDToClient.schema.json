@@ -19,14 +19,14 @@
     },
     "version": {
       "type": "string",
-      "description": "Server software version."
+      "description": "Server software version.",
+      "default": ""
     }
   },
   "required": [
     "$header",
     "player_id",
-    "software",
-    "version"
+    "software"
   ],
   "additionalProperties": false,
   "x-receiver": "client"

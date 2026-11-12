@@ -272,6 +272,10 @@ function decodeToken(rawSchema: JsonSchema, token: string, name: string, baseId:
     }
     return result;
   }
+  // Some servers leave numbers blank (`SI#110###%`); the field's default stands in.
+  if (token === "" && (t === "integer" || t === "number") && schema.default !== undefined) {
+    return structuredClone(schema.default);
+  }
   return decodeScalar(t, token, name);
 }
 

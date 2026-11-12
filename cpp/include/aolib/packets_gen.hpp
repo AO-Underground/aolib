@@ -882,7 +882,7 @@ struct PU : Outgoing {
 };
 
 struct PV : Outgoing {
-    int player_id{0};
+    int player_id{-1};
     int char_id{0};
     nlohmann::json extras;
 

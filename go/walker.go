@@ -327,6 +327,10 @@ func decodeSlot(raw *node, token, name, baseID string) (any, error) {
 		}
 		return token == "1", nil
 	case "integer", "number":
+		// Some servers leave numbers blank (SI#110###%); the field's default stands in.
+		if d, ok := s.vals["default"]; ok && token == "" {
+			return d, nil
+		}
 		if _, err := strconv.ParseFloat(token, 64); err != nil {
 			return nil, fmt.Errorf("invalid number for field %q: %q", name, token)
 		}

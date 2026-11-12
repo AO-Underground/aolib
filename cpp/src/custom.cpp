@@ -121,7 +121,11 @@ nlohmann::ordered_json decode_token(const nlohmann::ordered_json& raw, const std
     }
     std::string t = json_type(s);
     if (t == "string") return unescape_fanta(tok);
-    if (t == "number" || t == "integer") return parse_wire_int(tok, "number");
+    if (t == "number" || t == "integer") {
+        // Some servers leave numbers blank (SI#110###%); the field's default stands in.
+        if (tok.empty() && s.contains("default")) return s["default"];
+        return parse_wire_int(tok, "number");
+    }
     if (t == "boolean") return parse_wire_bool(tok, "boolean");
     if (t == "object") {
         if (s.contains("x-wire-bits")) {

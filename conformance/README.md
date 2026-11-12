@@ -22,3 +22,9 @@ them spec-correct.
 Every packet schema, in each direction, has at least one vector. Strings carry
 `#`/`&`/`%`/`$` wherever a field allows them, so escaping is checked
 everywhere.
+
+## Lenient decoding
+
+`lenient.json` holds malformed packets real servers send (a missing trailing
+field, blank numbers). They can't round-trip, so each binding only checks that
+the fanta form decodes to the same packet as the JSON form.
