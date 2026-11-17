@@ -33,6 +33,10 @@ var (
 	compiler    *jsonschema.Compiler
 	compileErr  error
 	compiled    sync.Map // schemaPath -> *jsonschema.Schema
+	// compileMu serializes compiler.Compile: jsonschema.Compiler mutates its
+	// caches and is not safe for concurrent use. Every session in the process
+	// shares this compiler, so first-use validation can arrive concurrently.
+	compileMu sync.Mutex
 )
 
 func loadSpec() {
@@ -61,6 +65,11 @@ func schemaFor(path string) (*jsonschema.Schema, error) {
 	compileOnce.Do(loadSpec)
 	if compileErr != nil {
 		return nil, compileErr
+	}
+	compileMu.Lock()
+	defer compileMu.Unlock()
+	if s, ok := compiled.Load(path); ok {
+		return s.(*jsonschema.Schema), nil
 	}
 	s, err := compiler.Compile(specBase + path)
 	if err != nil {
